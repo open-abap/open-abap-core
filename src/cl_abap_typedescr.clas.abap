@@ -16,7 +16,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 
   METHOD describe_by_data.
     CREATE OBJECT type.
-    WRITE '@KERNEL console.log("describe_by_data, todo");'.
+    WRITE '@KERNEL console.log("KERNEL, describe_by_data, todo");'.
     type->type_kind = typekind_int.
   ENDMETHOD.
 
