@@ -1,0 +1,16 @@
+{
+  "name": "open-abap",
+  "version": "1.0.0",
+  "private": true,
+  "description": "test",
+  "main": "index.js",
+  "scripts": {
+    "test": "rm -rf output && abap_transpile && echo RUNNING && node output/index.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@abaplint/runtime": "^0.5.28",
+    "@abaplint/transpiler-cli": "^0.5.28"
+  }
+}

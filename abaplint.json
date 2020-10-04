@@ -1,0 +1,71 @@
+{
+  "global": {
+    "files": "/src/**/*.*",
+    "skipGeneratedGatewayClasses": true,
+    "skipGeneratedPersistentClasses": true,
+    "skipGeneratedFunctionGroups": true
+  },
+  "syntax": {
+    "version": "v702",
+    "errorNamespace": "."
+  },
+  "rules": {
+    "implement_methods": true,
+    "indentation": true,
+    "keyword_case": true,
+    "when_others_last": true,
+    "avoid_use": {
+      "define": true,
+      "execSQL": true,
+      "kernelCall": true,
+      "communication": true,
+      "describeLines": true,
+      "systemCall": true,
+      "break": true,
+      "statics": true,
+      "endselect": false,
+      "defaultKey": false
+    },
+    "parser_error": true,
+    "unknown_types": true,
+    "global_class": true,
+    "check_syntax": true,
+    "functional_writing": true,
+    "obsolete_statement": {
+      "refresh": true,
+      "compute": true,
+      "requested": true,
+      "setExtended": true,
+      "withHeaderLine": true,
+      "fieldSymbolStructure": true,
+      "load": true,
+      "typePools": true,
+      "occurs": true,
+      "add": false,
+      "divide": false,
+      "move": false,
+      "multiply": false,
+      "subtract": false
+    },
+    "forbidden_identifier": {
+      "check": [
+        "^abstract$",	"^arguments$", "^await$", "^boolean$",
+        "^break$",	"^byte$", "^case$", "^catch$",
+        "^char$",	"^class$", "^const$", "^continue$",
+        "^debugger$",	"^default$", "^delete$", "^do$",
+        "^double$",	"^else$", "^enum$", "^eval$",
+        "^export$",	"^extends$", "^false$", "^final$",
+        "^finally$",	"^float$", "^for$", "^function$",
+        "^goto$",	"^if$", "^implements$", "^import$",
+        "^in$",	"^instanceof$", "^int$", "^interface$",
+        "^let$",	"^long$", "^native$", "^new$",
+        "^null$",	"^package$", "^private$", "^protected$",
+        "^public$",	"^return$", "^short$", "^static$",
+        "^super$",	"^switch$", "^synchronized$", "^this$",
+        "^throw$",	"^throws$", "^transient$", "^true$",
+        "^try$",	"^typeof$", "^var$", "^void$",
+        "^volatile$",	"^while$", "^with$", "^yield$",
+        "^unique\\d+$"]
+    }
+  }
+}
