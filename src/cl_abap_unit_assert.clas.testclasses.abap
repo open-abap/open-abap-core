@@ -2,6 +2,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
     METHODS initial FOR TESTING.
+    METHODS initial_ref FOR TESTING.
     METHODS equals FOR TESTING.
     METHODS differs FOR TESTING.
 
@@ -15,6 +16,15 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_initial( foo ).
     foo = 'abc'.
     cl_abap_unit_assert=>assert_not_initial( foo ).
+
+  ENDMETHOD.
+
+  METHOD initial_ref.
+
+    DATA zip TYPE REF TO cl_abap_zip.
+    cl_abap_unit_assert=>assert_initial( zip ).
+    CREATE OBJECT zip.
+    cl_abap_unit_assert=>assert_not_initial( zip ).
 
   ENDMETHOD.
 
