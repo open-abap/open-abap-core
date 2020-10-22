@@ -20,6 +20,7 @@ CLASS cl_abap_conv_in_ce IMPLEMENTATION.
     ASSERT encoding = 'UTF-8'.
     CREATE OBJECT ret.
   ENDMETHOD.
+
   METHOD convert.
     WRITE '@KERNEL let arr = new Uint8Array(input.get().match(/.{1,2}/g).map(byte => parseInt(byte, 16)));'.
     WRITE '@KERNEL let res = new TextDecoder("utf-8").decode(arr);'.
