@@ -22,6 +22,11 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
       assert_initial
         IMPORTING
           act TYPE any.
+
+    CLASS-METHODS
+      assert_subrc
+        IMPORTING
+          exp TYPE i DEFAULT 0.
 ENDCLASS.
 
 CLASS cl_abap_unit_assert IMPLEMENTATION.
@@ -41,4 +46,9 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
   METHOD assert_initial.
     ASSERT act IS INITIAL.
   ENDMETHOD.
+
+  METHOD assert_subrc.
+    ASSERT sy-subrc = exp.
+  ENDMETHOD.
+
 ENDCLASS.
