@@ -1,5 +1,5 @@
 CLASS cl_abap_zip DEFINITION PUBLIC.
-
+* todo
 ENDCLASS.
 
 CLASS cl_abap_zip IMPLEMENTATION.
