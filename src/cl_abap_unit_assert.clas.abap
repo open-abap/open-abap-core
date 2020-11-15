@@ -3,8 +3,8 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
     CLASS-METHODS
       assert_equals
         IMPORTING
-          act TYPE string
-          exp TYPE string
+          act TYPE any
+          exp TYPE any
           msg TYPE string OPTIONAL.
 
     CLASS-METHODS
@@ -36,7 +36,28 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD assert_equals.
-    ASSERT act = exp.
+    DATA type1 TYPE c LENGTH 1.
+    DATA type2 TYPE c LENGTH 1.
+    DATA index TYPE i.
+    FIELD-SYMBOLS <row1> TYPE any.
+    FIELD-SYMBOLS <row2> TYPE any.
+
+    DESCRIBE FIELD act TYPE type1.
+    DESCRIBE FIELD exp TYPE type2.
+    ASSERT type1 = type2.
+
+    IF type1 = 'h'.
+      ASSERT lines( act ) = lines( exp ).
+      DO lines( act ) TIMES.
+        index = sy-index.
+        READ TABLE act INDEX index ASSIGNING <row1>.
+        READ TABLE exp INDEX index ASSIGNING <row2>.
+        assert_equals( act = <row1>
+                       exp = <row2> ).
+      ENDDO.
+    ELSE.
+      ASSERT act = exp.
+    ENDIF.
   ENDMETHOD.
 
   METHOD assert_not_initial.
