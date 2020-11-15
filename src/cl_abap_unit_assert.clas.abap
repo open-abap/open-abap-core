@@ -39,7 +39,9 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
     DATA type1 TYPE c LENGTH 1.
     DATA type2 TYPE c LENGTH 1.
     DATA index TYPE i.
+    FIELD-SYMBOLS <tab1> TYPE INDEX TABLE.
     FIELD-SYMBOLS <row1> TYPE any.
+    FIELD-SYMBOLS <tab2> TYPE INDEX TABLE.
     FIELD-SYMBOLS <row2> TYPE any.
 
     DESCRIBE FIELD act TYPE type1.
@@ -48,10 +50,14 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
 
     IF type1 = 'h'.
       ASSERT lines( act ) = lines( exp ).
+      ASSIGN act TO <tab1>.
+      ASSIGN exp TO <tab2>.
       DO lines( act ) TIMES.
         index = sy-index.
-        READ TABLE act INDEX index ASSIGNING <row1>.
-        READ TABLE exp INDEX index ASSIGNING <row2>.
+        READ TABLE <tab1> INDEX index ASSIGNING <row1>.
+        ASSERT sy-subrc = 0.
+        READ TABLE <tab2> INDEX index ASSIGNING <row2>.
+        ASSERT sy-subrc = 0.
         assert_equals( act = <row1>
                        exp = <row2> ).
       ENDDO.
