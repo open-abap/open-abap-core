@@ -4,6 +4,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS initial FOR TESTING.
     METHODS initial_ref FOR TESTING.
     METHODS equals FOR TESTING.
+    METHODS equals_table FOR TESTING.
     METHODS differs FOR TESTING.
 
 ENDCLASS.
@@ -36,6 +37,14 @@ CLASS ltcl_test IMPLEMENTATION.
 
     cl_abap_unit_assert=>assert_equals( act = 2 exp = 2 ).
     cl_abap_unit_assert=>assert_equals( act = 'hello' exp = 'hello' ).
+  ENDMETHOD.
+
+  METHOD equals_table.
+    DATA lt_tab1 TYPE string_table.
+    DATA lt_tab2 TYPE string_table.
+    APPEND 'foo' TO lt_tab1.
+    APPEND 'foo' TO lt_tab2.
+    cl_abap_unit_assert=>assert_equals( act = lt_tab1 exp = lt_tab2 ).
   ENDMETHOD.
 
   METHOD differs.
