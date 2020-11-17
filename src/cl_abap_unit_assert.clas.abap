@@ -24,12 +24,19 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
           act TYPE any.
 
     CLASS-METHODS
+      fail.
+
+    CLASS-METHODS
       assert_subrc
         IMPORTING
           exp TYPE i DEFAULT 0.
 ENDCLASS.
 
 CLASS cl_abap_unit_assert IMPLEMENTATION.
+
+  METHOD fail.
+    ASSERT 1 = 2.
+  ENDMETHOD.
 
   METHOD assert_differs.
     ASSERT act <> exp.
