@@ -19,6 +19,6 @@ CLASS cl_abap_conv_out_ce IMPLEMENTATION.
   METHOD convert.
     WRITE '@KERNEL let arr = new TextEncoder("utf-8").encode(data.get());'.
     WRITE '@KERNEL let result = arr.reduce(function(acc, i) { return acc + ("0" + i.toString(16)).slice(-2); }, "");'.
-    WRITE '@KERNEL buffer.set(result);'.
+    WRITE '@KERNEL buffer.set(result.toUpperCase());'.
   ENDMETHOD.
 ENDCLASS.
