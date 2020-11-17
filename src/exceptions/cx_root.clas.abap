@@ -1,5 +1,7 @@
 CLASS cx_root DEFINITION PUBLIC.
 
+  PUBLIC SECTION.
+    DATA previous TYPE REF TO cx_root.
 
 ENDCLASS.
 
