@@ -10,6 +10,17 @@
     "errorNamespace": "."
   },
   "rules": {
+    "begin_end_names": true,
+    "xml_consistency": true,
+    "check_abstract": true,
+    "colon_missing_space": true,
+    "contains_tab": true,
+    "empty_statement": true,
+    "double_space": true,
+    "exporting": true,
+    "max_one_statement": true,
+    "tabl_enhancement_category": true,
+    "check_ddic": true,
     "implement_methods": true,
     "indentation": true,
     "keyword_case": true,
