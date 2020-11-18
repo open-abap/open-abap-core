@@ -1,8 +1,8 @@
 *******************************************************************
 *   System-defined Include-files.                                 *
 *******************************************************************
-  INCLUDE LZOPENABAPTOP.                     " Global Declarations
-  INCLUDE LZOPENABAPUXX.                     " Function Modules
+INCLUDE lzopenabaptop.                     " Global Declarations
+INCLUDE lzopenabapuxx.                     " Function Modules
 
 *******************************************************************
 *   User-defined Include-files (if necessary).                    *

@@ -1,3 +1,3 @@
-FUNCTION-POOL ZOPENABAP.                    "MESSAGE-ID ..
+FUNCTION-POOL zopenabap.                    "MESSAGE-ID ..
 
 * INCLUDE LZOPENABAPD...                     " Local class definition
