@@ -4,7 +4,11 @@ CLASS cx_root DEFINITION ABSTRACT PUBLIC.
     DATA previous TYPE REF TO cx_root.
     DATA textid TYPE c LENGTH 32.
 
-    METHODS: get_source_position.
+    METHODS get_source_position
+      EXPORTING
+        program_name TYPE string
+        include_name TYPE string
+        source_line TYPE string.
 
     INTERFACES if_message.
     ALIASES get_longtext FOR if_message~get_longtext.
