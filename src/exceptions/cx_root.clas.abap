@@ -23,11 +23,11 @@ CLASS cx_root IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_message~get_longtext.
-    ASSERT 'todo' = 1.
+    result = 'GetLongtextDummyValue'.
   ENDMETHOD.
 
   METHOD if_message~get_text.
-    ASSERT 'todo' = 1.
+    result = 'GetTextDummyValue'.
   ENDMETHOD.
 
 ENDCLASS.
