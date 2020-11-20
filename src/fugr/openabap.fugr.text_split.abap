@@ -9,6 +9,12 @@ FUNCTION text_split.
 *"     VALUE(REST)
 *"----------------------------------------------------------------------
 
-  ASSERT 'todo' = 1.
+  IF strlen( text ) < 50.
+    line = text.
+    rest = ''.
+  ELSE.
+    line = text(50).
+    rest = rest+50.
+  ENDIF.
 
 ENDFUNCTION.
