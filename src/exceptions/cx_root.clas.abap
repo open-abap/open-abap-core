@@ -23,7 +23,7 @@ ENDCLASS.
 CLASS cx_root IMPLEMENTATION.
 
   METHOD constructor.
-    previous = previous.
+    me->previous = previous.
   ENDMETHOD.
 
   METHOD get_source_position.
