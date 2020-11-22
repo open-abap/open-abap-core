@@ -9,6 +9,14 @@ INTERFACE if_t100_message PUBLIC.
           attr4 TYPE string,
         END OF t100key.
 
-  CONSTANTS: default_textid TYPE string VALUE 'default'.
+  CONSTANTS:
+    BEGIN OF default_textid,
+      msgid TYPE string VALUE 'AB',
+      msgno TYPE string VALUE '123',
+      attr1 TYPE string VALUE '',
+      attr2 TYPE string VALUE '',
+      attr3 TYPE string VALUE '',
+      attr4 TYPE string VALUE '',
+    END OF default_textid.
 
 ENDINTERFACE.
