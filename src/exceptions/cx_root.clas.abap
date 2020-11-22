@@ -4,6 +4,10 @@ CLASS cx_root DEFINITION ABSTRACT PUBLIC.
     DATA previous TYPE REF TO cx_root.
     DATA textid TYPE c LENGTH 32.
 
+    METHODS constructor
+      IMPORTING
+        previous TYPE REF TO cx_root OPTIONAL.
+
     METHODS get_source_position
       EXPORTING
         program_name TYPE string
@@ -17,6 +21,10 @@ CLASS cx_root DEFINITION ABSTRACT PUBLIC.
 ENDCLASS.
 
 CLASS cx_root IMPLEMENTATION.
+
+  METHOD constructor.
+    previous = previous.
+  ENDMETHOD.
 
   METHOD get_source_position.
     ASSERT 'todo' = 1.
