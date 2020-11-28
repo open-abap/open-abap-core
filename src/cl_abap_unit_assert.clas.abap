@@ -24,7 +24,9 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
           act TYPE any.
 
     CLASS-METHODS
-      fail.
+      fail
+        IMPORTING
+          msg TYPE csequence OPTIONAL.
 
     CLASS-METHODS
       assert_subrc
