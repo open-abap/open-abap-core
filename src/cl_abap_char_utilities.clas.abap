@@ -4,6 +4,7 @@ CLASS cl_abap_char_utilities DEFINITION PUBLIC.
       cr_lf TYPE c LENGTH 2 VALUE '\r\n',
 * https://en.wikipedia.org/wiki/Byte_order_mark, 0xEF,0xBB,0xBF
       byte_order_mark_utf8 TYPE x LENGTH 3 VALUE 'EFBBBF',
+      horizontal_tab TYPE c LENGTH 1 VALUE '\t',
       newline TYPE c LENGTH 2 VALUE '\n'.
 ENDCLASS.
 
