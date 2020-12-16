@@ -19,9 +19,11 @@ CLASS ltcl_char_utilities IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD test2.
+* check that this is not a syntax error,
     CONSTANTS foo LIKE cl_abap_char_utilities=>newline VALUE cl_abap_char_utilities=>newline.
+
     cl_abap_unit_assert=>assert_equals(
-      act = strlen( foo )
+      act = strlen( cl_abap_char_utilities=>newline )
       exp = 1 ).
   ENDMETHOD.
 
