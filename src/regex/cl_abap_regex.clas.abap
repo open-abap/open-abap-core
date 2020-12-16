@@ -28,8 +28,9 @@ CLASS cl_abap_regex IMPLEMENTATION.
   METHOD create_matcher.
     CREATE OBJECT ro_matcher
       EXPORTING
-        pattern = mv_pattern
-        text    = text.
+        pattern     = mv_pattern
+        ignore_case = mv_ignore_case
+        text        = text.
   ENDMETHOD.
 
 ENDCLASS.
