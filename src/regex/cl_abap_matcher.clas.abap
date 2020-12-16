@@ -4,6 +4,7 @@ CLASS cl_abap_matcher DEFINITION PUBLIC.
     METHODS constructor
       IMPORTING
         pattern TYPE clike
+        ignore_case TYPE abap_bool
         text TYPE clike.
 
     METHODS find_all
@@ -13,6 +14,7 @@ CLASS cl_abap_matcher DEFINITION PUBLIC.
   PRIVATE SECTION.
     DATA mv_pattern TYPE string.
     DATA mv_text TYPE string.
+    DATA mv_ignore_case TYPE abap_bool.
 
 ENDCLASS.
 
@@ -21,11 +23,16 @@ CLASS cl_abap_matcher IMPLEMENTATION.
   METHOD constructor.
     mv_pattern = pattern.
     mv_text = text.
+    mv_ignore_case = ignore_case.
   ENDMETHOD.
 
   METHOD find_all.
 
-    FIND ALL OCCURRENCES OF REGEX mv_pattern IN mv_text RESULTS rt_matches.
+    IF mv_ignore_case = abap_true.
+      FIND ALL OCCURRENCES OF REGEX mv_pattern IN mv_text RESULTS rt_matches IGNORING CASE.
+    ELSE.
+      FIND ALL OCCURRENCES OF REGEX mv_pattern IN mv_text RESULTS rt_matches.
+    ENDIF.
 
   ENDMETHOD.
 
