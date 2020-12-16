@@ -32,9 +32,20 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
       assert_subrc
         IMPORTING
           exp TYPE i DEFAULT 0.
+
+    CLASS-METHODS
+      assert_char_cp
+        IMPORTING
+          act TYPE clike
+          exp TYPE clike.
+
 ENDCLASS.
 
 CLASS cl_abap_unit_assert IMPLEMENTATION.
+
+  METHOD assert_char_cp.
+    ASSERT act CP exp.
+  ENDMETHOD.
 
   METHOD fail.
     ASSERT 1 = 2.
