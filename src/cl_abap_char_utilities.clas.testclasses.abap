@@ -2,6 +2,7 @@ CLASS ltcl_char_utilities DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SH
 
   PRIVATE SECTION.
     METHODS test1 FOR TESTING.
+    METHODS test2 FOR TESTING.
 
 ENDCLASS.
 
@@ -15,6 +16,15 @@ CLASS ltcl_char_utilities IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lines( tab )
       exp = 2 ).
+  ENDMETHOD.
+
+  METHOD test2.
+* check that this is not a syntax error,
+    CONSTANTS foo LIKE cl_abap_char_utilities=>newline VALUE cl_abap_char_utilities=>newline.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = strlen( cl_abap_char_utilities=>newline )
+      exp = 1 ).
   ENDMETHOD.
 
 ENDCLASS.
