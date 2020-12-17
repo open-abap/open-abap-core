@@ -9,7 +9,7 @@ CLASS ltcl_conv_in IMPLEMENTATION.
 
   METHOD test1.
     DATA conv TYPE REF TO cl_abap_conv_in_ce.
-    DATA data TYPE xstring.
+    DATA data TYPE string.
     conv = cl_abap_conv_in_ce=>create( 'UTF-8' ).
     conv->convert(
       EXPORTING input = '616263'

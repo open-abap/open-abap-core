@@ -9,10 +9,10 @@ CLASS cl_abap_conv_in_ce DEFINITION PUBLIC.
     METHODS
       convert
         IMPORTING
-          input TYPE string
+          input TYPE xstring
           n     TYPE i
         EXPORTING
-          data  TYPE xstring.
+          data  TYPE string.
 ENDCLASS.
 
 CLASS cl_abap_conv_in_ce IMPLEMENTATION.
