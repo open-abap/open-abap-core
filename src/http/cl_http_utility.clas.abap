@@ -11,6 +11,12 @@ CLASS cl_http_utility DEFINITION PUBLIC.
         escaped TYPE string
       RETURNING
         VALUE(unescaped) TYPE string.
+
+    CLASS-METHODS encode_base64
+      IMPORTING
+        data TYPE string
+      RETURNING
+        VALUE(encoded) TYPE string.
 ENDCLASS.
 
 CLASS cl_http_utility IMPLEMENTATION.
@@ -21,5 +27,10 @@ CLASS cl_http_utility IMPLEMENTATION.
 
   METHOD unescape_url.
     WRITE '@KERNEL unescaped.set(decodeURI(escaped.get()));'.
+  ENDMETHOD.
+
+  METHOD encode_base64.
+    WRITE '@KERNEL let buffer = Buffer.from(data.get());'.
+    WRITE '@KERNEL encoded.set(buffer.toString("base64"));'.
   ENDMETHOD.
 ENDCLASS.
