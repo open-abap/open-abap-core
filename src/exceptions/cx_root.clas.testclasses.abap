@@ -47,7 +47,6 @@ CLASS ltcl_test IMPLEMENTATION.
         EXPORTING
           textid   = ls_t100_key
           msgv1    = 'hello'.
-      cl_abap_unit_assert=>fail( ).
     CATCH cx_root INTO lx_error.
       lv_act = lx_error->get_text( ).
       cl_abap_unit_assert=>assert_equals(
