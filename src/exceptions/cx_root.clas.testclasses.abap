@@ -36,8 +36,8 @@ CLASS ltcl_test IMPLEMENTATION.
 
     DATA lx_error TYPE REF TO cx_root.
     DATA lv_act TYPE string.
-
     DATA ls_t100_key TYPE scx_t100key.
+
     ls_t100_key-msgid = '00'.
     ls_t100_key-msgno = '001'.
     ls_t100_key-attr1 = 'MSGV1'.
@@ -45,8 +45,8 @@ CLASS ltcl_test IMPLEMENTATION.
     TRY.
       RAISE EXCEPTION TYPE lcx_error
         EXPORTING
-          textid   = ls_t100_key
-          msgv1    = 'hello'.
+          textid = ls_t100_key
+          msgv1  = 'hello'.
     CATCH cx_root INTO lx_error.
       lv_act = lx_error->get_text( ).
       cl_abap_unit_assert=>assert_equals(

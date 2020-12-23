@@ -47,7 +47,6 @@ CLASS cx_root IMPLEMENTATION.
     WRITE '@KERNEL if (this.if_t100_message$t100key === undefined) { throw new Error("cx_root, no t100 found"); };'.
     WRITE '@KERNEL lv_msgid.set(this.if_t100_message$t100key.get().msgid);'.
     WRITE '@KERNEL lv_msgno.set(this.if_t100_message$t100key.get().msgno);'.
-
     WRITE '@KERNEL lv_msgv1.set(this[this.if_t100_message$t100key.get().attr1.get().toLowerCase()] ? this[this.if_t100_message$t100key.get().attr1.get().toLowerCase()].get() : "");'.
     WRITE '@KERNEL lv_msgv2.set(this[this.if_t100_message$t100key.get().attr2.get().toLowerCase()] ? this[this.if_t100_message$t100key.get().attr2.get().toLowerCase()].get() : "");'.
     WRITE '@KERNEL lv_msgv3.set(this[this.if_t100_message$t100key.get().attr3.get().toLowerCase()] ? this[this.if_t100_message$t100key.get().attr3.get().toLowerCase()].get() : "");'.
