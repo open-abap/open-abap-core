@@ -48,10 +48,12 @@ CLASS cx_root IMPLEMENTATION.
     WRITE '@KERNEL lv_msgid.set(this.if_t100_message$t100key.get().msgid);'.
     WRITE '@KERNEL lv_msgno.set(this.if_t100_message$t100key.get().msgno);'.
 
-    WRITE '@KERNEL console.dir(lv_msgno);'.
+    WRITE '@KERNEL lv_msgv1.set(this[this.if_t100_message$t100key.get().attr1.get().toLowerCase()] ? this[this.if_t100_message$t100key.get().attr1.get().toLowerCase()].get() : "");'.
+    WRITE '@KERNEL lv_msgv2.set(this[this.if_t100_message$t100key.get().attr2.get().toLowerCase()] ? this[this.if_t100_message$t100key.get().attr2.get().toLowerCase()].get() : "");'.
+    WRITE '@KERNEL lv_msgv3.set(this[this.if_t100_message$t100key.get().attr3.get().toLowerCase()] ? this[this.if_t100_message$t100key.get().attr3.get().toLowerCase()].get() : "");'.
+    WRITE '@KERNEL lv_msgv4.set(this[this.if_t100_message$t100key.get().attr4.get().toLowerCase()] ? this[this.if_t100_message$t100key.get().attr4.get().toLowerCase()].get() : "");'.
 
     MESSAGE ID lv_msgid TYPE 'S' NUMBER lv_msgno WITH lv_msgv1 lv_msgv2 lv_msgv3 lv_msgv4 INTO result.
-    WRITE '@KERNEL console.dir(result);'.
 
   ENDMETHOD.
 
