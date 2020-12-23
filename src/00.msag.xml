@@ -12,7 +12,7 @@
      <SPRSL>E</SPRSL>
      <ARBGB>00</ARBGB>
      <MSGNR>001</MSGNR>
-     <TEXT>open-abap-hello-world</TEXT>
+     <TEXT>&amp;1&amp;2&amp;3&amp;4</TEXT>
     </T100>
    </T100>
   </asx:values>

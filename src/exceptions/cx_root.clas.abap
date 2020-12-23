@@ -31,11 +31,11 @@ CLASS cx_root IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_message~get_longtext.
-    result = 'GetLongtextDummyValue'.
+    result = 'OpenAbapGetLongtextDummyValue'.
   ENDMETHOD.
 
   METHOD if_message~get_text.
-    result = 'GetTextDummyValue'.
+    result = 'OpenAbapGetTextDummyValue'.
   ENDMETHOD.
 
 ENDCLASS.
