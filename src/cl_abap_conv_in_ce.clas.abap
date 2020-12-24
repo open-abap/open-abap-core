@@ -4,6 +4,7 @@ CLASS cl_abap_conv_in_ce DEFINITION PUBLIC.
       create
         IMPORTING
           encoding TYPE string
+          input TYPE xstring OPTIONAL
         RETURNING
           VALUE(ret) TYPE REF TO cl_abap_conv_in_ce.
     METHODS
@@ -13,12 +14,21 @@ CLASS cl_abap_conv_in_ce DEFINITION PUBLIC.
           n     TYPE i
         EXPORTING
           data  TYPE string.
+    METHODS
+      read
+        IMPORTING
+          n     TYPE i
+        EXPORTING
+          data  TYPE string.
+  PRIVATE SECTION.
+    DATA mv_input TYPE xstring.
 ENDCLASS.
 
 CLASS cl_abap_conv_in_ce IMPLEMENTATION.
   METHOD create.
     ASSERT encoding = 'UTF-8'.
     CREATE OBJECT ret.
+    ret->mv_input = input.
   ENDMETHOD.
 
   METHOD convert.
@@ -26,4 +36,14 @@ CLASS cl_abap_conv_in_ce IMPLEMENTATION.
     WRITE '@KERNEL let res = new TextDecoder("utf-8").decode(arr);'.
     WRITE '@KERNEL data.set(res);'.
   ENDMETHOD.
+
+  METHOD read.
+    convert(
+      EXPORTING
+        input = mv_input
+        n     = n
+      IMPORTING
+        data  = data ).
+  ENDMETHOD.
+
 ENDCLASS.
