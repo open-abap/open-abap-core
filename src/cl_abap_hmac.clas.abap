@@ -7,7 +7,9 @@ CLASS cl_abap_hmac DEFINITION PUBLIC.
         if_data        TYPE xstring
       EXPORTING
         ef_hmacstring  TYPE string
-        ef_hmacxstring TYPE xstring.
+        ef_hmacxstring TYPE xstring
+      RAISING
+        cx_abap_message_digest.
 ENDCLASS.
 
 CLASS cl_abap_hmac IMPLEMENTATION.
