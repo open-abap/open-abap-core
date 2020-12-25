@@ -11,6 +11,8 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_int TYPE c LENGTH 1 VALUE 'I'.
     CONSTANTS typekind_struct1 TYPE c LENGTH 1 VALUE 'u'.
     CONSTANTS typekind_struct2 TYPE c LENGTH 1 VALUE 'v'.
+    CONSTANTS typekind_xstring TYPE c LENGTH 1 VALUE 'y'.
+    CONSTANTS typekind_string TYPE c LENGTH 1 VALUE 'g'.
 
 ENDCLASS.
 
@@ -30,6 +32,10 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->type_kind = typekind_int.
       WHEN 'Structure'.
         type->type_kind = typekind_struct2.
+      WHEN 'XString'.
+        type->type_kind = typekind_xstring.
+      WHEN 'String'.
+        type->type_kind = typekind_string.
     ENDCASE.
   ENDMETHOD.
 
