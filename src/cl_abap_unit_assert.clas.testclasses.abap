@@ -7,6 +7,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS equals_table FOR TESTING.
     METHODS differs FOR TESTING.
     METHODS cp FOR TESTING.
+    METHODS char_eq_string FOR TESTING.
 
 ENDCLASS.
 
@@ -56,6 +57,14 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD differs.
     cl_abap_unit_assert=>assert_differs( act = 1 exp = 2 ).
+  ENDMETHOD.
+
+  METHOD char_eq_string.
+    DATA lv_char TYPE c LENGTH 10.
+    DATA lv_string TYPE string.
+    lv_char = 'hello'.
+    lv_string = 'hello'.
+    cl_abap_unit_assert=>assert_equals( act = lv_char exp = lv_string ).
   ENDMETHOD.
 
 ENDCLASS.
