@@ -13,4 +13,6 @@ INTERFACE if_http_request PUBLIC.
       RETURNING
         VALUE(value) TYPE string.
 
+  METHODS set_data IMPORTING data TYPE string.
+
 ENDINTERFACE.

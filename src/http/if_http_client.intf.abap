@@ -10,4 +10,13 @@ INTERFACE if_http_client PUBLIC.
       proxy_authentication TYPE abap_bool
       username             TYPE string
       password             TYPE string.
+
+  METHODS close.
+  METHODS send.
+  METHODS receive.
+
+  METHODS get_last_error
+    EXPORTING
+      code    TYPE i
+      message TYPE string.
 ENDINTERFACE.
