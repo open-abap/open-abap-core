@@ -70,7 +70,7 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
       IF NOT type2 IS INITIAL.
         ASSERT type2 CA 'Cg'.
       ENDIF.
-    ELSE.
+    ELSEIF NOT type1 IS INITIAL AND NOT type2 IS INITIAL.
       ASSERT type1 = type2.
     ENDIF.
 
