@@ -66,7 +66,13 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
 
     DESCRIBE FIELD act TYPE type1.
     DESCRIBE FIELD exp TYPE type2.
-    ASSERT type1 = type2.
+    IF type1 CA 'Cg'. " character and strings
+      IF NOT type2 IS INITIAL.
+        ASSERT type2 CA 'Cg'.
+      ENDIF.
+    ELSE.
+      ASSERT type1 = type2.
+    ENDIF.
 
     IF type1 = 'h'.
       ASSERT lines( act ) = lines( exp ).
