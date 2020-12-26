@@ -8,7 +8,8 @@ INTERFACE if_http_response PUBLIC.
 
   METHODS get_status
     EXPORTING
-      code TYPE i.
+      code   TYPE i
+      reason TYPE string.
 
   METHODS get_cdata
     RETURNING
