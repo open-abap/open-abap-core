@@ -7,6 +7,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
         RETURNING VALUE(type) TYPE REF TO cl_abap_typedescr.
 
     DATA type_kind TYPE c LENGTH 1.
+    DATA absolute_name TYPE string.
 
     CONSTANTS typekind_int TYPE c LENGTH 1 VALUE 'I'.
     CONSTANTS typekind_struct1 TYPE c LENGTH 1 VALUE 'u'.
@@ -37,6 +38,9 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
       WHEN 'String'.
         type->type_kind = typekind_string.
     ENDCASE.
+
+    type->absolute_name = 'ABSOLUTE_NAME_TODO'.
+
   ENDMETHOD.
 
 ENDCLASS.

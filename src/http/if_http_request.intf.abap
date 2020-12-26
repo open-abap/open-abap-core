@@ -26,7 +26,9 @@ INTERFACE if_http_request PUBLIC.
         IMPORTING
           version TYPE string.
 
-  METHODS set_data IMPORTING data TYPE string.
+  METHODS set_data IMPORTING data TYPE xstring.
+
+  METHODS set_cdata IMPORTING data TYPE string.
 
   METHODS set_form_field
     IMPORTING
