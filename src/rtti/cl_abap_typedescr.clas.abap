@@ -38,6 +38,9 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
       WHEN 'String'.
         type->type_kind = typekind_string.
     ENDCASE.
+
+    type->absolute_name = 'ABSOLUTE_NAME_TODO'.
+
   ENDMETHOD.
 
 ENDCLASS.
