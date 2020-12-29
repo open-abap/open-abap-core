@@ -41,9 +41,15 @@ CLASS cl_http_client IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_client~send.
-* note that fetch() also works in browsers, https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+* note that fetch() also works in browsers,
+* https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+* https://caniuse.com/fetch
 
-    WRITE '@KERNEL const response = globalThis.fetch(this.url.get());'.
+    WRITE '@KERNEL let response = undefined;'.
+    WRITE '@KERNEL console.dir(this.url.get());'.
+    WRITE '@KERNEL globalThis.fetch(this.url.get()).then(res => res.text()).then(data => console.log(data)).catch(e => response = "error" );'.
+    WRITE '@KERNEL let iteration = 1;'.
+    WRITE '@KERNEL while (response === undefined) { console.dir(iteration++); }'. " busy wait
     WRITE '@KERNEL console.dir(response);'.
 
     ASSERT 1 = 'todo'.
