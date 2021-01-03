@@ -45,11 +45,8 @@ CLASS cl_http_client IMPLEMENTATION.
 * https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
 * https://caniuse.com/fetch
 
-    WRITE '@KERNEL let response = undefined;'.
     WRITE '@KERNEL console.dir(this.url.get());'.
-    WRITE '@KERNEL globalThis.fetch(this.url.get()).then(res => res.text()).then(data => console.log(data)).catch(e => response = "error" );'.
-    WRITE '@KERNEL let iteration = 1;'.
-    WRITE '@KERNEL while (response === undefined) { console.dir(iteration++); }'. " busy wait
+    WRITE '@KERNEL let response = await globalThis.fetch(this.url.get());'.
     WRITE '@KERNEL console.dir(response);'.
 
     ASSERT 1 = 'todo'.
