@@ -24,6 +24,7 @@ CLASS cl_http_client IMPLEMENTATION.
 
   METHOD constructor.
     me->url = url.
+    CREATE OBJECT if_http_client~response TYPE lcl_response.
   ENDMETHOD.
 
   METHOD create_by_url.
@@ -45,15 +46,14 @@ CLASS cl_http_client IMPLEMENTATION.
 * https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
 * https://caniuse.com/fetch
 
-    WRITE '@KERNEL console.dir(this.url.get());'.
     WRITE '@KERNEL let response = await globalThis.fetch(this.url.get());'.
-    WRITE '@KERNEL console.dir(response);'.
+    WRITE '@KERNEL console.dir(response.status);'.
 
-    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_http_client~receive.
-    ASSERT 1 = 'todo'.
+* handled in send()
+    RETURN.
   ENDMETHOD.
 
   METHOD if_http_client~get_last_error.
