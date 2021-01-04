@@ -20,6 +20,6 @@ INTERFACE if_http_response PUBLIC.
       VALUE(val) TYPE string.
 
   METHODS get_data
-    RETURNING VALUE(val) TYPE string.
+    RETURNING VALUE(val) TYPE xstring.
 
 ENDINTERFACE.

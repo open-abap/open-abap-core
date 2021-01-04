@@ -52,6 +52,7 @@ CLASS cl_http_client IMPLEMENTATION.
   METHOD if_http_client~send.
 * note that fetch() also works in browsers,
 * https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+* https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
 * https://caniuse.com/fetch
 
     WRITE '@KERNEL let response = await globalThis.fetch(this.url.get(), {headers: {"Authorization": this.authorization.get()}});'.

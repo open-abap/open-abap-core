@@ -19,12 +19,12 @@ INTERFACE if_http_request PUBLIC.
         VALUE(value) TYPE string.
 
   METHODS set_method
-        IMPORTING
-          meth TYPE string.
+    IMPORTING
+      meth TYPE string.
 
   METHODS set_version
-        IMPORTING
-          version TYPE string.
+    IMPORTING
+      version TYPE string.
 
   METHODS set_data IMPORTING data TYPE xstring.
 
