@@ -47,7 +47,7 @@ CLASS cl_http_client IMPLEMENTATION.
 * https://caniuse.com/fetch
 
     WRITE '@KERNEL let response = await globalThis.fetch(this.url.get());'.
-    WRITE '@KERNEL console.dir(response.status);'.
+    WRITE '@KERNEL this.if_http_client$response.get().status.set(response.status);'.
 
   ENDMETHOD.
 
