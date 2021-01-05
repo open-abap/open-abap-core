@@ -1,0 +1,3 @@
+INTERFACE if_ixml_ostream PUBLIC.
+
+ENDINTERFACE.
