@@ -21,10 +21,9 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD cp2.
-* todo, uncomment this
-    " cl_abap_unit_assert=>assert_char_cp(
-    "   act = |hello\nfoobar\nmoo|
-    "   exp = '*oo*' ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = |hello\nfoobar\nmoo|
+      exp = '*oo*' ).
   ENDMETHOD.
 
   METHOD initial.

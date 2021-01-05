@@ -30,10 +30,9 @@ CLASS ltcl_test IMPLEMENTATION.
 
     lv_cdata = li_client->response->get_cdata( ).
     cl_abap_unit_assert=>assert_not_initial( lv_cdata ).
-* todo, uncomment this
-    " cl_abap_unit_assert=>assert_char_cp(
-    "   act = lv_cdata
-    "   exp = '*headers*' ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = '*headers*' ).
 
   ENDMETHOD.
 

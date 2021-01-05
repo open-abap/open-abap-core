@@ -37,6 +37,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->kind = kind_elem.
       WHEN 'Structure'.
         CREATE OBJECT type.
+* see https://github.com/open-abap/open-abap/issues/59
 *        CREATE OBJECT type TYPE cl_abap_structdescr.
         type->type_kind = typekind_struct2.
         type->kind = kind_struct.
