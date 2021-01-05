@@ -6,16 +6,23 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS equals FOR TESTING.
     METHODS equals_table FOR TESTING.
     METHODS differs FOR TESTING.
-    METHODS cp FOR TESTING.
+    METHODS cp1 FOR TESTING.
+    METHODS cp2 FOR TESTING.
     METHODS char_eq_string FOR TESTING.
 
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
 
-  METHOD cp.
+  METHOD cp1.
     cl_abap_unit_assert=>assert_char_cp(
       act = 'foobar'
+      exp = '*oo*' ).
+  ENDMETHOD.
+
+  METHOD cp2.
+    cl_abap_unit_assert=>assert_char_cp(
+      act = |hello\nfoobar\nmoo|
       exp = '*oo*' ).
   ENDMETHOD.
 

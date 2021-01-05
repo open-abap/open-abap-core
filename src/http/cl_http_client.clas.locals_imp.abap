@@ -3,6 +3,7 @@ CLASS lcl_response DEFINITION.
     INTERFACES if_http_response.
   PRIVATE SECTION.
     DATA status TYPE i.
+    DATA cdata TYPE string.
 ENDCLASS.
 
 CLASS lcl_response IMPLEMENTATION.
@@ -16,7 +17,7 @@ CLASS lcl_response IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_response~get_cdata.
-    ASSERT 2 = 'todo'.
+    data = cdata.
   ENDMETHOD.
 
   METHOD if_http_response~get_content_type.

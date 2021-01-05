@@ -17,9 +17,20 @@ CLASS cl_http_utility DEFINITION PUBLIC.
         data TYPE string
       RETURNING
         VALUE(encoded) TYPE string.
+
+    CLASS-METHODS fields_to_string
+      IMPORTING
+        fields TYPE tihttpnvp
+      RETURNING
+        VALUE(string) TYPE string.
 ENDCLASS.
 
 CLASS cl_http_utility IMPLEMENTATION.
+
+  METHOD fields_to_string.
+    ASSERT 2 = 'todo'.
+  ENDMETHOD.
+
   METHOD decode_x_base64.
     WRITE '@KERNEL let buffer = Buffer.from(encoded.get(), "base64");'.
     WRITE '@KERNEL decoded.set(buffer.toString("hex"));'.

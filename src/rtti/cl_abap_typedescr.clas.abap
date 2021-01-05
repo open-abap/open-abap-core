@@ -1,4 +1,4 @@
-CLASS cl_abap_typedescr DEFINITION PUBLIC.
+CLASS cl_abap_typedescr DEFINITION PUBLIC ABSTRACT.
 
   PUBLIC SECTION.
     CLASS-METHODS
@@ -7,6 +7,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
         RETURNING VALUE(type) TYPE REF TO cl_abap_typedescr.
 
     DATA type_kind TYPE c LENGTH 1.
+    DATA kind TYPE c LENGTH 1.
     DATA absolute_name TYPE string.
 
     CONSTANTS typekind_int TYPE c LENGTH 1 VALUE 'I'.
@@ -14,6 +15,9 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_struct2 TYPE c LENGTH 1 VALUE 'v'.
     CONSTANTS typekind_xstring TYPE c LENGTH 1 VALUE 'y'.
     CONSTANTS typekind_string TYPE c LENGTH 1 VALUE 'g'.
+
+    CONSTANTS kind_elem TYPE c LENGTH 1 VALUE 'E'.
+    CONSTANTS kind_struct TYPE c LENGTH 1 VALUE 'S'.
 
 ENDCLASS.
 
@@ -25,18 +29,26 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 
     WRITE '@KERNEL lv_name.set(data.constructor.name);'.
 
-    CREATE OBJECT type.
-
 * These are the constructor names from the js runtime
     CASE lv_name.
       WHEN 'Integer'.
+        CREATE OBJECT type.
         type->type_kind = typekind_int.
+        type->kind = kind_elem.
       WHEN 'Structure'.
+        CREATE OBJECT type.
+* see https://github.com/open-abap/open-abap/issues/59
+*        CREATE OBJECT type TYPE cl_abap_structdescr.
         type->type_kind = typekind_struct2.
+        type->kind = kind_struct.
       WHEN 'XString'.
+        CREATE OBJECT type.
         type->type_kind = typekind_xstring.
+        type->kind = kind_elem.
       WHEN 'String'.
+        CREATE OBJECT type.
         type->type_kind = typekind_string.
+        type->kind = kind_elem.
     ENDCASE.
 
     type->absolute_name = 'ABSOLUTE_NAME_TODO'.
