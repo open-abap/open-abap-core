@@ -1,4 +1,4 @@
-CLASS cl_abap_typedescr DEFINITION PUBLIC.
+CLASS cl_abap_typedescr DEFINITION PUBLIC ABSTRACT.
 
   PUBLIC SECTION.
     CLASS-METHODS
@@ -29,20 +29,23 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 
     WRITE '@KERNEL lv_name.set(data.constructor.name);'.
 
-    CREATE OBJECT type.
-
 * These are the constructor names from the js runtime
     CASE lv_name.
       WHEN 'Integer'.
+        CREATE OBJECT type.
         type->type_kind = typekind_int.
         type->kind = kind_elem.
       WHEN 'Structure'.
+        CREATE OBJECT type.
+*        CREATE OBJECT type TYPE cl_abap_structdescr.
         type->type_kind = typekind_struct2.
         type->kind = kind_struct.
       WHEN 'XString'.
+        CREATE OBJECT type.
         type->type_kind = typekind_xstring.
         type->kind = kind_elem.
       WHEN 'String'.
+        CREATE OBJECT type.
         type->type_kind = typekind_string.
         type->kind = kind_elem.
     ENDCASE.
