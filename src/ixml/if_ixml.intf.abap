@@ -10,5 +10,5 @@ INTERFACE if_ixml PUBLIC.
       ostream  TYPE REF TO if_ixml_ostream
       document TYPE REF TO if_ixml_document
     RETURNING
-      VALUE(renderer) TYPE REF TO if_ixml_rendererrrrr.
+      VALUE(renderer) TYPE REF TO if_ixml_renderer.
 ENDINTERFACE.
