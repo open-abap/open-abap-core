@@ -1,0 +1,3 @@
+INTERFACE if_ixml_renderer PUBLIC.
+  METHODS render.
+ENDINTERFACE.

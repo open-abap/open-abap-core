@@ -1,0 +1,3 @@
+INTERFACE if_ixml_document PUBLIC.
+
+ENDINTERFACE.

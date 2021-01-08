@@ -11,17 +11,20 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
       assert_differs
         IMPORTING
           act TYPE string
-          exp TYPE string.
+          exp TYPE string
+          msg TYPE string OPTIONAL.
 
     CLASS-METHODS
       assert_not_initial
         IMPORTING
-          act TYPE any.
+          act TYPE any
+          msg TYPE string OPTIONAL.
 
     CLASS-METHODS
       assert_initial
         IMPORTING
-          act TYPE any.
+          act TYPE any
+          msg TYPE string OPTIONAL.
 
     CLASS-METHODS
       fail
@@ -31,13 +34,15 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
     CLASS-METHODS
       assert_subrc
         IMPORTING
-          exp TYPE i DEFAULT 0.
+          exp TYPE i DEFAULT 0
+          msg TYPE string OPTIONAL.
 
     CLASS-METHODS
       assert_char_cp
         IMPORTING
           act TYPE clike
-          exp TYPE clike.
+          exp TYPE clike
+          msg TYPE string OPTIONAL.
 
 ENDCLASS.
 
