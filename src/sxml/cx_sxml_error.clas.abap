@@ -1,0 +1,7 @@
+CLASS cx_sxml_error DEFINITION PUBLIC INHERITING FROM cx_dynamic_check.
+
+ENDCLASS.
+
+CLASS cx_sxml_error IMPLEMENTATION.
+
+ENDCLASS.

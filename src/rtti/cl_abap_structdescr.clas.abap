@@ -4,6 +4,7 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
     TYPES: BEGIN OF component,
              name TYPE string,
              type TYPE REF TO cl_abap_typedescr,
+             as_include TYPE abap_bool,
            END OF component.
     TYPES: component_table TYPE STANDARD TABLE OF component WITH DEFAULT KEY.
 
