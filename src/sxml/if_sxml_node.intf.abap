@@ -1,0 +1,2 @@
+INTERFACE if_sxml_node PUBLIC.
+ENDINTERFACE.

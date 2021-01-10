@@ -11,4 +11,11 @@ INTERFACE if_ixml PUBLIC.
       document TYPE REF TO if_ixml_document
     RETURNING
       VALUE(renderer) TYPE REF TO if_ixml_renderer.
+  METHODS create_parser
+    IMPORTING
+      stream_factory  TYPE REF TO if_ixml_stream_factory
+      istream  TYPE REF TO if_ixml_istream
+      document TYPE REF TO if_ixml_document
+    RETURNING
+      VALUE(parser) TYPE REF TO if_ixml_parser.
 ENDINTERFACE.
