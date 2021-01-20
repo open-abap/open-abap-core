@@ -8,11 +8,13 @@ ENDCLASS.
 CLASS cl_sxml_string_reader IMPLEMENTATION.
   METHOD create.
 
+************* WIP *******************
+
     DATA lo_json TYPE REF TO lcl_json_parser.
     CREATE OBJECT lo_json.
     lo_json->parse( cl_abap_codepage=>convert_from( data ) ).
 
-********************************
+************* DUMMY IMPLEMENTATION *******************
 
     DATA lt_nodes TYPE lcl_reader=>ty_nodes.
     DATA li_node1 TYPE REF TO if_sxml_node.
@@ -31,5 +33,6 @@ CLASS cl_sxml_string_reader IMPLEMENTATION.
     CREATE OBJECT reader TYPE lcl_reader
       EXPORTING
         it_nodes = lt_nodes.
+
   ENDMETHOD.
 ENDCLASS.

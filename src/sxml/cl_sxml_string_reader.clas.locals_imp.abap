@@ -19,10 +19,18 @@ CLASS lcl_json_parser DEFINITION.
   PRIVATE SECTION.
     DATA mt_nodes TYPE ty_nodes.
 
+    METHODS append
+      IMPORTING
+        iv_path TYPE string
+        iv_name TYPE string
+        iv_type TYPE string
+        iv_value TYPE string.
+
     METHODS traverse IMPORTING iv_json TYPE string.
     METHODS traverse_object IMPORTING iv_json TYPE string.
     METHODS traverse_basic IMPORTING iv_json TYPE string.
     METHODS traverse_array IMPORTING iv_json TYPE string.
+
 ENDCLASS.
 
 CLASS lcl_json_parser IMPLEMENTATION.
@@ -31,6 +39,15 @@ CLASS lcl_json_parser IMPLEMENTATION.
     CLEAR mt_nodes.
     traverse( iv_json ).
     rt_nodes = mt_nodes.
+  ENDMETHOD.
+
+  METHOD append.
+    DATA ls_node LIKE LINE OF mt_nodes.
+    ls_node-path = iv_path.
+    ls_node-name = iv_name.
+    ls_node-type = iv_type.
+    ls_node-value = iv_value.
+    APPEND ls_node TO mt_nodes.
   ENDMETHOD.
 
   METHOD traverse.
