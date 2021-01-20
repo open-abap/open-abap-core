@@ -3,6 +3,7 @@ CLASS ltcl_sxml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
   PRIVATE SECTION.
     TYPES: BEGIN OF ty_node,
              type TYPE if_sxml_node=>node_type,
+             name TYPE string,
            END OF ty_node.
 
     TYPES ty_nodes TYPE STANDARD TABLE OF ty_node WITH DEFAULT KEY.
@@ -42,6 +43,8 @@ CLASS ltcl_sxml IMPLEMENTATION.
   METHOD dump_nodes.
 
     DATA li_node TYPE REF TO if_sxml_node.
+    DATA li_close TYPE REF TO if_sxml_close_element.
+    DATA li_open TYPE REF TO if_sxml_open_element.
     DATA li_reader TYPE REF TO if_sxml_reader.
     DATA ls_node TYPE ty_node.
 
@@ -53,8 +56,19 @@ CLASS ltcl_sxml IMPLEMENTATION.
       IF li_node IS INITIAL.
         EXIT.
       ENDIF.
+
       CLEAR ls_node.
       ls_node-type = li_node->type.
+
+      CASE li_node->type.
+        WHEN if_sxml_node=>co_nt_element_open.
+          li_open ?= li_node.
+          ls_node-name = li_open->qname-name.
+        WHEN if_sxml_node=>co_nt_element_close.
+          li_close ?= li_node.
+          ls_node-name = li_close->qname-name.
+      ENDCASE.
+
       APPEND ls_node TO rt_nodes.
     ENDDO.
 
