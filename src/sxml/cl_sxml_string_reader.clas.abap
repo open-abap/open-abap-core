@@ -7,6 +7,13 @@ ENDCLASS.
 
 CLASS cl_sxml_string_reader IMPLEMENTATION.
   METHOD create.
+
+    DATA lo_json TYPE REF TO lcl_json_parser.
+    CREATE OBJECT lo_json.
+    lo_json->parse( cl_abap_codepage=>convert_from( data ) ).
+
+********************************
+
     DATA lt_nodes TYPE lcl_reader=>ty_nodes.
     DATA li_node1 TYPE REF TO if_sxml_node.
     DATA li_node2 TYPE REF TO if_sxml_node.

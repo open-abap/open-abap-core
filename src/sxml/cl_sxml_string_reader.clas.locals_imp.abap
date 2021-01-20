@@ -1,5 +1,83 @@
 * JSON specification, https://www.ecma-international.org/publications-and-standards/standards/ecma-404/
 
+CLASS lcl_json_parser DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_node,
+            path TYPE string,
+            name TYPE string,
+            type TYPE string,
+            value TYPE string,
+           END OF ty_node.
+
+    TYPES ty_nodes TYPE STANDARD TABLE OF ty_node WITH DEFAULT KEY.
+
+    METHODS
+      parse
+        IMPORTING iv_json TYPE string
+        RETURNING VALUE(rt_nodes) TYPE ty_nodes.
+
+  PRIVATE SECTION.
+    DATA mt_nodes TYPE ty_nodes.
+
+    METHODS traverse IMPORTING iv_json TYPE string.
+    METHODS traverse_object IMPORTING iv_json TYPE string.
+    METHODS traverse_basic IMPORTING iv_json TYPE string.
+    METHODS traverse_array IMPORTING iv_json TYPE string.
+ENDCLASS.
+
+CLASS lcl_json_parser IMPLEMENTATION.
+
+  METHOD parse.
+    CLEAR mt_nodes.
+    traverse( iv_json ).
+    rt_nodes = mt_nodes.
+  ENDMETHOD.
+
+  METHOD traverse.
+
+    DATA lv_type TYPE string.
+
+* todo, catch parser errors
+    WRITE '@KERNEL let parsed = JSON.parse(iv_json.get());'.
+    WRITE '@KERNEL lv_type.set(Array.isArray(parsed) ? "array" : typeof parsed);'.
+
+    CASE lv_type.
+      WHEN 'object'.
+        traverse_object( iv_json ).
+      WHEN 'array'.
+        traverse_array( iv_json ).
+      WHEN 'string' OR 'boolean' OR 'number'.
+        traverse_basic( iv_json ).
+      WHEN OTHERS.
+        ASSERT 2 = 'todo'.
+    ENDCASE.
+
+  ENDMETHOD.
+
+  METHOD traverse_basic.
+  ENDMETHOD.
+
+  METHOD traverse_array.
+  ENDMETHOD.
+
+  METHOD traverse_object.
+
+    DATA lt_keys TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA lv_key LIKE LINE OF lt_keys.
+    DATA lv_value TYPE string.
+
+    WRITE '@KERNEL let parsed = JSON.parse(iv_json.get());'.
+    WRITE '@KERNEL Object.keys(parsed).forEach(k => lt_keys.append(k));'.
+
+    LOOP AT lt_keys INTO lv_key.
+      WRITE '@KERNEL lv_value.set(JSON.stringify(parsed[lv_key.get()]));'.
+      traverse( lv_value ).
+    ENDLOOP.
+
+  ENDMETHOD.
+
+ENDCLASS.
+
 CLASS lcl_node DEFINITION.
   PUBLIC SECTION.
     METHODS constructor

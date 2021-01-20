@@ -44,7 +44,7 @@ CLASS ltcl_sxml IMPLEMENTATION.
     DATA ls_node LIKE LINE OF lt_actual.
     DATA lt_expected TYPE ty_nodes.
 
-    lt_actual = dump_nodes( '{}' ).
+    lt_actual = dump_nodes( '{"key1": [2, 34]}' ).
 
     ls_node-type = if_sxml_node=>co_nt_element_open.
     APPEND ls_node TO lt_expected.
