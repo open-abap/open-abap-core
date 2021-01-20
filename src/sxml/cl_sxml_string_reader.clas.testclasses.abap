@@ -21,6 +21,9 @@ CLASS ltcl_sxml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS integer_array FOR TESTING.
     METHODS key_value FOR TESTING.
     METHODS key_empty FOR TESTING.
+    METHODS two_keys FOR TESTING.
+    METHODS two_array FOR TESTING.
+    METHODS array_with_object FOR TESTING.
 
 ENDCLASS.
 
@@ -149,6 +152,68 @@ CLASS ltcl_sxml IMPLEMENTATION.
 
     cl_abap_unit_assert=>assert_equals(
       act = lt_actual2
+      exp = mt_expected ).
+
+  ENDMETHOD.
+
+  METHOD two_keys.
+
+    DATA lt_actual TYPE ty_nodes.
+
+    lt_actual = dump_nodes( '{"key1": "value1", "key2": "value2"}' ).
+
+    add_expected_type( if_sxml_node=>co_nt_element_open ).
+    add_expected_type( if_sxml_node=>co_nt_element_open ).
+    add_expected_type( if_sxml_node=>co_nt_value ).
+    add_expected_type( if_sxml_node=>co_nt_element_close ).
+    add_expected_type( if_sxml_node=>co_nt_element_open ).
+    add_expected_type( if_sxml_node=>co_nt_value ).
+    add_expected_type( if_sxml_node=>co_nt_element_close ).
+    add_expected_type( if_sxml_node=>co_nt_element_close ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lt_actual
+      exp = mt_expected ).
+
+  ENDMETHOD.
+
+  METHOD two_array.
+
+    DATA lt_actual TYPE ty_nodes.
+
+    lt_actual = dump_nodes( '[1, 2]' ).
+
+    add_expected_type( if_sxml_node=>co_nt_element_open ).
+    add_expected_type( if_sxml_node=>co_nt_element_open ).
+    add_expected_type( if_sxml_node=>co_nt_value ).
+    add_expected_type( if_sxml_node=>co_nt_element_close ).
+    add_expected_type( if_sxml_node=>co_nt_element_open ).
+    add_expected_type( if_sxml_node=>co_nt_value ).
+    add_expected_type( if_sxml_node=>co_nt_element_close ).
+    add_expected_type( if_sxml_node=>co_nt_element_close ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lt_actual
+      exp = mt_expected ).
+
+  ENDMETHOD.
+
+  METHOD array_with_object.
+
+    DATA lt_actual TYPE ty_nodes.
+
+    lt_actual = dump_nodes( '[{"key": "value"}]' ).
+
+    add_expected_type( if_sxml_node=>co_nt_element_open ).
+    add_expected_type( if_sxml_node=>co_nt_element_open ).
+    add_expected_type( if_sxml_node=>co_nt_element_open ).
+    add_expected_type( if_sxml_node=>co_nt_value ).
+    add_expected_type( if_sxml_node=>co_nt_element_close ).
+    add_expected_type( if_sxml_node=>co_nt_element_close ).
+    add_expected_type( if_sxml_node=>co_nt_element_close ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lt_actual
       exp = mt_expected ).
 
   ENDMETHOD.
