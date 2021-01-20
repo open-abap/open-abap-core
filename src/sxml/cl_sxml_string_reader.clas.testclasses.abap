@@ -24,7 +24,6 @@ CLASS ltcl_sxml IMPLEMENTATION.
     DATA ls_node TYPE ty_node.
 
     li_reader = cl_sxml_string_reader=>create( cl_abap_codepage=>convert_to( iv_json ) ).
-
     cl_abap_unit_assert=>assert_not_initial( li_reader ).
 
     DO.
