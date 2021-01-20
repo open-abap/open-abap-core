@@ -21,9 +21,13 @@ CLASS cl_sxml_string_reader IMPLEMENTATION.
     LOOP AT lt_parsed INTO ls_parsed.
       CASE ls_parsed-type.
         WHEN if_sxml_node=>co_nt_element_open.
-          CREATE OBJECT li_node TYPE lcl_open_node.
+          CREATE OBJECT li_node TYPE lcl_open_node
+            EXPORTING
+              name = ls_parsed-name.
         WHEN if_sxml_node=>co_nt_element_close.
-          CREATE OBJECT li_node TYPE lcl_close_node.
+          CREATE OBJECT li_node TYPE lcl_close_node
+            EXPORTING
+              name = ls_parsed-name.
         WHEN if_sxml_node=>co_nt_value.
           CREATE OBJECT li_node TYPE lcl_value_node.
         WHEN OTHERS.

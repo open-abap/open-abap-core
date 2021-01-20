@@ -11,8 +11,10 @@ CLASS ltcl_sxml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     DATA mt_expected TYPE ty_nodes.
 
     METHODS setup.
-    METHODS add_expected_type
-      IMPORTING iv_type TYPE if_sxml_node=>node_type.
+    METHODS add_expected
+      IMPORTING
+        iv_type TYPE if_sxml_node=>node_type
+        iv_name TYPE string OPTIONAL.
     METHODS dump_nodes
       IMPORTING iv_json TYPE string
       RETURNING VALUE(rt_nodes) TYPE ty_nodes.
@@ -34,7 +36,7 @@ CLASS ltcl_sxml IMPLEMENTATION.
     CLEAR mt_expected.
   ENDMETHOD.
 
-  METHOD add_expected_type.
+  METHOD add_expected.
     DATA ls_expected LIKE LINE OF mt_expected.
     ls_expected-type = iv_type.
     APPEND ls_expected TO mt_expected.
@@ -82,8 +84,8 @@ CLASS ltcl_sxml IMPLEMENTATION.
     lt_actual1 = dump_nodes( '{}' ).
     lt_actual2 = dump_nodes( '[]' ).
 
-    add_expected_type( if_sxml_node=>co_nt_element_open ).
-    add_expected_type( if_sxml_node=>co_nt_element_close ).
+    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( if_sxml_node=>co_nt_element_close ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lt_actual1
@@ -101,9 +103,9 @@ CLASS ltcl_sxml IMPLEMENTATION.
 
     lt_actual = dump_nodes( '2' ).
 
-    add_expected_type( if_sxml_node=>co_nt_element_open ).
-    add_expected_type( if_sxml_node=>co_nt_value ).
-    add_expected_type( if_sxml_node=>co_nt_element_close ).
+    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( if_sxml_node=>co_nt_value ).
+    add_expected( if_sxml_node=>co_nt_element_close ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lt_actual
@@ -117,11 +119,11 @@ CLASS ltcl_sxml IMPLEMENTATION.
 
     lt_actual = dump_nodes( '[2]' ).
 
-    add_expected_type( if_sxml_node=>co_nt_element_open ).
-    add_expected_type( if_sxml_node=>co_nt_element_open ).
-    add_expected_type( if_sxml_node=>co_nt_value ).
-    add_expected_type( if_sxml_node=>co_nt_element_close ).
-    add_expected_type( if_sxml_node=>co_nt_element_close ).
+    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( if_sxml_node=>co_nt_value ).
+    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( if_sxml_node=>co_nt_element_close ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lt_actual
@@ -135,11 +137,11 @@ CLASS ltcl_sxml IMPLEMENTATION.
 
     lt_actual = dump_nodes( '{"key1": "value1"}' ).
 
-    add_expected_type( if_sxml_node=>co_nt_element_open ).
-    add_expected_type( if_sxml_node=>co_nt_element_open ).
-    add_expected_type( if_sxml_node=>co_nt_value ).
-    add_expected_type( if_sxml_node=>co_nt_element_close ).
-    add_expected_type( if_sxml_node=>co_nt_element_close ).
+    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( if_sxml_node=>co_nt_value ).
+    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( if_sxml_node=>co_nt_element_close ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lt_actual
@@ -155,10 +157,10 @@ CLASS ltcl_sxml IMPLEMENTATION.
     lt_actual1 = dump_nodes( '{"key1": []}' ).
     lt_actual2 = dump_nodes( '{"key1": {}}' ).
 
-    add_expected_type( if_sxml_node=>co_nt_element_open ).
-    add_expected_type( if_sxml_node=>co_nt_element_open ).
-    add_expected_type( if_sxml_node=>co_nt_element_close ).
-    add_expected_type( if_sxml_node=>co_nt_element_close ).
+    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( if_sxml_node=>co_nt_element_close ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lt_actual1
@@ -176,14 +178,14 @@ CLASS ltcl_sxml IMPLEMENTATION.
 
     lt_actual = dump_nodes( '{"key1": "value1", "key2": "value2"}' ).
 
-    add_expected_type( if_sxml_node=>co_nt_element_open ).
-    add_expected_type( if_sxml_node=>co_nt_element_open ).
-    add_expected_type( if_sxml_node=>co_nt_value ).
-    add_expected_type( if_sxml_node=>co_nt_element_close ).
-    add_expected_type( if_sxml_node=>co_nt_element_open ).
-    add_expected_type( if_sxml_node=>co_nt_value ).
-    add_expected_type( if_sxml_node=>co_nt_element_close ).
-    add_expected_type( if_sxml_node=>co_nt_element_close ).
+    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( if_sxml_node=>co_nt_value ).
+    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( if_sxml_node=>co_nt_value ).
+    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( if_sxml_node=>co_nt_element_close ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lt_actual
@@ -197,14 +199,14 @@ CLASS ltcl_sxml IMPLEMENTATION.
 
     lt_actual = dump_nodes( '[1, 2]' ).
 
-    add_expected_type( if_sxml_node=>co_nt_element_open ).
-    add_expected_type( if_sxml_node=>co_nt_element_open ).
-    add_expected_type( if_sxml_node=>co_nt_value ).
-    add_expected_type( if_sxml_node=>co_nt_element_close ).
-    add_expected_type( if_sxml_node=>co_nt_element_open ).
-    add_expected_type( if_sxml_node=>co_nt_value ).
-    add_expected_type( if_sxml_node=>co_nt_element_close ).
-    add_expected_type( if_sxml_node=>co_nt_element_close ).
+    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( if_sxml_node=>co_nt_value ).
+    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( if_sxml_node=>co_nt_value ).
+    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( if_sxml_node=>co_nt_element_close ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lt_actual
@@ -218,13 +220,13 @@ CLASS ltcl_sxml IMPLEMENTATION.
 
     lt_actual = dump_nodes( '[{"key": "value"}]' ).
 
-    add_expected_type( if_sxml_node=>co_nt_element_open ).
-    add_expected_type( if_sxml_node=>co_nt_element_open ).
-    add_expected_type( if_sxml_node=>co_nt_element_open ).
-    add_expected_type( if_sxml_node=>co_nt_value ).
-    add_expected_type( if_sxml_node=>co_nt_element_close ).
-    add_expected_type( if_sxml_node=>co_nt_element_close ).
-    add_expected_type( if_sxml_node=>co_nt_element_close ).
+    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( if_sxml_node=>co_nt_value ).
+    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( if_sxml_node=>co_nt_element_close ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lt_actual

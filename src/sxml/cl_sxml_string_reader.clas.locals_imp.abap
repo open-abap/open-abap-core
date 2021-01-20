@@ -4,6 +4,7 @@ CLASS lcl_json_parser DEFINITION.
   PUBLIC SECTION.
     TYPES: BEGIN OF ty_node,
              type TYPE if_sxml_node=>node_type,
+             name TYPE string,
            END OF ty_node.
 
     TYPES ty_nodes TYPE STANDARD TABLE OF ty_node WITH DEFAULT KEY.
@@ -18,7 +19,8 @@ CLASS lcl_json_parser DEFINITION.
 
     METHODS append
       IMPORTING
-        iv_type TYPE if_sxml_node=>node_type.
+        iv_type TYPE if_sxml_node=>node_type
+        iv_name TYPE string OPTIONAL.
 
     METHODS traverse IMPORTING iv_json TYPE string.
     METHODS traverse_object IMPORTING iv_json TYPE string.
@@ -110,12 +112,14 @@ ENDCLASS.
 CLASS lcl_open_node DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_sxml_open_element.
-    METHODS constructor.
+    METHODS constructor
+      IMPORTING name TYPE string.
 ENDCLASS.
 
 CLASS lcl_open_node IMPLEMENTATION.
   METHOD constructor.
     if_sxml_node~type = if_sxml_node=>co_nt_element_open.
+    if_sxml_open_element~qname-name = name.
   ENDMETHOD.
 
   METHOD if_sxml_open_element~get_attributes.
@@ -126,12 +130,14 @@ ENDCLASS.
 CLASS lcl_close_node DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_sxml_close_element.
-    METHODS constructor.
+    METHODS constructor
+      IMPORTING name TYPE string.
 ENDCLASS.
 
 CLASS lcl_close_node IMPLEMENTATION.
   METHOD constructor.
     if_sxml_node~type = if_sxml_node=>co_nt_element_close.
+    if_sxml_close_element~qname-name = name.
   ENDMETHOD.
 ENDCLASS.
 
