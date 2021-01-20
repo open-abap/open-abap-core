@@ -3,10 +3,10 @@
 CLASS lcl_json_parser DEFINITION.
   PUBLIC SECTION.
     TYPES: BEGIN OF ty_node,
-            path TYPE string,
-            name TYPE string,
-            type TYPE string,
-            value TYPE string,
+             path TYPE string,
+             name TYPE string,
+             type TYPE string,
+             value TYPE string,
            END OF ty_node.
 
     TYPES ty_nodes TYPE STANDARD TABLE OF ty_node WITH DEFAULT KEY.
@@ -72,9 +72,24 @@ CLASS lcl_json_parser IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD traverse_basic.
+* todo
   ENDMETHOD.
 
   METHOD traverse_array.
+
+    DATA lv_value TYPE string.
+    DATA lv_length TYPE i.
+    DATA lv_index TYPE i.
+
+    WRITE '@KERNEL let parsed = JSON.parse(iv_json.get());'.
+    WRITE '@KERNEL lv_length.set(parsed.length);'.
+
+    DO lv_length TIMES.
+      lv_index = sy-index - 1.
+      WRITE '@KERNEL lv_value.set(JSON.stringify(parsed[lv_index.get()]));'.
+      traverse( lv_value ).
+    ENDDO.
+
   ENDMETHOD.
 
   METHOD traverse_object.
