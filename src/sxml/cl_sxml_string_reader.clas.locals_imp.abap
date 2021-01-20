@@ -2,7 +2,7 @@ CLASS lcl_node DEFINITION.
   PUBLIC SECTION.
     METHODS constructor
       IMPORTING
-        iv_type TYPE i.
+        iv_type TYPE if_sxml_node=>node_type.
     INTERFACES if_sxml_node.
 ENDCLASS.
 
