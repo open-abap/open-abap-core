@@ -18,9 +18,16 @@ CLASS cl_sxml_string_reader IMPLEMENTATION.
     lt_parsed = lo_json->parse( cl_abap_codepage=>convert_from( data ) ).
 
     LOOP AT lt_parsed INTO ls_parsed.
-      CREATE OBJECT li_node TYPE lcl_node
-        EXPORTING
-          iv_type = ls_parsed-type.
+      CASE ls_parsed-type.
+        WHEN if_sxml_node=>co_nt_element_open.
+          CREATE OBJECT li_node TYPE lcl_open_node.
+        WHEN if_sxml_node=>co_nt_element_close.
+          CREATE OBJECT li_node TYPE lcl_close_node.
+        WHEN if_sxml_node=>co_nt_value.
+          CREATE OBJECT li_node TYPE lcl_value_node.
+        WHEN OTHERS.
+          ASSERT 1 = 2.
+      ENDCASE.
       APPEND li_node TO lt_nodes.
     ENDLOOP.
 

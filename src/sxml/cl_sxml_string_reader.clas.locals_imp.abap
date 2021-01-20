@@ -107,17 +107,39 @@ CLASS lcl_json_parser IMPLEMENTATION.
 
 ENDCLASS.
 
-CLASS lcl_node DEFINITION.
+CLASS lcl_open_node DEFINITION.
   PUBLIC SECTION.
-    METHODS constructor
-      IMPORTING
-        iv_type TYPE if_sxml_node=>node_type.
-    INTERFACES if_sxml_node.
+    INTERFACES if_sxml_open_element.
+    METHODS constructor.
 ENDCLASS.
 
-CLASS lcl_node IMPLEMENTATION.
+CLASS lcl_open_node IMPLEMENTATION.
   METHOD constructor.
-    if_sxml_node~type = iv_type.
+    if_sxml_node~type = if_sxml_node=>co_nt_element_open.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_close_node DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_sxml_close_element.
+    METHODS constructor.
+ENDCLASS.
+
+CLASS lcl_close_node IMPLEMENTATION.
+  METHOD constructor.
+    if_sxml_node~type = if_sxml_node=>co_nt_element_close.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_value_node DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_sxml_value_node.
+    METHODS constructor.
+ENDCLASS.
+
+CLASS lcl_value_node IMPLEMENTATION.
+  METHOD constructor.
+    if_sxml_node~type = if_sxml_node=>co_nt_value.
   ENDMETHOD.
 ENDCLASS.
 
