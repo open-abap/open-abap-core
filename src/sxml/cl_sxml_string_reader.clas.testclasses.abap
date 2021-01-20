@@ -10,7 +10,7 @@ CLASS ltcl_sxml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS test1 FOR TESTING.
 
     METHODS dump_nodes
-      IMPORTING ii_reader TYPE REF TO if_sxml_reader
+      IMPORTING iv_json TYPE string
       RETURNING VALUE(rt_nodes) TYPE ty_nodes.
 
 ENDCLASS.
@@ -20,12 +20,15 @@ CLASS ltcl_sxml IMPLEMENTATION.
   METHOD dump_nodes.
 
     DATA li_node TYPE REF TO if_sxml_node.
+    DATA li_reader TYPE REF TO if_sxml_reader.
     DATA ls_node TYPE ty_node.
 
-    cl_abap_unit_assert=>assert_not_initial( ii_reader ).
+    li_reader = cl_sxml_string_reader=>create( cl_abap_codepage=>convert_to( iv_json ) ).
+
+    cl_abap_unit_assert=>assert_not_initial( li_reader ).
 
     DO.
-      li_node = ii_reader->read_next_node( ).
+      li_node = li_reader->read_next_node( ).
       IF li_node IS INITIAL.
         EXIT.
       ENDIF.
@@ -38,19 +41,20 @@ CLASS ltcl_sxml IMPLEMENTATION.
 
   METHOD test1.
 
-    DATA lt_nodes TYPE ty_nodes.
-    DATA ls_node LIKE LINE OF lt_nodes.
+    DATA lt_actual TYPE ty_nodes.
+    DATA ls_node LIKE LINE OF lt_actual.
     DATA lt_expected TYPE ty_nodes.
 
-    lt_nodes = dump_nodes( cl_sxml_string_reader=>create( cl_abap_codepage=>convert_to( '{}' ) ) ).
+    lt_actual = dump_nodes( '{}' ).
 
     ls_node-type = if_sxml_node=>co_nt_element_open.
     APPEND ls_node TO lt_expected.
+
     ls_node-type = if_sxml_node=>co_nt_element_close.
     APPEND ls_node TO lt_expected.
 
     cl_abap_unit_assert=>assert_equals(
-      act = lt_nodes
+      act = lt_actual
       exp = lt_expected ).
 
   ENDMETHOD.
