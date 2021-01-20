@@ -31,7 +31,9 @@ CLASS lcl_json_parser IMPLEMENTATION.
 
   METHOD parse.
     CLEAR mt_nodes.
+    append( if_sxml_node=>co_nt_element_open ).
     traverse( iv_json ).
+    append( if_sxml_node=>co_nt_element_close ).
     rt_nodes = mt_nodes.
   ENDMETHOD.
 
@@ -75,7 +77,9 @@ CLASS lcl_json_parser IMPLEMENTATION.
     WRITE '@KERNEL let parsed = JSON.parse(iv_json.get());'.
     WRITE '@KERNEL lv_length.set(parsed.length);'.
 
-    append( if_sxml_node=>co_nt_element_open ).
+    IF lv_length > 0.
+      append( if_sxml_node=>co_nt_element_open ).
+    ENDIF.
 
     DO lv_length TIMES.
       lv_index = sy-index - 1.
@@ -83,7 +87,9 @@ CLASS lcl_json_parser IMPLEMENTATION.
       traverse( lv_value ).
     ENDDO.
 
-    append( if_sxml_node=>co_nt_element_close ).
+    IF lv_length > 0.
+      append( if_sxml_node=>co_nt_element_close ).
+    ENDIF.
 
   ENDMETHOD.
 
@@ -96,14 +102,18 @@ CLASS lcl_json_parser IMPLEMENTATION.
     WRITE '@KERNEL let parsed = JSON.parse(iv_json.get());'.
     WRITE '@KERNEL Object.keys(parsed).forEach(k => lt_keys.append(k));'.
 
-    append( if_sxml_node=>co_nt_element_open ).
+    IF lines( lt_keys ) > 0.
+      append( if_sxml_node=>co_nt_element_open ).
+    ENDIF.
 
     LOOP AT lt_keys INTO lv_key.
       WRITE '@KERNEL lv_value.set(JSON.stringify(parsed[lv_key.get()]));'.
       traverse( lv_value ).
     ENDLOOP.
 
-    append( if_sxml_node=>co_nt_element_close ).
+    IF lines( lt_keys ) > 0.
+      append( if_sxml_node=>co_nt_element_close ).
+    ENDIF.
 
   ENDMETHOD.
 

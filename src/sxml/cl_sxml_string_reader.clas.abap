@@ -11,20 +11,26 @@ CLASS cl_sxml_string_reader IMPLEMENTATION.
 ************* WIP *******************
 
     DATA lo_json TYPE REF TO lcl_json_parser.
-    DATA lt_nodes TYPE lcl_json_parser=>ty_nodes.
+    DATA lt_parsed TYPE lcl_json_parser=>ty_nodes.
+    DATA ls_parsed LIKE LINE OF lt_parsed.
     DATA li_node TYPE REF TO if_sxml_node.
-    DATA ls_node LIKE LINE OF lt_nodes.
+    DATA lt_nodes TYPE lcl_reader=>ty_nodes.
 
     CREATE OBJECT lo_json.
-    lt_nodes = lo_json->parse( cl_abap_codepage=>convert_from( data ) ).
+    lt_parsed = lo_json->parse( cl_abap_codepage=>convert_from( data ) ).
 
-    LOOP AT lt_nodes INTO ls_node.
-      WRITE / ls_node-type.
+    LOOP AT lt_parsed INTO ls_parsed.
+*      WRITE / ls_parsed-type.
       CREATE OBJECT li_node TYPE lcl_node
         EXPORTING
-          iv_type = ls_node-type.
+          iv_type = ls_parsed-type.
       APPEND li_node TO lt_nodes.
     ENDLOOP.
+*    WRITE / 'done'.
+
+    CREATE OBJECT reader TYPE lcl_reader
+      EXPORTING
+        it_nodes = lt_nodes.
 
 ************* DUMMY IMPLEMENTATION *******************
     " DATA lt_nodes TYPE lcl_reader=>ty_nodes.
