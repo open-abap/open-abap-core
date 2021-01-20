@@ -7,15 +7,31 @@ CLASS ltcl_sxml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
     TYPES ty_nodes TYPE STANDARD TABLE OF ty_node WITH DEFAULT KEY.
 
-    METHODS test1 FOR TESTING.
+    DATA mt_expected TYPE ty_nodes.
 
+    METHODS setup.
+    METHODS add_expected_type
+      IMPORTING iv_type TYPE if_sxml_node=>node_type.
     METHODS dump_nodes
       IMPORTING iv_json TYPE string
       RETURNING VALUE(rt_nodes) TYPE ty_nodes.
 
+    METHODS test1 FOR TESTING.
+    METHODS test2 FOR TESTING.
+
 ENDCLASS.
 
 CLASS ltcl_sxml IMPLEMENTATION.
+
+  METHOD setup.
+    CLEAR mt_expected.
+  ENDMETHOD.
+
+  METHOD add_expected_type.
+    DATA ls_expected LIKE LINE OF mt_expected.
+    ls_expected-type = iv_type.
+    APPEND ls_expected TO mt_expected.
+  ENDMETHOD.
 
   METHOD dump_nodes.
 
@@ -40,21 +56,26 @@ CLASS ltcl_sxml IMPLEMENTATION.
 
   METHOD test1.
 
-    DATA lt_actual TYPE ty_nodes.
-    DATA ls_node LIKE LINE OF lt_actual.
-    DATA lt_expected TYPE ty_nodes.
+    DATA lt_actual1 TYPE ty_nodes.
+    DATA lt_actual2 TYPE ty_nodes.
 
-    lt_actual = dump_nodes( '{"key1": [2, 34]}' ).
+    lt_actual1 = dump_nodes( '{}' ).
+    lt_actual2 = dump_nodes( '[]' ).
 
-    ls_node-type = if_sxml_node=>co_nt_element_open.
-    APPEND ls_node TO lt_expected.
-
-    ls_node-type = if_sxml_node=>co_nt_element_close.
-    APPEND ls_node TO lt_expected.
+    add_expected_type( if_sxml_node=>co_nt_element_open ).
+    add_expected_type( if_sxml_node=>co_nt_element_close ).
 
     cl_abap_unit_assert=>assert_equals(
-      act = lt_actual
-      exp = lt_expected ).
+      act = lt_actual1
+      exp = mt_expected ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lt_actual2
+      exp = mt_expected ).
+
+  ENDMETHOD.
+
+  METHOD test2.
 
   ENDMETHOD.
 
