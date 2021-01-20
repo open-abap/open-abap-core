@@ -3,10 +3,7 @@
 CLASS lcl_json_parser DEFINITION.
   PUBLIC SECTION.
     TYPES: BEGIN OF ty_node,
-             path TYPE string,
-             name TYPE string,
-             type TYPE string,
-             value TYPE string,
+             type TYPE if_sxml_node=>node_type,
            END OF ty_node.
 
     TYPES ty_nodes TYPE STANDARD TABLE OF ty_node WITH DEFAULT KEY.
@@ -21,10 +18,7 @@ CLASS lcl_json_parser DEFINITION.
 
     METHODS append
       IMPORTING
-        iv_path TYPE string
-        iv_name TYPE string
-        iv_type TYPE string
-        iv_value TYPE string.
+        iv_type TYPE if_sxml_node=>node_type.
 
     METHODS traverse IMPORTING iv_json TYPE string.
     METHODS traverse_object IMPORTING iv_json TYPE string.
@@ -43,10 +37,7 @@ CLASS lcl_json_parser IMPLEMENTATION.
 
   METHOD append.
     DATA ls_node LIKE LINE OF mt_nodes.
-    ls_node-path = iv_path.
-    ls_node-name = iv_name.
     ls_node-type = iv_type.
-    ls_node-value = iv_value.
     APPEND ls_node TO mt_nodes.
   ENDMETHOD.
 
@@ -72,7 +63,7 @@ CLASS lcl_json_parser IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD traverse_basic.
-* todo
+    append( if_sxml_node=>co_nt_value ).
   ENDMETHOD.
 
   METHOD traverse_array.
@@ -84,11 +75,15 @@ CLASS lcl_json_parser IMPLEMENTATION.
     WRITE '@KERNEL let parsed = JSON.parse(iv_json.get());'.
     WRITE '@KERNEL lv_length.set(parsed.length);'.
 
+    append( if_sxml_node=>co_nt_element_open ).
+
     DO lv_length TIMES.
       lv_index = sy-index - 1.
       WRITE '@KERNEL lv_value.set(JSON.stringify(parsed[lv_index.get()]));'.
       traverse( lv_value ).
     ENDDO.
+
+    append( if_sxml_node=>co_nt_element_close ).
 
   ENDMETHOD.
 
@@ -101,10 +96,14 @@ CLASS lcl_json_parser IMPLEMENTATION.
     WRITE '@KERNEL let parsed = JSON.parse(iv_json.get());'.
     WRITE '@KERNEL Object.keys(parsed).forEach(k => lt_keys.append(k));'.
 
+    append( if_sxml_node=>co_nt_element_open ).
+
     LOOP AT lt_keys INTO lv_key.
       WRITE '@KERNEL lv_value.set(JSON.stringify(parsed[lv_key.get()]));'.
       traverse( lv_value ).
     ENDLOOP.
+
+    append( if_sxml_node=>co_nt_element_close ).
 
   ENDMETHOD.
 

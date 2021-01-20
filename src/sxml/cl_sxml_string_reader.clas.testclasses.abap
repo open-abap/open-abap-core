@@ -16,8 +16,11 @@ CLASS ltcl_sxml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
       IMPORTING iv_json TYPE string
       RETURNING VALUE(rt_nodes) TYPE ty_nodes.
 
-    METHODS test1 FOR TESTING.
-    METHODS test2 FOR TESTING.
+    METHODS empty FOR TESTING.
+    METHODS simple_integer FOR TESTING.
+    METHODS integer_array FOR TESTING.
+    METHODS key_value FOR TESTING.
+    METHODS key_empty FOR TESTING.
 
 ENDCLASS.
 
@@ -54,7 +57,7 @@ CLASS ltcl_sxml IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD test1.
+  METHOD empty.
 
     DATA lt_actual1 TYPE ty_nodes.
     DATA lt_actual2 TYPE ty_nodes.
@@ -75,7 +78,78 @@ CLASS ltcl_sxml IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD test2.
+  METHOD simple_integer.
+
+    DATA lt_actual TYPE ty_nodes.
+
+    lt_actual = dump_nodes( '2' ).
+
+    add_expected_type( if_sxml_node=>co_nt_element_open ).
+    add_expected_type( if_sxml_node=>co_nt_value ).
+    add_expected_type( if_sxml_node=>co_nt_element_close ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lt_actual
+      exp = mt_expected ).
+
+  ENDMETHOD.
+
+  METHOD integer_array.
+
+    DATA lt_actual TYPE ty_nodes.
+
+    lt_actual = dump_nodes( '[2]' ).
+
+    add_expected_type( if_sxml_node=>co_nt_element_open ).
+    add_expected_type( if_sxml_node=>co_nt_element_open ).
+    add_expected_type( if_sxml_node=>co_nt_value ).
+    add_expected_type( if_sxml_node=>co_nt_element_close ).
+    add_expected_type( if_sxml_node=>co_nt_element_close ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lt_actual
+      exp = mt_expected ).
+
+  ENDMETHOD.
+
+  METHOD key_value.
+
+    DATA lt_actual TYPE ty_nodes.
+
+    lt_actual = dump_nodes( '{"key1": "value1"}' ).
+
+    add_expected_type( if_sxml_node=>co_nt_element_open ).
+    add_expected_type( if_sxml_node=>co_nt_element_open ).
+    add_expected_type( if_sxml_node=>co_nt_value ).
+    add_expected_type( if_sxml_node=>co_nt_element_close ).
+    add_expected_type( if_sxml_node=>co_nt_element_close ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lt_actual
+      exp = mt_expected ).
+
+  ENDMETHOD.
+
+  METHOD key_empty.
+
+    DATA lt_actual1 TYPE ty_nodes.
+    DATA lt_actual2 TYPE ty_nodes.
+
+    lt_actual1 = dump_nodes( '{"key1": []}' ).
+    lt_actual2 = dump_nodes( '{"key1": {}}' ).
+
+    add_expected_type( if_sxml_node=>co_nt_element_open ).
+    add_expected_type( if_sxml_node=>co_nt_element_open ).
+    add_expected_type( if_sxml_node=>co_nt_element_close ).
+    add_expected_type( if_sxml_node=>co_nt_element_close ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lt_actual1
+      exp = mt_expected ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lt_actual2
+      exp = mt_expected ).
 
   ENDMETHOD.
 
