@@ -117,6 +117,10 @@ CLASS lcl_open_node IMPLEMENTATION.
   METHOD constructor.
     if_sxml_node~type = if_sxml_node=>co_nt_element_open.
   ENDMETHOD.
+
+  METHOD if_sxml_open_element~get_attributes.
+* todo
+  ENDMETHOD.
 ENDCLASS.
 
 CLASS lcl_close_node DEFINITION.
@@ -140,6 +144,10 @@ ENDCLASS.
 CLASS lcl_value_node IMPLEMENTATION.
   METHOD constructor.
     if_sxml_node~type = if_sxml_node=>co_nt_value.
+  ENDMETHOD.
+
+  METHOD if_sxml_value_node~get_value.
+* todo
   ENDMETHOD.
 ENDCLASS.
 

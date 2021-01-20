@@ -1,0 +1,3 @@
+INTERFACE if_sxml_attribute.
+  TYPES attributes TYPE STANDARD TABLE OF REF TO if_sxml_attribute WITH DEFAULT KEY.
+ENDINTERFACE.

@@ -15,9 +15,11 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC ABSTRACT.
     CONSTANTS typekind_struct2 TYPE c LENGTH 1 VALUE 'v'.
     CONSTANTS typekind_xstring TYPE c LENGTH 1 VALUE 'y'.
     CONSTANTS typekind_string TYPE c LENGTH 1 VALUE 'g'.
+    CONSTANTS typekind_dref TYPE c LENGTH 1 VALUE 'l'.
 
     CONSTANTS kind_elem TYPE c LENGTH 1 VALUE 'E'.
     CONSTANTS kind_struct TYPE c LENGTH 1 VALUE 'S'.
+    CONSTANTS kind_table TYPE c LENGTH 1 VALUE 'T'.
 
 ENDCLASS.
 
