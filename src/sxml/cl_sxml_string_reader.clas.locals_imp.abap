@@ -26,14 +26,20 @@ CLASS lcl_json_parser DEFINITION.
     METHODS traverse_object IMPORTING iv_json TYPE string.
     METHODS traverse_basic IMPORTING iv_json TYPE string.
     METHODS traverse_array IMPORTING iv_json TYPE string.
+    METHODS determine_type
+      IMPORTING iv_json TYPE string
+      RETURNING VALUE(rv_type) TYPE string.
 
 ENDCLASS.
 
 CLASS lcl_json_parser IMPLEMENTATION.
 
   METHOD parse.
+    DATA lv_name TYPE string.
     CLEAR mt_nodes.
-    append( if_sxml_node=>co_nt_element_open ).
+    lv_name = determine_type( iv_json ).
+    append( iv_type = if_sxml_node=>co_nt_element_open
+            iv_name = lv_name ).
     traverse( iv_json ).
     append( if_sxml_node=>co_nt_element_close ).
     rt_nodes = mt_nodes.
@@ -42,7 +48,29 @@ CLASS lcl_json_parser IMPLEMENTATION.
   METHOD append.
     DATA ls_node LIKE LINE OF mt_nodes.
     ls_node-type = iv_type.
+    ls_node-name = iv_name.
     APPEND ls_node TO mt_nodes.
+  ENDMETHOD.
+
+  METHOD determine_type.
+
+    DATA lv_type TYPE string.
+
+* todo, catch parser errors
+    WRITE '@KERNEL let parsed = JSON.parse(iv_json.get());'.
+    WRITE '@KERNEL lv_type.set(Array.isArray(parsed) ? "array" : typeof parsed);'.
+    WRITE '@KERNEL if (parsed === null) lv_type.set("null");'.
+
+    rv_type = lv_type.
+    CASE lv_type.
+      WHEN 'string'.
+        rv_type = 'str'.
+      WHEN 'number'.
+        rv_type = 'num'.
+      WHEN 'boolean'.
+        rv_type = 'bool'.
+    ENDCASE.
+
   ENDMETHOD.
 
   METHOD traverse.
@@ -52,6 +80,7 @@ CLASS lcl_json_parser IMPLEMENTATION.
 * todo, catch parser errors
     WRITE '@KERNEL let parsed = JSON.parse(iv_json.get());'.
     WRITE '@KERNEL lv_type.set(Array.isArray(parsed) ? "array" : typeof parsed);'.
+    WRITE '@KERNEL if (parsed === null) lv_type.set("null");'.
 
     CASE lv_type.
       WHEN 'object'.
@@ -60,6 +89,8 @@ CLASS lcl_json_parser IMPLEMENTATION.
         traverse_array( iv_json ).
       WHEN 'string' OR 'boolean' OR 'number'.
         traverse_basic( iv_json ).
+      WHEN 'null'.
+        RETURN.
       WHEN OTHERS.
         ASSERT 2 = 'todo'.
     ENDCASE.
