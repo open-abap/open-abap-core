@@ -14,6 +14,7 @@ CLASS cl_sxml_string_reader IMPLEMENTATION.
     DATA li_node TYPE REF TO if_sxml_node.
     DATA lt_nodes TYPE lcl_reader=>ty_nodes.
 
+* todo, for now this only hanles json, but the class is really meant for XML
     CREATE OBJECT lo_json.
     lt_parsed = lo_json->parse( cl_abap_codepage=>convert_from( data ) ).
 
