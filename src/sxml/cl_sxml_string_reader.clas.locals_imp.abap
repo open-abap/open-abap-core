@@ -1,3 +1,5 @@
+* JSON specification, https://www.ecma-international.org/publications-and-standards/standards/ecma-404/
+
 CLASS lcl_node DEFINITION.
   PUBLIC SECTION.
     METHODS constructor
