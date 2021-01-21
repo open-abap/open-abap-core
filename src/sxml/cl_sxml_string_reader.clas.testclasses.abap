@@ -170,7 +170,8 @@ CLASS ltcl_sxml IMPLEMENTATION.
 
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'array' ).
-    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_open
+                  iv_name = 'num' ).
     add_expected( if_sxml_node=>co_nt_value ).
     add_expected( if_sxml_node=>co_nt_element_close ).
     add_expected( if_sxml_node=>co_nt_element_close ).
@@ -189,7 +190,8 @@ CLASS ltcl_sxml IMPLEMENTATION.
 
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'object' ).
-    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_open
+                  iv_name = 'str' ).
     add_expected( if_sxml_node=>co_nt_value ).
     add_expected( if_sxml_node=>co_nt_element_close ).
     add_expected( if_sxml_node=>co_nt_element_close ).
@@ -208,7 +210,8 @@ CLASS ltcl_sxml IMPLEMENTATION.
 
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'object' ).
-    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_open
+                  iv_name = 'array' ).
     add_expected( if_sxml_node=>co_nt_element_close ).
     add_expected( if_sxml_node=>co_nt_element_close ).
 
@@ -226,10 +229,12 @@ CLASS ltcl_sxml IMPLEMENTATION.
 
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'object' ).
-    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_open
+                  iv_name = 'str' ).
     add_expected( if_sxml_node=>co_nt_value ).
     add_expected( if_sxml_node=>co_nt_element_close ).
-    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_open
+                  iv_name = 'str' ).
     add_expected( if_sxml_node=>co_nt_value ).
     add_expected( if_sxml_node=>co_nt_element_close ).
     add_expected( if_sxml_node=>co_nt_element_close ).
@@ -248,10 +253,12 @@ CLASS ltcl_sxml IMPLEMENTATION.
 
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'array' ).
-    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_open
+                  iv_name = 'num' ).
     add_expected( if_sxml_node=>co_nt_value ).
     add_expected( if_sxml_node=>co_nt_element_close ).
-    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_open
+                  iv_name = 'num' ).
     add_expected( if_sxml_node=>co_nt_value ).
     add_expected( if_sxml_node=>co_nt_element_close ).
     add_expected( if_sxml_node=>co_nt_element_close ).
@@ -270,8 +277,10 @@ CLASS ltcl_sxml IMPLEMENTATION.
 
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'array' ).
-    add_expected( if_sxml_node=>co_nt_element_open ).
-    add_expected( if_sxml_node=>co_nt_element_open ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_open
+                  iv_name = 'object' ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_open
+                  iv_name = 'str' ).
     add_expected( if_sxml_node=>co_nt_value ).
     add_expected( if_sxml_node=>co_nt_element_close ).
     add_expected( if_sxml_node=>co_nt_element_close ).

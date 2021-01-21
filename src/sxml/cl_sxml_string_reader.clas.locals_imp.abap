@@ -26,22 +26,17 @@ CLASS lcl_json_parser DEFINITION.
     METHODS traverse_object IMPORTING iv_json TYPE string.
     METHODS traverse_basic IMPORTING iv_json TYPE string.
     METHODS traverse_array IMPORTING iv_json TYPE string.
-    METHODS determine_type
-      IMPORTING iv_json TYPE string
-      RETURNING VALUE(rv_type) TYPE string.
+    " METHODS determine_type
+    "   IMPORTING iv_json TYPE string
+    "   RETURNING VALUE(rv_type) TYPE string.
 
 ENDCLASS.
 
 CLASS lcl_json_parser IMPLEMENTATION.
 
   METHOD parse.
-    DATA lv_name TYPE string.
     CLEAR mt_nodes.
-    lv_name = determine_type( iv_json ).
-    append( iv_type = if_sxml_node=>co_nt_element_open
-            iv_name = lv_name ).
     traverse( iv_json ).
-    append( if_sxml_node=>co_nt_element_close ).
     rt_nodes = mt_nodes.
   ENDMETHOD.
 
@@ -50,27 +45,6 @@ CLASS lcl_json_parser IMPLEMENTATION.
     ls_node-type = iv_type.
     ls_node-name = iv_name.
     APPEND ls_node TO mt_nodes.
-  ENDMETHOD.
-
-  METHOD determine_type.
-
-    DATA lv_type TYPE string.
-
-* todo, catch parser errors
-    WRITE '@KERNEL let parsed = JSON.parse(iv_json.get());'.
-    WRITE '@KERNEL lv_type.set(Array.isArray(parsed) ? "array" : typeof parsed);'.
-    WRITE '@KERNEL if (parsed === null) lv_type.set("null");'.
-
-    rv_type = lv_type.
-    CASE lv_type.
-      WHEN 'string'.
-        rv_type = 'str'.
-      WHEN 'number'.
-        rv_type = 'num'.
-      WHEN 'boolean'.
-        rv_type = 'bool'.
-    ENDCASE.
-
   ENDMETHOD.
 
   METHOD traverse.
@@ -87,10 +61,8 @@ CLASS lcl_json_parser IMPLEMENTATION.
         traverse_object( iv_json ).
       WHEN 'array'.
         traverse_array( iv_json ).
-      WHEN 'string' OR 'boolean' OR 'number'.
+      WHEN 'string' OR 'boolean' OR 'number' OR 'null'.
         traverse_basic( iv_json ).
-      WHEN 'null'.
-        RETURN.
       WHEN OTHERS.
         ASSERT 2 = 'todo'.
     ENDCASE.
@@ -98,7 +70,26 @@ CLASS lcl_json_parser IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD traverse_basic.
-    append( if_sxml_node=>co_nt_value ).
+
+    DATA lv_type TYPE string.
+    WRITE '@KERNEL let parsed = JSON.parse(iv_json.get());'.
+    WRITE '@KERNEL lv_type.set(typeof parsed);'.
+    WRITE '@KERNEL if (parsed === null) lv_type.set("null");'.
+    CASE lv_type.
+      WHEN 'string'.
+        lv_type = 'str'.
+      WHEN 'number'.
+        lv_type = 'num'.
+      WHEN 'boolean'.
+        lv_type = 'bool'.
+    ENDCASE.
+
+    append( iv_type = if_sxml_node=>co_nt_element_open
+            iv_name = lv_type ).
+    IF lv_type <> 'null'.
+      append( if_sxml_node=>co_nt_value ).
+    ENDIF.
+    append( if_sxml_node=>co_nt_element_close ).
   ENDMETHOD.
 
   METHOD traverse_array.
@@ -110,13 +101,16 @@ CLASS lcl_json_parser IMPLEMENTATION.
     WRITE '@KERNEL let parsed = JSON.parse(iv_json.get());'.
     WRITE '@KERNEL lv_length.set(parsed.length);'.
 
+    append( iv_type = if_sxml_node=>co_nt_element_open
+            iv_name = 'array' ).
+
     DO lv_length TIMES.
-      append( if_sxml_node=>co_nt_element_open ).
       lv_index = sy-index - 1.
       WRITE '@KERNEL lv_value.set(JSON.stringify(parsed[lv_index.get()]));'.
       traverse( lv_value ).
-      append( if_sxml_node=>co_nt_element_close ).
     ENDDO.
+
+    append( if_sxml_node=>co_nt_element_close ).
 
   ENDMETHOD.
 
@@ -129,12 +123,15 @@ CLASS lcl_json_parser IMPLEMENTATION.
     WRITE '@KERNEL let parsed = JSON.parse(iv_json.get());'.
     WRITE '@KERNEL Object.keys(parsed).forEach(k => lt_keys.append(k));'.
 
+    append( iv_type = if_sxml_node=>co_nt_element_open
+            iv_name = 'object' ).
+
     LOOP AT lt_keys INTO lv_key.
-      append( if_sxml_node=>co_nt_element_open ).
       WRITE '@KERNEL lv_value.set(JSON.stringify(parsed[lv_key.get()]));'.
       traverse( lv_value ).
-      append( if_sxml_node=>co_nt_element_close ).
     ENDLOOP.
+
+    append( if_sxml_node=>co_nt_element_close ).
 
   ENDMETHOD.
 
