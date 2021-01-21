@@ -38,6 +38,18 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
           msg TYPE string OPTIONAL.
 
     CLASS-METHODS
+      assert_true
+        IMPORTING
+          act TYPE abap_bool
+          msg TYPE string OPTIONAL.
+
+    CLASS-METHODS
+      assert_false
+        IMPORTING
+          act TYPE abap_bool
+          msg TYPE string OPTIONAL.
+
+    CLASS-METHODS
       assert_char_cp
         IMPORTING
           act TYPE clike
@@ -58,6 +70,14 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
 
   METHOD assert_differs.
     ASSERT act <> exp.
+  ENDMETHOD.
+
+  METHOD assert_true.
+    ASSERT act = abap_true.
+  ENDMETHOD.
+
+  METHOD assert_false.
+    ASSERT act = abap_false.
   ENDMETHOD.
 
   METHOD assert_equals.
