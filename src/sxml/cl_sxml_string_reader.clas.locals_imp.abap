@@ -26,9 +26,6 @@ CLASS lcl_json_parser DEFINITION.
     METHODS traverse_object IMPORTING iv_json TYPE string.
     METHODS traverse_basic IMPORTING iv_json TYPE string.
     METHODS traverse_array IMPORTING iv_json TYPE string.
-    " METHODS determine_type
-    "   IMPORTING iv_json TYPE string
-    "   RETURNING VALUE(rv_type) TYPE string.
 
 ENDCLASS.
 
@@ -87,9 +84,11 @@ CLASS lcl_json_parser IMPLEMENTATION.
     append( iv_type = if_sxml_node=>co_nt_element_open
             iv_name = lv_type ).
     IF lv_type <> 'null'.
-      append( if_sxml_node=>co_nt_value ).
+      append( iv_type = if_sxml_node=>co_nt_value ).
     ENDIF.
-    append( if_sxml_node=>co_nt_element_close ).
+    append( iv_type = if_sxml_node=>co_nt_element_close
+            iv_name = lv_type ).
+
   ENDMETHOD.
 
   METHOD traverse_array.
@@ -110,7 +109,8 @@ CLASS lcl_json_parser IMPLEMENTATION.
       traverse( lv_value ).
     ENDDO.
 
-    append( if_sxml_node=>co_nt_element_close ).
+    append( iv_type = if_sxml_node=>co_nt_element_close
+            iv_name = 'array' ).
 
   ENDMETHOD.
 
@@ -131,7 +131,8 @@ CLASS lcl_json_parser IMPLEMENTATION.
       traverse( lv_value ).
     ENDLOOP.
 
-    append( if_sxml_node=>co_nt_element_close ).
+    append( iv_type = if_sxml_node=>co_nt_element_close
+            iv_name = 'object' ).
 
   ENDMETHOD.
 

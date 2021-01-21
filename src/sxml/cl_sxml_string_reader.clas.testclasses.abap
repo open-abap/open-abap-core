@@ -89,7 +89,8 @@ CLASS ltcl_sxml IMPLEMENTATION.
 
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'object' ).
-    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_close
+                  iv_name = 'object' ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lt_actual
@@ -105,7 +106,8 @@ CLASS ltcl_sxml IMPLEMENTATION.
 
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'array' ).
-    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_close
+                  iv_name = 'array' ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lt_actual
@@ -121,8 +123,9 @@ CLASS ltcl_sxml IMPLEMENTATION.
 
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'num' ).
-    add_expected( if_sxml_node=>co_nt_value ).
-    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( iv_type = if_sxml_node=>co_nt_value ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_close
+                  iv_name = 'num' ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lt_actual
@@ -138,8 +141,9 @@ CLASS ltcl_sxml IMPLEMENTATION.
 
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'bool' ).
-    add_expected( if_sxml_node=>co_nt_value ).
-    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( iv_type = if_sxml_node=>co_nt_value ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_close
+                  iv_name = 'bool' ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lt_actual
@@ -155,7 +159,8 @@ CLASS ltcl_sxml IMPLEMENTATION.
 
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'null' ).
-    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_close
+                  iv_name = 'null' ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lt_actual
@@ -173,9 +178,11 @@ CLASS ltcl_sxml IMPLEMENTATION.
                   iv_name = 'array' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'num' ).
-    add_expected( if_sxml_node=>co_nt_value ).
-    add_expected( if_sxml_node=>co_nt_element_close ).
-    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( iv_type = if_sxml_node=>co_nt_value ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_close
+                  iv_name = 'num' ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_close
+                  iv_name = 'array' ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lt_actual
@@ -193,9 +200,11 @@ CLASS ltcl_sxml IMPLEMENTATION.
                   iv_name = 'object' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'str' ).
-    add_expected( if_sxml_node=>co_nt_value ).
-    add_expected( if_sxml_node=>co_nt_element_close ).
-    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( iv_type = if_sxml_node=>co_nt_value ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_close
+                  iv_name = 'str' ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_close
+                  iv_name = 'object' ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lt_actual
@@ -213,8 +222,10 @@ CLASS ltcl_sxml IMPLEMENTATION.
                   iv_name = 'object' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'array' ).
-    add_expected( if_sxml_node=>co_nt_element_close ).
-    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_close
+                  iv_name = 'array' ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_close
+                  iv_name = 'object' ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lt_actual
@@ -232,13 +243,16 @@ CLASS ltcl_sxml IMPLEMENTATION.
                   iv_name = 'object' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'str' ).
-    add_expected( if_sxml_node=>co_nt_value ).
-    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( iv_type = if_sxml_node=>co_nt_value ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_close
+                  iv_name = 'str' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'str' ).
-    add_expected( if_sxml_node=>co_nt_value ).
-    add_expected( if_sxml_node=>co_nt_element_close ).
-    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( iv_type = if_sxml_node=>co_nt_value ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_close
+                  iv_name = 'str' ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_close
+                  iv_name = 'object' ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lt_actual
@@ -256,13 +270,16 @@ CLASS ltcl_sxml IMPLEMENTATION.
                   iv_name = 'array' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'num' ).
-    add_expected( if_sxml_node=>co_nt_value ).
-    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( iv_type = if_sxml_node=>co_nt_value ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_close
+                  iv_name = 'num' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'num' ).
-    add_expected( if_sxml_node=>co_nt_value ).
-    add_expected( if_sxml_node=>co_nt_element_close ).
-    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( iv_type = if_sxml_node=>co_nt_value ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_close
+                  iv_name = 'num' ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_close
+                  iv_name = 'array' ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lt_actual
@@ -282,10 +299,13 @@ CLASS ltcl_sxml IMPLEMENTATION.
                   iv_name = 'object' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'str' ).
-    add_expected( if_sxml_node=>co_nt_value ).
-    add_expected( if_sxml_node=>co_nt_element_close ).
-    add_expected( if_sxml_node=>co_nt_element_close ).
-    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( iv_type = if_sxml_node=>co_nt_value ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_close
+                  iv_name = 'str' ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_close
+                  iv_name = 'object' ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_close
+                  iv_name = 'array' ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lt_actual
@@ -305,10 +325,13 @@ CLASS ltcl_sxml IMPLEMENTATION.
                   iv_name = 'object' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'str' ).
-    add_expected( if_sxml_node=>co_nt_value ).
-    add_expected( if_sxml_node=>co_nt_element_close ).
-    add_expected( if_sxml_node=>co_nt_element_close ).
-    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( iv_type = if_sxml_node=>co_nt_value ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_close
+                  iv_name = 'str' ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_close
+                  iv_name = 'object' ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_close
+                  iv_name = 'object' ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lt_actual
