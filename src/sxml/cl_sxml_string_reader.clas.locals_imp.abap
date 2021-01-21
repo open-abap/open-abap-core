@@ -3,9 +3,10 @@
 CLASS lcl_json_parser DEFINITION.
   PUBLIC SECTION.
     TYPES: BEGIN OF ty_node,
-             type TYPE if_sxml_node=>node_type,
-             name TYPE string,
-             key TYPE string,
+             type  TYPE if_sxml_node=>node_type,
+             name  TYPE string,
+             key   TYPE string,
+             value TYPE string,
            END OF ty_node.
 
     TYPES ty_nodes TYPE STANDARD TABLE OF ty_node WITH DEFAULT KEY.
@@ -22,7 +23,8 @@ CLASS lcl_json_parser DEFINITION.
       IMPORTING
         iv_type TYPE if_sxml_node=>node_type
         iv_name TYPE string OPTIONAL
-        iv_key TYPE string OPTIONAL.
+        iv_key TYPE string OPTIONAL
+        iv_value TYPE string OPTIONAL.
 
     METHODS traverse
       IMPORTING
@@ -56,6 +58,7 @@ CLASS lcl_json_parser IMPLEMENTATION.
     ls_node-type = iv_type.
     ls_node-name = iv_name.
     ls_node-key = iv_key.
+    ls_node-value = iv_value.
     APPEND ls_node TO mt_nodes.
   ENDMETHOD.
 
@@ -84,9 +87,11 @@ CLASS lcl_json_parser IMPLEMENTATION.
   METHOD traverse_basic.
 
     DATA lv_type TYPE string.
+
     WRITE '@KERNEL let parsed = JSON.parse(iv_json.get());'.
     WRITE '@KERNEL lv_type.set(typeof parsed);'.
     WRITE '@KERNEL if (parsed === null) lv_type.set("null");'.
+
     CASE lv_type.
       WHEN 'string'.
         lv_type = 'str'.
@@ -100,7 +105,13 @@ CLASS lcl_json_parser IMPLEMENTATION.
             iv_name = lv_type
             iv_key  = iv_key ).
     IF lv_type <> 'null'.
-      append( iv_type = if_sxml_node=>co_nt_value ).
+      IF lv_type = 'str'.
+        append( iv_type  = if_sxml_node=>co_nt_value
+                iv_value = substring( val = iv_json off = 1 len = strlen( iv_json ) - 2 ) ).
+      ELSE.
+        append( iv_type  = if_sxml_node=>co_nt_value
+                iv_value = iv_json ).
+      ENDIF.
     ENDIF.
     append( iv_type = if_sxml_node=>co_nt_element_close
             iv_name = lv_type ).
@@ -224,16 +235,21 @@ ENDCLASS.
 CLASS lcl_value_node DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_sxml_value_node.
-    METHODS constructor.
+    METHODS constructor
+      IMPORTING
+        value TYPE string.
+  PRIVATE SECTION.
+    DATA mv_value TYPE string.
 ENDCLASS.
 
 CLASS lcl_value_node IMPLEMENTATION.
   METHOD constructor.
     if_sxml_node~type = if_sxml_node=>co_nt_value.
+    mv_value = value.
   ENDMETHOD.
 
   METHOD if_sxml_value_node~get_value.
-* todo
+    val = mv_value.
   ENDMETHOD.
 ENDCLASS.
 

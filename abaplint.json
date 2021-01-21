@@ -13,6 +13,7 @@
     "begin_end_names": true,
     "xml_consistency": true,
     "check_abstract": true,
+    "parser_missing_space": true,
     "colon_missing_space": true,
     "contains_tab": true,
     "empty_statement": true,

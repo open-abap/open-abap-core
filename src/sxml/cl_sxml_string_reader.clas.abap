@@ -42,7 +42,9 @@ CLASS cl_sxml_string_reader IMPLEMENTATION.
             EXPORTING
               name = ls_parsed-name.
         WHEN if_sxml_node=>co_nt_value.
-          CREATE OBJECT li_node TYPE lcl_value_node.
+          CREATE OBJECT li_node TYPE lcl_value_node
+            EXPORTING
+              value = ls_parsed-value.
         WHEN OTHERS.
           ASSERT 1 = 2.
       ENDCASE.
