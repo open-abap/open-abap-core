@@ -1,0 +1,5 @@
+CLASS cl_abap_refdescr DEFINITION PUBLIC.
+ENDCLASS.
+
+CLASS cl_abap_refdescr IMPLEMENTATION.
+ENDCLASS.
