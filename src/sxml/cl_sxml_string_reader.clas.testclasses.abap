@@ -30,6 +30,7 @@ CLASS ltcl_sxml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS two_keys FOR TESTING.
     METHODS two_array FOR TESTING.
     METHODS array_with_object FOR TESTING.
+    METHODS object_with_object FOR TESTING.
 
 ENDCLASS.
 
@@ -277,6 +278,29 @@ CLASS ltcl_sxml IMPLEMENTATION.
 
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'array' ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_open
+                  iv_name = 'object' ).
+    add_expected( iv_type = if_sxml_node=>co_nt_element_open
+                  iv_name = 'str' ).
+    add_expected( if_sxml_node=>co_nt_value ).
+    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( if_sxml_node=>co_nt_element_close ).
+    add_expected( if_sxml_node=>co_nt_element_close ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lt_actual
+      exp = mt_expected ).
+
+  ENDMETHOD.
+
+  METHOD object_with_object.
+
+    DATA lt_actual TYPE ty_nodes.
+
+    lt_actual = dump_nodes( '{"key": {"sub": "value"}}' ).
+
+    add_expected( iv_type = if_sxml_node=>co_nt_element_open
+                  iv_name = 'object' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'object' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
