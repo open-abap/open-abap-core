@@ -4,6 +4,7 @@ CLASS ltcl_sxml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     TYPES: BEGIN OF ty_node,
              type TYPE if_sxml_node=>node_type,
              name TYPE string,
+             key TYPE string,
            END OF ty_node.
 
     TYPES ty_nodes TYPE STANDARD TABLE OF ty_node WITH DEFAULT KEY.
@@ -14,7 +15,8 @@ CLASS ltcl_sxml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS add_expected
       IMPORTING
         iv_type TYPE if_sxml_node=>node_type
-        iv_name TYPE string OPTIONAL.
+        iv_name TYPE string OPTIONAL
+        iv_key TYPE string OPTIONAL.
     METHODS dump_nodes
       IMPORTING iv_json TYPE string
       RETURNING VALUE(rt_nodes) TYPE ty_nodes.
@@ -44,6 +46,7 @@ CLASS ltcl_sxml IMPLEMENTATION.
     DATA ls_expected LIKE LINE OF mt_expected.
     ls_expected-type = iv_type.
     ls_expected-name = iv_name.
+    ls_expected-key = iv_key.
     APPEND ls_expected TO mt_expected.
   ENDMETHOD.
 
@@ -54,6 +57,8 @@ CLASS ltcl_sxml IMPLEMENTATION.
     DATA li_open TYPE REF TO if_sxml_open_element.
     DATA li_reader TYPE REF TO if_sxml_reader.
     DATA ls_node TYPE ty_node.
+    DATA lt_attributes TYPE if_sxml_attribute=>attributes.
+    DATA li_attribute TYPE REF TO if_sxml_attribute.
 
     li_reader = cl_sxml_string_reader=>create( cl_abap_codepage=>convert_to( iv_json ) ).
     cl_abap_unit_assert=>assert_not_initial( li_reader ).
@@ -71,6 +76,11 @@ CLASS ltcl_sxml IMPLEMENTATION.
         WHEN if_sxml_node=>co_nt_element_open.
           li_open ?= li_node.
           ls_node-name = li_open->qname-name.
+
+          lt_attributes = li_open->get_attributes( ).
+          LOOP AT lt_attributes INTO li_attribute.
+            ls_node-key = li_attribute->get_value( ).
+          ENDLOOP.
         WHEN if_sxml_node=>co_nt_element_close.
           li_close ?= li_node.
           ls_node-name = li_close->qname-name.
@@ -199,7 +209,8 @@ CLASS ltcl_sxml IMPLEMENTATION.
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'object' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
-                  iv_name = 'str' ).
+                  iv_name = 'str'
+                  iv_key  = 'key1' ).
     add_expected( iv_type = if_sxml_node=>co_nt_value ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_close
                   iv_name = 'str' ).
@@ -221,7 +232,8 @@ CLASS ltcl_sxml IMPLEMENTATION.
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'object' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
-                  iv_name = 'array' ).
+                  iv_name = 'array'
+                  iv_key  = 'key1' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_close
                   iv_name = 'array' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_close
@@ -242,12 +254,14 @@ CLASS ltcl_sxml IMPLEMENTATION.
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'object' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
-                  iv_name = 'str' ).
+                  iv_name = 'str'
+                  iv_key  = 'key1' ).
     add_expected( iv_type = if_sxml_node=>co_nt_value ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_close
                   iv_name = 'str' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
-                  iv_name = 'str' ).
+                  iv_name = 'str'
+                  iv_key  = 'key2' ).
     add_expected( iv_type = if_sxml_node=>co_nt_value ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_close
                   iv_name = 'str' ).
@@ -298,7 +312,8 @@ CLASS ltcl_sxml IMPLEMENTATION.
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'object' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
-                  iv_name = 'str' ).
+                  iv_name = 'str'
+                  iv_key  = 'key' ).
     add_expected( iv_type = if_sxml_node=>co_nt_value ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_close
                   iv_name = 'str' ).
@@ -322,9 +337,11 @@ CLASS ltcl_sxml IMPLEMENTATION.
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'object' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
-                  iv_name = 'object' ).
+                  iv_name = 'object'
+                  iv_key = 'key' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
-                  iv_name = 'str' ).
+                  iv_name = 'str'
+                  iv_key = 'sub' ).
     add_expected( iv_type = if_sxml_node=>co_nt_value ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_close
                   iv_name = 'str' ).
