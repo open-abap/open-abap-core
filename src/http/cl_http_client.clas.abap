@@ -73,7 +73,13 @@ CLASS cl_http_client IMPLEMENTATION.
 * https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
 * https://caniuse.com/fetch
 
-    WRITE '@KERNEL let response = await globalThis.fetch(this.url.get(), {headers: {"Authorization": "Basic c2RmOnNkZg=="}});'.
+    DATA lv_method TYPE string.
+    lv_method = if_http_client~request->get_method( ).
+    IF lv_method IS INITIAL.
+      lv_method = 'GET'.
+    ENDIF.
+
+    WRITE '@KERNEL let response = await globalThis.fetch(this.url.get(), {method: lv_method.get(), headers: {"Authorization": "Basic c2RmOnNkZg=="}});'.
 *    WRITE '@KERNEL console.dir(await response.text());'.
 
     WRITE '@KERNEL this.if_http_client$response.get().status.set(response.status);'.
