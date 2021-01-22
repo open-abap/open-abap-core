@@ -5,6 +5,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS basic_auth FOR TESTING RAISING cx_static_check.
     METHODS call_set_method FOR TESTING RAISING cx_static_check.
     METHODS request_header_fields FOR TESTING RAISING cx_static_check.
+    METHODS default_uri FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -108,6 +109,27 @@ CLASS ltcl_test IMPLEMENTATION.
     ASSERT sy-subrc = 0.
     READ TABLE fields WITH KEY name = 'foobar' TRANSPORTING NO FIELDS.
     ASSERT sy-subrc = 0.
+
+  ENDMETHOD.
+
+  METHOD default_uri.
+
+    DATA li_client TYPE REF TO if_http_client.
+
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = 'https://dummy/foo.html?moo=42'
+        ssl_id = 'ANONYM'
+      IMPORTING
+        client = li_client ).
+
+" TODO
+
+    " ASSERT li_client->request->get_header_field( '~request_uri' ) = '/foo.html'.
+
+    " DATA fields TYPE tihttpnvp.
+    " li_client->request->get_form_fields( CHANGING fields = fields ).
+    " ASSERT lines( fields ) = 1.
 
   ENDMETHOD.
 

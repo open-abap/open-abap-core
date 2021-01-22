@@ -37,6 +37,7 @@ CLASS lcl_request DEFINITION.
   PRIVATE SECTION.
     DATA mv_method TYPE string.
     DATA mt_headers TYPE tihttpnvp.
+    DATA mt_form_fields TYPE tihttpnvp.
 ENDCLASS.
 
 CLASS lcl_request IMPLEMENTATION.
@@ -46,6 +47,10 @@ CLASS lcl_request IMPLEMENTATION.
     ls_header-name = '~request_uri'.
     ls_header-value = uri.
     APPEND ls_header TO mt_headers.
+  ENDMETHOD.
+
+  METHOD if_http_request~get_form_fields.
+    fields = mt_form_fields.
   ENDMETHOD.
 
   METHOD if_http_request~set_header_field.
