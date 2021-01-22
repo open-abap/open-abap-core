@@ -123,10 +123,9 @@ CLASS ltcl_test IMPLEMENTATION.
       IMPORTING
         client = li_client ).
 
-" TODO
+    ASSERT li_client->request->get_header_field( '~request_uri' ) = '/foo.html'.
 
-    " ASSERT li_client->request->get_header_field( '~request_uri' ) = '/foo.html'.
-
+* todo
     " DATA fields TYPE tihttpnvp.
     " li_client->request->get_form_fields( CHANGING fields = fields ).
     " ASSERT lines( fields ) = 1.

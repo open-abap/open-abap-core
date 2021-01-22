@@ -49,6 +49,11 @@ CLASS lcl_request IMPLEMENTATION.
     APPEND ls_header TO mt_headers.
   ENDMETHOD.
 
+  METHOD if_http_request~set_form_fields.
+" todo
+    RETURN.
+  ENDMETHOD.
+
   METHOD if_http_request~get_form_fields.
     fields = mt_form_fields.
   ENDMETHOD.

@@ -24,10 +24,27 @@ CLASS cl_http_client IMPLEMENTATION.
 
   METHOD constructor.
 * SSL_ID and proxies are currently ignored
-    me->url = url.
+
+    DATA lv_uri TYPE string.
+    DATA lv_query TYPE string.
+
+    me->url = url. " todo, remove this
+
     CREATE OBJECT if_http_client~response TYPE lcl_response.
+
+    FIND REGEX '\w(\/[\w\d\.]+)' IN url SUBMATCHES lv_uri.
+
     CREATE OBJECT if_http_client~request TYPE lcl_request
-      EXPORTING uri = ''. " todo
+      EXPORTING
+        uri = lv_uri.
+
+    FIND REGEX '\?(.*)' IN url SUBMATCHES lv_query.
+    IF sy-subrc = 0.
+      cl_http_utility=>set_query(
+        request = if_http_client~request
+        query   = lv_query ).
+    ENDIF.
+
   ENDMETHOD.
 
   METHOD create_by_url.

@@ -23,12 +23,32 @@ CLASS cl_http_utility DEFINITION PUBLIC.
         fields TYPE tihttpnvp
       RETURNING
         VALUE(string) TYPE string.
+
+    CLASS-METHODS string_to_fields
+      IMPORTING
+        string TYPE string
+      RETURNING
+        VALUE(fields) TYPE tihttpnvp.
+
+    CLASS-METHODS set_query
+      IMPORTING
+        request TYPE REF TO if_http_request
+        query   TYPE string.
+
 ENDCLASS.
 
 CLASS cl_http_utility IMPLEMENTATION.
 
+  METHOD string_to_fields.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD set_query.
+    request->set_form_fields( cl_http_utility=>string_to_fields( query ) ).
+  ENDMETHOD.
+
   METHOD fields_to_string.
-    ASSERT 2 = 'todo'.
+    RETURN.
   ENDMETHOD.
 
   METHOD decode_x_base64.
@@ -37,6 +57,7 @@ CLASS cl_http_utility IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD unescape_url.
+    " todo, this can probably be done in ABAP with a few regex'es
     WRITE '@KERNEL unescaped.set(decodeURI(escaped.get()));'.
   ENDMETHOD.
 
