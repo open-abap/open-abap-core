@@ -10,6 +10,7 @@
     "errorNamespace": "."
   },
   "rules": {
+    "definitions_top": true,
     "begin_end_names": true,
     "xml_consistency": true,
     "check_abstract": true,

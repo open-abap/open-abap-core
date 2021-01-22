@@ -15,11 +15,12 @@ ENDCLASS.
 CLASS cl_abap_hmac IMPLEMENTATION.
   METHOD calculate_hmac_for_raw.
 
+    DATA lv_algorithm TYPE string.
+
     ASSERT if_key IS INITIAL.
     CLEAR ef_hmacstring.
     CLEAR ef_hmacxstring.
 
-    DATA lv_algorithm TYPE string.
     lv_algorithm = to_lower( if_algorithm ).
     ASSERT lv_algorithm = 'sha1' OR lv_algorithm = 'md5'.
 
