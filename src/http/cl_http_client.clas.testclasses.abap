@@ -115,6 +115,7 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD default_uri.
 
     DATA li_client TYPE REF TO if_http_client.
+    DATA fields TYPE tihttpnvp.
 
     cl_http_client=>create_by_url(
       EXPORTING
@@ -125,10 +126,8 @@ CLASS ltcl_test IMPLEMENTATION.
 
     ASSERT li_client->request->get_header_field( '~request_uri' ) = '/foo.html'.
 
-* todo
-    " DATA fields TYPE tihttpnvp.
-    " li_client->request->get_form_fields( CHANGING fields = fields ).
-    " ASSERT lines( fields ) = 1.
+    li_client->request->get_form_fields( CHANGING fields = fields ).
+    ASSERT lines( fields ) = 1.
 
   ENDMETHOD.
 

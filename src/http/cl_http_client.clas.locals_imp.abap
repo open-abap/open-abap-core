@@ -50,8 +50,7 @@ CLASS lcl_request IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_request~set_form_fields.
-" todo
-    RETURN.
+    mt_form_fields = fields.
   ENDMETHOD.
 
   METHOD if_http_request~get_form_fields.
