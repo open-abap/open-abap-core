@@ -17,7 +17,6 @@ CLASS cl_http_client DEFINITION PUBLIC CREATE PRIVATE.
 
   PRIVATE SECTION.
     DATA url TYPE string.
-    DATA authorization TYPE string.
 
 ENDCLASS.
 
@@ -27,6 +26,8 @@ CLASS cl_http_client IMPLEMENTATION.
 * SSL_ID and proxies are currently ignored
     me->url = url.
     CREATE OBJECT if_http_client~response TYPE lcl_response.
+    CREATE OBJECT if_http_client~request TYPE lcl_request
+      EXPORTING uri = ''. " todo
   ENDMETHOD.
 
   METHOD create_by_url.
@@ -36,11 +37,11 @@ CLASS cl_http_client IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_client~authenticate.
-
     DATA lv_base64 TYPE string.
     lv_base64 = cl_http_utility=>encode_base64( |{ username }:{ password }| ).
-    authorization = |Basic { lv_base64 }|.
-
+    if_http_client~request->set_header_field(
+      name = 'authorization'
+      value = |Basic { lv_base64 }| ).
   ENDMETHOD.
 
   METHOD if_http_client~close.
@@ -55,7 +56,7 @@ CLASS cl_http_client IMPLEMENTATION.
 * https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
 * https://caniuse.com/fetch
 
-    WRITE '@KERNEL let response = await globalThis.fetch(this.url.get(), {headers: {"Authorization": this.authorization.get()}});'.
+    WRITE '@KERNEL let response = await globalThis.fetch(this.url.get(), {headers: {"Authorization": "Basic c2RmOnNkZg=="}});'.
 *    WRITE '@KERNEL console.dir(await response.text());'.
 
     WRITE '@KERNEL this.if_http_client$response.get().status.set(response.status);'.

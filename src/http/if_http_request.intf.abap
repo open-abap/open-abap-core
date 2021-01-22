@@ -11,16 +11,17 @@ INTERFACE if_http_request PUBLIC.
         name TYPE string
         value TYPE string.
 
-  METHODS:
+  METHODS
     get_header_field
       IMPORTING
         field TYPE string
       RETURNING
         VALUE(value) TYPE string.
 
-  METHODS set_method
-    IMPORTING
-      meth TYPE string.
+  METHODS get_header_fields CHANGING fields TYPE tihttpnvp.
+
+  METHODS set_method IMPORTING meth TYPE string.
+  METHODS get_method RETURNING VALUE(meth) TYPE string.
 
   METHODS set_version
     IMPORTING
