@@ -25,10 +25,9 @@ CLASS ltcl_xml IMPLEMENTATION.
       document = li_doc ).
     li_renderer->render( ).
 
-    " WRITE '@KERNEL console.dir(lv_xml);'.
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = lv_xml
-    "   exp = '<?xml version="1.0" encoding="utf-16"?>' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_xml
+      exp = '<?xml version="1.0" encoding="utf-16"?>' ).
 
   ENDMETHOD.
 
