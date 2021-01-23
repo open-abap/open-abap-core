@@ -5,6 +5,10 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC ABSTRACT.
       describe_by_data
         IMPORTING data TYPE any
         RETURNING VALUE(type) TYPE REF TO cl_abap_typedescr.
+    CLASS-METHODS
+      describe_by_object_ref
+        IMPORTING data TYPE any
+        RETURNING VALUE(type) TYPE REF TO cl_abap_typedescr.
 
     DATA type_kind TYPE c LENGTH 1.
     DATA kind TYPE c LENGTH 1.
@@ -25,6 +29,10 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC ABSTRACT.
 ENDCLASS.
 
 CLASS cl_abap_typedescr IMPLEMENTATION.
+
+  METHOD describe_by_object_ref.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD describe_by_data.
 
