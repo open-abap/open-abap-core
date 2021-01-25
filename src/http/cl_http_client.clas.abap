@@ -74,12 +74,22 @@ CLASS cl_http_client IMPLEMENTATION.
 * https://caniuse.com/fetch
 
     DATA lv_method TYPE string.
+    DATA lv_url TYPE string.
+    DATA lt_form_fields TYPE tihttpnvp.
+
     lv_method = if_http_client~request->get_method( ).
     IF lv_method IS INITIAL.
       lv_method = 'GET'.
     ENDIF.
 
-    WRITE '@KERNEL let response = await globalThis.fetch(this.url.get(), {method: lv_method.get(), headers: {"Authorization": "Basic c2RmOnNkZg=="}});'.
+    lv_url = url.
+
+    if_http_client~request->get_form_fields( CHANGING fields = lt_form_fields ).
+    IF lines( lt_form_fields ) > 0.
+      lv_url = lv_url && '?' && cl_http_utility=>fields_to_string( lt_form_fields ).
+    ENDIF.
+
+    WRITE '@KERNEL let response = await globalThis.fetch(lv_url.get(), {method: lv_method.get(), headers: {"Authorization": "Basic c2RmOnNkZg=="}});'.
 *    WRITE '@KERNEL console.dir(await response.text());'.
 
     WRITE '@KERNEL this.if_http_client$response.get().status.set(response.status);'.
