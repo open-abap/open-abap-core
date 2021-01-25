@@ -7,6 +7,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS call_set_method FOR TESTING RAISING cx_static_check.
     METHODS request_header_fields FOR TESTING RAISING cx_static_check.
     METHODS default_uri FOR TESTING RAISING cx_static_check.
+    METHODS query_field FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -153,6 +154,27 @@ CLASS ltcl_test IMPLEMENTATION.
     li_client->request->get_form_fields( CHANGING fields = fields ).
     ASSERT lines( fields ) = 1.
 
+  ENDMETHOD.
+
+  METHOD query_field.
+    DATA li_client TYPE REF TO if_http_client.
+    DATA lv_cdata TYPE string.
+
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = 'https://httpbin.org/get'
+        ssl_id = 'ANONYM'
+      IMPORTING
+        client = li_client ).
+    li_client->request->set_form_field( name = 'foo' value = 'bar' ).
+    li_client->send( ).
+    li_client->receive( ).
+
+    lv_cdata = li_client->response->get_cdata( ).
+*    WRITE '@KERNEL console.dir(lv_cdata);'.
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = '*"foo": "bar"*' ).
   ENDMETHOD.
 
 ENDCLASS.

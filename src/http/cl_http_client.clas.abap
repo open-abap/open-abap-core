@@ -16,7 +16,7 @@ CLASS cl_http_client DEFINITION PUBLIC CREATE PRIVATE.
         url TYPE string.
 
   PRIVATE SECTION.
-    DATA url TYPE string.
+    DATA mv_host TYPE string.
 
 ENDCLASS.
 
@@ -28,11 +28,12 @@ CLASS cl_http_client IMPLEMENTATION.
     DATA lv_uri TYPE string.
     DATA lv_query TYPE string.
 
-    me->url = url. " todo, remove this
-
     CREATE OBJECT if_http_client~response TYPE lcl_response.
 
-    FIND REGEX '\w(\/[\w\d\.]+)' IN url SUBMATCHES lv_uri.
+    FIND REGEX '\w(\/[\w\d\.\-\/]+)' IN url SUBMATCHES lv_uri.
+    mv_host = url.
+    REPLACE FIRST OCCURRENCE OF lv_uri IN mv_host WITH ''.
+*    WRITE '@KERNEL console.dir(this.mv_host.get());'.
 
     CREATE OBJECT if_http_client~request TYPE lcl_request
       EXPORTING
@@ -74,12 +75,33 @@ CLASS cl_http_client IMPLEMENTATION.
 * https://caniuse.com/fetch
 
     DATA lv_method TYPE string.
+    DATA lv_url TYPE string.
+    DATA lt_form_fields TYPE tihttpnvp.
+    DATA lt_header_fields TYPE tihttpnvp.
+    DATA ls_field LIKE LINE OF lt_header_fields.
+
     lv_method = if_http_client~request->get_method( ).
     IF lv_method IS INITIAL.
       lv_method = 'GET'.
     ENDIF.
 
-    WRITE '@KERNEL let response = await globalThis.fetch(this.url.get(), {method: lv_method.get(), headers: {"Authorization": "Basic c2RmOnNkZg=="}});'.
+* building URL
+    lv_url = mv_host && if_http_client~request->get_header_field( '~request_uri' ).
+    if_http_client~request->get_form_fields( CHANGING fields = lt_form_fields ).
+    IF lines( lt_form_fields ) > 0.
+      lv_url = lv_url && '?' && cl_http_utility=>fields_to_string( lt_form_fields ).
+    ENDIF.
+*    WRITE '@KERNEL console.dir(lv_url.get());'.
+
+* building headers
+    if_http_client~request->get_header_fields( CHANGING fields = lt_header_fields ).
+    WRITE '@KERNEL let headers = {};'.
+    LOOP AT lt_header_fields INTO ls_field WHERE name <> '~request_uri'.
+      WRITE '@KERNEL headers[ls_field.get().name.get()] = ls_field.get().value.get();'.
+    ENDLOOP.
+*    WRITE '@KERNEL console.dir(headers);'.
+
+    WRITE '@KERNEL let response = await globalThis.fetch(lv_url.get(), {method: lv_method.get(), headers: headers});'.
 *    WRITE '@KERNEL console.dir(await response.text());'.
 
     WRITE '@KERNEL this.if_http_client$response.get().status.set(response.status);'.
@@ -94,7 +116,7 @@ CLASS cl_http_client IMPLEMENTATION.
 
   METHOD if_http_client~get_last_error.
     if_http_client~response->get_status( IMPORTING code = code ).
-    message = 'todo_open_abap'.
+    message = 'todo_open_abap'. " get from one of the response headers?
   ENDMETHOD.
 
 ENDCLASS.

@@ -99,7 +99,10 @@ CLASS lcl_request IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_request~set_form_field.
-    ASSERT 2 = 'todo'.
+    DATA ls_field LIKE LINE OF mt_form_fields.
+    ls_field-name = name.
+    ls_field-value = value.
+    APPEND ls_field TO mt_form_fields.
   ENDMETHOD.
 
   METHOD if_http_request~get_header_fields.
