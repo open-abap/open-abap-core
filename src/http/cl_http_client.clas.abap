@@ -16,7 +16,7 @@ CLASS cl_http_client DEFINITION PUBLIC CREATE PRIVATE.
         url TYPE string.
 
   PRIVATE SECTION.
-    DATA url TYPE string.
+    DATA mv_host TYPE string.
 
 ENDCLASS.
 
@@ -28,11 +28,12 @@ CLASS cl_http_client IMPLEMENTATION.
     DATA lv_uri TYPE string.
     DATA lv_query TYPE string.
 
-    me->url = url. " todo, remove this
-
     CREATE OBJECT if_http_client~response TYPE lcl_response.
 
-    FIND REGEX '\w(\/[\w\d\.]+)' IN url SUBMATCHES lv_uri.
+    FIND REGEX '\w(\/[\w\d\.\-\/]+)' IN url SUBMATCHES lv_uri.
+    mv_host = url.
+    REPLACE FIRST OCCURRENCE OF lv_uri IN mv_host WITH ''.
+*    WRITE '@KERNEL console.dir(this.mv_host.get());'.
 
     CREATE OBJECT if_http_client~request TYPE lcl_request
       EXPORTING
@@ -82,12 +83,12 @@ CLASS cl_http_client IMPLEMENTATION.
       lv_method = 'GET'.
     ENDIF.
 
-    lv_url = url.
-
+    lv_url = mv_host && if_http_client~request->get_header_field( '~request_uri' ).
     if_http_client~request->get_form_fields( CHANGING fields = lt_form_fields ).
     IF lines( lt_form_fields ) > 0.
       lv_url = lv_url && '?' && cl_http_utility=>fields_to_string( lt_form_fields ).
     ENDIF.
+*    WRITE '@KERNEL console.dir(lv_url.get());'.
 
     WRITE '@KERNEL let response = await globalThis.fetch(lv_url.get(), {method: lv_method.get(), headers: {"Authorization": "Basic c2RmOnNkZg=="}});'.
 *    WRITE '@KERNEL console.dir(await response.text());'.
@@ -104,7 +105,7 @@ CLASS cl_http_client IMPLEMENTATION.
 
   METHOD if_http_client~get_last_error.
     if_http_client~response->get_status( IMPORTING code = code ).
-    message = 'todo_open_abap'.
+    message = 'todo_open_abap'. " get from one of the response headers?
   ENDMETHOD.
 
 ENDCLASS.
