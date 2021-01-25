@@ -77,12 +77,15 @@ CLASS cl_http_client IMPLEMENTATION.
     DATA lv_method TYPE string.
     DATA lv_url TYPE string.
     DATA lt_form_fields TYPE tihttpnvp.
+    DATA lt_header_fields TYPE tihttpnvp.
+    DATA ls_field LIKE LINE OF lt_header_fields.
 
     lv_method = if_http_client~request->get_method( ).
     IF lv_method IS INITIAL.
       lv_method = 'GET'.
     ENDIF.
 
+* building URL
     lv_url = mv_host && if_http_client~request->get_header_field( '~request_uri' ).
     if_http_client~request->get_form_fields( CHANGING fields = lt_form_fields ).
     IF lines( lt_form_fields ) > 0.
@@ -90,7 +93,15 @@ CLASS cl_http_client IMPLEMENTATION.
     ENDIF.
 *    WRITE '@KERNEL console.dir(lv_url.get());'.
 
-    WRITE '@KERNEL let response = await globalThis.fetch(lv_url.get(), {method: lv_method.get(), headers: {"Authorization": "Basic c2RmOnNkZg=="}});'.
+* building headers
+    if_http_client~request->get_header_fields( CHANGING fields = lt_header_fields ).
+    WRITE '@KERNEL let headers = {};'.
+    LOOP AT lt_header_fields INTO ls_field WHERE name <> '~request_uri'.
+      WRITE '@KERNEL headers[ls_field.get().name.get()] = ls_field.get().value.get();'.
+    ENDLOOP.
+*    WRITE '@KERNEL console.dir(headers);'.
+
+    WRITE '@KERNEL let response = await globalThis.fetch(lv_url.get(), {method: lv_method.get(), headers: headers});'.
 *    WRITE '@KERNEL console.dir(await response.text());'.
 
     WRITE '@KERNEL this.if_http_client$response.get().status.set(response.status);'.
