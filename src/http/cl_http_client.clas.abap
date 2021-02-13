@@ -76,6 +76,7 @@ CLASS cl_http_client IMPLEMENTATION.
 
     DATA lv_method TYPE string.
     DATA lv_url TYPE string.
+    DATA lv_body TYPE string.
     DATA lt_form_fields TYPE tihttpnvp.
     DATA lt_header_fields TYPE tihttpnvp.
     DATA ls_field LIKE LINE OF lt_header_fields.
@@ -101,7 +102,10 @@ CLASS cl_http_client IMPLEMENTATION.
     ENDLOOP.
 *    WRITE '@KERNEL console.dir(headers);'.
 
-    WRITE '@KERNEL let response = await globalThis.fetch(lv_url.get(), {method: lv_method.get(), headers: headers});'.
+    lv_body = if_http_client~request->get_cdata( ).
+
+    WRITE '@KERNEL let response = await globalThis.fetch(lv_url.get(), {method: lv_method.get(), headers: headers, body: lv_method.get() === "GET" ? undefined : lv_body.get()});'.
+
 *    WRITE '@KERNEL console.dir(await response.text());'.
 
     WRITE '@KERNEL this.if_http_client$response.get().status.set(response.status);'.

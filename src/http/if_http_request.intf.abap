@@ -32,6 +32,7 @@ INTERFACE if_http_request PUBLIC.
   METHODS set_data IMPORTING data TYPE xstring.
 
   METHODS set_cdata IMPORTING data TYPE string.
+  METHODS get_cdata RETURNING VALUE(data) TYPE string.
 
   METHODS set_form_field
     IMPORTING

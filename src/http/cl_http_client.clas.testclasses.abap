@@ -54,6 +54,9 @@ CLASS ltcl_test IMPLEMENTATION.
       IMPORTING
         client = li_client ).
     li_client->request->set_method( 'POST' ).
+
+    li_client->request->set_cdata( 'HELLO_WORLD' ).
+
     li_client->send( ).
     li_client->receive( ).
 
@@ -61,6 +64,11 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_code
       exp = 200 ).
+
+    lv_cdata = li_client->response->get_cdata( ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = '*HELLO_WORLD*' ).
 
   ENDMETHOD.
 
