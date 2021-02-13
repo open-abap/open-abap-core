@@ -36,6 +36,7 @@ CLASS lcl_request DEFINITION.
     METHODS constructor IMPORTING uri TYPE string.
   PRIVATE SECTION.
     DATA mv_method TYPE string.
+    DATA mv_body TYPE string.
     DATA mt_headers TYPE tihttpnvp.
     DATA mt_form_fields TYPE tihttpnvp.
 ENDCLASS.
@@ -95,7 +96,11 @@ CLASS lcl_request IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_request~set_cdata.
-    ASSERT 2 = 'todo'.
+    mv_body = data.
+  ENDMETHOD.
+
+  METHOD if_http_request~get_cdata.
+    data = mv_body.
   ENDMETHOD.
 
   METHOD if_http_request~set_form_field.
