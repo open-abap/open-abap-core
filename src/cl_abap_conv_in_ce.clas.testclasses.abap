@@ -3,6 +3,7 @@ CLASS ltcl_conv_in DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FIN
   PRIVATE SECTION.
     METHODS test1 FOR TESTING.
     METHODS test2 FOR TESTING.
+    METHODS empty FOR TESTING.
 
 ENDCLASS.
 
@@ -44,6 +45,19 @@ CLASS ltcl_conv_in IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_string
       exp = '0034' ).
+
+  ENDMETHOD.
+
+  METHOD empty.
+
+    DATA conv TYPE REF TO cl_abap_conv_in_ce.
+    DATA data TYPE string.
+    DATA input TYPE xstring.
+    conv = cl_abap_conv_in_ce=>create( encoding = 'UTF-8' ).
+    conv->convert(
+      EXPORTING input = input
+      IMPORTING data = data ).
+    cl_abap_unit_assert=>assert_initial( data ).
 
   ENDMETHOD.
 
