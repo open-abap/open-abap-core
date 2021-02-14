@@ -32,6 +32,9 @@ CLASS cl_abap_conv_in_ce IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD convert.
+    IF input IS INITIAL.
+      RETURN.
+    ENDIF.
     WRITE '@KERNEL let arr = new Uint8Array(input.get().match(/.{1,2}/g).map(byte => parseInt(byte, 16)));'.
     WRITE '@KERNEL let res = new TextDecoder("utf-8").decode(arr);'.
     WRITE '@KERNEL data.set(res);'.
