@@ -71,7 +71,7 @@
         "^export$",	"^extends$", "^false$", "^final$",
         "^finally$",	"^float$", "^for$", "^function$",
         "^goto$",	"^if$", "^implements$", "^import$",
-        "^instanceof$", "^int$", "^interface$",
+        "^instanceof$", "^interface$",
         "^let$",	"^long$", "^native$", "^new$",
         "^null$",	"^package$", "^private$", "^protected$",
         "^public$",	"^return$", "^short$", "^static$",
