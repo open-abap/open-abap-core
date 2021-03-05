@@ -11,13 +11,44 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
     CONSTANTS platform_windowsxp TYPE i VALUE 6.
 
     CLASS-METHODS:
-      gui_download,
-      gui_upload,
-      file_open_dialog,
+      gui_download
+        IMPORTING
+          bin_filesize TYPE i
+          filename     TYPE string
+          filetype     TYPE string
+        CHANGING
+          data_tab TYPE any,
+      gui_upload
+        IMPORTING
+          filename TYPE string
+          filetype TYPE string
+        EXPORTING
+          filelength TYPE i
+        CHANGING
+          data_tab TYPE any,
+      file_open_dialog
+        IMPORTING
+          window_title     TYPE string
+          default_filename TYPE string
+          file_filter      TYPE string
+        CHANGING
+          file_table  TYPE filetable
+          rc          TYPE i
+          user_action TYPE i,
       get_platform
         RETURNING
           VALUE(platform) TYPE i,
-      file_save_dialog.
+      file_save_dialog
+        IMPORTING
+          window_title         TYPE string
+          default_extension    TYPE string
+          default_file_name    TYPE string
+          file_filter          TYPE string
+        CHANGING
+          filename   TYPE string
+          path       TYPE string
+          fullpath   TYPE string
+          user_actin TYPE i.
 ENDCLASS.
 
 CLASS cl_gui_frontend_services IMPLEMENTATION.
