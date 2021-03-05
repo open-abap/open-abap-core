@@ -32,7 +32,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
           default_filename TYPE string
           file_filter      TYPE string
         CHANGING
-          file_table  TYPE any
+          file_table  TYPE filetable
           rc          TYPE i
           user_action TYPE i,
       get_platform
