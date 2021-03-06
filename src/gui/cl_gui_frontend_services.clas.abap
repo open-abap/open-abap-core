@@ -45,10 +45,10 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
           default_file_name    TYPE string
           file_filter          TYPE string
         CHANGING
-          filename   TYPE string
-          path       TYPE string
-          fullpath   TYPE string
-          user_actin TYPE i.
+          filename    TYPE string
+          path        TYPE string
+          fullpath    TYPE string
+          user_action TYPE i.
 ENDCLASS.
 
 CLASS cl_gui_frontend_services IMPLEMENTATION.
