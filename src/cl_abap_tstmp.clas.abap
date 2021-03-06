@@ -10,10 +10,11 @@ ENDCLASS.
 
 CLASS cl_abap_tstmp IMPLEMENTATION.
   METHOD subtract.
-* todo, use string template to output timestamp to ISO?
-*    WRITE '@KERNEL console.dir(INPUT.tstmp1.get());'.
-*    WRITE '@KERNEL let t1 = Date.parse(INPUT.tstmp1.get());'.
-*    WRITE '@KERNEL console.dir(t1);'.
-    ASSERT 1 = 'todo'.
+    DATA str TYPE string.
+    str = |{ tstmp1 TIMESTAMP = ISO }|.
+    WRITE '@KERNEL let t1 = Date.parse(str.get());'.
+    str = |{ tstmp2 TIMESTAMP = ISO }|.
+    WRITE '@KERNEL let t2 = Date.parse(str.get());'.
+    WRITE '@KERNEL r_secs.set((t1 - t2)/1000);'.
   ENDMETHOD.
 ENDCLASS.

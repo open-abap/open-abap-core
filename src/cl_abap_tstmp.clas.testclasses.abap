@@ -13,14 +13,13 @@ CLASS ltcl_test IMPLEMENTATION.
     CONSTANTS lc_time TYPE timestamp VALUE '19710201000000'.
     DATA lv_seconds TYPE i.
 
-    " todo
-    " lv_seconds = cl_abap_tstmp=>subtract(
-    "   tstmp1 = lc_time
-    "   tstmp2 = lc_epoch ).
+    lv_seconds = cl_abap_tstmp=>subtract(
+      tstmp1 = lc_time
+      tstmp2 = lc_epoch ).
 
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = lv_seconds
-    "   exp = 34214400 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_seconds
+      exp = 34214400 ).
   ENDMETHOD.
 
 ENDCLASS.
