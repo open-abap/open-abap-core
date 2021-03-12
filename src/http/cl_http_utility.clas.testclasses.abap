@@ -55,7 +55,7 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD unescape_url.
 
-    DATA decoded TYPE xstring.
+    DATA decoded TYPE string.
 
     decoded = cl_http_utility=>unescape_url( '%27' ).
 
@@ -67,7 +67,7 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD encode_base64.
 
-    DATA encoded TYPE xstring.
+    DATA encoded TYPE string.
 
     encoded = cl_http_utility=>encode_base64( 'opensesame' ).
 
