@@ -1,5 +1,5 @@
-CLASS cl_abap_typedescr DEFINITION PUBLIC ABSTRACT.
-
+CLASS cl_abap_typedescr DEFINITION PUBLIC.
+* todo, this class should be ABSTRACT
   PUBLIC SECTION.
     CLASS-METHODS
       describe_by_data
