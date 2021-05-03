@@ -15,7 +15,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
         RETURNING VALUE(type) TYPE REF TO cl_abap_typedescr.
     CLASS-METHODS
       describe_by_object_ref
-        IMPORTING data TYPE any
+        IMPORTING data TYPE REF TO object
         RETURNING VALUE(type) TYPE REF TO cl_abap_typedescr.
 
     DATA type_kind TYPE c LENGTH 1.
