@@ -25,7 +25,7 @@ CLASS cl_abap_hmac IMPLEMENTATION.
     ASSERT lv_algorithm = 'sha1' OR lv_algorithm = 'md5'.
 
 * todo, this doesnt work in browser?
-    WRITE '@KERNEL var crypto = require("crypto");'.
+    WRITE '@KERNEL const crypto = await import("crypto");'.
     WRITE '@KERNEL var shasum = crypto.createHash(lv_algorithm.get());'.
     WRITE '@KERNEL shasum.update(if_data.get(), "hex");'.
     WRITE '@KERNEL ef_hmacstring.set(shasum.digest("hex").toUpperCase());'.
