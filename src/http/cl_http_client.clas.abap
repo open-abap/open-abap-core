@@ -32,8 +32,9 @@ CLASS cl_http_client IMPLEMENTATION.
 
     FIND REGEX '\w(\/[\w\d\.\-\/]+)' IN url SUBMATCHES lv_uri.
     mv_host = url.
-    REPLACE FIRST OCCURRENCE OF lv_uri IN mv_host WITH ''.
 *    WRITE '@KERNEL console.dir(this.mv_host.get());'.
+*    WRITE '@KERNEL console.dir(lv_uri.get());'.
+    REPLACE FIRST OCCURRENCE OF lv_uri IN mv_host WITH ''.
 
     CREATE OBJECT if_http_client~request TYPE lcl_request
       EXPORTING
