@@ -30,6 +30,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_char TYPE c LENGTH 1 VALUE 'C'.
     CONSTANTS typekind_dref TYPE c LENGTH 1 VALUE 'l'.
     CONSTANTS typekind_oref TYPE c LENGTH 1 VALUE 'r'.
+    CONSTANTS typekind_table TYPE c LENGTH 1 VALUE 'h'.
 
     CONSTANTS kind_elem TYPE c LENGTH 1 VALUE 'E'.
     CONSTANTS kind_struct TYPE c LENGTH 1 VALUE 'S'.
@@ -78,6 +79,13 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
             data = data.
         type->type_kind = typekind_struct2.
         type->kind = kind_struct.
+      WHEN 'Table'.
+        " CREATE OBJECT type TYPE cl_abap_tabledescr
+        "   EXPORTING
+        "     data = data.
+        CREATE OBJECT type.
+        type->type_kind = typekind_table.
+        type->kind = kind_table.
       WHEN 'XString'.
         CREATE OBJECT type.
         type->type_kind = typekind_xstring.
