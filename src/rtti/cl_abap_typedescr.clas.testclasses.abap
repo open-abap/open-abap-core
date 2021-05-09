@@ -6,6 +6,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS typekind_xstring FOR TESTING.
     METHODS typekind_string FOR TESTING.
     METHODS kind_elem FOR TESTING.
+    METHODS field_symbol FOR TESTING.
 
 ENDCLASS.
 
@@ -74,6 +75,22 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = type->type_kind
       exp = cl_abap_typedescr=>typekind_struct2 ).
+  ENDMETHOD.
+
+  METHOD field_symbol.
+
+    DATA integer TYPE i.
+    DATA type TYPE REF TO cl_abap_typedescr.
+    FIELD-SYMBOLS <fs> TYPE i.
+    ASSIGN integer TO <fs>.
+
+    type = cl_abap_typedescr=>describe_by_data( <fs> ).
+    cl_abap_unit_assert=>assert_not_initial( type ).
+    cl_abap_unit_assert=>assert_not_initial( type->type_kind ).
+    cl_abap_unit_assert=>assert_equals(
+      act = type->type_kind
+      exp = cl_abap_typedescr=>typekind_int ).
+
   ENDMETHOD.
 
 ENDCLASS.

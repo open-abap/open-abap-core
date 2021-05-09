@@ -63,7 +63,6 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 
     DATA lv_name TYPE string.
 
-* todo, add special handing for field symbol input
     WRITE '@KERNEL lv_name.set(data.constructor.name);'.
 
 * These are the constructor names from the js runtime
@@ -86,6 +85,12 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         CREATE OBJECT type.
         type->type_kind = typekind_string.
         type->kind = kind_elem.
+      WHEN 'FieldSymbol'.
+        WRITE '@KERNEL lv_name = data.getPointer();'.
+        type = describe_by_data( lv_name ).
+        RETURN.
+      WHEN OTHERS.
+        ASSERT 1 = 'todo_cl_abap_typedescr'.
     ENDCASE.
 
     type->absolute_name = 'ABSOLUTE_NAME_TODO'.
