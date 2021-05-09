@@ -63,6 +63,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 
     DATA lv_name TYPE string.
 
+* todo, add special handing for field symbol input
     WRITE '@KERNEL lv_name.set(data.constructor.name);'.
 
 * These are the constructor names from the js runtime
@@ -72,9 +73,9 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->type_kind = typekind_int.
         type->kind = kind_elem.
       WHEN 'Structure'.
-        CREATE OBJECT type.
-* see https://github.com/open-abap/open-abap/issues/59
-*        CREATE OBJECT type TYPE cl_abap_structdescr.
+        CREATE OBJECT type TYPE cl_abap_structdescr
+          EXPORTING
+            data = data.
         type->type_kind = typekind_struct2.
         type->kind = kind_struct.
       WHEN 'XString'.
