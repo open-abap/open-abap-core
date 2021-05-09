@@ -80,10 +80,9 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->type_kind = typekind_struct2.
         type->kind = kind_struct.
       WHEN 'Table'.
-        " CREATE OBJECT type TYPE cl_abap_tabledescr
-        "   EXPORTING
-        "     data = data.
-        CREATE OBJECT type.
+        CREATE OBJECT type TYPE cl_abap_tabledescr
+          EXPORTING
+            data = data.
         type->type_kind = typekind_table.
         type->kind = kind_table.
       WHEN 'XString'.
