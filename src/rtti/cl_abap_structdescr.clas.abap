@@ -32,14 +32,13 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     WRITE '@KERNEL   lv_name.set(name.toUpperCase());'.
     CLEAR ls_component.
     ls_component-name = lv_name.
-*    ASSIGN COMPONENT lv_name OF STRUCTURE data TO <fs>.
-*    ls_component-type = cl_abap_typedescr=>describe_by_data( <fs> ).
+    ASSIGN COMPONENT lv_name OF STRUCTURE data TO <fs>.
+    ls_component-type = cl_abap_typedescr=>describe_by_data( <fs> ).
     APPEND ls_component TO gt_components.
     WRITE '@KERNEL }'.
   ENDMETHOD.
 
   METHOD get_components.
-    WRITE '@KERNEL console.dir(this.gt_components);'.
     components = gt_components.
   ENDMETHOD.
 

@@ -11,8 +11,16 @@
   },
   "rules": {
     "check_include": false, // todo
+    "uncaught_exception": false, // todo
     "check_subrc": false,
     "check_text_elements": true,
+    "line_only_punc": true,
+    "message_exists": true,
+    "line_length": false,
+    "names_no_dash": true,
+    "modify_only_own_db_tables": true,
+    "start_at_tab": true,
+    "local_testclass_location": true,
     "check_transformation_exists": true,
     "class_attribute_names": false,
     "description_empty": false,
@@ -80,6 +88,9 @@
     "obsolete_statement": {
       "refresh": true,
       "compute": true,
+      "pack": true,
+      "selectWithoutInto": true,
+      "freeMemory": true,
       "requested": true,
       "communication": true,
       "parameter": true,

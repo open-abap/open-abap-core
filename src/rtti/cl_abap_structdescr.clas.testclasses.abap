@@ -32,7 +32,11 @@ CLASS ltcl_test IMPLEMENTATION.
       act = ls_comp-name
       exp = 'FIELD' ).
 
-*    cl_abap_unit_assert=>assert_not_initial( ls_comp-type ).
+    cl_abap_unit_assert=>assert_not_initial( ls_comp-type ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_comp-type->type_kind
+      exp = cl_abap_typedescr=>typekind_int ).
 
   ENDMETHOD.
 
