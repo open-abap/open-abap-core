@@ -39,7 +39,6 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_components.
-    WRITE '@KERNEL console.dir(this.gt_components);'.
     components = gt_components.
   ENDMETHOD.
 
