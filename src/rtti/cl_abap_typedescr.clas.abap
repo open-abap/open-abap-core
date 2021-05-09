@@ -27,6 +27,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_struct2 TYPE c LENGTH 1 VALUE 'v'.
     CONSTANTS typekind_xstring TYPE c LENGTH 1 VALUE 'y'.
     CONSTANTS typekind_string TYPE c LENGTH 1 VALUE 'g'.
+    CONSTANTS typekind_char TYPE c LENGTH 1 VALUE 'C'.
     CONSTANTS typekind_dref TYPE c LENGTH 1 VALUE 'l'.
     CONSTANTS typekind_oref TYPE c LENGTH 1 VALUE 'r'.
 
@@ -85,11 +86,16 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         CREATE OBJECT type.
         type->type_kind = typekind_string.
         type->kind = kind_elem.
+      WHEN 'Character'.
+        CREATE OBJECT type.
+        type->type_kind = typekind_char.
+        type->kind = kind_elem.
       WHEN 'FieldSymbol'.
         WRITE '@KERNEL lv_name = data.getPointer();'.
         type = describe_by_data( lv_name ).
         RETURN.
       WHEN OTHERS.
+        WRITE / lv_name.
         ASSERT 1 = 'todo_cl_abap_typedescr'.
     ENDCASE.
 
