@@ -32,9 +32,6 @@ CLASS ltcl_test IMPLEMENTATION.
       tstmp = lc_time
       secs  = 5000 ).
 
-    WRITE '@KERNEL console.dir(lv_time);'.
-    WRITE lv_time.
-
     cl_abap_unit_assert=>assert_equals(
       act = lv_time
       exp = '19710201012320' ).

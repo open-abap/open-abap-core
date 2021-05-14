@@ -28,8 +28,7 @@ CLASS cl_abap_tstmp IMPLEMENTATION.
   METHOD add.
     DATA str TYPE string.
     str = |{ tstmp TIMESTAMP = ISO }|.
-    WRITE '@KERNEL let t1 = new Date(Date.parse(str.get()));'.
-    WRITE '@KERNEL console.dir(t1);'.
+    WRITE '@KERNEL let t1 = new Date(Date.parse(str.get() + "Z"));'.
     WRITE '@KERNEL t1.setSeconds( t1.getSeconds() + secs.get() );'.
     WRITE '@KERNEL time.set(t1.toISOString().slice(0, 19).replace(/-/g, "").replace(/:/g, "").replace("T", ""));'.
   ENDMETHOD.
