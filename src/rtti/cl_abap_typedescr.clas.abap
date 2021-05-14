@@ -37,6 +37,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS kind_elem TYPE c LENGTH 1 VALUE 'E'.
     CONSTANTS kind_struct TYPE c LENGTH 1 VALUE 'S'.
     CONSTANTS kind_table TYPE c LENGTH 1 VALUE 'T'.
+    CONSTANTS kind_ref TYPE c LENGTH 1 VALUE 'R'.
 
 ENDCLASS.
 
@@ -111,6 +112,10 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         WRITE '@KERNEL lv_name = data.getPointer();'.
         type = describe_by_data( lv_name ).
         RETURN.
+      WHEN 'ABAPObject'.
+        CREATE OBJECT type TYPE cl_abap_refdescr.
+        type->type_kind = typekind_oref.
+        type->kind = kind_ref.
       WHEN OTHERS.
         WRITE / lv_name.
         ASSERT 1 = 'todo_cl_abap_typedescr'.
