@@ -5,6 +5,7 @@ ENDCLASS.
 
 CLASS cl_abap_refdescr IMPLEMENTATION.
   METHOD get_referenced_type.
-    ASSERT 2 = 'todo'.
+    CREATE OBJECT type.
+    type->absolute_name = 'CLASS_NAME_TODO'.
   ENDMETHOD.
 ENDCLASS.
