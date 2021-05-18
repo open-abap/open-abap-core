@@ -1,4 +1,4 @@
-INTERFACE if_sxml_attribute.
+INTERFACE if_sxml_attribute PUBLIC.
   TYPES attributes TYPE STANDARD TABLE OF REF TO if_sxml_attribute WITH DEFAULT KEY.
   DATA: BEGIN OF qname,
           name TYPE string,
