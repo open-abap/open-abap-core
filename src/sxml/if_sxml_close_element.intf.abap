@@ -1,4 +1,4 @@
-INTERFACE if_sxml_close_element.
+INTERFACE if_sxml_close_element PUBLIC.
   INTERFACES if_sxml_node.
 
   DATA: BEGIN OF qname,
