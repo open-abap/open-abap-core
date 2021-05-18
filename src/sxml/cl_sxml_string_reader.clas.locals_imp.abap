@@ -180,14 +180,13 @@ CLASS lcl_attribute DEFINITION.
 
   PRIVATE SECTION.
     DATA mv_value TYPE string.
-    DATA mv_value_type TYPE i.
 ENDCLASS.
 
 CLASS lcl_attribute IMPLEMENTATION.
   METHOD constructor.
     if_sxml_attribute~qname-name = name.
+    if_sxml_attribute~value_type = value_type.
     mv_value = value.
-    mv_value_type = mv_value_type.
   ENDMETHOD.
 
   METHOD if_sxml_attribute~get_value.
