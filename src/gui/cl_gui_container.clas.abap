@@ -1,0 +1,7 @@
+CLASS cl_gui_container DEFINITION PUBLIC.
+  PUBLIC SECTION.
+    CONSTANTS screen0 TYPE string VALUE 'screen0'.
+ENDCLASS.
+
+CLASS cl_gui_container IMPLEMENTATION.
+ENDCLASS.
