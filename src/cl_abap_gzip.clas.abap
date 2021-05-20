@@ -21,7 +21,7 @@ CLASS cl_abap_gzip IMPLEMENTATION.
 * todo, this doesnt work in browser?
     WRITE '@KERNEL const zlib = await import("zlib");'.
     WRITE '@KERNEL const buf = Buffer.from(gzip_in.get(), "hex");'.
-    WRITE '@KERNEL const decompress = zlib.inflateRawSync(buf).toString("hex");'.
+    WRITE '@KERNEL const decompress = zlib.inflateRawSync(buf).toString("hex").toUpperCase();'.
 
     WRITE '@KERNEL raw_out.set(decompress);'.
     raw_out_len = xstrlen( raw_out ).
@@ -31,7 +31,7 @@ CLASS cl_abap_gzip IMPLEMENTATION.
 * todo, this doesnt work in browser?
     WRITE '@KERNEL const zlib = await import("zlib");'.
     WRITE '@KERNEL const buf = Buffer.from(raw_in.get(), "hex");'.
-    WRITE '@KERNEL const gzi = zlib.deflateRawSync(buf).toString("hex");'.
+    WRITE '@KERNEL const gzi = zlib.deflateRawSync(buf).toString("hex").toUpperCase();'.
 
     WRITE '@KERNEL gzip_out.set(gzi);'.
     gzip_out_len = xstrlen( gzip_out ).
