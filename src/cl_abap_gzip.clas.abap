@@ -24,7 +24,7 @@ CLASS cl_abap_gzip IMPLEMENTATION.
     WRITE '@KERNEL const decompress = zlib.inflateRawSync(buf).toString("hex");'.
 
     WRITE '@KERNEL raw_out.set(decompress);'.
-    WRITE '@KERNEL raw_out_len.set(decompress.length / 2);'.
+    raw_out_len = xstrlen( raw_out ).
   ENDMETHOD.
 
   METHOD compress_binary.
@@ -34,6 +34,6 @@ CLASS cl_abap_gzip IMPLEMENTATION.
     WRITE '@KERNEL const gzi = zlib.deflateRawSync(buf).toString("hex");'.
 
     WRITE '@KERNEL gzip_out.set(gzi);'.
-    WRITE '@KERNEL gzip_out_len.set(gzi.length / 2);'.
+    gzip_out_len = xstrlen( gzip_out ).
   ENDMETHOD.
 ENDCLASS.
