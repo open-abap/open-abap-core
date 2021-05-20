@@ -18,10 +18,22 @@ ENDCLASS.
 
 CLASS cl_abap_gzip IMPLEMENTATION.
   METHOD decompress_binary.
-    ASSERT 2 = 'todo'.
+* todo, this doesnt work in browser?
+    WRITE '@KERNEL const zlib = await import("zlib");'.
+    WRITE '@KERNEL const buf = Buffer.from(gzip_in.get(), "hex");'.
+    WRITE '@KERNEL const decompress = zlib.inflateRawSync(buf).toString("hex");'.
+
+    WRITE '@KERNEL raw_out.set(decompress);'.
+    WRITE '@KERNEL raw_out_len.set(decompress.length / 2);'.
   ENDMETHOD.
 
   METHOD compress_binary.
-    ASSERT 2 = 'todo'.
+* todo, this doesnt work in browser?
+    WRITE '@KERNEL const zlib = await import("zlib");'.
+    WRITE '@KERNEL const buf = Buffer.from(raw_in.get(), "hex");'.
+    WRITE '@KERNEL const gzi = zlib.deflateRawSync(buf).toString("hex");'.
+
+    WRITE '@KERNEL gzip_out.set(gzi);'.
+    WRITE '@KERNEL gzip_out_len.set(gzi.length / 2);'.
   ENDMETHOD.
 ENDCLASS.
