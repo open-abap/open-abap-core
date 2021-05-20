@@ -12,6 +12,10 @@ CLASS lcl_response IMPLEMENTATION.
     ASSERT 2 = 'todo'.
   ENDMETHOD.
 
+  METHOD if_http_response~get_header_fields.
+    ASSERT 2 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_http_response~get_status.
     code = status.
   ENDMETHOD.
