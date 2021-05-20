@@ -124,4 +124,8 @@ CLASS cl_http_client IMPLEMENTATION.
     message = 'todo_open_abap'. " get from one of the response headers?
   ENDMETHOD.
 
+  METHOD if_http_client~send_sap_logon_ticket.
+    ASSERT 2 = 'not supported'.
+  ENDMETHOD.
+
 ENDCLASS.
