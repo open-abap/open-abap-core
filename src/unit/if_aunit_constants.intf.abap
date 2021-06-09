@@ -1,0 +1,3 @@
+INTERFACE if_aunit_constants PUBLIC.
+  CONSTANTS no TYPE i VALUE 0.
+ENDINTERFACE.
