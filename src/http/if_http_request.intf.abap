@@ -39,4 +39,8 @@ INTERFACE if_http_request PUBLIC.
       name TYPE string
       value TYPE string.
 
+  METHODS get_header_fields
+    CHANGING
+      fields TYPE tihttpnvp.
+
 ENDINTERFACE.

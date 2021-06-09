@@ -14,6 +14,7 @@ INTERFACE if_http_client PUBLIC.
   METHODS close.
   METHODS send.
   METHODS receive.
+  METHODS send_sap_logon_ticket.
 
   METHODS get_last_error
     EXPORTING

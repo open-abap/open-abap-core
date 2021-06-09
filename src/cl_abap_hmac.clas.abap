@@ -22,7 +22,7 @@ CLASS cl_abap_hmac IMPLEMENTATION.
     CLEAR ef_hmacxstring.
 
     lv_algorithm = to_lower( if_algorithm ).
-    ASSERT lv_algorithm = 'sha1' OR lv_algorithm = 'md5'.
+    ASSERT lv_algorithm = 'sha1' OR lv_algorithm = 'md5' OR lv_algorithm = 'sha256'.
 
 * todo, this doesnt work in browser?
     WRITE '@KERNEL const crypto = await import("crypto");'.
