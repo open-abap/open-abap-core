@@ -20,9 +20,21 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
         secs    TYPE i
       RETURNING
         VALUE(time) TYPE timestamp.
+
+    CLASS-METHODS systemtstmp_syst2utc
+      IMPORTING
+        syst_date TYPE d
+        syst_time TYPE t
+      EXPORTING
+        utc_tstmp TYPE p.
 ENDCLASS.
 
 CLASS cl_abap_tstmp IMPLEMENTATION.
+
+  METHOD systemtstmp_syst2utc.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD subtract.
     DATA str TYPE string.
     str = |{ tstmp1 TIMESTAMP = ISO }|.

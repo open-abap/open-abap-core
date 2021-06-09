@@ -17,7 +17,6 @@ CLASS cl_abap_hmac IMPLEMENTATION.
 
     DATA lv_algorithm TYPE string.
 
-    ASSERT if_key IS INITIAL.
     CLEAR ef_hmacstring.
     CLEAR ef_hmacxstring.
 
@@ -26,9 +25,14 @@ CLASS cl_abap_hmac IMPLEMENTATION.
 
 * todo, this doesnt work in browser?
     WRITE '@KERNEL const crypto = await import("crypto");'.
-    WRITE '@KERNEL var shasum = crypto.createHash(lv_algorithm.get());'.
-    WRITE '@KERNEL shasum.update(if_data.get(), "hex");'.
-    WRITE '@KERNEL ef_hmacstring.set(shasum.digest("hex").toUpperCase());'.
+    IF if_key IS INITIAL.
+      WRITE '@KERNEL var shasum = crypto.createHash(lv_algorithm.get());'.
+      WRITE '@KERNEL shasum.update(if_data.get(), "hex");'.
+      WRITE '@KERNEL ef_hmacstring.set(shasum.digest("hex").toUpperCase());'.
+    ELSE.
+      WRITE '@KERNEL let hmac = crypto.createHmac(lv_algorithm.get(), Buffer.from(if_key.get(), "hex")).update(if_data.get(), "hex").digest("hex").toUpperCase();'.
+      WRITE '@KERNEL ef_hmacstring.set(hmac);'.
+    ENDIF.
 
     ef_hmacxstring = ef_hmacstring.
 
