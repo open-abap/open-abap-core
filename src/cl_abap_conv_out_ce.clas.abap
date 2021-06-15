@@ -2,12 +2,17 @@ CLASS cl_abap_conv_out_ce DEFINITION PUBLIC.
   PUBLIC SECTION.
     CLASS-METHODS
       create
-        IMPORTING encoding TYPE string
-        RETURNING VALUE(ret) TYPE REF TO cl_abap_conv_out_ce.
+        IMPORTING
+          encoding TYPE string
+        RETURNING
+          VALUE(ret) TYPE REF TO cl_abap_conv_out_ce.
     METHODS
       convert
-        IMPORTING data TYPE string
-        EXPORTING buffer TYPE xstring.
+        IMPORTING
+          data TYPE string
+          n TYPE i
+        EXPORTING
+          buffer TYPE xstring.
 ENDCLASS.
 
 CLASS cl_abap_conv_out_ce IMPLEMENTATION.
