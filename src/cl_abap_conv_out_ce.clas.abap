@@ -22,6 +22,7 @@ CLASS cl_abap_conv_out_ce IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD convert.
+* todo, input parameter "N" not handled
     WRITE '@KERNEL let arr = new TextEncoder("utf-8").encode(data.get());'.
     WRITE '@KERNEL let result = arr.reduce(function(acc, i) { return acc + ("0" + i.toString(16)).slice(-2); }, "");'.
     WRITE '@KERNEL buffer.set(result.toUpperCase());'.
