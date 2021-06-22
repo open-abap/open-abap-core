@@ -3,7 +3,7 @@ CLASS cl_abap_conv_in_ce DEFINITION PUBLIC.
     CLASS-METHODS
       create
         IMPORTING
-          encoding TYPE string DEFAULT 'UTF-8'
+          encoding TYPE abap_encoding DEFAULT 'UTF-8'
           input TYPE xstring OPTIONAL
         RETURNING
           VALUE(ret) TYPE REF TO cl_abap_conv_in_ce.

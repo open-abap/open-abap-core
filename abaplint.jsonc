@@ -90,6 +90,7 @@
       "compute": true,
       "pack": true,
       "selectWithoutInto": true,
+      "exitFromSQL": true,
       "freeMemory": true,
       "requested": true,
       "communication": true,

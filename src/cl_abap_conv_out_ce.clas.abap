@@ -3,7 +3,7 @@ CLASS cl_abap_conv_out_ce DEFINITION PUBLIC.
     CLASS-METHODS
       create
         IMPORTING
-          encoding TYPE string
+          encoding TYPE abap_encoding
         RETURNING
           VALUE(ret) TYPE REF TO cl_abap_conv_out_ce.
     METHODS
