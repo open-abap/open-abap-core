@@ -18,9 +18,11 @@ CLASS cl_http_utility DEFINITION PUBLIC.
       RETURNING
         VALUE(encoded) TYPE string.
 
-    CLASS-METHODS decode_x_base64.
-
-    CLASS-METHODS encode_x_base64.
+    CLASS-METHODS encode_x_base64
+      IMPORTING
+        data           TYPE xstring
+      RETURNING 
+        VALUE(encoded) TYPE string.
 
     CLASS-METHODS fields_to_string
       IMPORTING
@@ -71,12 +73,9 @@ CLASS cl_http_utility IMPLEMENTATION.
     string = concat_lines_of( table = tab sep = '&' ).
   ENDMETHOD.
 
-  METHOD decode_x_base64.
-* todo    
-  ENDMETHOD.
-
   METHOD encode_x_base64.
-* todo    
+    WRITE '@KERNEL let buffer = Buffer.from(data.get(), "hex");'.
+    WRITE '@KERNEL encoded.set(buffer.toString("base64"));'.
   ENDMETHOD.
 
   METHOD decode_x_base64.
