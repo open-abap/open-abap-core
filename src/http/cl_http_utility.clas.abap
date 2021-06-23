@@ -80,7 +80,7 @@ CLASS cl_http_utility IMPLEMENTATION.
 
   METHOD decode_x_base64.
     WRITE '@KERNEL let buffer = Buffer.from(encoded.get(), "base64");'.
-    WRITE '@KERNEL decoded.set(buffer.toString("hex"));'.
+    WRITE '@KERNEL decoded.set(buffer.toString("hex").toUpperCase());'.
   ENDMETHOD.
 
   METHOD unescape_url.
