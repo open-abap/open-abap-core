@@ -5,6 +5,7 @@ CLASS ltcl_conv_in DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FIN
     METHODS test2 FOR TESTING.
     METHODS test3 FOR TESTING.
     METHODS empty FOR TESTING.
+    METHODS utf16le FOR TESTING.
 
 ENDCLASS.
 
@@ -75,6 +76,22 @@ CLASS ltcl_conv_in IMPLEMENTATION.
       EXPORTING input = input
       IMPORTING data = data ).
     cl_abap_unit_assert=>assert_initial( data ).
+
+  ENDMETHOD.
+
+  METHOD utf16le.
+
+    DATA lv_hex TYPE xstring.
+    DATA lv_str TYPE string.
+    DATA lo_conv TYPE REF TO cl_abap_conv_in_ce.
+
+    lv_hex = '680065006C006C006F00200077006F0072006C006400'.
+    lo_conv = cl_abap_conv_in_ce=>create( encoding = '4103' ).
+    lo_conv->convert( EXPORTING input = lv_hex IMPORTING data = lv_str ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_str
+      exp = 'hello world' ).
 
   ENDMETHOD.
 
