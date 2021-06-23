@@ -18,6 +18,10 @@ CLASS cl_http_utility DEFINITION PUBLIC.
       RETURNING
         VALUE(encoded) TYPE string.
 
+    CLASS-METHODS decode_x_base64.
+
+    CLASS-METHODS encode_x_base64.
+
     CLASS-METHODS fields_to_string
       IMPORTING
         fields TYPE tihttpnvp
@@ -65,6 +69,14 @@ CLASS cl_http_utility IMPLEMENTATION.
       APPEND str TO tab.
     ENDLOOP.
     string = concat_lines_of( table = tab sep = '&' ).
+  ENDMETHOD.
+
+  METHOD decode_x_base64.
+* todo    
+  ENDMETHOD.
+
+  METHOD encode_x_base64.
+* todo    
   ENDMETHOD.
 
   METHOD decode_x_base64.
