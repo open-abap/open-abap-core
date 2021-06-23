@@ -9,22 +9,31 @@ CLASS cl_abap_conv_out_ce DEFINITION PUBLIC.
     METHODS
       convert
         IMPORTING
-          data TYPE string
-          n TYPE i
+          data   TYPE string
+          n      TYPE i
         EXPORTING
           buffer TYPE xstring.
+  PRIVATE SECTION.
+    DATA mv_js_encoding TYPE string.
 ENDCLASS.
 
 CLASS cl_abap_conv_out_ce IMPLEMENTATION.
   METHOD create.
-    ASSERT encoding = 'UTF-8'.
     CREATE OBJECT ret.
+    CASE encoding.
+      WHEN 'UTF-8'.
+        ret->mv_js_encoding = 'utf8'.
+      WHEN '4103'.
+        ret->mv_js_encoding = 'utf16le'.
+      WHEN OTHERS.
+        ASSERT 1 = 'not supported'.
+    ENDCASE.
   ENDMETHOD.
 
   METHOD convert.
 * todo, input parameter "N" not handled
-    WRITE '@KERNEL let arr = new TextEncoder("utf-8").encode(data.get());'.
-    WRITE '@KERNEL let result = arr.reduce(function(acc, i) { return acc + ("0" + i.toString(16)).slice(-2); }, "");'.
+
+    WRITE '@KERNEL let result = Buffer.from(data.get(), this.mv_js_encoding.get()).toString("hex");'.
     WRITE '@KERNEL buffer.set(result.toUpperCase());'.
   ENDMETHOD.
 ENDCLASS.

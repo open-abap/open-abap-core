@@ -22,12 +22,22 @@ CLASS cl_abap_conv_in_ce DEFINITION PUBLIC.
           data  TYPE string.
   PRIVATE SECTION.
     DATA mv_input TYPE xstring.
+    DATA mv_js_encoding TYPE string.
 ENDCLASS.
 
 CLASS cl_abap_conv_in_ce IMPLEMENTATION.
   METHOD create.
-    ASSERT encoding = 'UTF-8'.
     CREATE OBJECT ret.
+
+    CASE encoding.
+      WHEN 'UTF-8'.
+        ret->mv_js_encoding = 'utf8'.
+      WHEN '4103'.
+        ret->mv_js_encoding = 'utf16le'.
+      WHEN OTHERS.
+        ASSERT 1 = 'not supported'.
+    ENDCASE.
+
     ret->mv_input = input.
   ENDMETHOD.
 
@@ -35,9 +45,8 @@ CLASS cl_abap_conv_in_ce IMPLEMENTATION.
     IF input IS INITIAL.
       RETURN.
     ENDIF.
-    WRITE '@KERNEL let arr = new Uint8Array(input.get().match(/.{1,2}/g).map(byte => parseInt(byte, 16)));'.
-    WRITE '@KERNEL let res = new TextDecoder("utf-8").decode(arr);'.
-    WRITE '@KERNEL data.set(res);'.
+    WRITE '@KERNEL let result = Buffer.from(input.get(), "hex").toString(this.mv_js_encoding.get());'.
+    WRITE '@KERNEL data.set(result);'.
   ENDMETHOD.
 
   METHOD read.
