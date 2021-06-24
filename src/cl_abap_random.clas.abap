@@ -6,6 +6,7 @@ CLASS cl_abap_random DEFINITION PUBLIC.
       RETURNING 
         VALUE(ro_random) TYPE REF TO cl_abap_random.
     METHODS int RETURNING VALUE(rv_integer) TYPE i.
+    CLASS-METHODS seed RETURNING VALUE(rv_seed) TYPE i.
 * todo, use "crypto." instead, see cl_abap_hmac which also uses crypto
 ENDCLASS.
 
@@ -17,5 +18,9 @@ CLASS cl_abap_random IMPLEMENTATION.
   METHOD int.
 * todo, currently only positive integers are returned
     WRITE '@KERNEL rv_integer.set(Math.floor(Math.random() * 2147483647));'.
+  ENDMETHOD.
+
+  METHOD seed.
+    WRITE '@KERNEL rv_seed.set(Math.floor(Math.random() * 2147483647));'.
   ENDMETHOD.
 ENDCLASS.
