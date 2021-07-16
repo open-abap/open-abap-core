@@ -12,6 +12,17 @@
   "rules": {
     "check_include": false, // todo
     "uncaught_exception": false, // todo
+    "cyclic_oo": false,
+    "inline_data_old_versions": false,
+    "intf_referencing_clas": false,
+    "keep_single_parameter_on_one_line": true,
+    "line_break_multiple_parameters": false,
+    "line_break_style": false,
+    "msag_consistency": true,
+    "nesting": true,
+    "unused_variables": false,
+    "try_without_catch": true,
+    "identical_descriptions": true,
     "check_subrc": false,
     "check_text_elements": true,
     "line_only_punc": true,
