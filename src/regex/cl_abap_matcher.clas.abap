@@ -55,7 +55,7 @@ CLASS cl_abap_matcher IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD find_next.
-    ASSERT 1 = 'todo'.
+    found = abap_false.
   ENDMETHOD.
 
   METHOD get_submatch.

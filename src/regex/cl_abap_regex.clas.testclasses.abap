@@ -1,7 +1,8 @@
 CLASS ltcl_test DEFINITION FOR TESTING DURATION SHORT RISK LEVEL HARMLESS FINAL.
 
   PRIVATE SECTION.
-    METHODS: test01 FOR TESTING.
+    METHODS test01 FOR TESTING RAISING cx_static_check.
+    METHODS no_next FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -37,6 +38,23 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = ls_result-length
       exp = 2 ).
+
+  ENDMETHOD.
+
+  METHOD no_next.
+
+    DATA lo_regex TYPE REF TO cl_abap_regex.
+    DATA lo_matcher TYPE REF TO cl_abap_matcher.
+    
+    CREATE OBJECT lo_regex
+      EXPORTING
+        pattern     = '1111'
+        ignore_case = abap_true.
+    
+    lo_matcher = lo_regex->create_matcher( text = '2222' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_matcher->find_next( )
+      exp = abap_false ).
 
   ENDMETHOD.
 
