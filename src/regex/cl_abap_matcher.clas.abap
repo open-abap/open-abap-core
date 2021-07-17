@@ -32,6 +32,7 @@ CLASS cl_abap_matcher DEFINITION PUBLIC.
   PRIVATE SECTION.
     DATA mt_matches TYPE match_result_tab.
     DATA mv_index TYPE i.
+    DATA mv_text TYPE string.
 
 ENDCLASS.
 
@@ -43,6 +44,7 @@ CLASS cl_abap_matcher IMPLEMENTATION.
     ELSE.
       FIND ALL OCCURRENCES OF REGEX pattern IN text RESULTS mt_matches.
     ENDIF.
+    mv_text = text.
   ENDMETHOD.
 
   METHOD find_all.
@@ -56,15 +58,25 @@ CLASS cl_abap_matcher IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_submatch.
-    ASSERT 1 = 'todo'.
+    DATA ls_match LIKE LINE OF mt_matches.
+    DATA ls_submatch LIKE LINE OF ls_match-submatches.
+    READ TABLE mt_matches INDEX mv_index INTO ls_match.
+    READ TABLE ls_match-submatches INDEX index INTO ls_submatch.
+    IF sy-subrc = 0.
+      match = mv_text+ls_submatch-offset(ls_submatch-length).
+    ENDIF.
   ENDMETHOD.
 
   METHOD get_offset.
-    ASSERT 1 = 'todo'.
+    DATA ls_match LIKE LINE OF mt_matches.
+    READ TABLE mt_matches INDEX mv_index INTO ls_match.
+    offset = ls_match-offset.
   ENDMETHOD.
 
   METHOD get_length.
-    ASSERT 1 = 'todo'.
+    DATA ls_match LIKE LINE OF mt_matches.
+    READ TABLE mt_matches INDEX mv_index INTO ls_match.
+    length = ls_match-length.
   ENDMETHOD.
 
 ENDCLASS.
