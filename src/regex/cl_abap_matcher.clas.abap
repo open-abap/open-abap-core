@@ -30,32 +30,29 @@ CLASS cl_abap_matcher DEFINITION PUBLIC.
         VALUE(length) TYPE i.
 
   PRIVATE SECTION.
-    DATA mv_pattern TYPE string.
-    DATA mv_text TYPE string.
-    DATA mv_ignore_case TYPE abap_bool.
+    DATA mt_matches TYPE match_result_tab.
+    DATA mv_index TYPE i.
 
 ENDCLASS.
 
 CLASS cl_abap_matcher IMPLEMENTATION.
 
   METHOD constructor.
-    mv_pattern = pattern.
-    mv_text = text.
-    mv_ignore_case = ignore_case.
+    IF ignore_case = abap_true.
+      FIND ALL OCCURRENCES OF REGEX pattern IN text RESULTS mt_matches IGNORING CASE.
+    ELSE.
+      FIND ALL OCCURRENCES OF REGEX pattern IN text RESULTS mt_matches.
+    ENDIF.
   ENDMETHOD.
 
   METHOD find_all.
-
-    IF mv_ignore_case = abap_true.
-      FIND ALL OCCURRENCES OF REGEX mv_pattern IN mv_text RESULTS rt_matches IGNORING CASE.
-    ELSE.
-      FIND ALL OCCURRENCES OF REGEX mv_pattern IN mv_text RESULTS rt_matches.
-    ENDIF.
-
+    rt_matches = mt_matches.
   ENDMETHOD.
 
   METHOD find_next.
-    found = abap_false.
+    mv_index = mv_index + 1.
+    READ TABLE mt_matches INDEX mv_index TRANSPORTING NO FIELDS.
+    found = boolc( sy-subrc = 0 ).
   ENDMETHOD.
 
   METHOD get_submatch.
