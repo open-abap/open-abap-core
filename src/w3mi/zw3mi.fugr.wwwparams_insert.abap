@@ -7,6 +7,6 @@ FUNCTION wwwparams_insert.
 *"      ENTRY_EXISTS
 *"----------------------------------------------------------------------
 
-* todo
+  ASSERT 1 = 'todo'.
 
 ENDFUNCTION.

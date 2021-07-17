@@ -10,6 +10,6 @@ FUNCTION wwwdata_export.
 *"      EXPORT_ERROR
 *"----------------------------------------------------------------------
 
-* todo
+  ASSERT 1 = 'todo'.
 
 ENDFUNCTION.

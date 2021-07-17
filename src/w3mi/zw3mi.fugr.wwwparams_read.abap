@@ -11,6 +11,6 @@ FUNCTION wwwparams_read.
 *"      ENTRY_NOT_EXISTS
 *"----------------------------------------------------------------------
 
-* todo
+  ASSERT 1 = 'todo'.
 
 ENDFUNCTION.
