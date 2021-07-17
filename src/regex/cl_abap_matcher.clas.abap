@@ -11,6 +11,24 @@ CLASS cl_abap_matcher DEFINITION PUBLIC.
       RETURNING
         VALUE(rt_matches) TYPE match_result_tab.
 
+    METHODS find_next
+      RETURNING
+        VALUE(found) TYPE abap_bool.
+
+    METHODS get_submatch
+      IMPORTING 
+        index TYPE i
+      RETURNING 
+        VALUE(match) TYPE string.
+
+    METHODS get_offset
+      RETURNING 
+        VALUE(offset) TYPE i.
+
+    METHODS get_length
+      RETURNING 
+        VALUE(length) TYPE i.
+
   PRIVATE SECTION.
     DATA mv_pattern TYPE string.
     DATA mv_text TYPE string.
@@ -34,6 +52,22 @@ CLASS cl_abap_matcher IMPLEMENTATION.
       FIND ALL OCCURRENCES OF REGEX mv_pattern IN mv_text RESULTS rt_matches.
     ENDIF.
 
+  ENDMETHOD.
+
+  METHOD find_next.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get_submatch.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get_offset.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get_length.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
 ENDCLASS.
