@@ -8,6 +8,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS request_header_fields FOR TESTING RAISING cx_static_check.
     METHODS default_uri FOR TESTING RAISING cx_static_check.
     METHODS query_field FOR TESTING RAISING cx_static_check.
+    METHODS git FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -183,6 +184,66 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = lv_cdata
       exp = '*"foo": "bar"*' ).
+  ENDMETHOD.
+
+  METHOD git.
+
+    DATA li_client TYPE REF TO if_http_client.
+    DATA lv_code TYPE i.
+    DATA lv_cdata TYPE string.
+    DATA lv_str TYPE string.
+    DATA lv_hex TYPE xstring.
+    DATA lv_resp TYPE xstring.
+    
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = 'https://github.com'
+        ssl_id = 'ANONYM'
+      IMPORTING
+        client = li_client ).
+    li_client->request->set_header_field(
+        name  = '~request_uri'
+        value = '/abapGit/abapGit/info/refs?service=git-upload-pack' ).
+    li_client->send( ).
+    li_client->receive( ).
+    li_client->response->get_status( IMPORTING code = lv_code ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_code
+      exp = 200 ).
+    lv_cdata = li_client->response->get_cdata( ).
+    ASSERT lv_cdata(4) = '001e'.
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = '001e*' ).
+
+**************
+
+    li_client->request->set_header_field(
+      name  = '~request_method'
+      value = 'POST' ).
+    li_client->request->set_header_field(
+      name  = '~request_uri'
+      value = '/abapGit/abapGit/git-upload-pack' ).
+    li_client->request->set_header_field(
+      name  = 'Content-Type'
+      value = 'application/x-git-upload-pack-request' ).
+    li_client->request->set_header_field(
+      name  = 'Accept'
+      value = 'application/x-git-upload-pack-result' ).
+
+    lv_str = |0056want fc1689cd6eca126e79e923381c02e75fb3464d28 side-band-64k no-progress multi_ack\n000Ddeepen 1\n00000009done\n|.
+    cl_abap_conv_out_ce=>create( 'UTF-8' )->convert(
+      EXPORTING data = lv_str
+      IMPORTING buffer = lv_hex ).
+
+    " li_client->request->set_data( lv_hex ).
+    " li_client->send( ).
+    " li_client->receive( ).
+    " li_client->response->get_status( IMPORTING code = lv_code ).
+    " ASSERT lv_code = 200.
+    " lv_resp = li_client->response->get_data( ).
+    " ASSERT xstrlen( lv_resp ) > 2000000.
+
   ENDMETHOD.
 
 ENDCLASS.
