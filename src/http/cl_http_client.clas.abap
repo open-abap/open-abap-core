@@ -64,17 +64,10 @@ CLASS cl_http_client IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_client~close.
-* https://www.chromestatus.com/feature/5760375567941632
-* https://github.com/node-fetch/node-fetch/issues/599
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_http_client~send.
-* note that fetch() also works in browsers,
-* https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
-* https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
-* https://caniuse.com/fetch
-
     DATA lv_method TYPE string.
     DATA lv_url TYPE string.
     DATA lv_body TYPE string.
@@ -93,7 +86,7 @@ CLASS cl_http_client IMPLEMENTATION.
     IF lines( lt_form_fields ) > 0.
       lv_url = lv_url && '?' && cl_http_utility=>fields_to_string( lt_form_fields ).
     ENDIF.
-*    WRITE '@KERNEL console.dir(lv_url.get());'.
+    " WRITE '@KERNEL console.dir(lv_url.get());'.
 
 * building headers
     if_http_client~request->get_header_fields( CHANGING fields = lt_header_fields ).
@@ -105,12 +98,35 @@ CLASS cl_http_client IMPLEMENTATION.
 
     lv_body = if_http_client~request->get_cdata( ).
 
-    WRITE '@KERNEL let response = await globalThis.fetch(lv_url.get(), {method: lv_method.get(), headers: headers, body: lv_method.get() === "GET" ? undefined : lv_body.get()});'.
+    WRITE '@KERNEL const https = await import("https");'.
+    WRITE '@KERNEL function postData(url, options, body) {'.
+    WRITE '@KERNEL   return new Promise((resolve, reject) => {'.
+    WRITE '@KERNEL     const req = https.request(url, options,'.
+    WRITE '@KERNEL       (res) => {'.
+    WRITE '@KERNEL         let body = "";'.
+    WRITE '@KERNEL         res.on("data", (chunk) => (body += chunk.toString()));'.
+    WRITE '@KERNEL         res.on("error", reject);'.
+    WRITE '@KERNEL         res.on("end", () => {'.
+    WRITE '@KERNEL           if (res.statusCode >= 200 && res.statusCode <= 299) {'.
+    WRITE '@KERNEL             resolve({statusCode: res.statusCode, headers: res.headers, body: body});'.
+    WRITE '@KERNEL           } else {'.
+    WRITE '@KERNEL             reject("Request failed. status: " + res.statusCode + ", body: " + body);'.
+    WRITE '@KERNEL           }'.
+    WRITE '@KERNEL         });'.
+    WRITE '@KERNEL       });'.
+    WRITE '@KERNEL     req.on("error", reject);'.
+    WRITE '@KERNEL     req.write(body, "binary");'.
+    WRITE '@KERNEL     req.end();'.
+    WRITE '@KERNEL   });'.
+    WRITE '@KERNEL }'.
 
-*    WRITE '@KERNEL console.dir(await response.text());'.
+    WRITE '@KERNEL let response = await postData(lv_url.get(), {method: lv_method.get(), headers: headers}, lv_body.get());'.
 
-    WRITE '@KERNEL this.if_http_client$response.get().status.set(response.status);'.
-    WRITE '@KERNEL this.if_http_client$response.get().cdata.set(await response.text());'.
+    " WRITE '@KERNEL console.dir(response);'.
+    " WRITE '@KERNEL console.dir(response.statusCode);'.
+
+    WRITE '@KERNEL this.if_http_client$response.get().status.set(response.statusCode);'.
+    WRITE '@KERNEL this.if_http_client$response.get().cdata.set(response.body);'.
 
   ENDMETHOD.
 
