@@ -8,6 +8,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS request_header_fields FOR TESTING RAISING cx_static_check.
     METHODS default_uri FOR TESTING RAISING cx_static_check.
     METHODS query_field FOR TESTING RAISING cx_static_check.
+    METHODS git_list_branches FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -183,6 +184,34 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = lv_cdata
       exp = '*"foo": "bar"*' ).
+  ENDMETHOD.
+
+  METHOD git_list_branches.
+
+    DATA li_client TYPE REF TO if_http_client.
+    DATA lv_code TYPE i.
+    DATA lv_cdata TYPE string.
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = 'https://github.com'
+        ssl_id = 'ANONYM'
+      IMPORTING
+        client = li_client ).
+    li_client->request->set_header_field(
+        name  = '~request_uri'
+        value = '/abapGit/abapGit/info/refs?service=git-upload-pack' ).
+    li_client->send( ).
+    li_client->receive( ).
+    li_client->response->get_status( IMPORTING code = lv_code ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_code
+      exp = 200 ).
+    lv_cdata = li_client->response->get_cdata( ).
+    ASSERT lv_cdata(4) = '001e'.
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = '001e*' ).
+
   ENDMETHOD.
 
 ENDCLASS.
