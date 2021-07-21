@@ -65,9 +65,20 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
           msg TYPE string OPTIONAL
           quit TYPE i OPTIONAL.
 
+    CLASS-METHODS
+      assert_bound
+        IMPORTING
+          act TYPE string
+          msg TYPE string OPTIONAL
+          quit TYPE i OPTIONAL.
+
 ENDCLASS.
 
 CLASS cl_abap_unit_assert IMPLEMENTATION.
+
+  METHOD assert_bound.
+    ASSERT act IS BOUND.
+  ENDMETHOD.
 
   METHOD assert_char_cp.
     ASSERT act CP exp.
