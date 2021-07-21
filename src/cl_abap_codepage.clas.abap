@@ -6,6 +6,9 @@ CLASS cl_abap_codepage DEFINITION PUBLIC.
     CLASS-METHODS convert_from
       IMPORTING input TYPE xstring
       RETURNING VALUE(output) TYPE string.
+    CLASS-METHODS sap_codepage
+      IMPORTING encoding TYPE string
+      RETURNING VALUE(codepage) TYPE abap_encoding.
 ENDCLASS.
 
 CLASS cl_abap_codepage IMPLEMENTATION.
@@ -23,5 +26,10 @@ CLASS cl_abap_codepage IMPLEMENTATION.
     conv->convert(
       EXPORTING input = input
       IMPORTING data = output ).
+  ENDMETHOD.
+
+  METHOD sap_codepage.
+    ASSERT encoding = 'UTF-16LE'.
+    codepage = '4103'.
   ENDMETHOD.
 ENDCLASS.
