@@ -14,6 +14,12 @@ CLASS cl_abap_conv_out_ce DEFINITION PUBLIC.
           n      TYPE i
         EXPORTING
           buffer TYPE xstring.
+    METHODS write
+      IMPORTING 
+        data TYPE string.
+    METHODS get_buffer
+      RETURNING 
+        VALUE(buffer) TYPE xstring.
   PRIVATE SECTION.
     DATA mv_js_encoding TYPE string.
 ENDCLASS.
@@ -29,6 +35,14 @@ CLASS cl_abap_conv_out_ce IMPLEMENTATION.
       WHEN OTHERS.
         ASSERT 1 = 'not supported'.
     ENDCASE.
+  ENDMETHOD.
+
+  METHOD write.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get_buffer.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD convert.
