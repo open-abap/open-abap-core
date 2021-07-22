@@ -15,12 +15,18 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
     METHODS:
       get_components RETURNING VALUE(components) TYPE component_table.
 
+    CLASS-METHODS create IMPORTING components TYPE component_table.
+
   PRIVATE SECTION.
     DATA gt_components TYPE component_table.
 
 ENDCLASS.
 
 CLASS cl_abap_structdescr IMPLEMENTATION.
+
+  METHOD create.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD constructor.
     DATA lv_name TYPE string.
