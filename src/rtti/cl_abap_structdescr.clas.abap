@@ -15,7 +15,9 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
     METHODS:
       get_components RETURNING VALUE(components) TYPE component_table.
 
-    CLASS-METHODS create IMPORTING components TYPE component_table.
+    CLASS-METHODS create
+      IMPORTING components TYPE component_table
+      RETURNING VALUE(ref) TYPE REF TO cl_abap_structdescr.
 
   PRIVATE SECTION.
     DATA gt_components TYPE component_table.

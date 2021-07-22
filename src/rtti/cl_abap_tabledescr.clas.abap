@@ -6,7 +6,9 @@ CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
     METHODS get_table_line_type
       RETURNING
         VALUE(type) TYPE REF TO cl_abap_typedescr.
-    CLASS-METHODS create IMPORTING type TYPE REF TO cl_abap_typedescr.
+    CLASS-METHODS create
+      IMPORTING type TYPE REF TO cl_abap_typedescr
+      RETURNING VALUE(ref) TYPE REF TO cl_abap_tabledescr.
   PRIVATE SECTION.
     DATA lo_type TYPE REF TO cl_abap_typedescr.
 ENDCLASS.
