@@ -10,14 +10,16 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
     CONSTANTS platform_windows98 TYPE i VALUE 5.
     CONSTANTS platform_windowsxp TYPE i VALUE 6.
 
-    CLASS-METHODS:
+    CLASS-METHODS
       gui_download
         IMPORTING
           bin_filesize TYPE i
           filename     TYPE string
           filetype     TYPE string
         CHANGING
-          data_tab TYPE any,
+          data_tab TYPE any.
+
+    CLASS-METHODS
       gui_upload
         IMPORTING
           filename TYPE string
@@ -25,7 +27,9 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
         EXPORTING
           filelength TYPE i
         CHANGING
-          data_tab TYPE any,
+          data_tab TYPE any.
+
+    CLASS-METHODS
       file_open_dialog
         IMPORTING
           window_title     TYPE string
@@ -34,10 +38,14 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
         CHANGING
           file_table  TYPE filetable
           rc          TYPE i
-          user_action TYPE i,
+          user_action TYPE i.
+    
+    CLASS-METHODS
       get_platform
         RETURNING
-          VALUE(platform) TYPE i,
+          VALUE(platform) TYPE i.
+
+    CLASS-METHODS
       file_save_dialog
         IMPORTING
           window_title         TYPE string
@@ -49,11 +57,64 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
           path        TYPE string
           fullpath    TYPE string
           user_action TYPE i.
+
+    CLASS-METHODS
+      directory_browse
+        IMPORTING 
+          window_title    TYPE string
+          initial_folder  TYPE string
+        CHANGING
+          selected_folder TYPE string.
+
+    CLASS-METHODS
+      execute
+        IMPORTING 
+          document TYPE string.          
+
+    CLASS-METHODS
+      get_file_separator
+        CHANGING 
+          file_separator TYPE string.         
+          
+    CLASS-METHODS
+      directory_exist
+        IMPORTING
+          directory TYPE string
+        RETURNING
+          VALUE(result) TYPE abap_bool.            
+          
+    CLASS-METHODS
+      directory_create
+        IMPORTING
+          directory TYPE string
+        CHANGING
+          rc TYPE i.           
+
 ENDCLASS.
 
 CLASS cl_gui_frontend_services IMPLEMENTATION.
+  METHOD directory_exist.
+    ASSERT 1 = 'directory_exist not supported'.
+  ENDMETHOD.
+
+  METHOD directory_create.
+    ASSERT 1 = 'directory_create not supported'.
+  ENDMETHOD.
+
   METHOD gui_download.
     ASSERT 1 = 'gui_download not supported'.
+  ENDMETHOD.
+
+  METHOD get_file_separator.
+    ASSERT 1 = 'get_file_separator not supported'.
+  ENDMETHOD.
+
+  METHOD execute.
+    ASSERT 1 = 'execute not supported'.
+  ENDMETHOD.
+
+  METHOD directory_browse.
+    ASSERT 1 = 'directory_browse not supported'.
   ENDMETHOD.
 
   METHOD gui_upload.
