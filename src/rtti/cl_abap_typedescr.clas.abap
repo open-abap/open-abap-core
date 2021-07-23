@@ -18,6 +18,11 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
         IMPORTING data TYPE REF TO object
         RETURNING VALUE(type) TYPE REF TO cl_abap_typedescr.
 
+    METHODS
+      get_relative_name
+        RETURNING 
+          VALUE(name) TYPE string.
+
     DATA type_kind TYPE c LENGTH 1.
     DATA kind TYPE c LENGTH 1.
     DATA absolute_name TYPE string.
@@ -54,6 +59,10 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 
     ASSERT 1 = 'todo'.
 
+  ENDMETHOD.
+
+  METHOD get_relative_name.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD describe_by_data_ref.
