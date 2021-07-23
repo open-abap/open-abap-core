@@ -13,11 +13,14 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
     TYPES: component_table TYPE STANDARD TABLE OF component WITH DEFAULT KEY.
 
     METHODS:
-      get_components RETURNING VALUE(components) TYPE component_table.
+      get_components RETURNING VALUE(components) TYPE component_table,
+      is_ddic_type RETURNING VALUE(bool) TYPE abap_bool.
 
     CLASS-METHODS create
-      IMPORTING components TYPE component_table
-      RETURNING VALUE(ref) TYPE REF TO cl_abap_structdescr.
+      IMPORTING 
+        components TYPE component_table
+      RETURNING 
+        VALUE(ref) TYPE REF TO cl_abap_structdescr.
 
   PRIVATE SECTION.
     DATA gt_components TYPE component_table.
@@ -27,6 +30,10 @@ ENDCLASS.
 CLASS cl_abap_structdescr IMPLEMENTATION.
 
   METHOD create.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD is_ddic_type.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
