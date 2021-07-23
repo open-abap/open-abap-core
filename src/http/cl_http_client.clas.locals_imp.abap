@@ -29,7 +29,9 @@ CLASS lcl_response IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_response~get_data.
-    ASSERT 2 = 'todo'.
+    cl_abap_conv_out_ce=>create( 'UTF-8' )->convert(
+      EXPORTING data = cdata
+      IMPORTING buffer = val ).
   ENDMETHOD.
 
 ENDCLASS.

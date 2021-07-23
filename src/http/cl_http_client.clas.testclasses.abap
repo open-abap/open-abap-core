@@ -20,6 +20,7 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA li_client TYPE REF TO if_http_client.
     DATA lv_code TYPE i.
     DATA lv_cdata TYPE string.
+    DATA lv_xdata TYPE xstring.
 
     cl_http_client=>create_by_url(
       EXPORTING
@@ -40,6 +41,9 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = lv_cdata
       exp = '*headers*' ).
+
+    lv_xdata = li_client->response->get_data( ).
+    cl_abap_unit_assert=>assert_not_initial( lv_xdata ).
 
   ENDMETHOD.
 
@@ -237,7 +241,7 @@ CLASS ltcl_test IMPLEMENTATION.
       EXPORTING data = lv_str
       IMPORTING buffer = lv_hex ).
 
-    " li_client->request->set_data( lv_hex ).
+    li_client->request->set_data( lv_hex ).
     " li_client->send( ).
     " li_client->receive( ).
     " li_client->response->get_status( IMPORTING code = lv_code ).
