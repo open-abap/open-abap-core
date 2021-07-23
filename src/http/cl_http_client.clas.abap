@@ -64,7 +64,8 @@ CLASS cl_http_client IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_client~close.
-    ASSERT 1 = 'todo'.
+* todo    
+    RETURN.
   ENDMETHOD.
 
   METHOD if_http_client~send.
