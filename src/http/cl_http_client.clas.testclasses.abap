@@ -9,6 +9,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS default_uri FOR TESTING RAISING cx_static_check.
     METHODS query_field FOR TESTING RAISING cx_static_check.
     METHODS git FOR TESTING RAISING cx_static_check.
+    METHODS get_set_request_data FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -244,6 +245,44 @@ CLASS ltcl_test IMPLEMENTATION.
     " lv_resp = li_client->response->get_data( ).
     " ASSERT xstrlen( lv_resp ) > 2000000.
 
+  ENDMETHOD.
+
+  METHOD get_set_request_data.
+
+    DATA lv_string TYPE string.
+    DATA lv_xstring TYPE xstring.
+    DATA li_client TYPE REF TO if_http_client.
+    
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = 'https://github.com'
+        ssl_id = 'ANONYM'
+      IMPORTING
+        client = li_client ).
+    li_client->request->set_cdata( 'ABC' ).
+
+    lv_string = li_client->request->get_cdata( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_string
+      exp = 'ABC' ).  
+
+    lv_xstring = li_client->request->get_data( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_xstring
+      exp = '414243' ).  
+
+    li_client->request->set_data( lv_xstring ).
+    
+    lv_xstring = li_client->request->get_data( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_xstring
+      exp = '414243' ).    
+
+    lv_string = li_client->request->get_cdata( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_string
+      exp = 'ABC' ).
+  
   ENDMETHOD.
 
 ENDCLASS.

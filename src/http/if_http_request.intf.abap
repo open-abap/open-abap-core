@@ -30,7 +30,7 @@ INTERFACE if_http_request PUBLIC.
       version TYPE string.
 
   METHODS set_data IMPORTING data TYPE xstring.
-
+  METHODS get_data RETURNING VALUE(data) TYPE xstring.
   METHODS set_cdata IMPORTING data TYPE string.
   METHODS get_cdata RETURNING VALUE(data) TYPE string.
 
