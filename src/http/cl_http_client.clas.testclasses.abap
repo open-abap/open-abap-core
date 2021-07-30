@@ -9,6 +9,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS default_uri FOR TESTING RAISING cx_static_check.
     METHODS query_field FOR TESTING RAISING cx_static_check.
     METHODS git FOR TESTING RAISING cx_static_check.
+    METHODS get_set_request_data FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -19,6 +20,7 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA li_client TYPE REF TO if_http_client.
     DATA lv_code TYPE i.
     DATA lv_cdata TYPE string.
+    DATA lv_xdata TYPE xstring.
 
     cl_http_client=>create_by_url(
       EXPORTING
@@ -39,6 +41,9 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = lv_cdata
       exp = '*headers*' ).
+
+    lv_xdata = li_client->response->get_data( ).
+    cl_abap_unit_assert=>assert_not_initial( lv_xdata ).
 
   ENDMETHOD.
 
@@ -233,17 +238,57 @@ CLASS ltcl_test IMPLEMENTATION.
 
     lv_str = |0056want fc1689cd6eca126e79e923381c02e75fb3464d28 side-band-64k no-progress multi_ack\n000Ddeepen 1\n00000009done\n|.
     cl_abap_conv_out_ce=>create( 'UTF-8' )->convert(
-      EXPORTING data = lv_str
+      EXPORTING data   = lv_str
       IMPORTING buffer = lv_hex ).
 
-    " li_client->request->set_data( lv_hex ).
-    " li_client->send( ).
-    " li_client->receive( ).
-    " li_client->response->get_status( IMPORTING code = lv_code ).
-    " ASSERT lv_code = 200.
-    " lv_resp = li_client->response->get_data( ).
-    " ASSERT xstrlen( lv_resp ) > 2000000.
+    li_client->request->set_data( lv_hex ).
+    li_client->send( ).
+    li_client->receive( ).
+    li_client->response->get_status( IMPORTING code = lv_code ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_code
+      exp = 200 ).
+    lv_resp = li_client->response->get_data( ).
+    cl_abap_unit_assert=>assert_true( boolc( xstrlen( lv_resp ) > 2000000 ) ).
 
+  ENDMETHOD.
+
+  METHOD get_set_request_data.
+
+    DATA lv_string TYPE string.
+    DATA lv_xstring TYPE xstring.
+    DATA li_client TYPE REF TO if_http_client.
+    
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = 'https://github.com'
+        ssl_id = 'ANONYM'
+      IMPORTING
+        client = li_client ).
+    li_client->request->set_cdata( 'ABC' ).
+
+    lv_string = li_client->request->get_cdata( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_string
+      exp = 'ABC' ).  
+
+    lv_xstring = li_client->request->get_data( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_xstring
+      exp = '414243' ).  
+
+    li_client->request->set_data( lv_xstring ).
+    
+    lv_xstring = li_client->request->get_data( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_xstring
+      exp = '414243' ).    
+
+    lv_string = li_client->request->get_cdata( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_string
+      exp = 'ABC' ).
+  
   ENDMETHOD.
 
 ENDCLASS.

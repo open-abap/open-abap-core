@@ -29,7 +29,9 @@ CLASS lcl_response IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_response~get_data.
-    ASSERT 2 = 'todo'.
+    cl_abap_conv_out_ce=>create( 'UTF-8' )->convert(
+      EXPORTING data = cdata
+      IMPORTING buffer = val ).
   ENDMETHOD.
 
 ENDCLASS.
@@ -40,7 +42,7 @@ CLASS lcl_request DEFINITION.
     METHODS constructor IMPORTING uri TYPE string.
   PRIVATE SECTION.
     DATA mv_method TYPE string.
-    DATA mv_body TYPE string.
+    DATA mv_data TYPE xstring.
     DATA mt_headers TYPE tihttpnvp.
     DATA mt_form_fields TYPE tihttpnvp.
 ENDCLASS.
@@ -73,6 +75,9 @@ CLASS lcl_request IMPLEMENTATION.
       ls_header-value = value.
       APPEND ls_header TO mt_headers.
     ENDIF.
+    IF name = '~request_method'.
+      if_http_request~set_method( value ).
+    ENDIF.
   ENDMETHOD.
 
   METHOD if_http_request~get_header_field.
@@ -96,15 +101,23 @@ CLASS lcl_request IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_request~set_data.
-    ASSERT 2 = 'todo'.
+    mv_data = data.
+  ENDMETHOD.
+
+  METHOD if_http_request~get_data.
+    data = mv_data.
   ENDMETHOD.
 
   METHOD if_http_request~set_cdata.
-    mv_body = data.
+    cl_abap_conv_out_ce=>create( 'UTF-8' )->convert(
+      EXPORTING data = data
+      IMPORTING buffer = mv_data ).      
   ENDMETHOD.
 
   METHOD if_http_request~get_cdata.
-    data = mv_body.
+    cl_abap_conv_in_ce=>create( 'UTF-8' )->convert(
+      EXPORTING input = mv_data
+      IMPORTING data = data ).
   ENDMETHOD.
 
   METHOD if_http_request~set_form_field.
