@@ -75,6 +75,9 @@ CLASS lcl_request IMPLEMENTATION.
       ls_header-value = value.
       APPEND ls_header TO mt_headers.
     ENDIF.
+    IF name = '~request_method'.
+      if_http_request~set_method( value ).
+    ENDIF.
   ENDMETHOD.
 
   METHOD if_http_request~get_header_field.

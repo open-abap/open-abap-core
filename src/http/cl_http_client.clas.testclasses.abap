@@ -238,16 +238,18 @@ CLASS ltcl_test IMPLEMENTATION.
 
     lv_str = |0056want fc1689cd6eca126e79e923381c02e75fb3464d28 side-band-64k no-progress multi_ack\n000Ddeepen 1\n00000009done\n|.
     cl_abap_conv_out_ce=>create( 'UTF-8' )->convert(
-      EXPORTING data = lv_str
+      EXPORTING data   = lv_str
       IMPORTING buffer = lv_hex ).
 
     li_client->request->set_data( lv_hex ).
-    " li_client->send( ).
-    " li_client->receive( ).
-    " li_client->response->get_status( IMPORTING code = lv_code ).
-    " ASSERT lv_code = 200.
-    " lv_resp = li_client->response->get_data( ).
-    " ASSERT xstrlen( lv_resp ) > 2000000.
+    li_client->send( ).
+    li_client->receive( ).
+    li_client->response->get_status( IMPORTING code = lv_code ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_code
+      exp = 200 ).
+    lv_resp = li_client->response->get_data( ).
+    cl_abap_unit_assert=>assert_true( boolc( xstrlen( lv_resp ) > 2000000 ) ).
 
   ENDMETHOD.
 

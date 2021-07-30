@@ -69,12 +69,12 @@ CLASS cl_http_client IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_client~send.
-    DATA lv_method TYPE string.
-    DATA lv_url TYPE string.
-    DATA lv_body TYPE string.
-    DATA lt_form_fields TYPE tihttpnvp.
+    DATA lv_method        TYPE string.
+    DATA lv_url           TYPE string.
+    DATA lv_body          TYPE string.
+    DATA lt_form_fields   TYPE tihttpnvp.
     DATA lt_header_fields TYPE tihttpnvp.
-    DATA ls_field LIKE LINE OF lt_header_fields.
+    DATA ls_field         LIKE LINE OF lt_header_fields.
 
     lv_method = if_http_client~request->get_method( ).
     IF lv_method IS INITIAL.
@@ -105,9 +105,10 @@ CLASS cl_http_client IMPLEMENTATION.
     WRITE '@KERNEL     const req = https.request(url, options,'.
     WRITE '@KERNEL       (res) => {'.
     WRITE '@KERNEL         let body = "";'.
-    WRITE '@KERNEL         res.on("data", (chunk) => (body += chunk.toString()));'.
+    WRITE '@KERNEL         res.on("data", (chunk) => {body += chunk.toString()});'.
     WRITE '@KERNEL         res.on("error", reject);'.
     WRITE '@KERNEL         res.on("end", () => {'.
+*    WRITE '@KERNEL           console.dir(res.statusCode + " " + res.headers["content-type"]);'.
     WRITE '@KERNEL           if (res.statusCode >= 200 && res.statusCode <= 299) {'.
     WRITE '@KERNEL             resolve({statusCode: res.statusCode, headers: res.headers, body: body});'.
     WRITE '@KERNEL           } else {'.
@@ -121,7 +122,8 @@ CLASS cl_http_client IMPLEMENTATION.
     WRITE '@KERNEL   });'.
     WRITE '@KERNEL }'.
 
-    WRITE '@KERNEL let response = await postData(lv_url.get(), {method: lv_method.get(), headers: headers}, lv_body.get());'.
+    WRITE '@KERNEL if (this.agent === undefined) {this.agent = new https.Agent({keepAlive: true, maxSockets: 1});}'.
+    WRITE '@KERNEL let response = await postData(lv_url.get(), {method: lv_method.get(), headers: headers, agent: this.agent}, lv_body.get());'.
 
     " WRITE '@KERNEL console.dir(response);'.
     " WRITE '@KERNEL console.dir(response.statusCode);'.
