@@ -53,6 +53,7 @@ CLASS cl_http_client IMPLEMENTATION.
     CREATE OBJECT client TYPE cl_http_client
       EXPORTING
         url = url.
+    sy-subrc = 0. " todo
   ENDMETHOD.
 
   METHOD if_http_client~authenticate.
