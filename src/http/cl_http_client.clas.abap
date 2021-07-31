@@ -5,7 +5,7 @@ CLASS cl_http_client DEFINITION PUBLIC CREATE PRIVATE.
     CLASS-METHODS create_by_url
       IMPORTING
         url           TYPE string
-        ssl_id        TYPE string OPTIONAL
+        ssl_id        TYPE ssfapplssl OPTIONAL
         proxy_host    TYPE string OPTIONAL
         proxy_service TYPE string OPTIONAL
       EXPORTING
