@@ -10,6 +10,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS query_field FOR TESTING RAISING cx_static_check.
     METHODS git FOR TESTING RAISING cx_static_check.
     METHODS get_set_request_data FOR TESTING RAISING cx_static_check.
+    METHODS co_disabled FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -289,6 +290,14 @@ CLASS ltcl_test IMPLEMENTATION.
       act = lv_string
       exp = 'ABC' ).
   
+  ENDMETHOD.
+
+  METHOD co_disabled.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = if_http_client=>co_disabled
+      exp = 0 ).
+
   ENDMETHOD.
 
 ENDCLASS.
