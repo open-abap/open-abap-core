@@ -46,6 +46,8 @@ CLASS ltcl_test IMPLEMENTATION.
     lv_xdata = li_client->response->get_data( ).
     cl_abap_unit_assert=>assert_not_initial( lv_xdata ).
 
+    cl_abap_unit_assert=>assert_not_initial( li_client->response->get_content_type( ) ).
+
   ENDMETHOD.
 
   METHOD basic_post.
