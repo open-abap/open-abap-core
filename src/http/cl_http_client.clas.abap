@@ -129,6 +129,7 @@ CLASS cl_http_client IMPLEMENTATION.
     " WRITE '@KERNEL console.dir(response);'.
     " WRITE '@KERNEL console.dir(response.statusCode);'.
 
+    WRITE '@KERNEL this.if_http_client$response.get().content_type.set(response.headers["content-type"] || "");'.
     WRITE '@KERNEL this.if_http_client$response.get().status.set(response.statusCode);'.
     WRITE '@KERNEL this.if_http_client$response.get().cdata.set(response.body);'.
 
