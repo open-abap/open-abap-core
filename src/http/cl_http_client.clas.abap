@@ -101,24 +101,24 @@ CLASS cl_http_client IMPLEMENTATION.
     lv_body = if_http_client~request->get_cdata( ).
 
     WRITE '@KERNEL const https = await import("https");'.
-    WRITE '@KERNEL function postData(url, options, body) {'.
+    WRITE '@KERNEL function postData(url, options, requestBody) {'.
     WRITE '@KERNEL   return new Promise((resolve, reject) => {'.
     WRITE '@KERNEL     const req = https.request(url, options,'.
     WRITE '@KERNEL       (res) => {'.
-    WRITE '@KERNEL         let body = "";'.
-    WRITE '@KERNEL         res.on("data", (chunk) => {body += chunk.toString()});'.
+    WRITE '@KERNEL         let chunks = [];'.
+    WRITE '@KERNEL         res.on("data", (chunk) => {chunks.push(chunk);});'.
     WRITE '@KERNEL         res.on("error", reject);'.
     WRITE '@KERNEL         res.on("end", () => {'.
 *    WRITE '@KERNEL           console.dir(res.statusCode + " " + res.headers["content-type"]);'.
     WRITE '@KERNEL           if (res.statusCode >= 200 && res.statusCode <= 299) {'.
-    WRITE '@KERNEL             resolve({statusCode: res.statusCode, headers: res.headers, body: body});'.
+    WRITE '@KERNEL             resolve({statusCode: res.statusCode, headers: res.headers, body: Buffer.concat(chunks)});'.
     WRITE '@KERNEL           } else {'.
-    WRITE '@KERNEL             reject("Request failed. status: " + res.statusCode + ", body: " + body);'.
+    WRITE '@KERNEL             reject("Request failed. status: " + res.statusCode + ", body: " + Buffer.concat(chunks).toString());'.
     WRITE '@KERNEL           }'.
     WRITE '@KERNEL         });'.
     WRITE '@KERNEL       });'.
     WRITE '@KERNEL     req.on("error", reject);'.
-    WRITE '@KERNEL     req.write(body, "binary");'.
+    WRITE '@KERNEL     req.write(requestBody, "binary");'.
     WRITE '@KERNEL     req.end();'.
     WRITE '@KERNEL   });'.
     WRITE '@KERNEL }'.
@@ -131,7 +131,8 @@ CLASS cl_http_client IMPLEMENTATION.
 
     WRITE '@KERNEL this.if_http_client$response.get().content_type.set(response.headers["content-type"] || "");'.
     WRITE '@KERNEL this.if_http_client$response.get().status.set(response.statusCode);'.
-    WRITE '@KERNEL this.if_http_client$response.get().cdata.set(response.body);'.
+    WRITE '@KERNEL this.if_http_client$response.get().cdata.set(response.body.toString());'.
+    WRITE '@KERNEL this.if_http_client$response.get().hexdata.set(response.body.toString("hex").toUpperCase());'.
 
   ENDMETHOD.
 

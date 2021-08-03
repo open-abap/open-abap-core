@@ -211,7 +211,7 @@ CLASS ltcl_test IMPLEMENTATION.
         client = li_client ).
     li_client->request->set_header_field(
         name  = '~request_uri'
-        value = '/abapGit/abapGit/info/refs?service=git-upload-pack' ).
+        value = '/larshp/Empty/info/refs?service=git-upload-pack' ).
     li_client->send( ).
     li_client->receive( ).
     li_client->response->get_status( IMPORTING code = lv_code ).
@@ -231,7 +231,7 @@ CLASS ltcl_test IMPLEMENTATION.
       value = 'POST' ).
     li_client->request->set_header_field(
       name  = '~request_uri'
-      value = '/abapGit/abapGit/git-upload-pack' ).
+      value = '/larshp/Empty/git-upload-pack' ).
     li_client->request->set_header_field(
       name  = 'Content-Type'
       value = 'application/x-git-upload-pack-request' ).
@@ -239,7 +239,7 @@ CLASS ltcl_test IMPLEMENTATION.
       name  = 'Accept'
       value = 'application/x-git-upload-pack-result' ).
 
-    lv_str = |0056want fc1689cd6eca126e79e923381c02e75fb3464d28 side-band-64k no-progress multi_ack\n000Ddeepen 1\n00000009done\n|.
+    lv_str = |0056want f9ec23d6d935aa7dc26ee141c7b46feed9d4685e side-band-64k no-progress multi_ack\n000Ddeepen 1\n00000009done\n|.
     cl_abap_conv_out_ce=>create( 'UTF-8' )->convert(
       EXPORTING data   = lv_str
       IMPORTING buffer = lv_hex ).
@@ -252,7 +252,9 @@ CLASS ltcl_test IMPLEMENTATION.
       act = lv_code
       exp = 200 ).
     lv_resp = li_client->response->get_data( ).
-    cl_abap_unit_assert=>assert_true( boolc( xstrlen( lv_resp ) > 2000000 ) ).
+    cl_abap_unit_assert=>assert_equals(
+      act = xstrlen( lv_resp )
+      exp = 679 ).
 
   ENDMETHOD.
 

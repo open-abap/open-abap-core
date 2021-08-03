@@ -4,6 +4,7 @@ CLASS lcl_response DEFINITION.
   PRIVATE SECTION.
     DATA status TYPE i.
     DATA cdata TYPE string.
+    DATA hexdata TYPE xstring.
     DATA content_type TYPE string.
 ENDCLASS.
 
@@ -30,9 +31,7 @@ CLASS lcl_response IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_response~get_data.
-    cl_abap_conv_out_ce=>create( 'UTF-8' )->convert(
-      EXPORTING data = cdata
-      IMPORTING buffer = val ).
+    val = hexdata.
   ENDMETHOD.
 
 ENDCLASS.
