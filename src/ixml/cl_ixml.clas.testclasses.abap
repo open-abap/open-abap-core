@@ -10,17 +10,17 @@ CLASS ltcl_xml IMPLEMENTATION.
 
   METHOD render_empty_output.
 
-    DATA li_doc           TYPE REF TO if_ixml_document.
-    DATA li_ostream       TYPE REF TO if_ixml_ostream.
-    DATA li_renderer      TYPE REF TO if_ixml_renderer.
-    DATA lv_xml           TYPE string.
-    DATA li_streamfactory TYPE REF TO if_ixml_stream_factory.
-    DATA li_ixml          TYPE REF TO if_ixml.
+    DATA li_doc      TYPE REF TO if_ixml_document.
+    DATA li_ostream  TYPE REF TO if_ixml_ostream.
+    DATA li_renderer TYPE REF TO if_ixml_renderer.
+    DATA lv_xml      TYPE string.
+    DATA li_factory  TYPE REF TO if_ixml_stream_factory.
+    DATA li_ixml     TYPE REF TO if_ixml.
 
     li_ixml = cl_ixml=>create( ).
     li_doc = li_ixml->create_document( ).
-    li_streamfactory = li_ixml->create_stream_factory( ).
-    li_ostream = li_streamfactory->create_ostream_cstring( lv_xml ).
+    li_factory = li_ixml->create_stream_factory( ).
+    li_ostream = li_factory->create_ostream_cstring( lv_xml ).
     li_renderer = li_ixml->create_renderer(
       ostream  = li_ostream
       document = li_doc ).
@@ -34,11 +34,11 @@ CLASS ltcl_xml IMPLEMENTATION.
 
   METHOD parse_basic.
     
-    DATA: li_stream_factory TYPE REF TO if_ixml_stream_factory,
-          li_istream        TYPE REF TO if_ixml_istream,
-          li_element        TYPE REF TO if_ixml_element,
-          li_version        TYPE REF TO if_ixml_node,
-          li_parser         TYPE REF TO if_ixml_parser.
+    DATA li_factory TYPE REF TO if_ixml_stream_factory.
+    DATA li_istream TYPE REF TO if_ixml_istream.
+    DATA li_element TYPE REF TO if_ixml_element.
+    DATA li_version TYPE REF TO if_ixml_node.
+    DATA li_parser  TYPE REF TO if_ixml_parser.
     DATA li_ixml    TYPE REF TO if_ixml.
     DATA lv_xml     TYPE string.
     DATA lv_subrc   TYPE i.
@@ -59,9 +59,9 @@ CLASS ltcl_xml IMPLEMENTATION.
       | </asx:abap>\n| &&
       |</abapGit>|.
     
-    li_stream_factory = li_ixml->create_stream_factory( ).
-    li_istream = li_stream_factory->create_istream_string( lv_xml ).
-    li_parser = li_ixml->create_parser( stream_factory = li_stream_factory
+    li_factory = li_ixml->create_stream_factory( ).
+    li_istream = li_factory->create_istream_string( lv_xml ).
+    li_parser = li_ixml->create_parser( stream_factory = li_factory
                                         istream        = li_istream
                                         document       = li_xml_doc ).
     li_parser->add_strip_space_element( ).
