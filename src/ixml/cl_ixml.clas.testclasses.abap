@@ -72,6 +72,14 @@ CLASS ltcl_xml IMPLEMENTATION.
       act = lv_subrc
       exp = 0 ).
 
+********************
+
+    " li_element = li_xml_doc->find_from_name_ns(
+    "   depth = 0
+    "   name  = 'abapGit' ).
+
+    " cl_abap_unit_assert=>assert_not_initial( li_element ).
+
   ENDMETHOD.
 
 ENDCLASS.
