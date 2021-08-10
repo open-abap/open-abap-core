@@ -107,12 +107,35 @@ CLASS lcl_renderer IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.
 
+****************************************************************
+
 CLASS lcl_ostream DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_ostream.
 ENDCLASS.
 CLASS lcl_ostream IMPLEMENTATION.
 ENDCLASS.
+
+****************************************************************
+
+CLASS lcl_istream DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_ixml_istream.
+    METHODS constructor IMPORTING xml TYPE string.
+  PRIVATE SECTION.
+    DATA mv_xml TYPE string.
+ENDCLASS.
+CLASS lcl_istream IMPLEMENTATION.
+  METHOD constructor.
+    mv_xml = xml.
+  ENDMETHOD.
+  
+  METHOD if_ixml_istream~close.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.
+
+****************************************************************
 
 CLASS lcl_stream_factory DEFINITION.
   PUBLIC SECTION.
@@ -126,6 +149,48 @@ CLASS lcl_stream_factory IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_stream_factory~create_istream_string.
-    ASSERT 2 = 'todo'.
+    CREATE OBJECT stream TYPE lcl_istream
+      EXPORTING 
+        iv_xml = xml.
+  ENDMETHOD.
+ENDCLASS.
+
+****************************************************************
+
+CLASS lcl_parser DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_ixml_parser.
+    METHODS constructor
+      IMPORTING
+        istream  TYPE REF TO if_ixml_istream
+        document TYPE REF TO if_ixml_document.
+  PRIVATE SECTION.
+    DATA mv_istream  TYPE REF TO if_ixml_istream.
+    DATA mv_document TYPE REF TO if_ixml_document.
+ENDCLASS.
+CLASS lcl_parser IMPLEMENTATION.
+  METHOD constructor.
+    mv_istream = istream.
+    mv_document = document.
+  ENDMETHOD.
+
+  METHOD if_ixml_parser~parse.
+    RETURN. " todo
+  ENDMETHOD.
+
+  METHOD if_ixml_parser~set_normalizing.
+    RETURN. " todo
+  ENDMETHOD.
+
+  METHOD if_ixml_parser~num_errors.
+    RETURN. " todo
+  ENDMETHOD.
+
+  METHOD if_ixml_parser~add_strip_space_element.
+    RETURN. " todo
+  ENDMETHOD.
+
+  METHOD if_ixml_parser~get_error.
+    RETURN. " todo
   ENDMETHOD.
 ENDCLASS.

@@ -1,8 +1,10 @@
 CLASS cl_ixml DEFINITION PUBLIC CREATE PRIVATE.
   PUBLIC SECTION.
     INTERFACES if_ixml.
-    CLASS-METHODS:
-      create RETURNING VALUE(xml) TYPE REF TO if_ixml.
+    CLASS-METHODS
+      create 
+        RETURNING 
+          VALUE(xml) TYPE REF TO if_ixml.
 ENDCLASS.
 
 CLASS cl_ixml IMPLEMENTATION.
@@ -23,7 +25,10 @@ CLASS cl_ixml IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml~create_parser.
-    ASSERT 2 = 'todo'.
+    CREATE OBJECT parser TYPE lcl_parser
+      EXPORTING
+        istream  = istream
+        document = document.
   ENDMETHOD.
 
 ENDCLASS.
