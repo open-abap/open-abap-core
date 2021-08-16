@@ -3,10 +3,59 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
   PRIVATE SECTION.
     METHODS render_empty_output FOR TESTING RAISING cx_static_check.
     METHODS parse_basic FOR TESTING RAISING cx_static_check.
+    METHODS testing FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_xml IMPLEMENTATION.
+
+  METHOD testing.
+
+    CONSTANTS lc_regex_tag TYPE string VALUE '<\/?(\w+)( \w+="[\w.]+")*>'.
+
+    DATA lv_xml TYPE string.
+    DATA lv_offset TYPE i.
+    DATA lv_value TYPE string.
+    DATA lv_name TYPE string.
+    DATA lt_stack TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA ls_match TYPE match_result.
+    DATA ls_submatch LIKE LINE OF ls_match-submatches.
+  
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?>\n| &&
+      |<abapGit version="v1.0.0">\n| &&
+      | <foo>blah</foo>\n| &&
+      | <bar>moo</bar>\n| &&
+      |</abapGit>|.
+  
+    REPLACE ALL OCCURRENCES OF |\n| IN lv_xml WITH ||.
+  
+    WHILE lv_xml IS NOT INITIAL.
+      IF lv_xml CP '<?xml *'.
+* for now just skip the xml tag
+        FIND FIRST OCCURRENCE OF '?>' IN lv_xml MATCH OFFSET lv_offset.
+        ASSERT lv_offset > 0.
+        lv_offset = lv_offset + 2.
+      ELSEIF lv_xml CP '<*'.
+* start or close tag
+        FIND FIRST OCCURRENCE OF REGEX lc_regex_tag IN lv_xml RESULTS ls_match.
+        ASSERT ls_match-offset = 0.
+  
+        READ TABLE ls_match-submatches INDEX 1 INTO ls_submatch.
+        ASSERT sy-subrc = 0.
+        lv_name = lv_xml+ls_submatch-offset(ls_submatch-length).
+  
+        lv_offset = ls_match-length.
+      ELSE.
+* value
+        FIND FIRST OCCURRENCE OF '<' IN lv_xml MATCH OFFSET lv_offset.
+        lv_value = lv_xml(lv_offset).
+      ENDIF.
+  
+      lv_xml = lv_xml+lv_offset.
+      CONDENSE lv_xml.
+    ENDWHILE.
+
+  ENDMETHOD.
 
   METHOD render_empty_output.
 
