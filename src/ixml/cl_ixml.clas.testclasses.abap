@@ -50,13 +50,8 @@ CLASS ltcl_xml IMPLEMENTATION.
 
     lv_xml = |<?xml version="1.0" encoding="utf-16"?>\n| &&
       |<abapGit version="v1.0.0">\n| &&
-      | <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">\n| &&
-      |  <asx:values>\n| &&
-      |   <DATA>\n| &&
-      |    <FOO>2</FOO>\n| &&
-      |   </DATA>\n| &&
-      |  </asx:values>\n| &&
-      | </asx:abap>\n| &&
+      | <foo>blah</foo>\n| &&
+      | <bar>moo</bar>\n| &&
       |</abapGit>|.
     
     li_factory = li_ixml->create_stream_factory( ).
