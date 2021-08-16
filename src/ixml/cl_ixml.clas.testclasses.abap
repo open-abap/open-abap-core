@@ -5,9 +5,40 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_basic FOR TESTING RAISING cx_static_check.
     METHODS testing FOR TESTING RAISING cx_static_check.
 
+    METHODS dump
+      IMPORTING
+        ii_list        TYPE REF TO if_ixml_node_list
+      RETURNING
+        VALUE(rv_dump) TYPE string.
+
 ENDCLASS.
 
 CLASS ltcl_xml IMPLEMENTATION.
+
+  METHOD dump.
+
+    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+    DATA li_node TYPE REF TO if_ixml_node.
+
+    li_iterator = ii_list->create_iterator( ).
+    DO.
+      li_node = li_iterator->get_next( ).
+      IF li_node IS INITIAL.
+        RETURN.
+      ENDIF.
+
+      rv_dump = |{ rv_dump }NAME: { li_node->get_name( ) }\n|.
+      rv_dump = |{ rv_dump }NS: { li_node->get_namespace( ) }\n|.
+      rv_dump = |{ rv_dump }DEPTH: { li_node->get_depth( ) }\n|.
+      rv_dump = |{ rv_dump }VALUE: { li_node->get_value( ) }\n|.
+      rv_dump = |{ rv_dump }LEAF: { li_node->is_leaf( ) }\n|.
+      rv_dump = |{ rv_dump }----------\n|.
+
+      rv_dump = rv_dump && dump( li_node->get_children( ) ).
+
+    ENDDO.
+
+  ENDMETHOD.
 
   METHOD testing.
 
