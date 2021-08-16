@@ -98,6 +98,8 @@ CLASS ltcl_xml IMPLEMENTATION.
       act = lv_subrc
       exp = 0 ).
 
+    dump( li_xml_doc->if_ixml_node~get_children( ) ).
+
 ********************
 
     " li_element = li_xml_doc->find_from_name_ns(

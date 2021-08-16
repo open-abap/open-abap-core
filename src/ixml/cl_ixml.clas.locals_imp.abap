@@ -121,13 +121,13 @@ ENDCLASS.
 CLASS lcl_istream DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_istream.
-    METHODS constructor IMPORTING xml TYPE string.
+    METHODS constructor IMPORTING iv_xml TYPE string.
   PRIVATE SECTION.
     DATA mv_xml TYPE string.
 ENDCLASS.
 CLASS lcl_istream IMPLEMENTATION.
   METHOD constructor.
-    mv_xml = xml.
+    mv_xml = iv_xml.
   ENDMETHOD.
   
   METHOD if_ixml_istream~close.
@@ -185,12 +185,9 @@ CLASS lcl_parser IMPLEMENTATION.
     DATA lt_stack TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
     DATA ls_match TYPE match_result.
     DATA ls_submatch LIKE LINE OF ls_match-submatches.
-  
-    lv_xml = |<?xml version="1.0" encoding="utf-16"?>\n| &&
-      |<abapGit version="v1.0.0">\n| &&
-      | <foo>blah</foo>\n| &&
-      | <bar>moo</bar>\n| &&
-      |</abapGit>|.
+
+* this gets the private value from istream,    
+    WRITE '@KERNEL lv_xml.set(this.mv_istream.get().mv_xml);'.
   
     REPLACE ALL OCCURRENCES OF |\n| IN lv_xml WITH ||.
   
@@ -209,6 +206,12 @@ CLASS lcl_parser IMPLEMENTATION.
         ASSERT sy-subrc = 0.
         lv_name = lv_xml+ls_submatch-offset(ls_submatch-length).
   
+        IF lv_xml CP '</*'.
+          WRITE: / 'close:', lv_name.
+        ELSE.
+          WRITE: / 'open:', lv_name.
+        ENDIF.
+
         lv_offset = ls_match-length.
       ELSE.
 * value
