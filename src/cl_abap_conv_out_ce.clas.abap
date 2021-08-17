@@ -11,7 +11,7 @@ CLASS cl_abap_conv_out_ce DEFINITION PUBLIC.
       convert
         IMPORTING
           data   TYPE string
-          n      TYPE i
+          n      TYPE i OPTIONAL
         EXPORTING
           buffer TYPE xstring.
     METHODS write
