@@ -1,4 +1,6 @@
 INTERFACE if_ixml_document PUBLIC.
+  INTERFACES if_ixml_node.
+
   METHODS:
     set_encoding
       IMPORTING

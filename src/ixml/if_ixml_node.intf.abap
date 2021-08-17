@@ -14,6 +14,9 @@ INTERFACE if_ixml_node PUBLIC.
       new_child TYPE string
       old_child TYPE string,
     get_name RETURNING VALUE(val) TYPE string,
+    get_depth RETURNING VALUE(val) TYPE i,
+    is_leaf RETURNING VALUE(val) TYPE abap_bool,
+    get_namespace RETURNING VALUE(val) TYPE string,
     get_value RETURNING VALUE(val) TYPE string,
     get_type RETURNING VALUE(val) TYPE string,
     set_name IMPORTING name TYPE string,
