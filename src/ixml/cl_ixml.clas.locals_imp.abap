@@ -3,6 +3,79 @@ CLASS lcl_document DEFINITION.
     INTERFACES if_ixml_document.
 ENDCLASS.
 CLASS lcl_document IMPLEMENTATION.
+
+  METHOD if_ixml_node~append_child.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_attributes.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_first_child.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_children.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~query_interface.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~remove_node.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_parent.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~replace_child.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_name.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_depth.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~is_leaf.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_namespace.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_value.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_type.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~set_name.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~remove_child.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~append_child.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~set_value.
+    RETURN.
+  ENDMETHOD.
+
   METHOD if_ixml_document~set_encoding.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
