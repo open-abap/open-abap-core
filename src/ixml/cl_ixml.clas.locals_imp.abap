@@ -1,9 +1,9 @@
-CLASS lcl_document DEFINITION.
-  PUBLIC SECTION.
-    INTERFACES if_ixml_document.
-ENDCLASS.
-CLASS lcl_document IMPLEMENTATION.
 
+CLASS lcl_node DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_ixml_node.
+ENDCLASS.
+CLASS lcl_node IMPLEMENTATION.
   METHOD if_ixml_node~append_child.
     RETURN.
   ENDMETHOD.
@@ -74,6 +74,96 @@ CLASS lcl_document IMPLEMENTATION.
 
   METHOD if_ixml_node~set_value.
     RETURN.
+  ENDMETHOD.
+ENDCLASS.
+
+****************************************************************
+
+CLASS lcl_document DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_ixml_document.
+    METHODS constructor.
+  PRIVATE SECTION.
+    DATA mi_node TYPE REF TO if_ixml_node.
+ENDCLASS.
+CLASS lcl_document IMPLEMENTATION.
+
+  METHOD constructor.
+    CREATE OBJECT mi_node TYPE lcl_node.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~append_child.
+    mi_node->append_child( child ).
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_attributes.
+    map = mi_node->get_attributes( ).
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_first_child.
+    node = mi_node->get_first_child( ).
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_children.
+    val = mi_node->get_children( ).
+  ENDMETHOD.
+
+  METHOD if_ixml_node~query_interface.
+    mi_node->query_interface( foo ).
+  ENDMETHOD.
+
+  METHOD if_ixml_node~remove_node.
+    mi_node->remove_node( ).
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_parent.
+    val = mi_node->get_parent( ).
+  ENDMETHOD.
+
+  METHOD if_ixml_node~replace_child.
+    mi_node->replace_child(
+      new_child = new_child 
+      old_child = old_child ).
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_name.
+    val = mi_node->get_name( ).
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_depth.
+    val = mi_node->get_depth( ).
+  ENDMETHOD.
+
+  METHOD if_ixml_node~is_leaf.
+    val = mi_node->is_leaf( ).
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_namespace.
+    val = mi_node->get_namespace( ).
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_value.
+    val = mi_node->get_value( ).
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_type.
+    val = mi_node->get_type( ).
+  ENDMETHOD.
+
+  METHOD if_ixml_node~set_name.
+    mi_node->set_name( name ).
+  ENDMETHOD.
+
+  METHOD if_ixml_node~remove_child.
+    mi_node->remove_child( child ).
+  ENDMETHOD.
+
+  METHOD if_ixml_node~append_child.
+    mi_node->append_child( child ).
+  ENDMETHOD.
+
+  METHOD if_ixml_node~set_value.
+    mi_node->set_value( value ).
   ENDMETHOD.
 
   METHOD if_ixml_document~set_encoding.
@@ -165,6 +255,8 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+****************************************************************
 
 CLASS lcl_renderer DEFINITION.
   PUBLIC SECTION.
