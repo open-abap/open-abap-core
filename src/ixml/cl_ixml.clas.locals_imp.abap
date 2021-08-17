@@ -1,9 +1,40 @@
+CLASS lcl_node_list DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_ixml_node_list.
+ENDCLASS.
+CLASS lcl_node_list IMPLEMENTATION.
+  METHOD if_ixml_node_list~get_length.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD if_ixml_node_list~create_iterator.
+    RETURN.
+  ENDMETHOD.
+
+  METHOD if_ixml_node_list~get_item.
+    RETURN.
+  ENDMETHOD.
+  
+  METHOD if_ixml_node_list~create_rev_iterator_filtered.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.
+
+****************************************************************
 
 CLASS lcl_node DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_node.
+    METHODS constructor.
+
+  PRIVATE SECTION.
+    DATA mi_children TYPE REF TO if_ixml_node_list.
 ENDCLASS.
 CLASS lcl_node IMPLEMENTATION.
+  METHOD constructor.
+    CREATE OBJECT mi_children TYPE lcl_node_list.
+  ENDMETHOD.
+
   METHOD if_ixml_node~append_child.
     RETURN.
   ENDMETHOD.
@@ -17,7 +48,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_children.
-    RETURN.
+    val = mi_children.
   ENDMETHOD.
 
   METHOD if_ixml_node~query_interface.
