@@ -7,7 +7,7 @@ INTERFACE if_http_client PUBLIC.
 
   METHODS authenticate
     IMPORTING
-      proxy_authentication TYPE abap_bool
+      proxy_authentication TYPE abap_bool OPTIONAL
       username             TYPE string
       password             TYPE string.
 
