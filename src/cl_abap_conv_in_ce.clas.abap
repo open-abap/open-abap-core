@@ -11,7 +11,7 @@ CLASS cl_abap_conv_in_ce DEFINITION PUBLIC.
       convert
         IMPORTING
           input TYPE xstring
-          n     TYPE i
+          n     TYPE i OPTIONAL
         EXPORTING
           data  TYPE string.
     METHODS
