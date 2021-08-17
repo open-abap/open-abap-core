@@ -1,3 +1,19 @@
+CLASS lcl_node_iterator DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_ixml_node_iterator.
+ENDCLASS.
+CLASS lcl_node_iterator IMPLEMENTATION.
+  METHOD if_ixml_node_iterator~reset.
+    RETURN.
+  ENDMETHOD.
+  
+  METHOD if_ixml_node_iterator~get_next.
+    RETURN.
+  ENDMETHOD.
+ENDCLASS.
+
+****************************************************************
+
 CLASS lcl_node_list DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_node_list.
@@ -8,7 +24,7 @@ CLASS lcl_node_list IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node_list~create_iterator.
-    RETURN.
+    CREATE OBJECT rval TYPE lcl_node_iterator.
   ENDMETHOD.
 
   METHOD if_ixml_node_list~get_item.
