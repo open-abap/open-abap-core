@@ -1,3 +1,33 @@
+" NAME: abapGit
+" NS:
+" DEPTH: 2
+" VALUE: blahmoo
+" LEAF:
+
+" NAME: foo
+" NS:
+" DEPTH: 1
+" VALUE: blah
+" LEAF:
+
+" NAME: #text
+" NS:
+" DEPTH: 0
+" VALUE: blah
+" LEAF: X
+
+" NAME: bar
+" NS:
+" DEPTH: 1
+" VALUE: moo
+" LEAF:
+
+" NAME: #text
+" NS:
+" DEPTH: 0
+" VALUE: moo
+" LEAF: X
+
 CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
