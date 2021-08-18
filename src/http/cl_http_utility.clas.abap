@@ -58,7 +58,7 @@ CLASS cl_http_utility IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD set_query.
-    request->set_form_fields( cl_http_utility=>string_to_fields( query ) ).
+    request->set_form_fields( string_to_fields( query ) ).
   ENDMETHOD.
 
   METHOD fields_to_string.

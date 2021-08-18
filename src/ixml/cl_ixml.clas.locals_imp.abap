@@ -17,10 +17,19 @@ ENDCLASS.
 CLASS lcl_node_list DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_node_list.
+    METHODS append IMPORTING ii_node TYPE REF TO if_ixml_node.
+  PRIVATE SECTION.
+    DATA mt_list TYPE STANDARD TABLE OF REF TO if_ixml_node WITH DEFAULT KEY.
 ENDCLASS.
+
 CLASS lcl_node_list IMPLEMENTATION.
+  METHOD append.
+    ASSERT NOT ii_node IS INITIAL.
+    APPEND ii_node TO mt_list.
+  ENDMETHOD.
+
   METHOD if_ixml_node_list~get_length.
-    RETURN.
+    length = lines( mt_list ).
   ENDMETHOD.
 
   METHOD if_ixml_node_list~create_iterator.
@@ -28,11 +37,11 @@ CLASS lcl_node_list IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node_list~get_item.
-    RETURN.
+    READ TABLE mt_list INDEX index INTO val.
   ENDMETHOD.
   
   METHOD if_ixml_node_list~create_rev_iterator_filtered.
-    RETURN.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 ENDCLASS.
 
@@ -44,15 +53,16 @@ CLASS lcl_node DEFINITION.
     METHODS constructor.
 
   PRIVATE SECTION.
-    DATA mi_children TYPE REF TO if_ixml_node_list.
+    DATA mo_children TYPE REF TO lcl_node_list.
 ENDCLASS.
+
 CLASS lcl_node IMPLEMENTATION.
   METHOD constructor.
-    CREATE OBJECT mi_children TYPE lcl_node_list.
+    CREATE OBJECT mo_children TYPE lcl_node_list.
   ENDMETHOD.
 
   METHOD if_ixml_node~append_child.
-    RETURN.
+    mo_children->append( new_child ).
   ENDMETHOD.
 
   METHOD if_ixml_node~get_attributes.
@@ -60,11 +70,11 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_first_child.
-    RETURN.
+    node = mo_children->if_ixml_node_list~get_item( 1 ).
   ENDMETHOD.
 
   METHOD if_ixml_node~get_children.
-    val = mi_children.
+    val = mo_children.
   ENDMETHOD.
 
   METHOD if_ixml_node~query_interface.
@@ -115,10 +125,6 @@ CLASS lcl_node IMPLEMENTATION.
     RETURN.
   ENDMETHOD.
 
-  METHOD if_ixml_node~append_child.
-    RETURN.
-  ENDMETHOD.
-
   METHOD if_ixml_node~set_value.
     RETURN.
   ENDMETHOD.
@@ -140,7 +146,7 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~append_child.
-    mi_node->append_child( child ).
+    mi_node->append_child( new_child ).
   ENDMETHOD.
 
   METHOD if_ixml_node~get_attributes.
@@ -203,10 +209,6 @@ CLASS lcl_document IMPLEMENTATION.
 
   METHOD if_ixml_node~remove_child.
     mi_node->remove_child( child ).
-  ENDMETHOD.
-
-  METHOD if_ixml_node~append_child.
-    mi_node->append_child( child ).
   ENDMETHOD.
 
   METHOD if_ixml_node~set_value.
@@ -398,11 +400,11 @@ CLASS lcl_parser IMPLEMENTATION.
     DATA ls_match TYPE match_result.
     DATA ls_submatch LIKE LINE OF ls_match-submatches.
 
-* this gets the private value from istream,    
+* this gets the private value from istream,
     WRITE '@KERNEL lv_xml.set(this.mv_istream.get().mv_xml);'.
-  
+
     REPLACE ALL OCCURRENCES OF |\n| IN lv_xml WITH ||.
-  
+
     WHILE lv_xml IS NOT INITIAL.
       IF lv_xml CP '<?xml *'.
 * for now just skip the xml tag
