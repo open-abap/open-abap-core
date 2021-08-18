@@ -54,6 +54,9 @@ CLASS lcl_node DEFINITION.
 
   PRIVATE SECTION.
     DATA mo_children TYPE REF TO lcl_node_list.
+    DATA mv_name TYPE string.
+    DATA mv_namespace TYPE string.
+    DATA mv_value TYPE string.
 ENDCLASS.
 
 CLASS lcl_node IMPLEMENTATION.
@@ -78,55 +81,55 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~query_interface.
-    RETURN.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_ixml_node~remove_node.
-    RETURN.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_parent.
-    RETURN.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_ixml_node~replace_child.
-    RETURN.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_name.
-    RETURN.
+    val = mv_name.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_depth.
-    RETURN.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_ixml_node~is_leaf.
-    RETURN.
+    val = boolc( mo_children->if_ixml_node_list~get_length( ) = 0 ).
   ENDMETHOD.
 
   METHOD if_ixml_node~get_namespace.
-    RETURN.
+    val = mv_namespace.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_value.
-    RETURN.
+    val = mv_value.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_type.
-    RETURN.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_ixml_node~set_name.
-    RETURN.
+    mv_name = name.
   ENDMETHOD.
 
   METHOD if_ixml_node~remove_child.
-    RETURN.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_ixml_node~set_value.
-    RETURN.
+    mv_value = value.
   ENDMETHOD.
 ENDCLASS.
 
