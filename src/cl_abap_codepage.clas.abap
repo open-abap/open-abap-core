@@ -22,7 +22,7 @@ CLASS cl_abap_codepage IMPLEMENTATION.
   METHOD convert_from.
     DATA conv TYPE REF TO cl_abap_conv_in_ce.
     DATA data TYPE string.
-    conv = cl_abap_conv_in_ce=>create( 'UTF-8' ).
+    conv = cl_abap_conv_in_ce=>create( encoding = 'UTF-8' ).
     conv->convert(
       EXPORTING input = input
       IMPORTING data = output ).

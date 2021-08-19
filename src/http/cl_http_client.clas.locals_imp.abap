@@ -115,7 +115,7 @@ CLASS lcl_request IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_request~get_cdata.
-    cl_abap_conv_in_ce=>create( 'UTF-8' )->convert(
+    cl_abap_conv_in_ce=>create( encoding = 'UTF-8' )->convert(
       EXPORTING input = mv_data
       IMPORTING data = data ).
   ENDMETHOD.
