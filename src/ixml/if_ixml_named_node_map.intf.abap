@@ -10,6 +10,8 @@ INTERFACE if_ixml_named_node_map PUBLIC.
     get_named_item
       IMPORTING name TYPE string
       RETURNING VALUE(val) TYPE REF TO if_ixml_node,
+    set_named_item_ns
+      IMPORTING node TYPE REF TO if_ixml_node,
     remove_named_item
       IMPORTING name TYPE string.
 ENDINTERFACE.

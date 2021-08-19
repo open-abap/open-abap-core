@@ -26,6 +26,48 @@ ENDCLASS.
 
 ****************************************************************
 
+CLASS lcl_named_node_map DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_ixml_named_node_map.
+  PRIVATE SECTION.
+    DATA mt_list TYPE STANDARD TABLE OF REF TO if_ixml_node WITH DEFAULT KEY.
+ENDCLASS.
+
+CLASS lcl_named_node_map IMPLEMENTATION.
+  METHOD if_ixml_named_node_map~create_iterator.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_named_node_map~get_length.
+    val = lines( mt_list ).
+  ENDMETHOD.
+
+  METHOD if_ixml_named_node_map~get_named_item_ns.
+    DATA li_node LIKE LINE OF mt_list.
+
+    LOOP AT mt_list INTO li_node.
+      IF li_node->get_name( ) = name.
+        val = li_node.
+        RETURN.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD if_ixml_named_node_map~get_named_item.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_named_node_map~remove_named_item.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_named_node_map~set_named_item_ns.
+    APPEND node TO mt_list.
+  ENDMETHOD.
+ENDCLASS.
+
+****************************************************************
+
 CLASS lcl_node_list DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_node_list.
@@ -80,11 +122,13 @@ CLASS lcl_node DEFINITION.
     DATA mv_namespace TYPE string.
     DATA mv_value TYPE string.
     DATA mi_parent TYPE REF TO if_ixml_node.
+    DATA mi_attributes TYPE REF TO if_ixml_named_node_map.
 ENDCLASS.
 
 CLASS lcl_node IMPLEMENTATION.
   METHOD constructor.
     CREATE OBJECT mo_children TYPE lcl_node_list.
+    CREATE OBJECT mi_attributes TYPE lcl_named_node_map.
     mi_parent = ii_parent.
   ENDMETHOD.
 
@@ -97,7 +141,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_attributes.
-    RETURN.
+    map = mi_attributes.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_first_child.
@@ -467,8 +511,16 @@ CLASS lcl_parser DEFINITION.
         istream  TYPE REF TO if_ixml_istream
         document TYPE REF TO if_ixml_document.
   PRIVATE SECTION.
+    CONSTANTS lc_regex_tag TYPE string VALUE '<\/?([\w:]+)( [\w:]+="[\w\.:\/]+")*>'.
+    CONSTANTS lc_regex_attr TYPE string VALUE '([\w:]+)="([\w\.:\/]+)"'.
+
     DATA mi_istream  TYPE REF TO if_ixml_istream.
     DATA mi_document TYPE REF TO if_ixml_document.
+    METHODS parse_attributes
+      IMPORTING 
+        ii_node TYPE REF TO if_ixml_node
+        iv_xml TYPE string
+        is_match TYPE match_result.
 ENDCLASS.
 CLASS lcl_parser IMPLEMENTATION.
   METHOD constructor.
@@ -477,8 +529,6 @@ CLASS lcl_parser IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_parser~parse.
-
-    CONSTANTS lc_regex_tag TYPE string VALUE '<\/?([\w:]+)( [\w:]+="[\w\.:\/]+")*>'.
 
     DATA lv_xml TYPE string.
     DATA lv_offset TYPE i.
@@ -530,6 +580,11 @@ CLASS lcl_parser IMPLEMENTATION.
           lo_parent = lo_node.
         ENDIF.
 
+        parse_attributes(
+          ii_node  = lo_node 
+          iv_xml   = lv_xml
+          is_match = ls_match ).
+
         lv_offset = ls_match-length.
       ELSE.
 * value
@@ -546,6 +601,42 @@ CLASS lcl_parser IMPLEMENTATION.
       CONDENSE lv_xml.
     ENDWHILE.
 
+  ENDMETHOD.
+
+  METHOD parse_attributes.
+
+    DATA ls_submatch LIKE LINE OF is_match-submatches.
+    DATA lv_name TYPE string.
+    DATA lv_value TYPE string.
+    DATA lv_xml TYPE string.
+    DATA li_node TYPE REF TO if_ixml_node.
+    DATA lv_offset TYPE i.
+    DATA lv_length TYPE i.
+    
+    IF lines( is_match-submatches ) = 1.
+      RETURN.
+    ENDIF.
+
+    lv_xml = iv_xml(is_match-length).
+
+    DO.
+      FIND FIRST OCCURRENCE OF REGEX lc_regex_attr IN lv_xml
+        MATCH OFFSET lv_offset
+        MATCH LENGTH lv_length
+        SUBMATCHES lv_name lv_value.
+      IF sy-subrc <> 0.
+        RETURN.
+      ENDIF.
+
+      CREATE OBJECT li_node TYPE lcl_node.
+      li_node->set_name( lv_name ).
+      li_node->set_value( lv_value ).
+      ii_node->get_attributes( )->set_named_item_ns( li_node ).
+
+      lv_offset = lv_offset + lv_length.
+      lv_xml = lv_xml+lv_offset.
+    ENDDO.
+    
   ENDMETHOD.
 
   METHOD if_ixml_parser~set_normalizing.
