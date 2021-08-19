@@ -117,7 +117,26 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_depth.
-    val = '123'.
+    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+    DATA li_node TYPE REF TO if_ixml_node.
+    DATA lv_max TYPE i.
+    
+    IF mo_children->if_ixml_node_list~get_length( ) = 0.
+      val = 0.
+    ELSE.
+      li_iterator = mo_children->if_ixml_node_list~create_iterator( ).
+      DO.
+        li_node = li_iterator->get_next( ).
+        IF li_node IS INITIAL.
+          EXIT. " current loop
+        ENDIF.
+        IF li_node->get_depth( ) > lv_max.
+          lv_max = li_node->get_depth( ).
+        ENDIF.
+      ENDDO.
+
+      val = lv_max + 1.
+    ENDIF.
   ENDMETHOD.
 
   METHOD if_ixml_node~is_leaf.
