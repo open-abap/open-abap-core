@@ -73,7 +73,7 @@ INTERFACE if_ixml_document PUBLIC.
         depth TYPE i
         name  TYPE string
       RETURNING
-        VALUE(element) TYPE REF TO if_ixml_node,
+        VALUE(element) TYPE REF TO if_ixml_element,
     find_from_path
       IMPORTING
         path TYPE string
