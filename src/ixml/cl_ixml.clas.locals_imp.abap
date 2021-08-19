@@ -26,6 +26,39 @@ ENDCLASS.
 
 ****************************************************************
 
+CLASS lcl_named_node_map DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_ixml_named_node_map.
+ENDCLASS.
+
+CLASS lcl_named_node_map IMPLEMENTATION.
+  METHOD if_ixml_named_node_map~create_iterator.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_named_node_map~get_length.
+    RETURN. " todo
+  ENDMETHOD.
+
+  METHOD if_ixml_named_node_map~get_named_item_ns.
+    RETURN. " todo
+  ENDMETHOD.
+
+  METHOD if_ixml_named_node_map~get_named_item.
+    RETURN. " todo
+  ENDMETHOD.
+  
+  METHOD if_ixml_named_node_map~remove_named_item.
+    RETURN. " todo
+  ENDMETHOD.
+
+  METHOD if_ixml_named_node_map~set_named_item_ns.
+    RETURN. " todo
+  ENDMETHOD.
+ENDCLASS.
+
+****************************************************************
+
 CLASS lcl_node_list DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_node_list.
@@ -80,11 +113,13 @@ CLASS lcl_node DEFINITION.
     DATA mv_namespace TYPE string.
     DATA mv_value TYPE string.
     DATA mi_parent TYPE REF TO if_ixml_node.
+    DATA mi_attributes TYPE REF TO if_ixml_named_node_map.
 ENDCLASS.
 
 CLASS lcl_node IMPLEMENTATION.
   METHOD constructor.
     CREATE OBJECT mo_children TYPE lcl_node_list.
+    CREATE OBJECT mi_attributes TYPE lcl_named_node_map.
     mi_parent = ii_parent.
   ENDMETHOD.
 
@@ -97,7 +132,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_attributes.
-    ASSERT 1 = 'todo'.
+    map = mi_attributes.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_first_child.

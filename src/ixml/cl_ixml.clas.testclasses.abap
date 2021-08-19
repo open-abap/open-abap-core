@@ -207,6 +207,8 @@ CLASS ltcl_xml IMPLEMENTATION.
     li_node ?= li_doc->find_from_name_ns( depth = 0 name = 'abapGit' ).
     li_version = li_node->get_attributes( )->get_named_item_ns( 'vers' ).
 
+    cl_abap_unit_assert=>assert_not_initial( li_version ).
+
     cl_abap_unit_assert=>assert_equals(
       act = li_version->get_value( )
       exp = |abc| ).  
