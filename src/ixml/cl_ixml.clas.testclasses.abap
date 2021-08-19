@@ -5,8 +5,13 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_basic FOR TESTING RAISING cx_static_check.
     METHODS parse_namespace FOR TESTING RAISING cx_static_check.
     METHODS parse_negative FOR TESTING RAISING cx_static_check.
+    METHODS moving_nodes FOR TESTING RAISING cx_static_check.
           
-    METHODS parse IMPORTING iv_xml TYPE string RETURNING VALUE(rv_dump) TYPE string.
+    METHODS parse
+      IMPORTING 
+        iv_xml TYPE string 
+      RETURNING 
+        VALUE(ri_doc) TYPE REF TO if_ixml_document.
     METHODS dump
       IMPORTING
         ii_list        TYPE REF TO if_ixml_node_list
@@ -75,24 +80,19 @@ CLASS ltcl_xml IMPLEMENTATION.
 
     DATA li_factory TYPE REF TO if_ixml_stream_factory.
     DATA li_istream TYPE REF TO if_ixml_istream.
-    DATA li_element TYPE REF TO if_ixml_element.
-    DATA li_version TYPE REF TO if_ixml_node.
     DATA li_parser  TYPE REF TO if_ixml_parser.
     DATA li_ixml    TYPE REF TO if_ixml.
     DATA lv_subrc   TYPE i.
-    DATA lv_dump    TYPE string.
-    DATA lv_expected TYPE string.
-    DATA li_xml_doc TYPE REF TO if_ixml_document.
 
   
-    li_ixml    = cl_ixml=>create( ).
-    li_xml_doc = li_ixml->create_document( ).
+    li_ixml = cl_ixml=>create( ).
+    ri_doc  = li_ixml->create_document( ).
  
     li_factory = li_ixml->create_stream_factory( ).
     li_istream = li_factory->create_istream_string( iv_xml ).
     li_parser = li_ixml->create_parser( stream_factory = li_factory
-                                      istream        = li_istream
-                                      document       = li_xml_doc ).
+                                        istream        = li_istream
+                                        document       = ri_doc ).
     li_parser->add_strip_space_element( ).
     lv_subrc = li_parser->parse( ).
     li_istream->close( ).
@@ -100,8 +100,6 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_subrc
       exp = 0 ).
-
-    rv_dump = dump( li_xml_doc->if_ixml_node~get_children( ) ).
 
   ENDMETHOD.
 
@@ -124,7 +122,7 @@ CLASS ltcl_xml IMPLEMENTATION.
       |NAME:bar,DEPTH:1,VALUE:moo\n| &&
       |NAME:#text,DEPTH:0,VALUE:moo,LEAF:X\n|.
 
-    lv_dump = parse( lv_xml ).
+    lv_dump = dump( parse( lv_xml )->if_ixml_node~get_children( ) ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lv_dump
@@ -157,11 +155,40 @@ CLASS ltcl_xml IMPLEMENTATION.
       |NAME:FOO,DEPTH:1,VALUE:val\n| &&
       |NAME:#text,DEPTH:0,VALUE:val,LEAF:X\n|.
 
-    lv_dump = parse( lv_xml ).
+    lv_dump = dump( parse( lv_xml )->if_ixml_node~get_children( ) ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lv_dump
       exp = lv_expected ).
+
+  ENDMETHOD.
+
+  METHOD moving_nodes.
+
+    DATA lv_xml  TYPE string.
+    DATA li_git  TYPE REF TO if_ixml_node.
+    DATA li_sub  TYPE REF TO if_ixml_node.
+    DATA li_doc  TYPE REF TO if_ixml_document.
+    DATA lv_dump TYPE string.
+
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?><abapGit><sub></sub></abapGit>|.
+
+    li_doc = parse( lv_xml ).
+    lv_dump = dump( li_doc->if_ixml_node~get_children( ) ).
+    
+    li_git ?= li_doc->find_from_name_ns( depth = 0
+                                         name = 'abapGit' ).
+    li_sub = li_git->get_first_child( ).
+    cl_abap_unit_assert=>assert_not_initial( li_sub ).
+
+    li_doc->get_root( )->remove_child( li_git ).
+    li_doc->get_root( )->append_child( li_sub ).
+
+    lv_dump = dump( li_doc->if_ixml_node~get_children( ) ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_dump
+      exp = |NAME:sub,DEPTH:0,VALUE:,LEAF:X\n| ).
 
   ENDMETHOD.
 

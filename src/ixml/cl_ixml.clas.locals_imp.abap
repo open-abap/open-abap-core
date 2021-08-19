@@ -30,6 +30,7 @@ CLASS lcl_node_list DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_node_list.
     METHODS append IMPORTING ii_node TYPE REF TO if_ixml_node.
+    METHODS remove IMPORTING ii_node TYPE REF TO if_ixml_node.
   PRIVATE SECTION.
     DATA mt_list TYPE STANDARD TABLE OF REF TO if_ixml_node WITH DEFAULT KEY.
 ENDCLASS.
@@ -38,6 +39,13 @@ CLASS lcl_node_list IMPLEMENTATION.
   METHOD append.
     ASSERT NOT ii_node IS INITIAL.
     APPEND ii_node TO mt_list.
+  ENDMETHOD.
+
+  METHOD remove.
+    READ TABLE mt_list WITH KEY table_line = ii_node TRANSPORTING NO FIELDS.
+    IF sy-subrc = 0.
+      DELETE mt_list INDEX sy-tabix.
+    ENDIF.
   ENDMETHOD.
 
   METHOD if_ixml_node_list~get_length.
@@ -181,7 +189,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~remove_child.
-    ASSERT 1 = 'todo'.
+    mo_children->remove( child ).
   ENDMETHOD.
 
   METHOD if_ixml_node~set_value.
@@ -343,7 +351,24 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~find_from_name_ns.
-    ASSERT 1 = 'todo'.
+* todo: take importing parameter DEPTH into account
+    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+    DATA li_node TYPE REF TO if_ixml_node.
+    DATA li_children TYPE REF TO if_ixml_node_list.
+    
+    li_children = mi_node->get_children( ).
+    li_iterator = li_children->create_iterator( ).
+    DO.
+      li_node = li_iterator->get_next( ).
+      IF li_node IS INITIAL.
+        EXIT. " current loop
+      ENDIF.
+      IF li_node->get_name( ) = name.
+        element = li_node.
+        RETURN.
+      ENDIF.
+    ENDDO.
+    
   ENDMETHOD.
 
   METHOD if_ixml_document~find_from_path.
