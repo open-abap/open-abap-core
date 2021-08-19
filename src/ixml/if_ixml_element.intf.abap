@@ -1,4 +1,6 @@
 INTERFACE if_ixml_element PUBLIC.
+  INTERFACES if_ixml_node.
+
   METHODS:
     remove_attribute_ns
       IMPORTING foo TYPE string,

@@ -23,18 +23,17 @@ CLASS ltcl_xml IMPLEMENTATION.
     DO.
       li_node = li_iterator->get_next( ).
       IF li_node IS INITIAL.
-        RETURN.
+        EXIT. " current loop
       ENDIF.
 
-      rv_dump = |{ rv_dump }NAME: { li_node->get_name( ) }\n|.
-      rv_dump = |{ rv_dump }NS: { li_node->get_namespace( ) }\n|.
-      rv_dump = |{ rv_dump }DEPTH: { li_node->get_depth( ) }\n|.
-      rv_dump = |{ rv_dump }VALUE: { li_node->get_value( ) }\n|.
-      rv_dump = |{ rv_dump }LEAF: { li_node->is_leaf( ) }\n|.
-      rv_dump = |{ rv_dump }----------\n|.
+      rv_dump = |{ rv_dump }NAME: {
+        li_node->get_name( ) },NS: { 
+        li_node->get_namespace( ) },DEPTH: { 
+        li_node->get_depth( ) },VALUE: { 
+        li_node->get_value( ) },LEAF: { 
+        li_node->is_leaf( ) }\n|.
 
       rv_dump = rv_dump && dump( li_node->get_children( ) ).
-
     ENDDO.
 
   ENDMETHOD.
@@ -73,6 +72,8 @@ CLASS ltcl_xml IMPLEMENTATION.
     DATA li_ixml    TYPE REF TO if_ixml.
     DATA lv_xml     TYPE string.
     DATA lv_subrc   TYPE i.
+    DATA lv_dump    TYPE string.
+    DATA lv_expected TYPE string.
     DATA li_xml_doc TYPE REF TO if_ixml_document.
 
     
@@ -98,7 +99,17 @@ CLASS ltcl_xml IMPLEMENTATION.
       act = lv_subrc
       exp = 0 ).
 
-    dump( li_xml_doc->if_ixml_node~get_children( ) ).
+    lv_expected = |NAME: abapGit,NS: ,DEPTH: 2,VALUE: blahmoo,LEAF: \n| &&
+      |NAME: foo,NS: ,DEPTH: 1,VALUE: blah,LEAF: \n| &&
+      |NAME: #text,NS: ,DEPTH: 0,VALUE: blah,LEAF: X\n| &&
+      |NAME: bar,NS: ,DEPTH: 1,VALUE: moo,LEAF: \n| &&
+      |NAME: #text,NS: ,DEPTH: 0,VALUE: moo,LEAF: X\n|.
+
+    lv_dump = dump( li_xml_doc->if_ixml_node~get_children( ) ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_dump
+      exp = lv_expected ).
 
 ********************
 

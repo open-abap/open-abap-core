@@ -1,14 +1,26 @@
 CLASS lcl_node_iterator DEFINITION.
   PUBLIC SECTION.
+    TYPES ty_list TYPE STANDARD TABLE OF REF TO if_ixml_node WITH DEFAULT KEY.
     INTERFACES if_ixml_node_iterator.
+    METHODS constructor IMPORTING it_list TYPE ty_list.
+  PRIVATE SECTION.
+    DATA mv_pointer TYPE i.
+    DATA mt_list TYPE ty_list.
 ENDCLASS.
 CLASS lcl_node_iterator IMPLEMENTATION.
+  METHOD constructor.
+    mt_list = it_list.
+    mv_pointer = 1.
+  ENDMETHOD.
+
   METHOD if_ixml_node_iterator~reset.
-    RETURN.
+    mv_pointer = 1.
   ENDMETHOD.
   
   METHOD if_ixml_node_iterator~get_next.
-    RETURN.
+    READ TABLE mt_list INDEX mv_pointer INTO rval.
+*    WRITE '@KERNEL console.dir(rval);'.
+    mv_pointer = mv_pointer + 1.
   ENDMETHOD.
 ENDCLASS.
 
@@ -17,22 +29,32 @@ ENDCLASS.
 CLASS lcl_node_list DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_node_list.
+    METHODS append IMPORTING ii_node TYPE REF TO if_ixml_node.
+  PRIVATE SECTION.
+    DATA mt_list TYPE STANDARD TABLE OF REF TO if_ixml_node WITH DEFAULT KEY.
 ENDCLASS.
+
 CLASS lcl_node_list IMPLEMENTATION.
+  METHOD append.
+    ASSERT NOT ii_node IS INITIAL.
+    APPEND ii_node TO mt_list.
+  ENDMETHOD.
+
   METHOD if_ixml_node_list~get_length.
-    RETURN.
+    length = lines( mt_list ).
   ENDMETHOD.
 
   METHOD if_ixml_node_list~create_iterator.
-    CREATE OBJECT rval TYPE lcl_node_iterator.
+    CREATE OBJECT rval TYPE lcl_node_iterator
+      EXPORTING it_list = mt_list.
   ENDMETHOD.
 
   METHOD if_ixml_node_list~get_item.
-    RETURN.
+    READ TABLE mt_list INDEX index INTO val.
   ENDMETHOD.
   
   METHOD if_ixml_node_list~create_rev_iterator_filtered.
-    RETURN.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 ENDCLASS.
 
@@ -41,18 +63,25 @@ ENDCLASS.
 CLASS lcl_node DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_node.
-    METHODS constructor.
+    METHODS constructor
+      IMPORTING ii_parent TYPE REF TO if_ixml_node OPTIONAL.
 
   PRIVATE SECTION.
-    DATA mi_children TYPE REF TO if_ixml_node_list.
+    DATA mo_children TYPE REF TO lcl_node_list.
+    DATA mv_name TYPE string.
+    DATA mv_namespace TYPE string.
+    DATA mv_value TYPE string.
+    DATA mi_parent TYPE REF TO if_ixml_node.
 ENDCLASS.
+
 CLASS lcl_node IMPLEMENTATION.
   METHOD constructor.
-    CREATE OBJECT mi_children TYPE lcl_node_list.
+    CREATE OBJECT mo_children TYPE lcl_node_list.
+    mi_parent = ii_parent.
   ENDMETHOD.
 
   METHOD if_ixml_node~append_child.
-    RETURN.
+    mo_children->append( new_child ).
   ENDMETHOD.
 
   METHOD if_ixml_node~get_attributes.
@@ -60,67 +89,99 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_first_child.
-    RETURN.
+    node = mo_children->if_ixml_node_list~get_item( 1 ).
   ENDMETHOD.
 
   METHOD if_ixml_node~get_children.
-    val = mi_children.
+    val = mo_children.
   ENDMETHOD.
 
   METHOD if_ixml_node~query_interface.
-    RETURN.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_ixml_node~remove_node.
-    RETURN.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_parent.
-    RETURN.
+    val = mi_parent.
   ENDMETHOD.
 
   METHOD if_ixml_node~replace_child.
-    RETURN.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_name.
-    RETURN.
+    val = mv_name.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_depth.
-    RETURN.
+    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+    DATA li_node TYPE REF TO if_ixml_node.
+    DATA lv_max TYPE i.
+    
+    IF mo_children->if_ixml_node_list~get_length( ) = 0.
+      val = 0.
+    ELSE.
+      li_iterator = mo_children->if_ixml_node_list~create_iterator( ).
+      DO.
+        li_node = li_iterator->get_next( ).
+        IF li_node IS INITIAL.
+          EXIT. " current loop
+        ENDIF.
+        IF li_node->get_depth( ) > lv_max.
+          lv_max = li_node->get_depth( ).
+        ENDIF.
+      ENDDO.
+
+      val = lv_max + 1.
+    ENDIF.
   ENDMETHOD.
 
   METHOD if_ixml_node~is_leaf.
-    RETURN.
+    val = boolc( mo_children->if_ixml_node_list~get_length( ) = 0 ).
   ENDMETHOD.
 
   METHOD if_ixml_node~get_namespace.
-    RETURN.
+    val = mv_namespace.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_value.
-    RETURN.
+    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+    DATA li_node TYPE REF TO if_ixml_node.
+    DATA lv_max TYPE i.
+    
+    IF mo_children->if_ixml_node_list~get_length( ) = 0.
+      val = mv_value.
+    ELSE.
+      li_iterator = mo_children->if_ixml_node_list~create_iterator( ).
+      DO.
+        li_node = li_iterator->get_next( ).
+        IF li_node IS INITIAL.
+          EXIT. " current loop
+        ENDIF.
+        
+        val = val && li_node->get_value( ).
+      ENDDO.
+    ENDIF.
+    
   ENDMETHOD.
 
   METHOD if_ixml_node~get_type.
-    RETURN.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_ixml_node~set_name.
-    RETURN.
+    mv_name = name.
   ENDMETHOD.
 
   METHOD if_ixml_node~remove_child.
-    RETURN.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~append_child.
-    RETURN.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_ixml_node~set_value.
-    RETURN.
+    mv_value = value.
   ENDMETHOD.
 ENDCLASS.
 
@@ -140,7 +201,7 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~append_child.
-    mi_node->append_child( child ).
+    mi_node->append_child( new_child ).
   ENDMETHOD.
 
   METHOD if_ixml_node~get_attributes.
@@ -203,10 +264,6 @@ CLASS lcl_document IMPLEMENTATION.
 
   METHOD if_ixml_node~remove_child.
     mi_node->remove_child( child ).
-  ENDMETHOD.
-
-  METHOD if_ixml_node~append_child.
-    mi_node->append_child( child ).
   ENDMETHOD.
 
   METHOD if_ixml_node~set_value.
@@ -294,7 +351,7 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~get_root.
-    ASSERT 1 = 'todo'.
+    node = mi_node.
   ENDMETHOD.
 
   METHOD if_ixml_document~get_root_element.
@@ -377,13 +434,13 @@ CLASS lcl_parser DEFINITION.
         istream  TYPE REF TO if_ixml_istream
         document TYPE REF TO if_ixml_document.
   PRIVATE SECTION.
-    DATA mv_istream  TYPE REF TO if_ixml_istream.
-    DATA mv_document TYPE REF TO if_ixml_document.
+    DATA mi_istream  TYPE REF TO if_ixml_istream.
+    DATA mi_document TYPE REF TO if_ixml_document.
 ENDCLASS.
 CLASS lcl_parser IMPLEMENTATION.
   METHOD constructor.
-    mv_istream = istream.
-    mv_document = document.
+    mi_istream = istream.
+    mi_document = document.
   ENDMETHOD.
 
   METHOD if_ixml_parser~parse.
@@ -394,16 +451,23 @@ CLASS lcl_parser IMPLEMENTATION.
     DATA lv_offset TYPE i.
     DATA lv_value TYPE string.
     DATA lv_name TYPE string.
-    DATA lt_stack TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
     DATA ls_match TYPE match_result.
     DATA ls_submatch LIKE LINE OF ls_match-submatches.
 
-* this gets the private value from istream,    
-    WRITE '@KERNEL lv_xml.set(this.mv_istream.get().mv_xml);'.
-  
+    DATA lo_parent TYPE REF TO lcl_node.
+    DATA lo_node TYPE REF TO lcl_node.
+
+
+    lo_parent = mi_document->get_root( ).
+
+* get the private value from istream,
+    WRITE '@KERNEL lv_xml.set(this.mi_istream.get().mv_xml);'.
+
     REPLACE ALL OCCURRENCES OF |\n| IN lv_xml WITH ||.
-  
+
     WHILE lv_xml IS NOT INITIAL.
+      CLEAR lo_node.
+      
       IF lv_xml CP '<?xml *'.
 * for now just skip the xml tag
         FIND FIRST OCCURRENCE OF '?>' IN lv_xml MATCH OFFSET lv_offset.
@@ -419,9 +483,13 @@ CLASS lcl_parser IMPLEMENTATION.
         lv_name = lv_xml+ls_submatch-offset(ls_submatch-length).
   
         IF lv_xml CP '</*'.
-          WRITE: / 'close:', lv_name.
+* todo: check its the right name
+          lo_parent = lo_parent->if_ixml_node~get_parent( ).
         ELSE.
-          WRITE: / 'open:', lv_name.
+          CREATE OBJECT lo_node EXPORTING ii_parent = lo_parent.
+          lo_node->if_ixml_node~set_name( lv_name ).
+          lo_parent->if_ixml_node~append_child( lo_node ).
+          lo_parent = lo_node.
         ENDIF.
 
         lv_offset = ls_match-length.
@@ -429,8 +497,13 @@ CLASS lcl_parser IMPLEMENTATION.
 * value
         FIND FIRST OCCURRENCE OF '<' IN lv_xml MATCH OFFSET lv_offset.
         lv_value = lv_xml(lv_offset).
+
+        CREATE OBJECT lo_node EXPORTING ii_parent = lo_parent.
+        lo_node->if_ixml_node~set_name( '#text' ).
+        lo_node->if_ixml_node~set_value( lv_value ).
+        lo_parent->if_ixml_node~append_child( lo_node ).
       ENDIF.
-  
+
       lv_xml = lv_xml+lv_offset.
       CONDENSE lv_xml.
     ENDWHILE.

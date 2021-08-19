@@ -13,6 +13,17 @@
     "check_include": false, // todo
     "uncaught_exception": false, // todo
     "cyclic_oo": false,
+    "method_implemented_twice": true,
+    "local_class_naming": true,
+    "no_yoda_conditions": true,
+    "preferred_compare_operator": true,
+    "prefix_is_current_class": true,
+    "sequential_blank": true,
+    "superclass_final": true,
+    "space_before_colon": true,
+    "space_before_dot": true,
+    "unreachable_code": true,
+    "use_line_exists": true,
     "inline_data_old_versions": false,
     "intf_referencing_clas": false,
     "keep_single_parameter_on_one_line": true,
@@ -99,6 +110,7 @@
     "obsolete_statement": {
       "refresh": true,
       "compute": true,
+      "sortByFS": true,
       "pack": true,
       "selectWithoutInto": true,
       "exitFromSQL": true,
