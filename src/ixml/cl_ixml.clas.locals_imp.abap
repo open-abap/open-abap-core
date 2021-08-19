@@ -80,6 +80,10 @@ CLASS lcl_node IMPLEMENTATION.
     mi_parent = ii_parent.
   ENDMETHOD.
 
+  METHOD if_ixml_node~set_namespace_prefix.
+    mv_namespace = val.
+  ENDMETHOD.
+
   METHOD if_ixml_node~append_child.
     mo_children->append( new_child ).
   ENDMETHOD.
@@ -202,6 +206,10 @@ CLASS lcl_document IMPLEMENTATION.
 
   METHOD if_ixml_node~append_child.
     mi_node->append_child( new_child ).
+  ENDMETHOD.
+
+  METHOD if_ixml_node~set_namespace_prefix.
+    mi_node->set_namespace_prefix( val ).
   ENDMETHOD.
 
   METHOD if_ixml_node~get_attributes.
@@ -445,12 +453,13 @@ CLASS lcl_parser IMPLEMENTATION.
 
   METHOD if_ixml_parser~parse.
 
-    CONSTANTS lc_regex_tag TYPE string VALUE '<\/?(\w+)( \w+="[\w\.]+")*>'.
+    CONSTANTS lc_regex_tag TYPE string VALUE '<\/?([\w:]+)( [\w:]+="[\w\.:\/]+")*>'.
 
     DATA lv_xml TYPE string.
     DATA lv_offset TYPE i.
     DATA lv_value TYPE string.
     DATA lv_name TYPE string.
+    DATA lv_namespace TYPE string.
     DATA ls_match TYPE match_result.
     DATA ls_submatch LIKE LINE OF ls_match-submatches.
 
@@ -487,6 +496,10 @@ CLASS lcl_parser IMPLEMENTATION.
           lo_parent = lo_parent->if_ixml_node~get_parent( ).
         ELSE.
           CREATE OBJECT lo_node EXPORTING ii_parent = lo_parent.
+          IF lv_name CA ':'.
+            SPLIT lv_name AT ':' INTO lv_namespace lv_name.
+            lo_node->if_ixml_node~set_namespace_prefix( lv_namespace ).
+          ENDIF.
           lo_node->if_ixml_node~set_name( lv_name ).
           lo_parent->if_ixml_node~append_child( lo_node ).
           lo_parent = lo_node.

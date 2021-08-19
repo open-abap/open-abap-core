@@ -3,7 +3,10 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
   PRIVATE SECTION.
     METHODS render_empty_output FOR TESTING RAISING cx_static_check.
     METHODS parse_basic FOR TESTING RAISING cx_static_check.
-
+    METHODS parse_namespace FOR TESTING RAISING cx_static_check.
+    METHODS parse_negative FOR TESTING RAISING cx_static_check.
+          
+    METHODS parse IMPORTING iv_xml TYPE string RETURNING VALUE(rv_dump) TYPE string.
     METHODS dump
       IMPORTING
         ii_list        TYPE REF TO if_ixml_node_list
@@ -26,12 +29,18 @@ CLASS ltcl_xml IMPLEMENTATION.
         EXIT. " current loop
       ENDIF.
 
-      rv_dump = |{ rv_dump }NAME: {
-        li_node->get_name( ) },NS: { 
-        li_node->get_namespace( ) },DEPTH: { 
-        li_node->get_depth( ) },VALUE: { 
-        li_node->get_value( ) },LEAF: { 
-        li_node->is_leaf( ) }\n|.
+      rv_dump = |{ rv_dump }NAME:{
+        li_node->get_name( ) }|.
+      rv_dump = |{ rv_dump },DEPTH:{
+        li_node->get_depth( ) },VALUE:{ 
+        li_node->get_value( ) }|.
+      IF li_node->get_namespace( ) IS NOT INITIAL.
+        rv_dump = |{ rv_dump },NS:{ li_node->get_namespace( ) }|.
+      ENDIF.
+      IF li_node->is_leaf( ) = abap_true.
+        rv_dump = |{ rv_dump },LEAF:{ li_node->is_leaf( ) }|.
+      ENDIF.
+      rv_dump = |{ rv_dump }\n|.
 
       rv_dump = rv_dump && dump( li_node->get_children( ) ).
     ENDDO.
@@ -62,35 +71,28 @@ CLASS ltcl_xml IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD parse_basic.
-    
+  METHOD parse.
+
     DATA li_factory TYPE REF TO if_ixml_stream_factory.
     DATA li_istream TYPE REF TO if_ixml_istream.
     DATA li_element TYPE REF TO if_ixml_element.
     DATA li_version TYPE REF TO if_ixml_node.
     DATA li_parser  TYPE REF TO if_ixml_parser.
     DATA li_ixml    TYPE REF TO if_ixml.
-    DATA lv_xml     TYPE string.
     DATA lv_subrc   TYPE i.
     DATA lv_dump    TYPE string.
     DATA lv_expected TYPE string.
     DATA li_xml_doc TYPE REF TO if_ixml_document.
 
-    
+  
     li_ixml    = cl_ixml=>create( ).
     li_xml_doc = li_ixml->create_document( ).
-
-    lv_xml = |<?xml version="1.0" encoding="utf-16"?>\n| &&
-      |<abapGit version="v1.0.0">\n| &&
-      | <foo>blah</foo>\n| &&
-      | <bar>moo</bar>\n| &&
-      |</abapGit>|.
-    
+ 
     li_factory = li_ixml->create_stream_factory( ).
-    li_istream = li_factory->create_istream_string( lv_xml ).
+    li_istream = li_factory->create_istream_string( iv_xml ).
     li_parser = li_ixml->create_parser( stream_factory = li_factory
-                                        istream        = li_istream
-                                        document       = li_xml_doc ).
+                                      istream        = li_istream
+                                      document       = li_xml_doc ).
     li_parser->add_strip_space_element( ).
     lv_subrc = li_parser->parse( ).
     li_istream->close( ).
@@ -99,26 +101,72 @@ CLASS ltcl_xml IMPLEMENTATION.
       act = lv_subrc
       exp = 0 ).
 
-    lv_expected = |NAME: abapGit,NS: ,DEPTH: 2,VALUE: blahmoo,LEAF: \n| &&
-      |NAME: foo,NS: ,DEPTH: 1,VALUE: blah,LEAF: \n| &&
-      |NAME: #text,NS: ,DEPTH: 0,VALUE: blah,LEAF: X\n| &&
-      |NAME: bar,NS: ,DEPTH: 1,VALUE: moo,LEAF: \n| &&
-      |NAME: #text,NS: ,DEPTH: 0,VALUE: moo,LEAF: X\n|.
+    rv_dump = dump( li_xml_doc->if_ixml_node~get_children( ) ).
 
-    lv_dump = dump( li_xml_doc->if_ixml_node~get_children( ) ).
+  ENDMETHOD.
+
+  METHOD parse_basic.
+    
+    DATA lv_xml     TYPE string.
+    DATA lv_dump    TYPE string.
+    DATA lv_expected TYPE string.
+
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?>\n| &&
+      |<abapGit version="v1.0.0">\n| &&
+      | <foo>blah</foo>\n| &&
+      | <bar>moo</bar>\n| &&
+      |</abapGit>|.
+    
+    lv_expected =
+      |NAME:abapGit,DEPTH:2,VALUE:blahmoo\n| &&
+      |NAME:foo,DEPTH:1,VALUE:blah\n| &&
+      |NAME:#text,DEPTH:0,VALUE:blah,LEAF:X\n| &&
+      |NAME:bar,DEPTH:1,VALUE:moo\n| &&
+      |NAME:#text,DEPTH:0,VALUE:moo,LEAF:X\n|.
+
+    lv_dump = parse( lv_xml ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lv_dump
       exp = lv_expected ).
 
-********************
+  ENDMETHOD.
 
-    " li_element = li_xml_doc->find_from_name_ns(
-    "   depth = 0
-    "   name  = 'abapGit' ).
+  METHOD parse_namespace.
 
-    " cl_abap_unit_assert=>assert_not_initial( li_element ).
+    DATA lv_xml     TYPE string.
+    DATA lv_dump    TYPE string.
+    DATA lv_expected TYPE string.
 
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?>\n| &&
+      |<abapGit version="v1.0.0">\n| &&
+      | <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">\n| &&
+      |  <asx:values>\n| &&
+      |   <DATA>\n| &&
+      |    <FOO>val</FOO>\n| &&
+      |   </DATA>\n| &&
+      |  </asx:values>\n| &&
+      | </asx:abap>\n| &&
+      |</abapGit>|.
+    
+    lv_expected =
+      |NAME:abapGit,DEPTH:5,VALUE:val\n| &&
+      |NAME:abap,DEPTH:4,VALUE:val,NS:asx\n| &&
+      |NAME:values,DEPTH:3,VALUE:val,NS:asx\n| &&
+      |NAME:DATA,DEPTH:2,VALUE:val\n| &&
+      |NAME:FOO,DEPTH:1,VALUE:val\n| &&
+      |NAME:#text,DEPTH:0,VALUE:val,LEAF:X\n|.
+
+    lv_dump = parse( lv_xml ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_dump
+      exp = lv_expected ).
+
+  ENDMETHOD.
+
+  METHOD parse_negative.
+    RETURN. " todo, test parser errors are thrown
   ENDMETHOD.
 
 ENDCLASS.
