@@ -53,7 +53,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     DO.
       li_node = li_iterator->get_next( ).
       IF li_node IS INITIAL.
-        RETURN.
+        EXIT. " current loop
       ENDIF.
 
       rv_dump = |{ rv_dump }NAME: { li_node->get_name( ) }\n|.

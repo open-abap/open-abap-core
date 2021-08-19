@@ -148,7 +148,24 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_value.
-    val = mv_value.
+    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+    DATA li_node TYPE REF TO if_ixml_node.
+    DATA lv_max TYPE i.
+    
+    IF mo_children->if_ixml_node_list~get_length( ) = 0.
+      val = mv_value.
+    ELSE.
+      li_iterator = mo_children->if_ixml_node_list~create_iterator( ).
+      DO.
+        li_node = li_iterator->get_next( ).
+        IF li_node IS INITIAL.
+          EXIT. " current loop
+        ENDIF.
+        
+        val = val && li_node->get_value( ).
+      ENDDO.
+    ENDIF.
+    
   ENDMETHOD.
 
   METHOD if_ixml_node~get_type.
