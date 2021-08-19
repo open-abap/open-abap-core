@@ -201,7 +201,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     DATA li_version TYPE REF TO if_ixml_node.
     
 
-    lv_xml = |<?xml version="1.0" encoding="utf-16"?><abapGit vers="abc"></abapGit>|.
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?><abapGit vers="abc" foo="2"></abapGit>|.
     li_doc = parse( lv_xml ).
 
     li_node ?= li_doc->find_from_name_ns( depth = 0 name = 'abapGit' ).
