@@ -401,6 +401,7 @@ CLASS lcl_parser IMPLEMENTATION.
     DATA lv_name TYPE string.
     DATA lt_stack TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
     DATA ls_match TYPE match_result.
+    DATA lo_node TYPE REF TO lcl_node.
     DATA ls_submatch LIKE LINE OF ls_match-submatches.
 
 * this gets the private value from istream,
@@ -409,6 +410,8 @@ CLASS lcl_parser IMPLEMENTATION.
     REPLACE ALL OCCURRENCES OF |\n| IN lv_xml WITH ||.
 
     WHILE lv_xml IS NOT INITIAL.
+      CLEAR lo_node.
+      
       IF lv_xml CP '<?xml *'.
 * for now just skip the xml tag
         FIND FIRST OCCURRENCE OF '?>' IN lv_xml MATCH OFFSET lv_offset.
@@ -429,13 +432,19 @@ CLASS lcl_parser IMPLEMENTATION.
           WRITE: / 'open:', lv_name.
         ENDIF.
 
+        CREATE OBJECT lo_node.
+        lo_node->if_ixml_node~set_name( lv_name ).
+
         lv_offset = ls_match-length.
       ELSE.
 * value
         FIND FIRST OCCURRENCE OF '<' IN lv_xml MATCH OFFSET lv_offset.
         lv_value = lv_xml(lv_offset).
+
+        CREATE OBJECT lo_node.
+        lo_node->if_ixml_node~set_value( lv_value ).
       ENDIF.
-  
+
       lv_xml = lv_xml+lv_offset.
       CONDENSE lv_xml.
     ENDWHILE.
