@@ -85,7 +85,6 @@ CLASS ltcl_test IMPLEMENTATION.
 
     DATA li_client TYPE REF TO if_http_client.
     DATA lv_code TYPE i.
-    DATA lv_cdata TYPE string.
 
     cl_http_client=>create_by_url(
       EXPORTING
@@ -108,8 +107,6 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD call_set_method.
 
     DATA li_client TYPE REF TO if_http_client.
-    DATA lv_code TYPE i.
-    DATA lv_cdata TYPE string.
 
     cl_http_client=>create_by_url(
       EXPORTING
