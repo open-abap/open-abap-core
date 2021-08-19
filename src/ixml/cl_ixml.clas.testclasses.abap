@@ -125,7 +125,36 @@ CLASS ltcl_xml IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD parse_namespace.
-    RETURN.
+
+    DATA lv_xml     TYPE string.
+    DATA lv_dump    TYPE string.
+    DATA lv_expected TYPE string.
+
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?>\n| &&
+      |<abapGit version="v1.0.0">\n| &&
+      | <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">\n| &&
+      |  <asx:values>\n| &&
+      |   <DATA>\n| &&
+      |    <FOO>2</FOO>\n| &&
+      |   </DATA>\n| &&
+      |  </asx:values>\n| &&
+      | </asx:abap>\n| &&
+      |</abapGit>|.
+    
+    lv_expected = |NAME: abapGit,NS: ,DEPTH: 2,VALUE: blahmoo,LEAF: \n| &&
+      |NAME: foo,NS: ,DEPTH: 1,VALUE: blah,LEAF: \n| &&
+      |NAME: #text,NS: ,DEPTH: 0,VALUE: blah,LEAF: X\n| &&
+      |NAME: bar,NS: ,DEPTH: 1,VALUE: moo,LEAF: \n| &&
+      |NAME: #text,NS: ,DEPTH: 0,VALUE: moo,LEAF: X\n|.
+
+    lv_dump = parse( lv_xml ).
+
+    WRITE / lv_dump.
+
+    " cl_abap_unit_assert=>assert_equals(
+    "   act = lv_dump
+    "   exp = lv_expected ).
+
   ENDMETHOD.
 
 ENDCLASS.

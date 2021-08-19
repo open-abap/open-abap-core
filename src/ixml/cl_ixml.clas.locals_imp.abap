@@ -445,7 +445,7 @@ CLASS lcl_parser IMPLEMENTATION.
 
   METHOD if_ixml_parser~parse.
 
-    CONSTANTS lc_regex_tag TYPE string VALUE '<\/?(\w+)( \w+="[\w\.]+")*>'.
+    CONSTANTS lc_regex_tag TYPE string VALUE '<\/?([\w:]+)( [\w:]+="[\w\.:\/]+")*>'.
 
     DATA lv_xml TYPE string.
     DATA lv_offset TYPE i.
