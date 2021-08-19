@@ -2,7 +2,9 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
     METHODS render_empty_output FOR TESTING RAISING cx_static_check.
+    METHODS parse IMPORTING iv_xml TYPE string RETURNING VALUE(rv_dump) TYPE string.
     METHODS parse_basic FOR TESTING RAISING cx_static_check.
+    METHODS parse_namespace FOR TESTING RAISING cx_static_check.
 
     METHODS dump
       IMPORTING
@@ -62,6 +64,40 @@ CLASS ltcl_xml IMPLEMENTATION.
 
   ENDMETHOD.
 
+  METHOD parse.
+
+    DATA li_factory TYPE REF TO if_ixml_stream_factory.
+    DATA li_istream TYPE REF TO if_ixml_istream.
+    DATA li_element TYPE REF TO if_ixml_element.
+    DATA li_version TYPE REF TO if_ixml_node.
+    DATA li_parser  TYPE REF TO if_ixml_parser.
+    DATA li_ixml    TYPE REF TO if_ixml.
+    DATA lv_subrc   TYPE i.
+    DATA lv_dump    TYPE string.
+    DATA lv_expected TYPE string.
+    DATA li_xml_doc TYPE REF TO if_ixml_document.
+
+  
+    li_ixml    = cl_ixml=>create( ).
+    li_xml_doc = li_ixml->create_document( ).
+ 
+    li_factory = li_ixml->create_stream_factory( ).
+    li_istream = li_factory->create_istream_string( iv_xml ).
+    li_parser = li_ixml->create_parser( stream_factory = li_factory
+                                      istream        = li_istream
+                                      document       = li_xml_doc ).
+    li_parser->add_strip_space_element( ).
+    lv_subrc = li_parser->parse( ).
+    li_istream->close( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_subrc
+      exp = 0 ).
+
+    rv_dump = dump( li_xml_doc->if_ixml_node~get_children( ) ).
+
+  ENDMETHOD.
+
   METHOD parse_basic.
     
     DATA li_factory TYPE REF TO if_ixml_stream_factory.
@@ -111,14 +147,10 @@ CLASS ltcl_xml IMPLEMENTATION.
       act = lv_dump
       exp = lv_expected ).
 
-********************
+  ENDMETHOD.
 
-    " li_element = li_xml_doc->find_from_name_ns(
-    "   depth = 0
-    "   name  = 'abapGit' ).
-
-    " cl_abap_unit_assert=>assert_not_initial( li_element ).
-
+  METHOD parse_namespace.
+    RETURN.
   ENDMETHOD.
 
 ENDCLASS.
