@@ -97,7 +97,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_attributes.
-    RETURN.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_first_child.
