@@ -166,7 +166,7 @@ CLASS ltcl_xml IMPLEMENTATION.
   METHOD moving_nodes.
 
     DATA lv_xml  TYPE string.
-    DATA li_git  TYPE REF TO if_ixml_element.
+    DATA li_git  TYPE REF TO if_ixml_node.
     DATA li_sub  TYPE REF TO if_ixml_node.
     DATA li_doc  TYPE REF TO if_ixml_document.
     DATA lv_dump TYPE string.
@@ -174,17 +174,21 @@ CLASS ltcl_xml IMPLEMENTATION.
     lv_xml = |<?xml version="1.0" encoding="utf-16"?><abapGit><sub></sub></abapGit>|.
 
     li_doc = parse( lv_xml ).
-
+    lv_dump = dump( li_doc->if_ixml_node~get_children( ) ).
+    
     li_git ?= li_doc->find_from_name_ns( depth = 0
                                          name = 'abapGit' ).
     li_sub = li_git->get_first_child( ).
+    cl_abap_unit_assert=>assert_not_initial( li_sub ).
 
     li_doc->get_root( )->remove_child( li_git ).
     li_doc->get_root( )->append_child( li_sub ).
 
     lv_dump = dump( li_doc->if_ixml_node~get_children( ) ).
 
-    WRITE / lv_dump.
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_dump
+      exp = |NAME:sub,DEPTH:0,VALUE:,LEAF:X\n| ).
 
   ENDMETHOD.
 
