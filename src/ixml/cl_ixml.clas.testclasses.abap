@@ -64,7 +64,6 @@ CLASS ltcl_xml IMPLEMENTATION.
       rv_dump = |{ rv_dump }----------\n|.
 
       rv_dump = rv_dump && dump( li_node->get_children( ) ).
-
     ENDDO.
 
   ENDMETHOD.
@@ -103,6 +102,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     DATA li_ixml    TYPE REF TO if_ixml.
     DATA lv_xml     TYPE string.
     DATA lv_subrc   TYPE i.
+    DATA lv_dump    TYPE string.
     DATA li_xml_doc TYPE REF TO if_ixml_document.
 
     
@@ -128,7 +128,8 @@ CLASS ltcl_xml IMPLEMENTATION.
       act = lv_subrc
       exp = 0 ).
 
-    dump( li_xml_doc->if_ixml_node~get_children( ) ).
+    lv_dump = dump( li_xml_doc->if_ixml_node~get_children( ) ).
+    WRITE / lv_dump.
 
 ********************
 

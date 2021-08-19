@@ -1,14 +1,26 @@
 CLASS lcl_node_iterator DEFINITION.
   PUBLIC SECTION.
+    TYPES ty_list TYPE STANDARD TABLE OF REF TO if_ixml_node WITH DEFAULT KEY.
     INTERFACES if_ixml_node_iterator.
+    METHODS constructor IMPORTING it_list TYPE ty_list.
+  PRIVATE SECTION.
+    DATA mv_pointer TYPE i.
+    DATA mt_list TYPE ty_list.
 ENDCLASS.
 CLASS lcl_node_iterator IMPLEMENTATION.
+  METHOD constructor.
+    mt_list = it_list.
+    mv_pointer = 1.
+  ENDMETHOD.
+
   METHOD if_ixml_node_iterator~reset.
-    RETURN.
+    mv_pointer = 1.
   ENDMETHOD.
   
   METHOD if_ixml_node_iterator~get_next.
-    RETURN.
+    READ TABLE mt_list INDEX mv_pointer INTO rval.
+    WRITE '@KERNEL console.dir(rval);'.
+    mv_pointer = mv_pointer + 1.
   ENDMETHOD.
 ENDCLASS.
 
@@ -33,7 +45,8 @@ CLASS lcl_node_list IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node_list~create_iterator.
-    CREATE OBJECT rval TYPE lcl_node_iterator.
+    CREATE OBJECT rval TYPE lcl_node_iterator
+      EXPORTING it_list = mt_list.
   ENDMETHOD.
 
   METHOD if_ixml_node_list~get_item.
@@ -101,7 +114,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_depth.
-    ASSERT 1 = 'todo'.
+    val = '123'.
   ENDMETHOD.
 
   METHOD if_ixml_node~is_leaf.
@@ -299,7 +312,7 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~get_root.
-    ASSERT 1 = 'todo'.
+    node = mi_node.
   ENDMETHOD.
 
   METHOD if_ixml_document~get_root_element.
@@ -382,13 +395,13 @@ CLASS lcl_parser DEFINITION.
         istream  TYPE REF TO if_ixml_istream
         document TYPE REF TO if_ixml_document.
   PRIVATE SECTION.
-    DATA mv_istream  TYPE REF TO if_ixml_istream.
-    DATA mv_document TYPE REF TO if_ixml_document.
+    DATA mi_istream  TYPE REF TO if_ixml_istream.
+    DATA mi_document TYPE REF TO if_ixml_document.
 ENDCLASS.
 CLASS lcl_parser IMPLEMENTATION.
   METHOD constructor.
-    mv_istream = istream.
-    mv_document = document.
+    mi_istream = istream.
+    mi_document = document.
   ENDMETHOD.
 
   METHOD if_ixml_parser~parse.
@@ -399,13 +412,18 @@ CLASS lcl_parser IMPLEMENTATION.
     DATA lv_offset TYPE i.
     DATA lv_value TYPE string.
     DATA lv_name TYPE string.
-    DATA lt_stack TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
     DATA ls_match TYPE match_result.
-    DATA lo_node TYPE REF TO lcl_node.
     DATA ls_submatch LIKE LINE OF ls_match-submatches.
+        
+    DATA lt_stack TYPE STANDARD TABLE OF REF TO lcl_node WITH DEFAULT KEY.
+    DATA lo_parent TYPE REF TO lcl_node.
+    DATA lo_node TYPE REF TO lcl_node.
 
-* this gets the private value from istream,
-    WRITE '@KERNEL lv_xml.set(this.mv_istream.get().mv_xml);'.
+
+    lo_parent = mi_document->get_root( ).
+
+* get the private value from istream,
+    WRITE '@KERNEL lv_xml.set(this.mi_istream.get().mv_xml);'.
 
     REPLACE ALL OCCURRENCES OF |\n| IN lv_xml WITH ||.
 
@@ -427,13 +445,13 @@ CLASS lcl_parser IMPLEMENTATION.
         lv_name = lv_xml+ls_submatch-offset(ls_submatch-length).
   
         IF lv_xml CP '</*'.
-          WRITE: / 'close:', lv_name.
+* todo: check its the right name, and pop parent
         ELSE.
-          WRITE: / 'open:', lv_name.
-        ENDIF.
+          CREATE OBJECT lo_node.
+          lo_node->if_ixml_node~set_name( lv_name ).
 
-        CREATE OBJECT lo_node.
-        lo_node->if_ixml_node~set_name( lv_name ).
+          lo_parent->if_ixml_node~append_child( lo_node ).
+        ENDIF.
 
         lv_offset = ls_match-length.
       ELSE.
@@ -442,7 +460,9 @@ CLASS lcl_parser IMPLEMENTATION.
         lv_value = lv_xml(lv_offset).
 
         CREATE OBJECT lo_node.
+        lo_node->if_ixml_node~set_name( '#text' ).
         lo_node->if_ixml_node~set_value( lv_value ).
+        lo_parent->if_ixml_node~append_child( lo_node ).
       ENDIF.
 
       lv_xml = lv_xml+lv_offset.
