@@ -28,12 +28,18 @@ CLASS ltcl_xml IMPLEMENTATION.
         EXIT. " current loop
       ENDIF.
 
-      rv_dump = |{ rv_dump }NAME: {
-        li_node->get_name( ) },NS: { 
-        li_node->get_namespace( ) },DEPTH: { 
-        li_node->get_depth( ) },VALUE: { 
-        li_node->get_value( ) },LEAF: { 
-        li_node->is_leaf( ) }\n|.
+      rv_dump = |{ rv_dump }NAME:{
+        li_node->get_name( ) }|.
+      rv_dump = |{ rv_dump },DEPTH:{
+        li_node->get_depth( ) },VALUE:{ 
+        li_node->get_value( ) }|.
+      IF li_node->get_namespace( ) IS NOT INITIAL.
+        rv_dump = |{ rv_dump },NS:{ li_node->get_namespace( ) }|.
+      ENDIF.
+      IF li_node->is_leaf( ) = abap_true.
+        rv_dump = |{ rv_dump },LEAF:{ li_node->is_leaf( ) }|.
+      ENDIF.
+      rv_dump = |{ rv_dump }\n|.
 
       rv_dump = rv_dump && dump( li_node->get_children( ) ).
     ENDDO.
@@ -110,11 +116,12 @@ CLASS ltcl_xml IMPLEMENTATION.
       | <bar>moo</bar>\n| &&
       |</abapGit>|.
     
-    lv_expected = |NAME: abapGit,NS: ,DEPTH: 2,VALUE: blahmoo,LEAF: \n| &&
-      |NAME: foo,NS: ,DEPTH: 1,VALUE: blah,LEAF: \n| &&
-      |NAME: #text,NS: ,DEPTH: 0,VALUE: blah,LEAF: X\n| &&
-      |NAME: bar,NS: ,DEPTH: 1,VALUE: moo,LEAF: \n| &&
-      |NAME: #text,NS: ,DEPTH: 0,VALUE: moo,LEAF: X\n|.
+    lv_expected =
+      |NAME:abapGit,DEPTH:2,VALUE:blahmoo\n| &&
+      |NAME:foo,DEPTH:1,VALUE:blah\n| &&
+      |NAME:#text,DEPTH:0,VALUE:blah,LEAF:X\n| &&
+      |NAME:bar,DEPTH:1,VALUE:moo\n| &&
+      |NAME:#text,DEPTH:0,VALUE:moo,LEAF:X\n|.
 
     lv_dump = parse( lv_xml ).
 
@@ -135,17 +142,18 @@ CLASS ltcl_xml IMPLEMENTATION.
       | <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">\n| &&
       |  <asx:values>\n| &&
       |   <DATA>\n| &&
-      |    <FOO>2</FOO>\n| &&
+      |    <FOO>val</FOO>\n| &&
       |   </DATA>\n| &&
       |  </asx:values>\n| &&
       | </asx:abap>\n| &&
       |</abapGit>|.
     
-    lv_expected = |NAME: abapGit,NS: ,DEPTH: 2,VALUE: blahmoo,LEAF: \n| &&
-      |NAME: foo,NS: ,DEPTH: 1,VALUE: blah,LEAF: \n| &&
-      |NAME: #text,NS: ,DEPTH: 0,VALUE: blah,LEAF: X\n| &&
-      |NAME: bar,NS: ,DEPTH: 1,VALUE: moo,LEAF: \n| &&
-      |NAME: #text,NS: ,DEPTH: 0,VALUE: moo,LEAF: X\n|.
+    lv_expected = |NAME: abapGit,NS: ,DEPTH: 5,VALUE: val,LEAF: \n| &&
+      |NAME: abap,NS: asx,DEPTH: 4,VALUE: val,LEAF: \n| &&
+      |NAME: values,NS: asx,DEPTH: 3,VALUE: val,LEAF: \n| &&
+      |NAME: DATA,NS: ,DEPTH: 2,VALUE: val,LEAF: \n| &&
+      |NAME: FOO,NS: ,DEPTH: 1,VALUE: val,LEAF: \n| &&
+      |NAME: #text,NS: ,DEPTH: 0,VALUE: val,LEAF: X\n|.
 
     lv_dump = parse( lv_xml ).
 
