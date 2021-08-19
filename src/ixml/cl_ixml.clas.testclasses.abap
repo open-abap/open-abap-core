@@ -2,10 +2,11 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
     METHODS render_empty_output FOR TESTING RAISING cx_static_check.
-    METHODS parse IMPORTING iv_xml TYPE string RETURNING VALUE(rv_dump) TYPE string.
     METHODS parse_basic FOR TESTING RAISING cx_static_check.
     METHODS parse_namespace FOR TESTING RAISING cx_static_check.
-
+    METHODS parse_negative FOR TESTING RAISING cx_static_check.
+          
+    METHODS parse IMPORTING iv_xml TYPE string RETURNING VALUE(rv_dump) TYPE string.
     METHODS dump
       IMPORTING
         ii_list        TYPE REF TO if_ixml_node_list
@@ -148,21 +149,24 @@ CLASS ltcl_xml IMPLEMENTATION.
       | </asx:abap>\n| &&
       |</abapGit>|.
     
-    lv_expected = |NAME: abapGit,NS: ,DEPTH: 5,VALUE: val,LEAF: \n| &&
-      |NAME: abap,NS: asx,DEPTH: 4,VALUE: val,LEAF: \n| &&
-      |NAME: values,NS: asx,DEPTH: 3,VALUE: val,LEAF: \n| &&
-      |NAME: DATA,NS: ,DEPTH: 2,VALUE: val,LEAF: \n| &&
-      |NAME: FOO,NS: ,DEPTH: 1,VALUE: val,LEAF: \n| &&
-      |NAME: #text,NS: ,DEPTH: 0,VALUE: val,LEAF: X\n|.
+    lv_expected =
+      |NAME:abapGit,DEPTH:5,VALUE:val\n| &&
+      |NAME:abap,DEPTH:4,VALUE:val,NS:asx\n| &&
+      |NAME:values,DEPTH:3,VALUE:val,NS:asx\n| &&
+      |NAME:DATA,DEPTH:2,VALUE:val\n| &&
+      |NAME:FOO,DEPTH:1,VALUE:val\n| &&
+      |NAME:#text,DEPTH:0,VALUE:val,LEAF:X\n|.
 
     lv_dump = parse( lv_xml ).
 
-    WRITE / lv_dump.
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_dump
+      exp = lv_expected ).
 
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = lv_dump
-    "   exp = lv_expected ).
+  ENDMETHOD.
 
+  METHOD parse_negative.
+    RETURN. " todo, test parser errors are thrown
   ENDMETHOD.
 
 ENDCLASS.
