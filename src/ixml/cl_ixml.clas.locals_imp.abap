@@ -63,18 +63,21 @@ ENDCLASS.
 CLASS lcl_node DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_node.
-    METHODS constructor.
+    METHODS constructor
+      IMPORTING ii_parent TYPE REF TO if_ixml_node OPTIONAL.
 
   PRIVATE SECTION.
     DATA mo_children TYPE REF TO lcl_node_list.
     DATA mv_name TYPE string.
     DATA mv_namespace TYPE string.
     DATA mv_value TYPE string.
+    DATA mi_parent TYPE REF TO if_ixml_node.
 ENDCLASS.
 
 CLASS lcl_node IMPLEMENTATION.
   METHOD constructor.
     CREATE OBJECT mo_children TYPE lcl_node_list.
+    mi_parent = ii_parent.
   ENDMETHOD.
 
   METHOD if_ixml_node~append_child.
@@ -102,7 +105,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_parent.
-    ASSERT 1 = 'todo'.
+    val = mi_parent.
   ENDMETHOD.
 
   METHOD if_ixml_node~replace_child.
@@ -414,8 +417,7 @@ CLASS lcl_parser IMPLEMENTATION.
     DATA lv_name TYPE string.
     DATA ls_match TYPE match_result.
     DATA ls_submatch LIKE LINE OF ls_match-submatches.
-        
-    DATA lt_stack TYPE STANDARD TABLE OF REF TO lcl_node WITH DEFAULT KEY.
+
     DATA lo_parent TYPE REF TO lcl_node.
     DATA lo_node TYPE REF TO lcl_node.
 
@@ -445,12 +447,13 @@ CLASS lcl_parser IMPLEMENTATION.
         lv_name = lv_xml+ls_submatch-offset(ls_submatch-length).
   
         IF lv_xml CP '</*'.
-* todo: check its the right name, and pop parent
+* todo: check its the right name
+          lo_parent = lo_parent->if_ixml_node~get_parent( ).
         ELSE.
-          CREATE OBJECT lo_node.
+          CREATE OBJECT lo_node EXPORTING ii_parent = lo_parent.
           lo_node->if_ixml_node~set_name( lv_name ).
-
           lo_parent->if_ixml_node~append_child( lo_node ).
+          lo_parent = lo_node.
         ENDIF.
 
         lv_offset = ls_match-length.
@@ -459,7 +462,7 @@ CLASS lcl_parser IMPLEMENTATION.
         FIND FIRST OCCURRENCE OF '<' IN lv_xml MATCH OFFSET lv_offset.
         lv_value = lv_xml(lv_offset).
 
-        CREATE OBJECT lo_node.
+        CREATE OBJECT lo_node EXPORTING ii_parent = lo_parent.
         lo_node->if_ixml_node~set_name( '#text' ).
         lo_node->if_ixml_node~set_value( lv_value ).
         lo_parent->if_ixml_node~append_child( lo_node ).
