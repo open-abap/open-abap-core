@@ -112,7 +112,7 @@ ENDCLASS.
 
 CLASS lcl_node DEFINITION.
   PUBLIC SECTION.
-    INTERFACES if_ixml_node.
+    INTERFACES if_ixml_element.
     METHODS constructor
       IMPORTING ii_parent TYPE REF TO if_ixml_node OPTIONAL.
 
@@ -132,6 +132,106 @@ CLASS lcl_node IMPLEMENTATION.
     mi_parent = ii_parent.
   ENDMETHOD.
 
+  METHOD if_ixml_element~get_attributes.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~get_next.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~get_name.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~append_child.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~clone.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~create_filter_node_type.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~remove_attribute_ns.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~create_iterator.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~find_from_name_ns.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~find_from_name.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~get_attribute_node.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~get_attribute_ns.
+    val = if_ixml_node~get_attributes( )->get_named_item_ns( name )->get_value( ).
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~get_attribute.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~get_children.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~get_elements_by_tag_name.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~get_elements_by_tag_name_ns.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~get_first_child.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~get_value.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~remove_attribute.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~remove_node.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~render.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~set_attribute_node_ns.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~set_attribute.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~set_attribute_ns.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
+  METHOD if_ixml_element~set_value.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+  
   METHOD if_ixml_node~set_namespace_prefix.
     mv_namespace = val.
   ENDMETHOD.

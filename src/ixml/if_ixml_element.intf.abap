@@ -30,9 +30,9 @@ INTERFACE if_ixml_element PUBLIC.
       RETURNING VALUE(val) TYPE REF TO if_ixml_element,
     find_from_name
       IMPORTING
-        name TYPE string
+        name      TYPE string
         namespace TYPE string
-        depth TYPE i
+        depth     TYPE i
       RETURNING VALUE(val) TYPE REF TO if_ixml_element,
     get_attribute_node
       IMPORTING name TYPE string
