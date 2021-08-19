@@ -19,7 +19,7 @@ CLASS lcl_node_iterator IMPLEMENTATION.
   
   METHOD if_ixml_node_iterator~get_next.
     READ TABLE mt_list INDEX mv_pointer INTO rval.
-    WRITE '@KERNEL console.dir(rval);'.
+*    WRITE '@KERNEL console.dir(rval);'.
     mv_pointer = mv_pointer + 1.
   ENDMETHOD.
 ENDCLASS.
