@@ -8,6 +8,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS moving_nodes FOR TESTING RAISING cx_static_check.
     METHODS parse_attributes FOR TESTING RAISING cx_static_check.
     METHODS parse_attributes2 FOR TESTING RAISING cx_static_check.
+    METHODS parse_attributes3 FOR TESTING RAISING cx_static_check.
           
     METHODS parse
       IMPORTING 
@@ -233,6 +234,27 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = li_element->get_attribute_ns( 'serializer' )
       exp = |LCL_OBJECT_DTEL| ).  
+
+  ENDMETHOD.
+
+  METHOD parse_attributes3.
+
+    DATA lv_xml     TYPE string.
+    DATA li_doc     TYPE REF TO if_ixml_document.
+    DATA li_element TYPE REF TO if_ixml_element.
+    DATA li_version TYPE REF TO if_ixml_node.
+    
+
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?><abapGit></abapGit>|.
+    li_doc = parse( lv_xml ).
+
+    li_element ?= li_doc->find_from_name_ns( depth = 0 name = 'abapGit' ).
+    cl_abap_unit_assert=>assert_not_initial( li_element ).
+
+* not found, should return blank    
+    cl_abap_unit_assert=>assert_equals(
+      act = li_element->get_attribute_ns( 'sdfsdfsd' )
+      exp = || ).  
 
   ENDMETHOD.
 

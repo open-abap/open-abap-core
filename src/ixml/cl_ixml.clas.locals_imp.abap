@@ -177,7 +177,11 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
   
   METHOD if_ixml_element~get_attribute_ns.
-    val = if_ixml_node~get_attributes( )->get_named_item_ns( name )->get_value( ).
+    DATA li_node TYPE REF TO if_ixml_node.
+    li_node = if_ixml_node~get_attributes( )->get_named_item_ns( name ).
+    IF li_node IS NOT INITIAL.
+      val = li_node->get_value( ).
+    ENDIF.
   ENDMETHOD.
   
   METHOD if_ixml_element~get_attribute.
