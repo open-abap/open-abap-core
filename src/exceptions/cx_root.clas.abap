@@ -6,6 +6,7 @@ CLASS cx_root DEFINITION ABSTRACT PUBLIC.
 
     METHODS constructor
       IMPORTING
+        textid   LIKE textid OPTIONAL
         previous TYPE REF TO cx_root OPTIONAL.
 
     METHODS get_source_position
