@@ -20,7 +20,7 @@ INTERFACE if_ixml_document PUBLIC.
     create_attribute_ns
       IMPORTING
         name TYPE string
-        prefix TYPE string
+        prefix TYPE string OPTIONAL
       RETURNING
         VALUE(element) TYPE REF TO if_ixml_element,
     create_element_ns
@@ -65,7 +65,7 @@ INTERFACE if_ixml_document PUBLIC.
     find_from_name
       IMPORTING
         name TYPE string
-        namespace TYPE string
+        namespace TYPE string OPTIONAL
       RETURNING
         VALUE(element) TYPE REF TO if_ixml_element,
     find_from_name_ns

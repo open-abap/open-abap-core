@@ -41,7 +41,7 @@ CLASS ltcl_conv_in IMPLEMENTATION.
         lo_obj->read( EXPORTING n    = lv_len
                       IMPORTING data = lv_string ).
       CATCH cx_sy_conversion_codepage.
-        cl_abap_unit_assert=>fail( ).
+        cl_abap_unit_assert=>fail( 'unexpected' ).
     ENDTRY.
 
     cl_abap_unit_assert=>assert_equals(

@@ -17,7 +17,7 @@ CLASS cl_abap_conv_in_ce DEFINITION PUBLIC.
     METHODS
       read
         IMPORTING
-          n     TYPE i
+          n     TYPE i OPTIONAL
         EXPORTING
           data  TYPE string.
   PRIVATE SECTION.
