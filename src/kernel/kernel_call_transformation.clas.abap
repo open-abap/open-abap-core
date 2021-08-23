@@ -40,7 +40,7 @@ CLASS kernel_call_transformation IMPLEMENTATION.
       iv_ref  = result ).
     WRITE '@KERNEL }'.
 
-    WRITE '@KERNEL console.dir(INPUT.result.data);'.
+*    WRITE '@KERNEL console.dir(INPUT.result.data);'.
 
   ENDMETHOD.
 
@@ -53,7 +53,7 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     FIELD-SYMBOLS <structure> TYPE any.
     FIELD-SYMBOLS <field> TYPE any.
 
-    WRITE '@KERNEL console.dir(iv_ref.getPointer());'.
+*    WRITE '@KERNEL console.dir(iv_ref.getPointer());'.
     lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
     CASE lo_type->kind.
       WHEN cl_abap_typedescr=>kind_struct.
@@ -63,11 +63,11 @@ CLASS kernel_call_transformation IMPLEMENTATION.
         LOOP AT lt_comps INTO ls_compo.
           WRITE / ls_compo-name.
           ASSIGN COMPONENT ls_compo-name OF STRUCTURE <structure> TO <field>.
-          <field> = 2.
+          <field> = 2. " todo
         ENDLOOP.
         WRITE / 'structure'.
     ENDCASE.
-    WRITE '@KERNEL console.dir(iv_ref.getPointer());'.
+*    WRITE '@KERNEL console.dir(iv_ref.getPointer());'.
     
   ENDMETHOD.
 
