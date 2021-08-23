@@ -25,8 +25,6 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     CALL TRANSFORMATION id
       SOURCE XML lv_xml
       RESULT data = ls_foo.
-    
-*    WRITE '@KERNEL console.dir(ls_foo);'.
 
     cl_abap_unit_assert=>assert_equals(
       act = ls_foo-foo

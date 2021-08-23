@@ -20,18 +20,17 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     
 * INPUT is magic...
 *    WRITE '@KERNEL console.dir(INPUT);'.
-    WRITE '@KERNEL lv_name.set(INPUT.name);'.
-    WRITE '@KERNEL if (INPUT.sourceXML) source_xml.set(INPUT.sourceXML);'.
-*    WRITE '@KERNEL if (INPUT.result) result.assign(INPUT.result);'.
-*    WRITE '@KERNEL console.dir(result);'.
 
 * only the ID transformation is implemented
+    WRITE '@KERNEL lv_name.set(INPUT.name);'.
     ASSERT lv_name = 'id'.
 
+    WRITE '@KERNEL if (INPUT.sourceXML) source_xml.set(INPUT.sourceXML);'.
     IF source_xml IS NOT INITIAL.
       parse_xml( source_xml ).
     ENDIF.
 
+* note: INPUT.result is a javascript structure, not an ABAP structure    
     WRITE '@KERNEL for (const name in INPUT.result) {'.
     WRITE '@KERNEL lv_name.set(name);'.
     WRITE '@KERNEL result.assign(INPUT.result[name]);'.
