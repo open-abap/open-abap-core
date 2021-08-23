@@ -7,7 +7,7 @@ CLASS kernel_call_transformation DEFINITION PUBLIC.
     CLASS-METHODS parse_xml IMPORTING iv_xml TYPE string.
     CLASS-METHODS traverse IMPORTING
       iv_name TYPE string 
-      iv_ref  TYPE REF TO any.
+      iv_ref  TYPE REF TO data.
 ENDCLASS.
 
 CLASS kernel_call_transformation IMPLEMENTATION.
@@ -16,7 +16,7 @@ CLASS kernel_call_transformation IMPLEMENTATION.
 
     DATA lv_name TYPE string.
     DATA source_xml TYPE string.
-    DATA result TYPE REF TO any.
+    DATA result TYPE REF TO data.
     
 * INPUT is magic...
 *    WRITE '@KERNEL console.dir(INPUT);'.
@@ -40,6 +40,8 @@ CLASS kernel_call_transformation IMPLEMENTATION.
       iv_ref  = result ).
     WRITE '@KERNEL }'.
 
+    WRITE '@KERNEL console.dir(INPUT.result.data);'.
+
   ENDMETHOD.
 
   METHOD traverse.
@@ -48,19 +50,24 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     DATA lo_struc TYPE REF TO cl_abap_structdescr.
     DATA lt_comps TYPE cl_abap_structdescr=>component_table.
     DATA ls_compo LIKE LINE OF lt_comps.
+    FIELD-SYMBOLS <structure> TYPE any.
+    FIELD-SYMBOLS <field> TYPE any.
 
-*    WRITE '@KERNEL console.dir(iv_ref->*);'.
-*    WRITE '@KERNEL console.dir(iv_ref.getPointer());'.
+    WRITE '@KERNEL console.dir(iv_ref.getPointer());'.
     lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
     CASE lo_type->kind.
       WHEN cl_abap_typedescr=>kind_struct.
         lo_struc ?= lo_type.
         lt_comps = lo_struc->get_components( ).
+        ASSIGN iv_ref->* TO <structure>.
         LOOP AT lt_comps INTO ls_compo.
           WRITE / ls_compo-name.
+          ASSIGN COMPONENT ls_compo-name OF STRUCTURE <structure> TO <field>.
+          <field> = 2.
         ENDLOOP.
         WRITE / 'structure'.
     ENDCASE.
+    WRITE '@KERNEL console.dir(iv_ref.getPointer());'.
     
   ENDMETHOD.
 
