@@ -17,6 +17,8 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     DATA lv_name    TYPE string.
     DATA source_xml TYPE string.
     DATA result     TYPE REF TO data.
+    DATA lt_rtab    TYPE abap_trans_resbind_tab.
+    DATA ls_rtab    LIKE LINE OF lt_rtab.
 
 * only the ID transformation is implemented
     WRITE '@KERNEL lv_name.set(INPUT.name);'.
@@ -28,13 +30,24 @@ CLASS kernel_call_transformation IMPLEMENTATION.
       parse_xml( source_xml ).
     ENDIF.
 
-* note: INPUT.result is a javascript structure, not an ABAP structure    
+    WRITE '@KERNEL if (INPUT.result.constructor.name === "Table") {'.
+* INPUT.result is an ABAP internal table
+    WRITE '@KERNEL lt_rtab = INPUT.result;'.
+    LOOP AT lt_rtab INTO ls_rtab.
+      traverse(
+        iv_name = ls_rtab-name
+        iv_ref  = ls_rtab-value ).
+    ENDLOOP.
+
+    WRITE '@KERNEL } else {'.
+* INPUT.result is a javascript structure 
     WRITE '@KERNEL for (const name in INPUT.result) {'.
     WRITE '@KERNEL lv_name.set(name);'.
     WRITE '@KERNEL result.assign(INPUT.result[name]);'.
     traverse(
       iv_name = lv_name
       iv_ref  = result ).
+    WRITE '@KERNEL }'.
     WRITE '@KERNEL }'.
 
 *    WRITE '@KERNEL console.dir(INPUT.result.data);'.

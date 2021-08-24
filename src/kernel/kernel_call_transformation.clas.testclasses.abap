@@ -44,6 +44,9 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     DATA lv_xml            TYPE string.
     DATA mi_ixml     TYPE REF TO if_ixml.
     DATA mi_xml_doc  TYPE REF TO if_ixml_document.
+    DATA lt_rtab  TYPE abap_trans_resbind_tab.
+    FIELD-SYMBOLS <ls_rtab> LIKE LINE OF lt_rtab.
+
     DATA: BEGIN OF ls_data,
             foo TYPE i,
           END OF ls_data.
@@ -85,6 +88,21 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
       OPTIONS value_handling = 'accept_data_loss'
       SOURCE XML mi_xml_doc
       RESULT data = ls_data.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_data-foo
+      exp = 2 ).
+
+* via dynamic table    
+    CLEAR ls_data.
+    APPEND INITIAL LINE TO lt_rtab ASSIGNING <ls_rtab>.
+    <ls_rtab>-name = 'DATA'.
+    GET REFERENCE OF ls_data INTO <ls_rtab>-value.
+
+    CALL TRANSFORMATION id
+      OPTIONS value_handling = 'accept_data_loss'
+      SOURCE XML mi_xml_doc
+      RESULT (lt_rtab).
 
     cl_abap_unit_assert=>assert_equals(
       act = ls_data-foo
