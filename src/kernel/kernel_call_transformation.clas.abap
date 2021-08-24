@@ -14,15 +14,16 @@ CLASS kernel_call_transformation IMPLEMENTATION.
 
   METHOD call.
 
-    DATA lv_name TYPE string.
+    DATA lv_name    TYPE string.
     DATA source_xml TYPE string.
-    DATA result TYPE REF TO data.
+    DATA result     TYPE REF TO data.
 
 * only the ID transformation is implemented
     WRITE '@KERNEL lv_name.set(INPUT.name);'.
     ASSERT lv_name = 'id'.
 
-    WRITE '@KERNEL if (INPUT.sourceXML) source_xml.set(INPUT.sourceXML);'.
+    WRITE '@KERNEL if (INPUT.sourceXML.constructor.name === "ABAPObject") this.mi_doc.set(INPUT.sourceXML);'.
+    WRITE '@KERNEL if (INPUT.sourceXML.constructor.name === "String") source_xml.set(INPUT.sourceXML);'.
     IF source_xml IS NOT INITIAL.
       parse_xml( source_xml ).
     ENDIF.
@@ -68,7 +69,6 @@ CLASS kernel_call_transformation IMPLEMENTATION.
         lt_comps = lo_struc->get_components( ).
         ASSIGN iv_ref->* TO <structure>.
         LOOP AT lt_comps INTO ls_compo.
-
           li_sub = li_element->find_from_name_ns(
             name      = ls_compo-name 
             namespace = '' 
