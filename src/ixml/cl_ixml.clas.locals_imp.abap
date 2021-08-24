@@ -180,6 +180,7 @@ CLASS lcl_node IMPLEMENTATION.
       li_iterator = li_children->create_iterator( ).
       DO.
         li_node = li_iterator->get_next( ).
+*        WRITE '@KERNEL console.dir("next");'.
         IF li_node IS INITIAL.
           EXIT. " current loop
         ENDIF.

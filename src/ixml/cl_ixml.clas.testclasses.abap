@@ -172,6 +172,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     DATA li_git  TYPE REF TO if_ixml_node.
     DATA li_sub  TYPE REF TO if_ixml_node.
     DATA li_doc  TYPE REF TO if_ixml_document.
+    DATA li_found TYPE REF TO if_ixml_element.
     DATA lv_dump TYPE string.
 
     lv_xml = |<?xml version="1.0" encoding="utf-16"?><abapGit><sub></sub></abapGit>|.
@@ -192,6 +193,11 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_dump
       exp = |NAME:sub,DEPTH:0,VALUE:,LEAF:X\n| ).
+
+    li_found = li_doc->find_from_name_ns(
+      depth = 0
+      name  = 'sub' ).
+    cl_abap_unit_assert=>assert_not_initial( li_found ).
 
   ENDMETHOD.
 
