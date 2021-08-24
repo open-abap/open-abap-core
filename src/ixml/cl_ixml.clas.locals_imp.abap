@@ -165,7 +165,34 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
   
   METHOD if_ixml_element~find_from_name_ns.
-    ASSERT 1 = 'todo'.
+
+* todo: take importing parameter DEPTH into account
+    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+    DATA li_node TYPE REF TO if_ixml_node.
+    DATA li_children TYPE REF TO if_ixml_node_list.
+    DATA lt_nodes TYPE STANDARD TABLE OF REF TO if_ixml_node WITH DEFAULT KEY.
+    DATA li_top LIKE LINE OF lt_nodes.
+    
+    APPEND me TO lt_nodes.
+
+    LOOP AT lt_nodes INTO li_top.
+      li_children = li_top->get_children( ).
+      li_iterator = li_children->create_iterator( ).
+      DO.
+        li_node = li_iterator->get_next( ).
+        IF li_node IS INITIAL.
+          EXIT. " current loop
+        ENDIF.
+*        WRITE '@KERNEL console.dir(li_node.value.mv_name);'.
+*        WRITE '@KERNEL console.dir(name);'.
+        IF li_node->get_name( ) = name.
+          val = li_node.
+          RETURN.
+        ENDIF.
+        APPEND li_node TO lt_nodes.
+      ENDDO.
+    ENDLOOP.
+
   ENDMETHOD.
   
   METHOD if_ixml_element~find_from_name.
@@ -205,7 +232,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
   
   METHOD if_ixml_element~get_value.
-    ASSERT 1 = 'todo'.
+    val = if_ixml_node~get_value( ).
   ENDMETHOD.
   
   METHOD if_ixml_element~remove_attribute.
@@ -352,7 +379,7 @@ CLASS lcl_document DEFINITION.
     INTERFACES if_ixml_document.
     METHODS constructor.
   PRIVATE SECTION.
-    DATA mi_node TYPE REF TO if_ixml_node.
+    DATA mi_node TYPE REF TO lcl_node.
 ENDCLASS.
 CLASS lcl_document IMPLEMENTATION.
 
@@ -361,77 +388,77 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~append_child.
-    mi_node->append_child( new_child ).
+    mi_node->if_ixml_node~append_child( new_child ).
   ENDMETHOD.
 
   METHOD if_ixml_node~set_namespace_prefix.
-    mi_node->set_namespace_prefix( val ).
+    mi_node->if_ixml_node~set_namespace_prefix( val ).
   ENDMETHOD.
 
   METHOD if_ixml_node~get_attributes.
-    map = mi_node->get_attributes( ).
+    map = mi_node->if_ixml_node~get_attributes( ).
   ENDMETHOD.
 
   METHOD if_ixml_node~get_first_child.
-    node = mi_node->get_first_child( ).
+    node = mi_node->if_ixml_node~get_first_child( ).
   ENDMETHOD.
 
   METHOD if_ixml_node~get_children.
-    val = mi_node->get_children( ).
+    val = mi_node->if_ixml_node~get_children( ).
   ENDMETHOD.
 
   METHOD if_ixml_node~query_interface.
-    mi_node->query_interface( foo ).
+    mi_node->if_ixml_node~query_interface( foo ).
   ENDMETHOD.
 
   METHOD if_ixml_node~remove_node.
-    mi_node->remove_node( ).
+    mi_node->if_ixml_node~remove_node( ).
   ENDMETHOD.
 
   METHOD if_ixml_node~get_parent.
-    val = mi_node->get_parent( ).
+    val = mi_node->if_ixml_node~get_parent( ).
   ENDMETHOD.
 
   METHOD if_ixml_node~replace_child.
-    mi_node->replace_child(
+    mi_node->if_ixml_node~replace_child(
       new_child = new_child 
       old_child = old_child ).
   ENDMETHOD.
 
   METHOD if_ixml_node~get_name.
-    val = mi_node->get_name( ).
+    val = mi_node->if_ixml_node~get_name( ).
   ENDMETHOD.
 
   METHOD if_ixml_node~get_depth.
-    val = mi_node->get_depth( ).
+    val = mi_node->if_ixml_node~get_depth( ).
   ENDMETHOD.
 
   METHOD if_ixml_node~is_leaf.
-    val = mi_node->is_leaf( ).
+    val = mi_node->if_ixml_node~is_leaf( ).
   ENDMETHOD.
 
   METHOD if_ixml_node~get_namespace.
-    val = mi_node->get_namespace( ).
+    val = mi_node->if_ixml_node~get_namespace( ).
   ENDMETHOD.
 
   METHOD if_ixml_node~get_value.
-    val = mi_node->get_value( ).
+    val = mi_node->if_ixml_node~get_value( ).
   ENDMETHOD.
 
   METHOD if_ixml_node~get_type.
-    val = mi_node->get_type( ).
+    val = mi_node->if_ixml_node~get_type( ).
   ENDMETHOD.
 
   METHOD if_ixml_node~set_name.
-    mi_node->set_name( name ).
+    mi_node->if_ixml_node~set_name( name ).
   ENDMETHOD.
 
   METHOD if_ixml_node~remove_child.
-    mi_node->remove_child( child ).
+    mi_node->if_ixml_node~remove_child( child ).
   ENDMETHOD.
 
   METHOD if_ixml_node~set_value.
-    mi_node->set_value( value ).
+    mi_node->if_ixml_node~set_value( value ).
   ENDMETHOD.
 
   METHOD if_ixml_document~set_encoding.
@@ -495,28 +522,14 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~find_from_name.
-    ASSERT 1 = 'todo'.
+    ASSERT 1 = 'todo, use find_from_name_ns instead'.
   ENDMETHOD.
 
   METHOD if_ixml_document~find_from_name_ns.
-* todo: take importing parameter DEPTH into account
-    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
-    DATA li_node TYPE REF TO if_ixml_node.
-    DATA li_children TYPE REF TO if_ixml_node_list.
-    
-    li_children = mi_node->get_children( ).
-    li_iterator = li_children->create_iterator( ).
-    DO.
-      li_node = li_iterator->get_next( ).
-      IF li_node IS INITIAL.
-        EXIT. " current loop
-      ENDIF.
-      IF li_node->get_name( ) = name.
-        element = li_node.
-        RETURN.
-      ENDIF.
-    ENDDO.
-    
+    element = mi_node->if_ixml_element~find_from_name_ns(
+      name      = name
+      depth     = depth
+      namespace = '' ).
   ENDMETHOD.
 
   METHOD if_ixml_document~find_from_path.
