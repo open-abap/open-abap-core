@@ -17,9 +17,6 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     DATA lv_name TYPE string.
     DATA source_xml TYPE string.
     DATA result TYPE REF TO data.
-    
-* INPUT is magic...
-*    WRITE '@KERNEL console.dir(INPUT);'.
 
 * only the ID transformation is implemented
     WRITE '@KERNEL lv_name.set(INPUT.name);'.
@@ -48,6 +45,8 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     DATA lo_type TYPE REF TO cl_abap_typedescr.
     DATA lo_struc TYPE REF TO cl_abap_structdescr.
     DATA lt_comps TYPE cl_abap_structdescr=>component_table.
+    DATA li_element TYPE REF TO if_ixml_element.
+    DATA li_sub TYPE REF TO if_ixml_element.
     DATA ls_compo LIKE LINE OF lt_comps.
     FIELD-SYMBOLS <structure> TYPE any.
     FIELD-SYMBOLS <field> TYPE any.
@@ -57,14 +56,33 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     CASE lo_type->kind.
       WHEN cl_abap_typedescr=>kind_struct.
         lo_struc ?= lo_type.
+
+        li_element = mi_doc->find_from_name_ns(
+          depth = 0
+          name  = to_upper( iv_name ) ).
+*        WRITE '@KERNEL console.dir(li_element);'.
+        IF li_element IS INITIAL.
+          RETURN.
+        ENDIF.
+
         lt_comps = lo_struc->get_components( ).
         ASSIGN iv_ref->* TO <structure>.
         LOOP AT lt_comps INTO ls_compo.
-          WRITE / ls_compo-name.
+
+          li_sub = li_element->find_from_name_ns(
+            name      = ls_compo-name 
+            namespace = '' 
+            depth     = 0 ).
+*          WRITE '@KERNEL console.dir(li_sub);'.
+          IF li_sub IS INITIAL.
+            CONTINUE.
+          ENDIF.
+
+*          WRITE / ls_compo-name.
           ASSIGN COMPONENT ls_compo-name OF STRUCTURE <structure> TO <field>.
-          <field> = 2. " todo
+          <field> = li_sub->get_value( ).
         ENDLOOP.
-        WRITE / 'structure'.
+*        WRITE / 'structure'.
     ENDCASE.
 *    WRITE '@KERNEL console.dir(iv_ref.getPointer());'.
     
