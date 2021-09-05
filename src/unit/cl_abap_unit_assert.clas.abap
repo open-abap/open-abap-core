@@ -123,9 +123,11 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
 
     DESCRIBE FIELD act TYPE type1.
     DESCRIBE FIELD exp TYPE type2.
-    IF type1 CA 'Cg'. " character and strings
+*    WRITE '@KERNEL console.dir(type1.get());'.
+*    WRITE '@KERNEL console.dir(type2.get());'.
+    IF type1 CA 'CgyIFP'. " basic types
       IF NOT type2 IS INITIAL.
-        ASSERT type2 CA 'Cg'.
+        ASSERT type2 CA 'CgyIFP'.
       ENDIF.
     ELSEIF NOT type1 IS INITIAL AND NOT type2 IS INITIAL.
       ASSERT type1 = type2.
