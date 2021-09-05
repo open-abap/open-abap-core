@@ -38,11 +38,13 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_table TYPE c LENGTH 1 VALUE 'h'.
     CONSTANTS typekind_date TYPE c LENGTH 1 VALUE 'D'.
     CONSTANTS typekind_time TYPE c LENGTH 1 VALUE 'T'.
+    CONSTANTS typekind_class TYPE c LENGTH 1 VALUE '*'.
 
     CONSTANTS kind_elem TYPE c LENGTH 1 VALUE 'E'.
     CONSTANTS kind_struct TYPE c LENGTH 1 VALUE 'S'.
     CONSTANTS kind_table TYPE c LENGTH 1 VALUE 'T'.
     CONSTANTS kind_ref TYPE c LENGTH 1 VALUE 'R'.
+    CONSTANTS kind_class TYPE c LENGTH 1 VALUE 'C'.
 
 ENDCLASS.
 
@@ -70,7 +72,9 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD describe_by_object_ref.
-    ASSERT 1 = 'todo'.
+    CREATE OBJECT type TYPE cl_abap_classdescr.
+    type->type_kind = typekind_class.
+    type->kind = kind_class.
   ENDMETHOD.
 
   METHOD describe_by_data.
