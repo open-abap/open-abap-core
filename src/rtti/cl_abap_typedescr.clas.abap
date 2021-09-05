@@ -130,7 +130,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         ASSERT 1 = 'todo_cl_abap_typedescr'.
     ENDCASE.
 
-    WRITE '@KERNEL if(data.getQualifiedName) type.get().absolute_name.set(data.getQualifiedName());'.
+    WRITE '@KERNEL if(data.getQualifiedName && data.getQualifiedName() !== undefined) type.get().absolute_name.set(data.getQualifiedName());'.
     IF type->absolute_name = 'ABAP_BOOL'.
       type->absolute_name = '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL'.
     ELSEIF type->absolute_name IS INITIAL.
