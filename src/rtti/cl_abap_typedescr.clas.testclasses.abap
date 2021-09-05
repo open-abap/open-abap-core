@@ -45,10 +45,10 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD typekind_char.
 
-    DATA bool TYPE abap_bool.
+    DATA cthing TYPE c LENGTH 3.
     DATA type TYPE REF TO cl_abap_typedescr.
 
-    type = cl_abap_typedescr=>describe_by_data( bool ).
+    type = cl_abap_typedescr=>describe_by_data( cthing ).
     cl_abap_unit_assert=>assert_not_initial( type ).
     cl_abap_unit_assert=>assert_not_initial( type->type_kind ).
     cl_abap_unit_assert=>assert_equals(
