@@ -125,6 +125,10 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         CREATE OBJECT type TYPE cl_abap_refdescr.
         type->type_kind = typekind_oref.
         type->kind = kind_ref.
+      WHEN 'DataReference'.
+        CREATE OBJECT type TYPE cl_abap_refdescr.
+        type->type_kind = typekind_dref.
+        type->kind = kind_ref.
       WHEN OTHERS.
         WRITE / lv_name.
         ASSERT 1 = 'todo_cl_abap_typedescr'.
