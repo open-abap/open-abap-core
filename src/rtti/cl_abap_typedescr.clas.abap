@@ -33,6 +33,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_xstring TYPE c LENGTH 1 VALUE 'y'.
     CONSTANTS typekind_string TYPE c LENGTH 1 VALUE 'g'.
     CONSTANTS typekind_char TYPE c LENGTH 1 VALUE 'C'.
+    CONSTANTS typekind_hex TYPE c LENGTH 1 VALUE 'X'.
     CONSTANTS typekind_dref TYPE c LENGTH 1 VALUE 'l'.
     CONSTANTS typekind_oref TYPE c LENGTH 1 VALUE 'r'.
     CONSTANTS typekind_table TYPE c LENGTH 1 VALUE 'h'.
@@ -94,6 +95,10 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
       WHEN 'Numc'.
         CREATE OBJECT type.
         type->type_kind = typekind_num.
+        type->kind = kind_elem.
+      WHEN 'Hex'.
+        CREATE OBJECT type.
+        type->type_kind = typekind_hex.
         type->kind = kind_elem.
       WHEN 'Date'.
         CREATE OBJECT type.
