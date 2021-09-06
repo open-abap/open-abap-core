@@ -9,10 +9,17 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD test01.
 
-    DATA ref TYPE REF TO cl_abap_codepage.
+    DATA obj  TYPE REF TO cl_abap_codepage.
     DATA type TYPE REF TO cl_abap_classdescr.
-    CREATE OBJECT ref.
-    type ?= cl_abap_typedescr=>describe_by_object_ref( ref ).
+    DATA ref  TYPE REF TO cl_abap_refdescr.
+    
+    CREATE OBJECT obj.
+    type ?= cl_abap_typedescr=>describe_by_object_ref( obj ).
+    ref ?= cl_abap_typedescr=>describe_by_data( obj ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = type->absolute_name
+      exp = ref->get_referenced_type( )->absolute_name ).
 
   ENDMETHOD.
 
