@@ -37,6 +37,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_oref TYPE c LENGTH 1 VALUE 'r'.
     CONSTANTS typekind_table TYPE c LENGTH 1 VALUE 'h'.
     CONSTANTS typekind_date TYPE c LENGTH 1 VALUE 'D'.
+    CONSTANTS typekind_num TYPE c LENGTH 1 VALUE 'N'.
     CONSTANTS typekind_time TYPE c LENGTH 1 VALUE 'T'.
     CONSTANTS typekind_class TYPE c LENGTH 1 VALUE '*'.
 
@@ -89,6 +90,10 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
       WHEN 'Integer'.
         CREATE OBJECT type.
         type->type_kind = typekind_int.
+        type->kind = kind_elem.
+      WHEN 'Numc'.
+        CREATE OBJECT type.
+        type->type_kind = typekind_num.
         type->kind = kind_elem.
       WHEN 'Date'.
         CREATE OBJECT type.
