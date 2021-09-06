@@ -91,6 +91,10 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         CREATE OBJECT type.
         type->type_kind = typekind_int.
         type->kind = kind_elem.
+      WHEN 'Numc'.
+        CREATE OBJECT type.
+        type->type_kind = typekind_num.
+        type->kind = kind_elem.
       WHEN 'Date'.
         CREATE OBJECT type.
         type->type_kind = typekind_date.
