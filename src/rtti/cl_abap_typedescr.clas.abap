@@ -75,6 +75,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     CREATE OBJECT type TYPE cl_abap_classdescr.
     type->type_kind = typekind_class.
     type->kind = kind_class.
+    type->absolute_name = 'CLASS_NAME_TODO'.
   ENDMETHOD.
 
   METHOD describe_by_data.
