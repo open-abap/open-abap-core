@@ -13,6 +13,11 @@
     "check_include": false, // todo
     "uncaught_exception": false, // todo
     "cyclic_oo": false,
+    "parser_702_chaining": false,
+    "pragma_placement": true,
+    "omit_receiving": true,
+    "unsecure_fae": true,
+    "sicf_consistency": true,
     "method_implemented_twice": true,
     "local_class_naming": true,
     "no_yoda_conditions": true,
@@ -51,7 +56,7 @@
     "identical_conditions": true,
     "identical_contents": true,
     "identical_form_names": true,
-    "many_parenthesis": true,
+    "many_parentheses": true,
     "if_in_if": true,
     "in_statement_indentation": true,
     "downport": false,
@@ -111,6 +116,7 @@
       "refresh": true,
       "compute": true,
       "sortByFS": true,
+      "callTransformation": true,
       "pack": true,
       "selectWithoutInto": true,
       "exitFromSQL": true,
