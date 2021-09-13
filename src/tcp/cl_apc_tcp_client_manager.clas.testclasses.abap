@@ -1,6 +1,7 @@
 CLASS lcl_handler DEFINITION FINAL .
   PUBLIC SECTION.
     INTERFACES if_apc_wsp_event_handler.
+    DATA message TYPE xstring.
 ENDCLASS.
 
 CLASS lcl_handler IMPLEMENTATION.
@@ -49,9 +50,9 @@ CLASS ltcl_tcp IMPLEMENTATION.
     li_message->set_binary( '112233' ).
     li_message_manager->send( li_message ).
 
-    " WAIT FOR PUSH CHANNELS
-    "    UNTIL lo_handler->message IS NOT INITIAL
-    "    UP TO 10 SECONDS.
+    WAIT FOR PUSH CHANNELS
+      UNTIL lo_handler->message IS NOT INITIAL
+      UP TO 10 SECONDS.
 
   ENDMETHOD.
 
