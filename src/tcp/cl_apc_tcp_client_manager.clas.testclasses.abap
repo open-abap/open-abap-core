@@ -6,15 +6,19 @@ ENDCLASS.
 
 CLASS lcl_handler IMPLEMENTATION.
   METHOD if_apc_wsp_event_handler~on_open.
+    RETURN.
   ENDMETHOD.
 
   METHOD if_apc_wsp_event_handler~on_message.
+    WRITE / 'on_message'.
   ENDMETHOD.
 
   METHOD if_apc_wsp_event_handler~on_close.
+    WRITE / 'on_close'.
   ENDMETHOD.
 
   METHOD if_apc_wsp_event_handler~on_error.
+    WRITE / 'on_error'.
   ENDMETHOD.
 ENDCLASS.
 
@@ -38,7 +42,6 @@ CLASS ltcl_tcp IMPLEMENTATION.
 
 * todo, set ls_frame details
 
-* see http://tcpbin.org for ip and port
     li_client = cl_apc_tcp_client_manager=>create(
       i_host          = 'httpbin.org'
       i_port          = 80
