@@ -10,11 +10,12 @@ CLASS lcl_handler IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_apc_wsp_event_handler~on_message.
-    WRITE / 'on_message'.
+*    WRITE / 'on_message'.
+    message = i_message->get_binary( ).
   ENDMETHOD.
 
   METHOD if_apc_wsp_event_handler~on_close.
-    WRITE / 'on_close'.
+    RETURN.
   ENDMETHOD.
 
   METHOD if_apc_wsp_event_handler~on_error.

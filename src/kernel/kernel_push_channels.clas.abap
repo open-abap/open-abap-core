@@ -8,9 +8,9 @@ ENDCLASS.
 CLASS kernel_push_channels IMPLEMENTATION.
 
   METHOD wait.
-
-    RETURN.
-
+* todo, await up to some seconds
+    WRITE '@KERNEL await new Promise(resolve => setTimeout(resolve, 1000));'.
+* todo, check condition
   ENDMETHOD.
 
 ENDCLASS.

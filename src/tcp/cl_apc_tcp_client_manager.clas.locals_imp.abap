@@ -47,9 +47,14 @@ CLASS lcl_client IMPLEMENTATION.
   METHOD if_apc_wsp_client~connect.
     WRITE '@KERNEL const net = await import("net");'.
     WRITE '@KERNEL this.client = net.createConnection({ port: this.mv_port.get(), host: this.mv_host.get()}, () => {this.mo_handler.get().if_apc_wsp_event_handler$on_open();});'.
-    WRITE '@KERNEL this.client.on("data", (data) => {this.mo_handler.get().if_apc_wsp_event_handler$on_message(data);});'.
-    WRITE '@KERNEL this.client.on("end",      () => {this.mo_handler.get().if_apc_wsp_event_handler$on_close();});'.
-    WRITE '@KERNEL this.client.on("error",   (e) => {this.mo_handler.get().if_apc_wsp_event_handler$on_error();});'.
+    WRITE '@KERNEL this.client.on("data", async (data) => {'.
+    WRITE '@KERNEL   const msg = await (new lcl_message().constructor_());'.
+    WRITE '@KERNEL   await msg.if_apc_wsp_message$set_binary({iv_binary: data.toString("hex").toUpperCase()});'.
+*    WRITE '@KERNEL   console.dir(data);'.
+    WRITE '@KERNEL   await this.mo_handler.get().if_apc_wsp_event_handler$on_message({i_message: msg});'.
+    WRITE '@KERNEL });'.
+    WRITE '@KERNEL this.client.on("end",   async () => {this.mo_handler.get().if_apc_wsp_event_handler$on_close();});'.
+    WRITE '@KERNEL this.client.on("error", async (e) => {this.mo_handler.get().if_apc_wsp_event_handler$on_error();});'.
     WRITE '@KERNEL await new Promise(resolve => this.client.once("connect", resolve));'.
   ENDMETHOD.
 
