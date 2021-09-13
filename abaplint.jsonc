@@ -6,7 +6,7 @@
     "skipGeneratedFunctionGroups": true
   },
   "syntax": {
-    "version": "v702",
+    "version": "open-abap",
     "errorNamespace": "."
   },
   "rules": {
@@ -28,7 +28,7 @@
     "space_before_colon": true,
     "space_before_dot": true,
     "unreachable_code": true,
-    "use_line_exists": true,
+    "use_line_exists": false,
     "inline_data_old_versions": false,
     "intf_referencing_clas": false,
     "keep_single_parameter_on_one_line": true,
