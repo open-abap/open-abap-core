@@ -6,15 +6,20 @@ ENDCLASS.
 
 CLASS lcl_handler IMPLEMENTATION.
   METHOD if_apc_wsp_event_handler~on_open.
+    RETURN.
   ENDMETHOD.
 
   METHOD if_apc_wsp_event_handler~on_message.
+*    WRITE / 'on_message'.
+    message = i_message->get_binary( ).
   ENDMETHOD.
 
   METHOD if_apc_wsp_event_handler~on_close.
+    RETURN.
   ENDMETHOD.
 
   METHOD if_apc_wsp_event_handler~on_error.
+    WRITE / 'on_error'.
   ENDMETHOD.
 ENDCLASS.
 
@@ -28,19 +33,19 @@ ENDCLASS.
 CLASS ltcl_tcp IMPLEMENTATION.
 
   METHOD test1.
-    DATA lo_handler TYPE REF TO lcl_handler.
-    DATA li_client TYPE REF TO if_apc_wsp_client.
-    DATA ls_frame TYPE if_apc_tcp_frame_types=>ty_frame_type.
+    DATA lo_handler         TYPE REF TO lcl_handler.
+    DATA li_client          TYPE REF TO if_apc_wsp_client.
+    DATA ls_frame           TYPE if_apc_tcp_frame_types=>ty_frame_type.
     DATA li_message_manager TYPE REF TO if_apc_wsp_message_manager.
-    DATA li_message TYPE REF TO if_apc_wsp_message.
+    DATA li_message         TYPE REF TO if_apc_wsp_message.
 
     CREATE OBJECT lo_handler.
 
 * todo, set ls_frame details
 
     li_client = cl_apc_tcp_client_manager=>create(
-      i_host          = 'localhost'
-      i_port          = 80 
+      i_host          = 'httpbin.org'
+      i_port          = 80
       i_frame         = ls_frame
       i_event_handler = lo_handler ).
 
@@ -53,6 +58,8 @@ CLASS ltcl_tcp IMPLEMENTATION.
     WAIT FOR PUSH CHANNELS
       UNTIL lo_handler->message IS NOT INITIAL
       UP TO 10 SECONDS.
+
+* todo, close connection?
 
   ENDMETHOD.
 
