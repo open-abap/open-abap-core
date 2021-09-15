@@ -59,7 +59,7 @@ CLASS ltcl_tcp IMPLEMENTATION.
       UNTIL lo_handler->message IS NOT INITIAL
       UP TO 10 SECONDS.
 
-* todo, close connection?
+    li_client->close( ).
 
   ENDMETHOD.
 
