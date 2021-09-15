@@ -58,6 +58,10 @@ CLASS lcl_client IMPLEMENTATION.
     WRITE '@KERNEL await new Promise(resolve => this.client.once("connect", resolve));'.
   ENDMETHOD.
 
+  METHOD if_apc_wsp_client~close.
+    WRITE '@KERNEL this.client.destroy();'.
+  ENDMETHOD.
+
   METHOD if_apc_wsp_client~get_message_manager.
     ri_manager = me.
   ENDMETHOD.
