@@ -72,6 +72,6 @@ CLASS lcl_client IMPLEMENTATION.
 
   METHOD if_apc_wsp_message_manager~send.
     WRITE '@KERNEL const val = await ii_message.get().if_apc_wsp_message$get_binary();'.
-    WRITE '@KERNEL this.client.write(Buffer.from(val.get(), "hex"));'.
+    WRITE '@KERNEL this.client.write(Buffer.from(val.get(), "hex"), "binary");'.
   ENDMETHOD.
 ENDCLASS.
