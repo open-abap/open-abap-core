@@ -16,6 +16,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS field_symbol FOR TESTING.
     METHODS abap_bool_absolute FOR TESTING.
     METHODS abap_true_absolute FOR TESTING.
+    METHODS xsdboolean_absolute FOR TESTING.
 
 ENDCLASS.
 
@@ -192,6 +193,16 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_type->absolute_name
       exp = '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL' ).
+  ENDMETHOD.
+
+  METHOD xsdboolean_absolute.
+    DATA lo_type TYPE REF TO cl_abap_typedescr.
+    DATA lv_xsd TYPE xsdboolean.
+    lo_type = cl_abap_typedescr=>describe_by_data( lv_xsd ).
+* this is checked in ajson(which is used by abapGit)    
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_type->absolute_name
+      exp = '\TYPE=XSDBOOLEAN' ).
   ENDMETHOD.
 
 ENDCLASS.

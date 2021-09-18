@@ -154,6 +154,8 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
       type->absolute_name = '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL'.
     ELSEIF type->absolute_name IS INITIAL.
       type->absolute_name = 'ABSOLUTE_NAME_TODO'.
+    ELSE.
+      type->absolute_name = '\TYPE=' && type->absolute_name.
     ENDIF.
 
   ENDMETHOD.
