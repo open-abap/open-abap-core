@@ -13,8 +13,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@abaplint/cli": "^2.79.1",
-    "@abaplint/runtime": "^1.6.28",
-    "@abaplint/transpiler-cli": "^1.6.28"
+    "@abaplint/cli": "^2.79.3",
+    "@abaplint/runtime": "^1.6.29",
+    "@abaplint/transpiler-cli": "^1.6.29"
   }
 }
