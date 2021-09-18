@@ -10,6 +10,16 @@ CLASS cl_abap_hmac DEFINITION PUBLIC.
         ef_hmacxstring TYPE xstring
       RAISING
         cx_abap_message_digest.
+    CLASS-METHODS calculate_hmac_for_char
+      IMPORTING
+        if_algorithm   TYPE string DEFAULT 'SHA1'
+        if_key         TYPE xstring
+        if_data        TYPE string
+      EXPORTING
+        ef_hmacstring  TYPE string
+        ef_hmacxstring TYPE xstring
+      RAISING
+        cx_abap_message_digest.        
 ENDCLASS.
 
 CLASS cl_abap_hmac IMPLEMENTATION.
@@ -36,5 +46,9 @@ CLASS cl_abap_hmac IMPLEMENTATION.
 
     ef_hmacxstring = ef_hmacstring.
 
+  ENDMETHOD.
+
+  METHOD calculate_hmac_for_char.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 ENDCLASS.
