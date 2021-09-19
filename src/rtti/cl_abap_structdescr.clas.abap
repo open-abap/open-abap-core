@@ -13,18 +13,16 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
     TYPES: component_table TYPE STANDARD TABLE OF component WITH DEFAULT KEY.
 
     METHODS:
-      get_components RETURNING VALUE(components) TYPE component_table,
+      get_components RETURNING VALUE(rt_components) TYPE component_table,
       is_ddic_type RETURNING VALUE(bool) TYPE abap_bool.
 
     CLASS-METHODS create
       IMPORTING 
-        components TYPE component_table
+        p_components TYPE component_table
       RETURNING 
         VALUE(ref) TYPE REF TO cl_abap_structdescr.
 
-  PRIVATE SECTION.
-    DATA gt_components TYPE component_table.
-
+    DATA components TYPE component_table.
 ENDCLASS.
 
 CLASS cl_abap_structdescr IMPLEMENTATION.
@@ -39,7 +37,7 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
 
   METHOD constructor.
     DATA lv_name TYPE string.
-    DATA ls_component LIKE LINE OF gt_components.
+    DATA ls_component LIKE LINE OF components.
     FIELD-SYMBOLS <fs> TYPE any.
 
 * todo, fail if input is not a structure?
@@ -49,12 +47,12 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     ls_component-name = lv_name.
     ASSIGN COMPONENT lv_name OF STRUCTURE data TO <fs>.
     ls_component-type = cl_abap_typedescr=>describe_by_data( <fs> ).
-    APPEND ls_component TO gt_components.
+    APPEND ls_component TO components.
     WRITE '@KERNEL }'.
   ENDMETHOD.
 
   METHOD get_components.
-    components = gt_components.
+    rt_components = components.
   ENDMETHOD.
 
 ENDCLASS.
