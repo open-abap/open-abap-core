@@ -3,7 +3,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
   PUBLIC SECTION.
     CLASS-METHODS
       describe_by_data
-        IMPORTING data TYPE any
+        IMPORTING p_data TYPE any
         RETURNING VALUE(type) TYPE REF TO cl_abap_typedescr.
     CLASS-METHODS
       describe_by_name
@@ -111,13 +111,13 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
       WHEN 'Structure'.
         CREATE OBJECT type TYPE cl_abap_structdescr
           EXPORTING
-            data = data.
+            data = p_data.
         type->type_kind = typekind_struct2.
         type->kind = kind_struct.
       WHEN 'Table'.
         CREATE OBJECT type TYPE cl_abap_tabledescr
           EXPORTING
-            data = data.
+            data = p_data.
         type->type_kind = typekind_table.
         type->kind = kind_table.
       WHEN 'XString'.

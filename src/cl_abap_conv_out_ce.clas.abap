@@ -5,6 +5,8 @@ CLASS cl_abap_conv_out_ce DEFINITION PUBLIC.
         IMPORTING
           encoding    TYPE abap_encoding
           ignore_cerr TYPE abap_bool DEFAULT abap_false
+          endian      TYPE string OPTIONAL
+          replacement TYPE string OPTIONAL
         RETURNING
           VALUE(ret)  TYPE REF TO cl_abap_conv_out_ce.
     METHODS
