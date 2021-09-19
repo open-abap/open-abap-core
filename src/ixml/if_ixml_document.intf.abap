@@ -70,7 +70,7 @@ INTERFACE if_ixml_document PUBLIC.
         VALUE(element) TYPE REF TO if_ixml_element,
     find_from_name_ns
       IMPORTING
-        depth TYPE i
+        depth TYPE i OPTIONAL
         name  TYPE string
       RETURNING
         VALUE(element) TYPE REF TO if_ixml_element,
