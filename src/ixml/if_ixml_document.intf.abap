@@ -86,7 +86,7 @@ INTERFACE if_ixml_document PUBLIC.
       RETURNING VALUE(val) TYPE any,
     get_elements_by_tag_name
       IMPORTING
-        depth TYPE i
+        depth TYPE i OPTIONAL
         name TYPE string
         namespace TYPE string
       RETURNING VALUE(val) TYPE any,
