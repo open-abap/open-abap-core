@@ -84,7 +84,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 
     DATA lv_name TYPE string.
 
-    WRITE '@KERNEL lv_name.set(data.constructor.name);'.
+    WRITE '@KERNEL lv_name.set(p_data.constructor.name);'.
 
 * These are the constructor names from the js runtime
     CASE lv_name.
@@ -133,7 +133,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->type_kind = typekind_char.
         type->kind = kind_elem.
       WHEN 'FieldSymbol'.
-        WRITE '@KERNEL lv_name = data.getPointer();'.
+        WRITE '@KERNEL lv_name = p_data.getPointer();'.
         type = describe_by_data( lv_name ).
         RETURN.
       WHEN 'ABAPObject'.
@@ -149,7 +149,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         ASSERT 1 = 'todo_cl_abap_typedescr'.
     ENDCASE.
 
-    WRITE '@KERNEL if(data.getQualifiedName && data.getQualifiedName() !== undefined) type.get().absolute_name.set(data.getQualifiedName());'.
+    WRITE '@KERNEL if(p_data.getQualifiedName && p_data.getQualifiedName() !== undefined) type.get().absolute_name.set(p_data.getQualifiedName());'.
     IF type->absolute_name = 'ABAP_BOOL'.
       type->absolute_name = '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL'.
     ELSEIF type->absolute_name IS INITIAL.
