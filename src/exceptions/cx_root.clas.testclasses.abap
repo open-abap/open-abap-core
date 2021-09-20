@@ -43,15 +43,15 @@ CLASS ltcl_test IMPLEMENTATION.
     ls_t100_key-attr1 = 'MSGV1'.
 
     TRY.
-      RAISE EXCEPTION TYPE lcx_error
-        EXPORTING
-          textid = ls_t100_key
-          msgv1  = 'hello'.
-    CATCH cx_root INTO lx_error.
-      lv_act = lx_error->get_text( ).
-      cl_abap_unit_assert=>assert_equals(
-        act = lv_act
-        exp = 'hello' ).
+        RAISE EXCEPTION TYPE lcx_error
+          EXPORTING
+            textid = ls_t100_key
+            msgv1  = 'hello'.
+      CATCH cx_root INTO lx_error.
+        lv_act = lx_error->get_text( ).
+        cl_abap_unit_assert=>assert_equals(
+          act = lv_act
+          exp = 'hello' ).
     ENDTRY.
 
   ENDMETHOD.
