@@ -35,7 +35,7 @@ CLASS ltcl_tcp IMPLEMENTATION.
   METHOD test1.
     DATA lo_handler         TYPE REF TO lcl_handler.
     DATA li_client          TYPE REF TO if_apc_wsp_client.
-    DATA ls_frame           TYPE if_apc_tcp_frame_types=>ty_frame_type.
+    DATA ls_frame           TYPE if_abap_channel_types=>ty_apc_tcp_frame.
     DATA li_message_manager TYPE REF TO if_apc_wsp_message_manager.
     DATA li_message         TYPE REF TO if_apc_wsp_message.
 
