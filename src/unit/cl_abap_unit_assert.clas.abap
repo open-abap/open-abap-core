@@ -6,7 +6,8 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
           act TYPE any
           exp TYPE any
           msg TYPE string OPTIONAL
-          quit TYPE i OPTIONAL.
+          quit TYPE i OPTIONAL
+          level TYPE i OPTIONAL.
 
     CLASS-METHODS
       assert_differs
@@ -14,27 +15,31 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
           act TYPE string
           exp TYPE string
           msg TYPE string OPTIONAL
-          quit TYPE i OPTIONAL.
+          quit TYPE i OPTIONAL
+          level TYPE i OPTIONAL.
 
     CLASS-METHODS
       assert_not_initial
         IMPORTING
           act TYPE any
           msg TYPE string OPTIONAL
-          quit TYPE i OPTIONAL.
+          quit TYPE i OPTIONAL
+          level TYPE i OPTIONAL.
 
     CLASS-METHODS
       assert_initial
         IMPORTING
           act TYPE any
           msg TYPE string OPTIONAL
-          quit TYPE i OPTIONAL.
+          quit TYPE i OPTIONAL
+          level TYPE i OPTIONAL.
 
     CLASS-METHODS
       fail
         IMPORTING
           msg TYPE csequence OPTIONAL
           quit TYPE i OPTIONAL
+          level TYPE i OPTIONAL
         PREFERRED PARAMETER msg.
 
     CLASS-METHODS
@@ -42,21 +47,24 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
         IMPORTING
           exp TYPE i DEFAULT 0
           msg TYPE string OPTIONAL
-          quit TYPE i OPTIONAL.
+          quit TYPE i OPTIONAL
+          level TYPE i OPTIONAL.
 
     CLASS-METHODS
       assert_true
         IMPORTING
           act TYPE abap_bool
           msg TYPE string OPTIONAL
-          quit TYPE i OPTIONAL.
+          quit TYPE i OPTIONAL
+          level TYPE i OPTIONAL.
 
     CLASS-METHODS
       assert_false
         IMPORTING
           act TYPE abap_bool
           msg TYPE string OPTIONAL
-          quit TYPE i OPTIONAL.
+          quit TYPE i OPTIONAL
+          level TYPE i OPTIONAL.
 
     CLASS-METHODS
       assert_char_cp
@@ -64,21 +72,24 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
           act TYPE clike
           exp TYPE clike
           msg TYPE string OPTIONAL
-          quit TYPE i OPTIONAL.
+          quit TYPE i OPTIONAL
+          level TYPE i OPTIONAL.
 
     CLASS-METHODS
       assert_bound
         IMPORTING
           act TYPE string
           msg TYPE string OPTIONAL
-          quit TYPE i OPTIONAL.
+          quit TYPE i OPTIONAL
+          level TYPE i OPTIONAL.
 
     CLASS-METHODS
       assert_not_bound
         IMPORTING
           act TYPE string
           msg TYPE string OPTIONAL
-          quit TYPE i OPTIONAL.
+          quit TYPE i OPTIONAL
+          level TYPE i OPTIONAL.
 
 ENDCLASS.
 

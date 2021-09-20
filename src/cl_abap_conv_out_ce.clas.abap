@@ -9,6 +9,12 @@ CLASS cl_abap_conv_out_ce DEFINITION PUBLIC.
           replacement TYPE string OPTIONAL
         RETURNING
           VALUE(ret)  TYPE REF TO cl_abap_conv_out_ce.
+    CLASS-METHODS
+      uccpi
+        IMPORTING
+          value TYPE string
+        RETURNING
+          VALUE(ret) TYPE i.          
     METHODS
       convert
         IMPORTING
@@ -37,6 +43,10 @@ CLASS cl_abap_conv_out_ce IMPLEMENTATION.
       WHEN OTHERS.
         ASSERT 1 = 'not supported'.
     ENDCASE.
+  ENDMETHOD.
+
+  METHOD uccpi.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD write.
