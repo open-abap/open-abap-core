@@ -119,6 +119,7 @@
       "callTransformation": true,
       "pack": true,
       "selectWithoutInto": true,
+      "regex": false,
       "exitFromSQL": true,
       "freeMemory": true,
       "requested": true,
