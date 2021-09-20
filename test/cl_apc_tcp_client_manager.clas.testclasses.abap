@@ -45,7 +45,7 @@ CLASS ltcl_tcp IMPLEMENTATION.
 
     li_client = cl_apc_tcp_client_manager=>create(
       i_host          = 'httpbin.org'
-      i_port          = 80
+      i_port          = '80'
       i_frame         = ls_frame
       i_event_handler = lo_handler ).
 
