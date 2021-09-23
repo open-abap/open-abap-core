@@ -9,11 +9,13 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
              name       TYPE string,
              type       TYPE REF TO cl_abap_typedescr,
              as_include TYPE abap_bool,
+             type_kind  TYPE c LENGTH 1,
            END OF component.
     TYPES: component_table TYPE STANDARD TABLE OF component WITH DEFAULT KEY.
 
     METHODS:
       get_components RETURNING VALUE(rt_components) TYPE component_table,
+      get_ddic_field_list RETURNING VALUE(rt_components) TYPE ddfields,
       is_ddic_type RETURNING VALUE(bool) TYPE abap_bool.
 
     CLASS-METHODS create
@@ -29,6 +31,10 @@ ENDCLASS.
 CLASS cl_abap_structdescr IMPLEMENTATION.
 
   METHOD create.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get_ddic_field_list.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
