@@ -14,6 +14,7 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
 
     METHODS:
       get_components RETURNING VALUE(rt_components) TYPE component_table,
+      get_ddic_field_list RETURNING VALUE(rt_components) TYPE ddfields,
       is_ddic_type RETURNING VALUE(bool) TYPE abap_bool.
 
     CLASS-METHODS create
@@ -29,6 +30,10 @@ ENDCLASS.
 CLASS cl_abap_structdescr IMPLEMENTATION.
 
   METHOD create.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get_ddic_field_list.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
