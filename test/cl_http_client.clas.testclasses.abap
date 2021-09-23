@@ -237,7 +237,7 @@ CLASS ltcl_test IMPLEMENTATION.
       value = 'application/x-git-upload-pack-result' ).
 
     lv_str = |0056want f9ec23d6d935aa7dc26ee141c7b46feed9d4685e side-band-64k no-progress multi_ack\n000Ddeepen 1\n00000009done\n|.
-    cl_abap_conv_out_ce=>create( 'UTF-8' )->convert(
+    cl_abap_conv_out_ce=>create( encoding = 'UTF-8' )->convert(
       EXPORTING data   = lv_str
       IMPORTING buffer = lv_hex ).
 

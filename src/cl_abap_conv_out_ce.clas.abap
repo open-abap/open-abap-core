@@ -3,7 +3,7 @@ CLASS cl_abap_conv_out_ce DEFINITION PUBLIC.
     CLASS-METHODS
       create
         IMPORTING
-          encoding    TYPE abap_encoding
+          encoding    TYPE abap_encoding OPTIONAL
           ignore_cerr TYPE abap_bool DEFAULT abap_false
           endian      TYPE string OPTIONAL
           replacement TYPE string OPTIONAL
