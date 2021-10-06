@@ -75,7 +75,7 @@ INTERFACE if_ixml_element PUBLIC.
     set_attribute_ns
       IMPORTING
         name TYPE string
-        prefix TYPE string
+        prefix TYPE string OPTIONAL
         value TYPE string,
     set_value
       IMPORTING
