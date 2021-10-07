@@ -36,7 +36,7 @@ CLASS cl_abap_conv_out_ce IMPLEMENTATION.
   METHOD create.
     CREATE OBJECT ret.
     CASE encoding.
-      WHEN 'UTF-8'.
+      WHEN 'UTF-8' OR ''.
         ret->mv_js_encoding = 'utf8'.
       WHEN '4103'.
         ret->mv_js_encoding = 'utf16le'.
