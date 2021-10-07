@@ -28,8 +28,10 @@ CLASS cl_abap_conv_out_ce DEFINITION PUBLIC.
     METHODS get_buffer
       RETURNING 
         VALUE(buffer) TYPE xstring.
+    METHODS reset.
   PRIVATE SECTION.
     DATA mv_js_encoding TYPE string.
+    DATA mv_buffer TYPE xstring.
 ENDCLASS.
 
 CLASS cl_abap_conv_out_ce IMPLEMENTATION.
@@ -60,11 +62,18 @@ CLASS cl_abap_conv_out_ce IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD write.
-    ASSERT 1 = 'todo'.
+    DATA res TYPE xstring.
+    convert( EXPORTING data = data
+             IMPORTING buffer = res ).
+    CONCATENATE mv_buffer res INTO mv_buffer IN BYTE MODE.
   ENDMETHOD.
 
   METHOD get_buffer.
-    ASSERT 1 = 'todo'.
+    buffer = mv_buffer.
+  ENDMETHOD.
+
+  METHOD reset.
+    CLEAR mv_buffer.
   ENDMETHOD.
 
   METHOD convert.
