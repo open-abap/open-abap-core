@@ -36,7 +36,7 @@ CLASS cl_abap_conv_out_ce IMPLEMENTATION.
   METHOD create.
     CREATE OBJECT ret.
     CASE encoding.
-      WHEN 'UTF-8'.
+      WHEN 'UTF-8' OR ''.
         ret->mv_js_encoding = 'utf8'.
       WHEN '4103'.
         ret->mv_js_encoding = 'utf16le'.
@@ -46,7 +46,17 @@ CLASS cl_abap_conv_out_ce IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD uccpi.
-    ASSERT 1 = 'todo'.
+    DATA lo_out TYPE REF TO cl_abap_conv_out_ce.
+    DATA lv_hex TYPE xstring.
+    lo_out = create( encoding = '4103' ).
+    lo_out->convert(
+      EXPORTING
+        data = value 
+      IMPORTING
+        buffer = lv_hex ).
+    ASSERT xstrlen( lv_hex ) = 2.
+    ret = lv_hex(1).
+    ret = ret + lv_hex+1(1) * 255.
   ENDMETHOD.
 
   METHOD write.
