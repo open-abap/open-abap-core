@@ -48,13 +48,24 @@ CLASS cl_abap_conv_in_ce IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD uccpi.
-    ASSERT 1 = 'todo'.
+    DATA lv_hex TYPE x LENGTH 1.
+    DATA lo_in TYPE REF TO cl_abap_conv_in_ce.
+
+    lv_hex = value.
+    lo_in = create( ).
+
+    lo_in->convert(
+      EXPORTING 
+        input = lv_hex
+      IMPORTING
+        data  = ret ).
   ENDMETHOD.
 
   METHOD convert.
     IF input IS INITIAL.
       RETURN.
     ENDIF.
+    ASSERT mv_js_encoding IS NOT INITIAL.
     WRITE '@KERNEL let result = Buffer.from(input.get(), "hex").toString(this.mv_js_encoding.get());'.
     WRITE '@KERNEL data.set(result);'.
   ENDMETHOD.

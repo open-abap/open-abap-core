@@ -1,15 +1,24 @@
 CLASS ltcl_conv_in DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
-    METHODS test1 FOR TESTING.
-    METHODS test2 FOR TESTING.
-    METHODS test3 FOR TESTING.
-    METHODS empty FOR TESTING.
-    METHODS utf16le FOR TESTING.
+    METHODS test1 FOR TESTING RAISING cx_static_check.
+    METHODS test2 FOR TESTING RAISING cx_static_check.
+    METHODS test3 FOR TESTING RAISING cx_static_check.
+    METHODS empty FOR TESTING RAISING cx_static_check.
+    METHODS utf16le FOR TESTING RAISING cx_static_check.
+    METHODS uccpi_50 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_conv_in IMPLEMENTATION.
+
+  METHOD uccpi_50.
+    DATA str TYPE string.
+    str = cl_abap_conv_in_ce=>uccpi( 50 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = str
+      exp = '2' ).
+  ENDMETHOD.
 
   METHOD test1.
     DATA conv TYPE REF TO cl_abap_conv_in_ce.
