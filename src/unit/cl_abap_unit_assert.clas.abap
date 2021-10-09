@@ -3,10 +3,11 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
     CLASS-METHODS
       assert_equals
         IMPORTING
-          act TYPE any
-          exp TYPE any
-          msg TYPE string OPTIONAL
-          quit TYPE i OPTIONAL
+          act   TYPE any
+          exp   TYPE any
+          msg   TYPE string OPTIONAL
+          tol   TYPE f OPTIONAL
+          quit  TYPE i OPTIONAL
           level TYPE i OPTIONAL.
 
     CLASS-METHODS
