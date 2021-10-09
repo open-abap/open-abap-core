@@ -19,6 +19,16 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
           level TYPE i OPTIONAL.
 
     CLASS-METHODS
+      assert_number_between
+        IMPORTING
+          lower  TYPE i
+          upper  TYPE i
+          number TYPE i
+          msg    TYPE string OPTIONAL
+          quit   TYPE i OPTIONAL
+          level   TYPE i OPTIONAL.
+
+    CLASS-METHODS
       assert_not_initial
         IMPORTING
           act TYPE any
@@ -172,6 +182,11 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
 
   METHOD assert_subrc.
     ASSERT sy-subrc = exp.
+  ENDMETHOD.
+
+  METHOD assert_number_between.
+    ASSERT number >= lower.
+    ASSERT number <= upper.
   ENDMETHOD.
 
 ENDCLASS.
