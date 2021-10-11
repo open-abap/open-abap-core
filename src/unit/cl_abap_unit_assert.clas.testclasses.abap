@@ -8,6 +8,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS initial_hex FOR TESTING.
     METHODS equals FOR TESTING.
     METHODS equals_table FOR TESTING.
+    METHODS equals_tol FOR TESTING.
     METHODS differs FOR TESTING.
     METHODS cp1 FOR TESTING.
     METHODS cp2 FOR TESTING.
@@ -16,6 +17,18 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
+
+  METHOD equals_tol.
+    CONSTANTS pi TYPE f VALUE '3.14159265359'.
+    DATA degrees TYPE f.
+    DATA radians TYPE f.
+    degrees = 180.
+    radians = ( degrees * pi ) / 180.
+    cl_abap_unit_assert=>assert_equals(
+      exp = pi
+      act = radians
+      tol = `0.000000000000001` ).
+  ENDMETHOD.
 
   METHOD cp1.
     cl_abap_unit_assert=>assert_char_cp(
