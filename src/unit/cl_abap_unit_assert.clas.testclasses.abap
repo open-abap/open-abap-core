@@ -1,18 +1,18 @@
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
-    METHODS initial FOR TESTING.
-    METHODS initial_ref FOR TESTING.
-    METHODS initial_numbers FOR TESTING.
-    METHODS initial_date FOR TESTING.
-    METHODS initial_hex FOR TESTING.
-    METHODS equals FOR TESTING.
-    METHODS equals_table FOR TESTING.
-    METHODS equals_tol FOR TESTING.
-    METHODS differs FOR TESTING.
-    METHODS cp1 FOR TESTING.
-    METHODS cp2 FOR TESTING.
-    METHODS char_eq_string FOR TESTING.
+    METHODS initial FOR TESTING RAISING cx_static_check.
+    METHODS initial_ref FOR TESTING RAISING cx_static_check.
+    METHODS initial_numbers FOR TESTING RAISING cx_static_check.
+    METHODS initial_date FOR TESTING RAISING cx_static_check.
+    METHODS initial_hex FOR TESTING RAISING cx_static_check.
+    METHODS equals FOR TESTING RAISING cx_static_check.
+    METHODS equals_table FOR TESTING RAISING cx_static_check.
+    METHODS equals_tol FOR TESTING RAISING cx_static_check.
+    METHODS differs FOR TESTING RAISING cx_static_check.
+    METHODS cp1 FOR TESTING RAISING cx_static_check.
+    METHODS cp2 FOR TESTING RAISING cx_static_check.
+    METHODS char_eq_string FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
