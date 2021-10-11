@@ -1,21 +1,34 @@
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
-    METHODS initial FOR TESTING.
-    METHODS initial_ref FOR TESTING.
-    METHODS initial_numbers FOR TESTING.
-    METHODS initial_date FOR TESTING.
-    METHODS initial_hex FOR TESTING.
-    METHODS equals FOR TESTING.
-    METHODS equals_table FOR TESTING.
-    METHODS differs FOR TESTING.
-    METHODS cp1 FOR TESTING.
-    METHODS cp2 FOR TESTING.
-    METHODS char_eq_string FOR TESTING.
+    METHODS initial FOR TESTING RAISING cx_static_check.
+    METHODS initial_ref FOR TESTING RAISING cx_static_check.
+    METHODS initial_numbers FOR TESTING RAISING cx_static_check.
+    METHODS initial_date FOR TESTING RAISING cx_static_check.
+    METHODS initial_hex FOR TESTING RAISING cx_static_check.
+    METHODS equals FOR TESTING RAISING cx_static_check.
+    METHODS equals_table FOR TESTING RAISING cx_static_check.
+    METHODS equals_tol FOR TESTING RAISING cx_static_check.
+    METHODS differs FOR TESTING RAISING cx_static_check.
+    METHODS cp1 FOR TESTING RAISING cx_static_check.
+    METHODS cp2 FOR TESTING RAISING cx_static_check.
+    METHODS char_eq_string FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
+
+  METHOD equals_tol.
+    CONSTANTS pi TYPE f VALUE '3.14159265359'.
+    DATA degrees TYPE f.
+    DATA radians TYPE f.
+    degrees = 180.
+    radians = ( degrees * pi ) / 180.
+    cl_abap_unit_assert=>assert_equals(
+      exp = pi
+      act = radians
+      tol = `0.000000000000001` ).
+  ENDMETHOD.
 
   METHOD cp1.
     cl_abap_unit_assert=>assert_char_cp(

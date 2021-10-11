@@ -138,6 +138,7 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
     DATA type1 TYPE c LENGTH 1.
     DATA type2 TYPE c LENGTH 1.
     DATA index TYPE i.
+    DATA diff TYPE f.
     FIELD-SYMBOLS <tab1> TYPE INDEX TABLE.
     FIELD-SYMBOLS <row1> TYPE any.
     FIELD-SYMBOLS <tab2> TYPE INDEX TABLE.
@@ -168,6 +169,11 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
         assert_equals( act = <row1>
                        exp = <row2> ).
       ENDDO.
+    ELSEIF tol IS SUPPLIED.
+      diff = exp - act.
+*      WRITE '@KERNEL console.dir(tol);'.
+*      WRITE '@KERNEL console.dir(diff);'.
+      ASSERT diff < tol.
     ELSE.
       ASSERT act = exp.
     ENDIF.
