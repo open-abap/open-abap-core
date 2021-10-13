@@ -89,6 +89,15 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
           directory TYPE string
         CHANGING
           rc TYPE i.           
+    
+    CLASS-METHODS
+      clipboard_export
+        IMPORTING
+          no_auth_check TYPE abap_bool
+        EXPORTING
+          data TYPE any
+        CHANGING
+          rc TYPE i.
 
 ENDCLASS.
 
@@ -131,5 +140,9 @@ CLASS cl_gui_frontend_services IMPLEMENTATION.
 
   METHOD get_platform.
     platform = platform_windowsxp.
+  ENDMETHOD.
+
+  METHOD clipboard_export.
+    ASSERT 1 = 'clipboard_export not supported'.
   ENDMETHOD.
 ENDCLASS.
