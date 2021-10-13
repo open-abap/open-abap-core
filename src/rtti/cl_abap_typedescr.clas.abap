@@ -44,6 +44,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_packed TYPE c LENGTH 1 VALUE 'P'.
     CONSTANTS typekind_float TYPE c LENGTH 1 VALUE 'F'.
     CONSTANTS typekind_int1 TYPE c LENGTH 1 VALUE 'b'.
+    CONSTANTS typekind_int2 TYPE c LENGTH 1 VALUE 's'.
     
     CONSTANTS kind_elem TYPE c LENGTH 1 VALUE 'E'.
     CONSTANTS kind_struct TYPE c LENGTH 1 VALUE 'S'.
