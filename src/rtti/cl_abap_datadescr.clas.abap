@@ -1,0 +1,7 @@
+CLASS cl_abap_datadescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
+  PUBLIC SECTION.
+ENDCLASS.
+
+CLASS cl_abap_datadescr IMPLEMENTATION.
+
+ENDCLASS.

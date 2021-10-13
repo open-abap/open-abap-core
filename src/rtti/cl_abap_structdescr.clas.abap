@@ -21,7 +21,7 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
         IMPORTING
           p_name TYPE any
         RETURNING
-          VALUE(p_descr_ref) TYPE REF TO cl_abap_typedescr
+          VALUE(p_descr_ref) TYPE REF TO cl_abap_datadescr
         EXCEPTIONS
           component_not_found
           unsupported_input_type.
