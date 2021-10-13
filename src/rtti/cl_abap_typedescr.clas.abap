@@ -41,7 +41,10 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_num TYPE c LENGTH 1 VALUE 'N'.
     CONSTANTS typekind_time TYPE c LENGTH 1 VALUE 'T'.
     CONSTANTS typekind_class TYPE c LENGTH 1 VALUE '*'.
-
+    CONSTANTS typekind_packed TYPE c LENGTH 1 VALUE 'P'.
+    CONSTANTS typekind_float TYPE c LENGTH 1 VALUE 'F'.
+    CONSTANTS typekind_int1 TYPE c LENGTH 1 VALUE 'b'.
+    
     CONSTANTS kind_elem TYPE c LENGTH 1 VALUE 'E'.
     CONSTANTS kind_struct TYPE c LENGTH 1 VALUE 'S'.
     CONSTANTS kind_table TYPE c LENGTH 1 VALUE 'T'.
