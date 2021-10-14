@@ -21,6 +21,12 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
       RETURNING
         VALUE(time) TYPE timestamp.
 
+    CLASS-METHODS move
+      IMPORTING
+        tstmp_src   TYPE p
+      EXPORTING
+        tstmp_tgt TYPE p.
+
     CLASS-METHODS systemtstmp_syst2utc
       IMPORTING
         syst_date TYPE d
@@ -30,6 +36,10 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS cl_abap_tstmp IMPLEMENTATION.
+
+  METHOD move.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD systemtstmp_syst2utc.
     ASSERT 1 = 'todo'.
