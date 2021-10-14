@@ -78,6 +78,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
   ENDMETHOD.
   
   METHOD is_ddic_type.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
   
   METHOD describe_by_data_ref.
