@@ -72,6 +72,7 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
 
   METHOD get_component_type.
     " TODO
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
 ENDCLASS.
