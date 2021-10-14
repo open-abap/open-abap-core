@@ -22,6 +22,10 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
       get_relative_name
         RETURNING 
           VALUE(name) TYPE string.
+    METHODS 
+      is_ddic_type
+        RETURNING
+          VALUE(p_abap_bool) TYPE abap_bool.
 
     DATA type_kind TYPE c LENGTH 1.
     DATA kind TYPE c LENGTH 1.
@@ -41,7 +45,11 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_num TYPE c LENGTH 1 VALUE 'N'.
     CONSTANTS typekind_time TYPE c LENGTH 1 VALUE 'T'.
     CONSTANTS typekind_class TYPE c LENGTH 1 VALUE '*'.
-
+    CONSTANTS typekind_packed TYPE c LENGTH 1 VALUE 'P'.
+    CONSTANTS typekind_float TYPE c LENGTH 1 VALUE 'F'.
+    CONSTANTS typekind_int1 TYPE c LENGTH 1 VALUE 'b'.
+    CONSTANTS typekind_int2 TYPE c LENGTH 1 VALUE 's'.
+    
     CONSTANTS kind_elem TYPE c LENGTH 1 VALUE 'E'.
     CONSTANTS kind_struct TYPE c LENGTH 1 VALUE 'S'.
     CONSTANTS kind_table TYPE c LENGTH 1 VALUE 'T'.
@@ -68,7 +76,10 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
   METHOD get_relative_name.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-
+  
+  METHOD is_ddic_type.
+  ENDMETHOD.
+  
   METHOD describe_by_data_ref.
     ASSERT 1 = 'todo'.
   ENDMETHOD.

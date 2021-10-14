@@ -9,6 +9,19 @@ CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
     CLASS-METHODS create
       IMPORTING type TYPE REF TO cl_abap_typedescr
       RETURNING VALUE(ref) TYPE REF TO cl_abap_tabledescr.
+
+    DATA table_kind TYPE c LENGTH 1.
+
+    CONSTANTS tablekind_any TYPE c LENGTH 1 VALUE 'A'.
+    CONSTANTS tablekind_std TYPE c LENGTH 1 VALUE 'S'.
+    CONSTANTS tablekind_index TYPE c LENGTH 1 VALUE 'I'.
+    CONSTANTS tablekind_hashed TYPE c LENGTH 1 VALUE 'H'.
+    CONSTANTS tablekind_sorted TYPE c LENGTH 1 VALUE 'O'.
+    CONSTANTS keydefkind_default TYPE c LENGTH 1 VALUE 'D'.
+    CONSTANTS keydefkind_tableline TYPE c LENGTH 1 VALUE 'L'.
+    CONSTANTS keydefkind_user TYPE c LENGTH 1 VALUE 'U'.
+    CONSTANTS keydefkind_empty TYPE c LENGTH 1 VALUE 'E'.
+
   PRIVATE SECTION.
     DATA lo_type TYPE REF TO cl_abap_typedescr.
 ENDCLASS.
