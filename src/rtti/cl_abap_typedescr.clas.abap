@@ -22,6 +22,10 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
       get_relative_name
         RETURNING 
           VALUE(name) TYPE string.
+    METHODS 
+      is_ddic_type
+        RETURNING
+          VALUE(p_abap_bool) TYPE abap_bool.
 
     DATA type_kind TYPE c LENGTH 1.
     DATA kind TYPE c LENGTH 1.
@@ -72,7 +76,10 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
   METHOD get_relative_name.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-
+  
+  METHOD is_ddic_type.
+  ENDMETHOD.
+  
   METHOD describe_by_data_ref.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
