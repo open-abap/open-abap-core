@@ -16,13 +16,21 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
     METHODS:
       get_components RETURNING VALUE(rt_components) TYPE component_table,
       get_ddic_field_list RETURNING VALUE(rt_components) TYPE ddfields,
-      is_ddic_type RETURNING VALUE(bool) TYPE abap_bool.
+      is_ddic_type RETURNING VALUE(bool) TYPE abap_bool,
+      get_component_type
+        IMPORTING
+          p_name TYPE any
+        RETURNING
+          VALUE(p_descr_ref) TYPE REF TO cl_abap_datadescr
+        EXCEPTIONS
+          component_not_found
+          unsupported_input_type.
 
     CLASS-METHODS create
-      IMPORTING 
+      IMPORTING
         p_components TYPE component_table
         p_strict     TYPE abap_bool OPTIONAL
-      RETURNING 
+      RETURNING
         VALUE(ref)   TYPE REF TO cl_abap_structdescr.
 
     DATA components TYPE component_table.
@@ -60,6 +68,11 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
 
   METHOD get_components.
     rt_components = components.
+  ENDMETHOD.
+
+  METHOD get_component_type.
+    " TODO
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
 ENDCLASS.
