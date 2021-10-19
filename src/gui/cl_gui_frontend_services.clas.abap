@@ -99,6 +99,11 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
         CHANGING
           rc TYPE i.
 
+    CLASS-METHODS
+      get_system_directory
+        CHANGING
+          system_directory TYPE string.
+
 ENDCLASS.
 
 CLASS cl_gui_frontend_services IMPLEMENTATION.
@@ -144,5 +149,9 @@ CLASS cl_gui_frontend_services IMPLEMENTATION.
 
   METHOD clipboard_export.
     ASSERT 1 = 'clipboard_export not supported'.
+  ENDMETHOD.
+
+  METHOD get_system_directory.
+    ASSERT 1 = 'get_system_directory not supported'.
   ENDMETHOD.
 ENDCLASS.
