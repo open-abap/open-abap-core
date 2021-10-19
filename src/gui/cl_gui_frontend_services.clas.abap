@@ -69,7 +69,14 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
     CLASS-METHODS
       execute
         IMPORTING 
-          document TYPE string.          
+          document          TYPE string OPTIONAL
+          application       TYPE string OPTIONAL
+          parameter         TYPE string OPTIONAL
+          default_directory TYPE string OPTIONAL
+          maximized         TYPE string OPTIONAL
+          minimized         TYPE string OPTIONAL
+          synchronous       TYPE string OPTIONAL
+          operation         TYPE string DEFAULT 'OPEN'.
 
     CLASS-METHODS
       get_file_separator
