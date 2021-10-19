@@ -117,7 +117,6 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
           version_table TYPE filetable
           rc            TYPE i.
 
-
 ENDCLASS.
 
 CLASS cl_gui_frontend_services IMPLEMENTATION.
