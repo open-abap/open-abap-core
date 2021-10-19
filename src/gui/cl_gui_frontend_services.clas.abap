@@ -110,6 +110,13 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
       get_system_directory
         CHANGING
           system_directory TYPE string.
+    
+    CLASS-METHODS
+      get_gui_version
+        CHANGING
+          version_table TYPE filetable
+          rc            TYPE i.
+
 
 ENDCLASS.
 
@@ -160,5 +167,9 @@ CLASS cl_gui_frontend_services IMPLEMENTATION.
 
   METHOD get_system_directory.
     ASSERT 1 = 'get_system_directory not supported'.
+  ENDMETHOD.
+
+  METHOD get_gui_version.
+    ASSERT 1 = 'get_gui_verison not supported'.
   ENDMETHOD.
 ENDCLASS.
