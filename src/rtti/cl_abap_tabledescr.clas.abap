@@ -6,6 +6,14 @@ CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
     METHODS get_table_line_type
       RETURNING
         VALUE(type) TYPE REF TO cl_abap_typedescr.
+    CLASS-METHODS get
+      IMPORTING type TYPE REF TO cl_abap_typedescr
+      RETURNING VALUE(val) TYPE REF TO cl_abap_tabledescr.
+    CLASS-METHODS get_with_keys
+      IMPORTING
+        p_line_type TYPE REF TO cl_abap_datadescr
+        p_keys TYPE any
+      RETURNING VALUE(val) TYPE REF TO cl_abap_tabledescr.
     CLASS-METHODS create
       IMPORTING type TYPE REF TO cl_abap_typedescr
       RETURNING VALUE(ref) TYPE REF TO cl_abap_tabledescr.
@@ -28,6 +36,14 @@ ENDCLASS.
 
 CLASS cl_abap_tabledescr IMPLEMENTATION.
   METHOD create.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get_with_keys.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
