@@ -12,6 +12,11 @@ TYPES abap_trans_resbind_tab TYPE abap_trans_srcbind_tab.
 
 CONSTANTS abap_max_comp_name_ln TYPE i VALUE 30.
 
+TYPES: BEGIN OF abap_componentdescr,
+         name TYPE string,
+         type TYPE REF TO cl_abap_datadescr,
+       END OF abap_componentdescr.
+
 TYPES: BEGIN OF abap_table_keycompdescr,
          name TYPE string,
        END OF abap_table_keycompdescr.
