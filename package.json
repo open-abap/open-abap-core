@@ -14,7 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "@abaplint/cli": "^2.79.34",
-    "@abaplint/runtime": "^1.6.55",
-    "@abaplint/transpiler-cli": "^1.6.55"
+    "@abaplint/runtime": "^1.6.56",
+    "@abaplint/transpiler-cli": "^1.6.56"
   }
 }
