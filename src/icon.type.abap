@@ -1,0 +1,4 @@
+TYPE-POOL icon.
+
+CONSTANTS icon_okay TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_set_state TYPE c LENGTH 4 VALUE 'ICON'.
