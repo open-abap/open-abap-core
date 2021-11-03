@@ -12,6 +12,10 @@ CLASS cl_ixml IMPLEMENTATION.
     CREATE OBJECT xml TYPE cl_ixml.
   ENDMETHOD.
 
+  METHOD if_ixml~create_encoding.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml~create_document.
     CREATE OBJECT doc TYPE lcl_document.
   ENDMETHOD.

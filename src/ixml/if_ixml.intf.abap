@@ -18,4 +18,10 @@ INTERFACE if_ixml PUBLIC.
       document TYPE REF TO if_ixml_document
     RETURNING
       VALUE(parser) TYPE REF TO if_ixml_parser.
+  METHODS create_encoding
+    IMPORTING
+      byte_order TYPE string
+      character_set TYPE string
+    RETURNING
+    VALUE(parser) TYPE REF TO if_ixml_encoding.
 ENDINTERFACE.

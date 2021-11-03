@@ -609,7 +609,7 @@ CLASS lcl_stream_factory IMPLEMENTATION.
   METHOD if_ixml_stream_factory~create_ostream_cstring.
     CREATE OBJECT stream TYPE lcl_ostream.
 * hack, this method doesnt really follow normal ABAP semantics
-    WRITE '@KERNEL INPUT.xml.set(`<?xml version="1.0" encoding="utf-16"?>`);'.
+    WRITE '@KERNEL INPUT.string.set(`<?xml version="1.0" encoding="utf-16"?>`);'.
   ENDMETHOD.
 
   METHOD if_ixml_stream_factory~create_istream_string.
