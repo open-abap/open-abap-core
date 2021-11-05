@@ -22,7 +22,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
       get_relative_name
         RETURNING 
           VALUE(name) TYPE string.
-    METHODS 
+    METHODS
       is_ddic_type
         RETURNING
           VALUE(p_abap_bool) TYPE abap_bool.
@@ -49,6 +49,9 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_float TYPE c LENGTH 1 VALUE 'F'.
     CONSTANTS typekind_int1 TYPE c LENGTH 1 VALUE 'b'.
     CONSTANTS typekind_int2 TYPE c LENGTH 1 VALUE 's'.
+    CONSTANTS typekind_decfloat TYPE c LENGTH 1 VALUE '/'.
+    CONSTANTS typekind_decfloat16 TYPE c LENGTH 1 VALUE 'a'.
+    CONSTANTS typekind_decfloat34 TYPE c LENGTH 1 VALUE 'e'.
     
     CONSTANTS kind_elem TYPE c LENGTH 1 VALUE 'E'.
     CONSTANTS kind_struct TYPE c LENGTH 1 VALUE 'S'.
