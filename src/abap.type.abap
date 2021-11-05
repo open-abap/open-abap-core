@@ -17,6 +17,8 @@ TYPES: BEGIN OF abap_componentdescr,
          type TYPE REF TO cl_abap_datadescr,
        END OF abap_componentdescr.
 
+TYPES abap_component_tab TYPE STANDARD TABLE OF abap_componentdescr WITH DEFAULT KEY.
+
 TYPES: BEGIN OF abap_table_keycompdescr,
          name TYPE string,
        END OF abap_table_keycompdescr.
