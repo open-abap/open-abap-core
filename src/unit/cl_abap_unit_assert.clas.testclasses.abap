@@ -79,10 +79,10 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD initial_ref.
 
-    DATA zip TYPE REF TO cl_abap_zip.
-    cl_abap_unit_assert=>assert_initial( zip ).
-    CREATE OBJECT zip.
-    cl_abap_unit_assert=>assert_not_initial( zip ).
+    DATA unit TYPE REF TO cl_abap_unit_assert.
+    cl_abap_unit_assert=>assert_initial( unit ).
+    CREATE OBJECT unit.
+    cl_abap_unit_assert=>assert_not_initial( unit ).
 
   ENDMETHOD.
 
