@@ -12,6 +12,12 @@ CLASS cl_http_utility DEFINITION PUBLIC.
       RETURNING
         VALUE(unescaped) TYPE string.
 
+    CLASS-METHODS escape_url
+      IMPORTING
+        unescaped TYPE string
+      RETURNING
+        VALUE(escaped) TYPE string.
+
     CLASS-METHODS encode_base64
       IMPORTING
         data TYPE string
@@ -86,6 +92,10 @@ CLASS cl_http_utility IMPLEMENTATION.
   METHOD unescape_url.
     " todo, this can probably be done in ABAP with a few regex'es
     WRITE '@KERNEL unescaped.set(decodeURI(escaped.get()));'.
+  ENDMETHOD.
+
+  METHOD escape_url.
+    WRITE '@KERNEL escaped.set(encodeURIComponent(unescaped.get()));'.
   ENDMETHOD.
 
   METHOD encode_base64.
