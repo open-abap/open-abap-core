@@ -73,6 +73,8 @@ CLASS cl_http_client IMPLEMENTATION.
     DATA lv_method        TYPE string.
     DATA lv_url           TYPE string.
     DATA lv_body          TYPE string.
+    DATA lv_name          TYPE string.
+    DATA lv_value         TYPE string.
     DATA lt_form_fields   TYPE tihttpnvp.
     DATA lt_header_fields TYPE tihttpnvp.
     DATA ls_field         LIKE LINE OF lt_header_fields.
@@ -127,7 +129,15 @@ CLASS cl_http_client IMPLEMENTATION.
     WRITE '@KERNEL let response = await postData(lv_url.get(), {method: lv_method.get(), headers: headers, agent: this.agent}, lv_body.get());'.
 
     " WRITE '@KERNEL console.dir(response);'.
-    " WRITE '@KERNEL console.dir(response.statusCode);'.
+    " WRITE '@KERNEL console.dir(response.headers);'.
+
+    WRITE '@KERNEL for (const h in response.headers) {'.
+    WRITE '@KERNEL   lv_name.set(h);'.
+    WRITE '@KERNEL   lv_value.set(response.headers[h]);'.
+    if_http_client~response->set_header_field(
+      name  = lv_name
+      value = lv_value ).
+    WRITE '@KERNEL }'.
 
     WRITE '@KERNEL this.if_http_client$response.get().content_type.set(response.headers["content-type"] || "");'.
     WRITE '@KERNEL this.if_http_client$response.get().status.set(response.statusCode);'.

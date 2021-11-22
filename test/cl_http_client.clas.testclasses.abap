@@ -48,6 +48,10 @@ CLASS ltcl_test IMPLEMENTATION.
 
     cl_abap_unit_assert=>assert_not_initial( li_client->response->get_content_type( ) ).
 
+    cl_abap_unit_assert=>assert_char_cp(
+      act = li_client->response->get_header_field( 'server' )
+      exp = '*gunicorn*' ).
+
   ENDMETHOD.
 
   METHOD basic_post.
