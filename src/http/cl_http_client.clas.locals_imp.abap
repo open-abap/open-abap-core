@@ -89,7 +89,7 @@ CLASS lcl_request IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_request~set_method.
-    mv_method = meth.
+    mv_method = method.
   ENDMETHOD.
 
   METHOD if_http_request~get_method.
