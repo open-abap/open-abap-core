@@ -40,7 +40,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
           file_table  TYPE filetable
           rc          TYPE i
           user_action TYPE i.
-    
+
     CLASS-METHODS
       get_platform
         RETURNING
@@ -61,7 +61,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
 
     CLASS-METHODS
       directory_browse
-        IMPORTING 
+        IMPORTING
           window_title    TYPE string
           initial_folder  TYPE string
         CHANGING
@@ -69,7 +69,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
 
     CLASS-METHODS
       execute
-        IMPORTING 
+        IMPORTING
           document          TYPE string OPTIONAL
           application       TYPE string OPTIONAL
           parameter         TYPE string OPTIONAL
@@ -81,27 +81,27 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
 
     CLASS-METHODS
       get_file_separator
-        CHANGING 
-          file_separator TYPE string.         
-          
+        CHANGING
+          file_separator TYPE string.
+
     CLASS-METHODS
       directory_exist
         IMPORTING
           directory TYPE string
         RETURNING
-          VALUE(result) TYPE abap_bool.            
-          
+          VALUE(result) TYPE abap_bool.
+
     CLASS-METHODS
       directory_create
         IMPORTING
           directory TYPE string
         CHANGING
-          rc TYPE i.           
-    
+          rc TYPE i.
+
     CLASS-METHODS
       clipboard_export
         IMPORTING
-          no_auth_check TYPE abap_bool
+          no_auth_check TYPE abap_bool OPTIONAL
         EXPORTING
           data TYPE any
         CHANGING
@@ -111,7 +111,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
       get_system_directory
         CHANGING
           system_directory TYPE string.
-    
+
     CLASS-METHODS
       get_gui_version
         CHANGING
