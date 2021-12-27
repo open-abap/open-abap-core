@@ -31,6 +31,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     DATA kind TYPE c LENGTH 1.
     DATA absolute_name TYPE string.
 
+    CONSTANTS typekind_any TYPE c LENGTH 1 VALUE '~'.
     CONSTANTS typekind_int TYPE c LENGTH 1 VALUE 'I'.
     CONSTANTS typekind_struct1 TYPE c LENGTH 1 VALUE 'u'.
     CONSTANTS typekind_struct2 TYPE c LENGTH 1 VALUE 'v'.
