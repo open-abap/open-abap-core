@@ -3,10 +3,34 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
   PRIVATE SECTION.
     METHODS test1 FOR TESTING RAISING cx_static_check.
     METHODS test2 FOR TESTING RAISING cx_static_check.
+    METHODS invalid_input FOR TESTING RAISING cx_static_check.
+    METHODS empty_input FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
+
+  METHOD empty_input.
+    DATA ls_message TYPE i.
+    DATA lv_input TYPE string.
+    lv_input = ''.
+    TRY.
+        CALL TRANSFORMATION id SOURCE XML lv_input RESULT data = ls_message.
+      CATCH cx_xslt_runtime_error.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD invalid_input.
+    DATA ls_message TYPE i.
+    DATA lv_json TYPE string.
+    lv_json = 'invalid'.
+    " TRY.
+    "     CALL TRANSFORMATION id SOURCE XML lv_json RESULT data = ls_message.
+    "     cl_abap_unit_assert=>fail( ).
+    "   CATCH cx_xslt_format_error.
+    "     RETURN.
+    " ENDTRY.
+  ENDMETHOD.
 
   METHOD test1.
     DATA lv_xml TYPE string.

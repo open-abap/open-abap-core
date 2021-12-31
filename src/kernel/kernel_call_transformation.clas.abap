@@ -14,20 +14,24 @@ CLASS kernel_call_transformation IMPLEMENTATION.
 
   METHOD call.
 
-    DATA lv_name    TYPE string.
-    DATA source_xml TYPE string.
-    DATA result     TYPE REF TO data.
-    DATA lt_rtab    TYPE abap_trans_resbind_tab.
-    DATA ls_rtab    LIKE LINE OF lt_rtab.
+    DATA lv_name   TYPE string.
+    DATA lv_source TYPE string.
+    DATA result    TYPE REF TO data.
+    DATA lt_rtab   TYPE abap_trans_resbind_tab.
+    DATA ls_rtab   LIKE LINE OF lt_rtab.
 
 * only the ID transformation is implemented
     WRITE '@KERNEL lv_name.set(INPUT.name);'.
     ASSERT lv_name = 'id'.
 
     WRITE '@KERNEL if (INPUT.sourceXML.constructor.name === "ABAPObject") this.mi_doc.set(INPUT.sourceXML);'.
-    WRITE '@KERNEL if (INPUT.sourceXML.constructor.name === "String") source_xml.set(INPUT.sourceXML);'.
-    IF source_xml IS NOT INITIAL.
-      parse_xml( source_xml ).
+    WRITE '@KERNEL if (INPUT.sourceXML.constructor.name === "String") lv_source.set(INPUT.sourceXML);'.
+
+    IF lv_source IS INITIAL AND mi_doc IS INITIAL.
+      RAISE EXCEPTION TYPE cx_xslt_runtime_error.
+    ENDIF.
+    IF lv_source IS NOT INITIAL.
+      parse_xml( lv_source ).
     ENDIF.
 
     WRITE '@KERNEL if (INPUT.result.constructor.name === "Table") {'.
