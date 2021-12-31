@@ -5,7 +5,7 @@ INTERFACE if_http_request PUBLIC.
     co_request_method_get TYPE string VALUE 'GET',
     co_request_method_post TYPE string VALUE 'POST'.
 
-  METHODS:
+  METHODS
     set_header_field
       IMPORTING
         name TYPE string

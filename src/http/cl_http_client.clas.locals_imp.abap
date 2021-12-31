@@ -46,6 +46,14 @@ CLASS lcl_response IMPLEMENTATION.
     data = cdata.
   ENDMETHOD.
 
+  METHOD if_http_response~set_status.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_http_response~set_cdata.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_http_response~get_content_type.
     val = content_type.
   ENDMETHOD.

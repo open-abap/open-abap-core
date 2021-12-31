@@ -1,13 +1,13 @@
 CLASS cl_abap_gzip DEFINITION PUBLIC.
   PUBLIC SECTION.
-    CLASS-METHODS:
+    CLASS-METHODS
       decompress_binary
         IMPORTING
           gzip_in TYPE xstring
         EXPORTING
           raw_out TYPE xstring
           raw_out_len TYPE i.
-    CLASS-METHODS:
+    CLASS-METHODS
       compress_binary
         IMPORTING
           raw_in TYPE xstring

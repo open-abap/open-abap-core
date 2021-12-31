@@ -13,6 +13,7 @@
     "check_include": false, // todo
     "uncaught_exception": false, // todo
     "cyclic_oo": false,
+    "unnecessary_chaining": true,
     "parser_702_chaining": false,
     "pragma_placement": true,
     "omit_receiving": true,
