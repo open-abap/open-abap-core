@@ -5,6 +5,7 @@ CLASS kernel_call_transformation DEFINITION PUBLIC.
   PRIVATE SECTION.
     CLASS-DATA mi_doc TYPE REF TO if_ixml_document.
     CLASS-METHODS parse_xml IMPORTING iv_xml TYPE string.
+    CLASS-METHODS parse_json IMPORTING iv_json TYPE string.
     CLASS-METHODS traverse IMPORTING
       iv_name TYPE string 
       iv_ref  TYPE REF TO data.
@@ -14,20 +15,33 @@ CLASS kernel_call_transformation IMPLEMENTATION.
 
   METHOD call.
 
-    DATA lv_name    TYPE string.
-    DATA source_xml TYPE string.
-    DATA result     TYPE REF TO data.
-    DATA lt_rtab    TYPE abap_trans_resbind_tab.
-    DATA ls_rtab    LIKE LINE OF lt_rtab.
+    DATA lv_name   TYPE string.
+    DATA lv_source TYPE string.
+    DATA result    TYPE REF TO data.
+    DATA lt_rtab   TYPE abap_trans_resbind_tab.
+    DATA ls_rtab   LIKE LINE OF lt_rtab.
+
+    CLEAR mi_doc.
 
 * only the ID transformation is implemented
     WRITE '@KERNEL lv_name.set(INPUT.name);'.
     ASSERT lv_name = 'id'.
 
     WRITE '@KERNEL if (INPUT.sourceXML.constructor.name === "ABAPObject") this.mi_doc.set(INPUT.sourceXML);'.
-    WRITE '@KERNEL if (INPUT.sourceXML.constructor.name === "String") source_xml.set(INPUT.sourceXML);'.
-    IF source_xml IS NOT INITIAL.
-      parse_xml( source_xml ).
+    WRITE '@KERNEL if (INPUT.sourceXML.constructor.name === "String") lv_source.set(INPUT.sourceXML);'.
+
+    IF lv_source IS INITIAL AND mi_doc IS INITIAL.
+      RAISE EXCEPTION TYPE cx_xslt_runtime_error.
+    ENDIF.
+
+    IF lv_source IS NOT INITIAL.
+      IF lv_source(1) = '<'.
+        parse_xml( lv_source ).
+      ELSEIF lv_source(1) = '{' OR lv_source(1) = '['.
+        parse_json( lv_source ).
+      ELSE.
+        RAISE EXCEPTION TYPE cx_xslt_format_error.
+      ENDIF.
     ENDIF.
 
     WRITE '@KERNEL if (INPUT.result.constructor.name === "Table") {'.
@@ -122,6 +136,15 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     li_istream->close( ).
 
     ASSERT lv_subrc = 0.
+
+  ENDMETHOD.
+
+  METHOD parse_json.
+
+    DATA li_reader TYPE REF TO if_sxml_reader.
+    li_reader = cl_sxml_string_reader=>create( cl_abap_codepage=>convert_to( iv_json ) ).
+
+    mi_doc  = cl_ixml=>create( )->create_document( ).
 
   ENDMETHOD.
 

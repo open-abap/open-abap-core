@@ -1,14 +1,55 @@
 CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
-    METHODS test1 FOR TESTING RAISING cx_static_check.
-    METHODS test2 FOR TESTING RAISING cx_static_check.
+    METHODS test1_xml FOR TESTING RAISING cx_static_check.
+    METHODS test2_xml FOR TESTING RAISING cx_static_check.
+    METHODS test1_json FOR TESTING RAISING cx_static_check.
+    METHODS invalid_input FOR TESTING RAISING cx_static_check.
+    METHODS empty_input FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
 
-  METHOD test1.
+  METHOD test1_json.
+
+    DATA: BEGIN OF ls_message,
+            field TYPE i,
+          END OF ls_message.
+    DATA lv_input TYPE string.
+    lv_input = '{"DATA": {"FIELD": 321}}'.
+
+    CALL TRANSFORMATION id SOURCE XML lv_input RESULT data = ls_message.
+
+    " cl_abap_unit_assert=>assert_equals(
+    "   act = ls_message-field
+    "   exp = 321 ).
+
+  ENDMETHOD.
+
+  METHOD empty_input.
+    DATA ls_message TYPE i.
+    DATA lv_input TYPE string.
+    lv_input = ''.
+    TRY.
+        CALL TRANSFORMATION id SOURCE XML lv_input RESULT data = ls_message.
+      CATCH cx_xslt_runtime_error.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD invalid_input.
+    DATA ls_message TYPE i.
+    DATA lv_json TYPE string.
+    lv_json = 'invalid'.
+    TRY.
+        CALL TRANSFORMATION id SOURCE XML lv_json RESULT data = ls_message.
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_xslt_format_error.
+        RETURN.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD test1_xml.
     DATA lv_xml TYPE string.
     DATA: BEGIN OF ls_foo,
             foo TYPE i,
@@ -32,7 +73,7 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
       exp = 2 ).
   ENDMETHOD.
 
-  METHOD test2.
+  METHOD test2_xml.
 
     DATA li_git            TYPE REF TO if_ixml_element.
     DATA li_abap           TYPE REF TO if_ixml_node.
