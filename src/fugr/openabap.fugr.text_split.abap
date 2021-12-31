@@ -14,7 +14,7 @@ FUNCTION text_split.
     rest = ''.
   ELSE.
     line = text(50).
-    rest = rest+50.
+    rest = text+50.
   ENDIF.
 
 ENDFUNCTION.
