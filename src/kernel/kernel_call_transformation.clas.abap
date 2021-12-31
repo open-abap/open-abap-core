@@ -31,7 +31,13 @@ CLASS kernel_call_transformation IMPLEMENTATION.
       RAISE EXCEPTION TYPE cx_xslt_runtime_error.
     ENDIF.
     IF lv_source IS NOT INITIAL.
-      parse_xml( lv_source ).
+      IF lv_source(1) = '<'.
+        parse_xml( lv_source ).
+      ELSEIF lv_source(1) = '{' OR lv_source(1) = '['.
+        RETURN. " todo, input is json
+      ELSE.
+        RAISE EXCEPTION TYPE cx_xslt_format_error.
+      ENDIF.
     ENDIF.
 
     WRITE '@KERNEL if (INPUT.result.constructor.name === "Table") {'.

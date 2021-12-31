@@ -24,12 +24,12 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     DATA ls_message TYPE i.
     DATA lv_json TYPE string.
     lv_json = 'invalid'.
-    " TRY.
-    "     CALL TRANSFORMATION id SOURCE XML lv_json RESULT data = ls_message.
-    "     cl_abap_unit_assert=>fail( ).
-    "   CATCH cx_xslt_format_error.
-    "     RETURN.
-    " ENDTRY.
+    TRY.
+        CALL TRANSFORMATION id SOURCE XML lv_json RESULT data = ls_message.
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_xslt_format_error.
+        RETURN.
+    ENDTRY.
   ENDMETHOD.
 
   METHOD test1.
