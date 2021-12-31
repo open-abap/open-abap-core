@@ -5,6 +5,7 @@ CLASS kernel_call_transformation DEFINITION PUBLIC.
   PRIVATE SECTION.
     CLASS-DATA mi_doc TYPE REF TO if_ixml_document.
     CLASS-METHODS parse_xml IMPORTING iv_xml TYPE string.
+    CLASS-METHODS parse_json IMPORTING iv_xml TYPE string.
     CLASS-METHODS traverse IMPORTING
       iv_name TYPE string 
       iv_ref  TYPE REF TO data.
@@ -35,7 +36,7 @@ CLASS kernel_call_transformation IMPLEMENTATION.
       IF lv_source(1) = '<'.
         parse_xml( lv_source ).
       ELSEIF lv_source(1) = '{' OR lv_source(1) = '['.
-        RETURN. " todo, input is json
+        parse_json( lv_source ).
       ELSE.
         RAISE EXCEPTION TYPE cx_xslt_format_error.
       ENDIF.
@@ -134,6 +135,10 @@ CLASS kernel_call_transformation IMPLEMENTATION.
 
     ASSERT lv_subrc = 0.
 
+  ENDMETHOD.
+
+  METHOD parse_json.
+    RETURN. " todo, input is json
   ENDMETHOD.
 
 ENDCLASS.
