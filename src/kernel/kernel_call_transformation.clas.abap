@@ -30,6 +30,7 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     IF lv_source IS INITIAL AND mi_doc IS INITIAL.
       RAISE EXCEPTION TYPE cx_xslt_runtime_error.
     ENDIF.
+
     IF lv_source IS NOT INITIAL.
       IF lv_source(1) = '<'.
         parse_xml( lv_source ).
