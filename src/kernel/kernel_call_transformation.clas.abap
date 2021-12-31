@@ -5,7 +5,7 @@ CLASS kernel_call_transformation DEFINITION PUBLIC.
   PRIVATE SECTION.
     CLASS-DATA mi_doc TYPE REF TO if_ixml_document.
     CLASS-METHODS parse_xml IMPORTING iv_xml TYPE string.
-    CLASS-METHODS parse_json IMPORTING iv_xml TYPE string.
+    CLASS-METHODS parse_json IMPORTING iv_json TYPE string.
     CLASS-METHODS traverse IMPORTING
       iv_name TYPE string 
       iv_ref  TYPE REF TO data.
@@ -20,6 +20,8 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     DATA result    TYPE REF TO data.
     DATA lt_rtab   TYPE abap_trans_resbind_tab.
     DATA ls_rtab   LIKE LINE OF lt_rtab.
+
+    CLEAR mi_doc.
 
 * only the ID transformation is implemented
     WRITE '@KERNEL lv_name.set(INPUT.name);'.
@@ -138,7 +140,12 @@ CLASS kernel_call_transformation IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD parse_json.
-    RETURN. " todo, input is json
+
+    DATA li_reader TYPE REF TO if_sxml_reader.
+    li_reader = cl_sxml_string_reader=>create( cl_abap_codepage=>convert_to( iv_json ) ).
+
+    mi_doc  = cl_ixml=>create( )->create_document( ).
+
   ENDMETHOD.
 
 ENDCLASS.
