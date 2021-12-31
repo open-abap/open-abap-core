@@ -11,7 +11,7 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
              as_include TYPE abap_bool,
              type_kind  TYPE c LENGTH 1,
            END OF component.
-    TYPES: component_table TYPE STANDARD TABLE OF component WITH DEFAULT KEY.
+    TYPES component_table TYPE STANDARD TABLE OF component WITH DEFAULT KEY.
 
     METHODS:
       get_components RETURNING VALUE(rt_components) TYPE component_table,

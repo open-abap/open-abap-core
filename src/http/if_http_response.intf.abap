@@ -26,10 +26,18 @@ INTERFACE if_http_response PUBLIC.
     CHANGING
       fields TYPE tihttpnvp.
 
-  METHODS:
+  METHODS
     set_header_field
       IMPORTING
         name TYPE string
         value TYPE string.
+
+  METHODS
+    set_status
+      IMPORTING
+        code   TYPE i
+        reason TYPE string.
+
+  METHODS set_cdata IMPORTING data TYPE string.
 
 ENDINTERFACE.

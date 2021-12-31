@@ -5,7 +5,7 @@ FUNCTION system_callstack.
 *"     REFERENCE(CALLSTACK) TYPE  ABAP_CALLSTACK
 *"----------------------------------------------------------------------
 
-  FIELD-SYMBOLS: <fs> LIKE LINE OF callstack.
+  FIELD-SYMBOLS <fs> LIKE LINE OF callstack.
 
   APPEND INITIAL LINE TO callstack ASSIGNING <fs>.
   <fs>-mainprogram = 'ZTODO'.

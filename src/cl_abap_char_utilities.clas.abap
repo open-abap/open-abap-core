@@ -9,8 +9,7 @@ CLASS cl_abap_char_utilities DEFINITION PUBLIC.
       horizontal_tab TYPE c LENGTH 1 VALUE '_',
       newline TYPE c LENGTH 1 VALUE '_'.
 
-    CLASS-METHODS:
-      class_constructor.
+    CLASS-METHODS class_constructor.
 ENDCLASS.
 
 CLASS cl_abap_char_utilities IMPLEMENTATION.
