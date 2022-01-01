@@ -143,12 +143,18 @@ CLASS cl_http_client IMPLEMENTATION.
     WRITE '@KERNEL this.if_http_client$response.get().status.set(response.statusCode);'.
     WRITE '@KERNEL this.if_http_client$response.get().cdata.set(response.body.toString());'.
     WRITE '@KERNEL this.if_http_client$response.get().hexdata.set(response.body.toString("hex").toUpperCase());'.
+  
+* workaround for classic exceptions, this should work sometime in the transpiler instead
+    sy-subrc = 0.
 
   ENDMETHOD.
 
   METHOD if_http_client~receive.
 * handled in send()
-    RETURN.
+
+* workaround for classic exceptions, this should work sometime in the transpiler instead
+    sy-subrc = 0.
+
   ENDMETHOD.
 
   METHOD if_http_client~get_last_error.
