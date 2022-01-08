@@ -149,6 +149,9 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     DATA lt_attributes TYPE if_sxml_attribute=>attributes.
     DATA li_attribute TYPE REF TO if_sxml_attribute.
     DATA li_current TYPE REF TO if_ixml_node.
+    DATA lv_name TYPE string.
+    DATA li_new TYPE REF TO if_ixml_node.
+    DATA li_element TYPE REF TO if_ixml_element.
 
     li_reader = cl_sxml_string_reader=>create( cl_abap_codepage=>convert_to( iv_json ) ).
 
@@ -164,18 +167,27 @@ CLASS kernel_call_transformation IMPLEMENTATION.
       CASE li_node->type.
         WHEN if_sxml_node=>co_nt_element_open.
           li_open ?= li_node.
-*          WRITE / li_open->qname-name.
+*          WRITE: / 'open: ', li_open->qname-name.
 
           lt_attributes = li_open->get_attributes( ).
-*          LOOP AT lt_attributes INTO li_attribute.
+          LOOP AT lt_attributes INTO li_attribute.
 *            WRITE / li_attribute->get_value( ).
-*          ENDLOOP.
+            lv_name = li_attribute->get_value( ).
+          ENDLOOP.
+          IF lv_name IS NOT INITIAL.
+            li_element = mi_doc->create_element_ns( lv_name ).
+            li_new ?= li_element.
+            li_current->append_child( li_new ).
+            li_current = li_new.
+          ENDIF.
         WHEN if_sxml_node=>co_nt_element_close.
           li_close ?= li_node.
-*          WRITE / li_close->qname-name.
+*          WRITE: / 'close: ', li_close->qname-name.
+          li_current = li_current->get_parent( ).
         WHEN if_sxml_node=>co_nt_value.
           li_value ?= li_node.
 *          WRITE / li_value->get_value( ).
+          li_current->set_value( li_value->get_value( ) ).
       ENDCASE.
     ENDDO.
 
