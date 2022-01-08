@@ -21,10 +21,10 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
 
     CALL TRANSFORMATION id SOURCE XML lv_input RESULT data = ls_message.
 
-*    WRITE '@KERNEL console.dir(ls_message);'.
-*    cl_abap_unit_assert=>assert_equals(
-*      act = ls_message-field
-*      exp = 321 ).
+    WRITE '@KERNEL console.dir(ls_message);'.
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_message-field
+      exp = 321 ).
 
   ENDMETHOD.
 
