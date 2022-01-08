@@ -382,10 +382,12 @@ CLASS lcl_document DEFINITION.
   PRIVATE SECTION.
     DATA mi_node TYPE REF TO lcl_node.
 ENDCLASS.
+
 CLASS lcl_document IMPLEMENTATION.
 
   METHOD constructor.
     CREATE OBJECT mi_node TYPE lcl_node.
+    mi_node->if_ixml_node~set_name( '#document' ).
   ENDMETHOD.
 
   METHOD if_ixml_node~append_child.
