@@ -142,9 +142,42 @@ CLASS kernel_call_transformation IMPLEMENTATION.
   METHOD parse_json.
 
     DATA li_reader TYPE REF TO if_sxml_reader.
+    DATA li_node TYPE REF TO if_sxml_node.
+    DATA li_close TYPE REF TO if_sxml_close_element.
+    DATA li_open TYPE REF TO if_sxml_open_element.
+    DATA li_value TYPE REF TO if_sxml_value_node.
+    DATA lt_attributes TYPE if_sxml_attribute=>attributes.
+    DATA li_attribute TYPE REF TO if_sxml_attribute.
+    DATA li_current TYPE REF TO if_ixml_node.
+
     li_reader = cl_sxml_string_reader=>create( cl_abap_codepage=>convert_to( iv_json ) ).
 
-    mi_doc  = cl_ixml=>create( )->create_document( ).
+    mi_doc = cl_ixml=>create( )->create_document( ).
+    li_current = mi_doc->get_root( ).
+
+    DO.
+      li_node = li_reader->read_next_node( ).
+      IF li_node IS INITIAL.
+        EXIT.
+      ENDIF.
+
+      CASE li_node->type.
+        WHEN if_sxml_node=>co_nt_element_open.
+          li_open ?= li_node.
+*          WRITE / li_open->qname-name.
+
+          lt_attributes = li_open->get_attributes( ).
+*          LOOP AT lt_attributes INTO li_attribute.
+*            WRITE / li_attribute->get_value( ).
+*          ENDLOOP.
+        WHEN if_sxml_node=>co_nt_element_close.
+          li_close ?= li_node.
+*          WRITE / li_close->qname-name.
+        WHEN if_sxml_node=>co_nt_value.
+          li_value ?= li_node.
+*          WRITE / li_value->get_value( ).
+      ENDCASE.
+    ENDDO.
 
   ENDMETHOD.
 
