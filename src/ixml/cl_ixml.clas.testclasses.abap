@@ -9,6 +9,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_attributes FOR TESTING RAISING cx_static_check.
     METHODS parse_attributes2 FOR TESTING RAISING cx_static_check.
     METHODS parse_attributes3 FOR TESTING RAISING cx_static_check.
+    METHODS create FOR TESTING RAISING cx_static_check.
           
     METHODS parse
       IMPORTING 
@@ -24,6 +25,17 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 ENDCLASS.
 
 CLASS ltcl_xml IMPLEMENTATION.
+
+  METHOD create.
+    DATA li_current TYPE REF TO if_ixml_node.
+    DATA li_doc TYPE REF TO if_ixml_document.
+    li_doc = cl_ixml=>create( )->create_document( ).
+    li_current = li_doc->get_root( ).
+    ASSERT li_current IS NOT INITIAL.
+    ASSERT li_current->get_name( ) = '#document'.
+    ASSERT li_current->get_namespace( ) IS INITIAL.
+    ASSERT li_current->get_value( ) IS INITIAL.
+  ENDMETHOD.
 
   METHOD dump.
 

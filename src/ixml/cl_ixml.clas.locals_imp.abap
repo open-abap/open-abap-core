@@ -145,7 +145,11 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
   
   METHOD if_ixml_element~append_child.
-    ASSERT 1 = 'todo'.
+    DATA lo_node TYPE REF TO lcl_node.
+    lo_node ?= new_child.
+    lo_node->mi_parent = me.
+
+    mo_children->append( new_child ).
   ENDMETHOD.
   
   METHOD if_ixml_element~clone.
@@ -269,6 +273,10 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~append_child.
+    DATA lo_node TYPE REF TO lcl_node.
+    lo_node ?= new_child.
+    lo_node->mi_parent = me.
+
     mo_children->append( new_child ).
   ENDMETHOD.
 
@@ -382,13 +390,19 @@ CLASS lcl_document DEFINITION.
   PRIVATE SECTION.
     DATA mi_node TYPE REF TO lcl_node.
 ENDCLASS.
+
 CLASS lcl_document IMPLEMENTATION.
 
   METHOD constructor.
     CREATE OBJECT mi_node TYPE lcl_node.
+    mi_node->if_ixml_node~set_name( '#document' ).
   ENDMETHOD.
 
   METHOD if_ixml_node~append_child.
+    DATA lo_node TYPE REF TO lcl_node.
+    lo_node ?= new_child.
+    lo_node->mi_parent = me.
+
     mi_node->if_ixml_node~append_child( new_child ).
   ENDMETHOD.
 
@@ -487,11 +501,14 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~create_element_ns.
-    ASSERT 1 = 'todo'.
+    CREATE OBJECT element TYPE lcl_node.
+    element->if_ixml_node~set_name( name ).
+    element->if_ixml_node~set_namespace_prefix( prefix ).
   ENDMETHOD.
 
   METHOD if_ixml_document~create_element.
-    ASSERT 1 = 'todo'.
+    CREATE OBJECT element TYPE lcl_node.
+    element->if_ixml_node~set_name( name ).
   ENDMETHOD.
 
   METHOD if_ixml_document~create_iterator_filtered.

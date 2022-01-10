@@ -38,11 +38,14 @@ ENDCLASS.
 CLASS cl_abap_tstmp IMPLEMENTATION.
 
   METHOD move.
-    ASSERT 1 = 'todo'.
+* todo, this is most likely wrong, but will also work in some cases
+    tstmp_tgt = tstmp_src.
+
   ENDMETHOD.
 
   METHOD systemtstmp_syst2utc.
-    ASSERT 1 = 'todo'.
+* system timezone is always UTC for open-abap, so no conversion needed
+    utc_tstmp = |{ syst_date }{ syst_time }|.
   ENDMETHOD.
 
   METHOD subtract.
