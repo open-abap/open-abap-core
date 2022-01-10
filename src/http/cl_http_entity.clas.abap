@@ -1,17 +1,19 @@
-* todo: request and response classes seem similar, add abstract super class?
-
-CLASS lcl_response DEFINITION.
+CLASS cl_http_entity DEFINITION PUBLIC CREATE PRIVATE.
   PUBLIC SECTION.
     INTERFACES if_http_response.
+    INTERFACES if_http_request.
   PRIVATE SECTION.
     DATA status TYPE i.
     DATA cdata TYPE string.
     DATA hexdata TYPE xstring.
-    DATA mt_headers TYPE tihttpnvp.
     DATA content_type TYPE string.
+    DATA mv_method TYPE string.
+    DATA mv_data TYPE xstring.
+    DATA mt_headers TYPE tihttpnvp.
+    DATA mt_form_fields TYPE tihttpnvp.
 ENDCLASS.
 
-CLASS lcl_response IMPLEMENTATION.
+CLASS cl_http_entity IMPLEMENTATION.
 
   METHOD if_http_response~set_header_field.
     DATA ls_header LIKE LINE OF mt_headers.
@@ -62,27 +64,6 @@ CLASS lcl_response IMPLEMENTATION.
     val = hexdata.
   ENDMETHOD.
 
-ENDCLASS.
-
-CLASS lcl_request DEFINITION.
-  PUBLIC SECTION.
-    INTERFACES if_http_request.
-    METHODS constructor IMPORTING uri TYPE string.
-  PRIVATE SECTION.
-    DATA mv_method TYPE string.
-    DATA mv_data TYPE xstring.
-    DATA mt_headers TYPE tihttpnvp.
-    DATA mt_form_fields TYPE tihttpnvp.
-ENDCLASS.
-
-CLASS lcl_request IMPLEMENTATION.
-
-  METHOD constructor.
-    DATA ls_header LIKE LINE OF mt_headers.
-    ls_header-name = '~request_uri'.
-    ls_header-value = uri.
-    APPEND ls_header TO mt_headers.
-  ENDMETHOD.
 
   METHOD if_http_request~set_form_fields.
     mt_form_fields = fields.
