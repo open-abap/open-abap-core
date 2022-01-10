@@ -3,9 +3,8 @@ CLASS cl_http_entity DEFINITION PUBLIC CREATE PRIVATE.
     INTERFACES if_http_response.
     INTERFACES if_http_request.
   PRIVATE SECTION.
-    DATA status TYPE i.
-    DATA cdata TYPE string.
-    DATA hexdata TYPE xstring.
+    DATA mv_status TYPE i.
+    DATA mv_reason TYPE string.
     DATA content_type TYPE string.
     DATA mv_method TYPE string.
     DATA mv_data TYPE xstring.
@@ -41,19 +40,25 @@ CLASS cl_http_entity IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_response~get_status.
-    code = status.
+    code = mv_status.
+    reason = mv_reason.
   ENDMETHOD.
 
   METHOD if_http_response~get_cdata.
-    data = cdata.
+    cl_abap_conv_in_ce=>create( encoding = 'UTF-8' )->convert(
+      EXPORTING input = mv_data
+      IMPORTING data = data ).
   ENDMETHOD.
 
   METHOD if_http_response~set_status.
-    ASSERT 1 = 'todo'.
+    mv_status = code.
+    mv_reason = reason.
   ENDMETHOD.
 
   METHOD if_http_response~set_cdata.
-    ASSERT 1 = 'todo'.
+    cl_abap_conv_out_ce=>create( encoding = 'UTF-8' )->convert(
+      EXPORTING data = data
+      IMPORTING buffer = mv_data ).   
   ENDMETHOD.
 
   METHOD if_http_response~get_content_type.
@@ -61,9 +66,10 @@ CLASS cl_http_entity IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_response~get_data.
-    val = hexdata.
+    val = mv_data.
   ENDMETHOD.
 
+*****************************************  
 
   METHOD if_http_request~set_form_fields.
     mt_form_fields = fields.
