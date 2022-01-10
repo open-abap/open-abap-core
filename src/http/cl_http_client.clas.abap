@@ -140,10 +140,10 @@ CLASS cl_http_client IMPLEMENTATION.
       value = lv_value ).
     WRITE '@KERNEL }'.
 
+
     WRITE '@KERNEL this.if_http_client$response.get().content_type.set(response.headers["content-type"] || "");'.
-    WRITE '@KERNEL this.if_http_client$response.get().status.set(response.statusCode);'.
-    WRITE '@KERNEL this.if_http_client$response.get().cdata.set(response.body.toString());'.
-    WRITE '@KERNEL this.if_http_client$response.get().hexdata.set(response.body.toString("hex").toUpperCase());'.
+    WRITE '@KERNEL this.if_http_client$response.get().mv_status.set(response.statusCode);'.
+    WRITE '@KERNEL this.if_http_client$response.get().mv_data.set(response.body.toString("hex").toUpperCase());'.
   
 * workaround for classic exceptions, this should work sometime in the transpiler instead
     sy-subrc = 0.
