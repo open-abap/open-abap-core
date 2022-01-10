@@ -36,9 +36,10 @@ CLASS cl_http_client IMPLEMENTATION.
 *    WRITE '@KERNEL console.dir(lv_uri.get());'.
     REPLACE FIRST OCCURRENCE OF lv_uri IN mv_host WITH ''.
 
-    CREATE OBJECT if_http_client~request TYPE lcl_request
-      EXPORTING
-        uri = lv_uri.
+    CREATE OBJECT if_http_client~request TYPE lcl_request.
+    if_http_client~request->set_header_field(
+      name = '~request_uri'
+      value = lv_uri ).
 
     FIND REGEX '\?(.*)' IN url SUBMATCHES lv_query.
     IF sy-subrc = 0.
