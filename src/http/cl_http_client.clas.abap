@@ -28,7 +28,7 @@ CLASS cl_http_client IMPLEMENTATION.
     DATA lv_uri TYPE string.
     DATA lv_query TYPE string.
 
-    CREATE OBJECT if_http_client~response TYPE lcl_response.
+    CREATE OBJECT if_http_client~response TYPE cl_http_entity.
 
     FIND REGEX '\w(\/[\w\d\.\-\/]+)' IN url SUBMATCHES lv_uri.
     mv_host = url.
@@ -36,7 +36,7 @@ CLASS cl_http_client IMPLEMENTATION.
 *    WRITE '@KERNEL console.dir(lv_uri.get());'.
     REPLACE FIRST OCCURRENCE OF lv_uri IN mv_host WITH ''.
 
-    CREATE OBJECT if_http_client~request TYPE lcl_request.
+    CREATE OBJECT if_http_client~request TYPE cl_http_entity.
     if_http_client~request->set_header_field(
       name = '~request_uri'
       value = lv_uri ).
