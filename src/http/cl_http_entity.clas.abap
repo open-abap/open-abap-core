@@ -65,6 +65,10 @@ CLASS cl_http_entity IMPLEMENTATION.
     val = content_type.
   ENDMETHOD.
 
+  METHOD if_http_response~set_content_type.
+    content_type = val.
+  ENDMETHOD.
+
   METHOD if_http_response~get_data.
     val = mv_data.
   ENDMETHOD.
