@@ -18,6 +18,9 @@ INTERFACE if_http_response PUBLIC.
   METHODS get_content_type
     RETURNING
       VALUE(val) TYPE string.
+  METHODS set_content_type
+    IMPORTING
+      val TYPE string.      
 
   METHODS get_data
     RETURNING VALUE(val) TYPE xstring.
