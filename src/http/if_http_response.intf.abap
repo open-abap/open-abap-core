@@ -25,6 +25,9 @@ INTERFACE if_http_response PUBLIC.
   METHODS get_data
     RETURNING VALUE(val) TYPE xstring.
 
+  METHODS set_data
+    IMPORTING val TYPE xstring.
+
   METHODS get_header_fields
     CHANGING
       fields TYPE tihttpnvp.
