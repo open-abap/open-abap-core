@@ -8,8 +8,10 @@ CLASS lcl_in IMPLEMENTATION.
     DATA conv TYPE REF TO cl_abap_conv_in_ce.
     conv = cl_abap_conv_in_ce=>create( encoding = 'UTF-8' ).
     conv->convert(
-      EXPORTING input = source
-      IMPORTING data = result ).
+      EXPORTING 
+        input = source
+      IMPORTING 
+        data  = result ).
   ENDMETHOD.
 ENDCLASS.
 
@@ -24,7 +26,10 @@ CLASS lcl_out IMPLEMENTATION.
   METHOD if_abap_conv_out~convert.
     DATA conv TYPE REF TO cl_abap_conv_out_ce.
     conv = cl_abap_conv_out_ce=>create( encoding = 'UTF-8' ).
-    conv->convert( EXPORTING data   = source
-                   IMPORTING buffer = result ).
+    conv->convert(
+      EXPORTING 
+        data   = source
+      IMPORTING 
+        buffer = result ).
   ENDMETHOD.
 ENDCLASS.
