@@ -73,6 +73,10 @@ CLASS cl_http_entity IMPLEMENTATION.
     val = mv_data.
   ENDMETHOD.
 
+  METHOD if_http_response~set_data.
+    mv_data = val.
+  ENDMETHOD.
+
 *****************************************  
 
   METHOD if_http_request~set_form_fields.
