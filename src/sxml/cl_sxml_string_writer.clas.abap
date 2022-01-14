@@ -1,6 +1,11 @@
 CLASS cl_sxml_string_writer DEFINITION PUBLIC FINAL CREATE PRIVATE.
 
   PUBLIC SECTION.
+    INTERFACES if_sxml_writer.
+
+    METHODS constructor
+      IMPORTING 
+        type TYPE if_sxml=>xml_stream_type.
 
     METHODS get_output
       RETURNING
@@ -14,16 +19,65 @@ CLASS cl_sxml_string_writer DEFINITION PUBLIC FINAL CREATE PRIVATE.
       RAISING
         cx_sxml_illegal_argument_error.
 
+  PRIVATE SECTION.
+    DATA mv_output TYPE xstring.
+    DATA mv_type TYPE if_sxml=>xml_stream_type.
+    DATA mt_stack TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    METHODS append_text IMPORTING text TYPE string.
 ENDCLASS.
 
 CLASS cl_sxml_string_writer IMPLEMENTATION.
 
+  METHOD constructor.
+    mv_type = type.
+  ENDMETHOD.
+
   METHOD create.
-    ASSERT 1 = 'todo'.
+    CREATE OBJECT writer
+      EXPORTING 
+        type = type.
   ENDMETHOD.
 
   METHOD get_output.
-    ASSERT 1 = 'todo'.
+    output = mv_output.
+  ENDMETHOD.
+
+  METHOD append_text.
+    DATA append TYPE xstring.
+    append = cl_abap_conv_codepage=>create_out( )->convert( text ).
+    CONCATENATE mv_output append INTO mv_output IN BYTE MODE.
+  ENDMETHOD.
+
+  METHOD if_sxml_writer~open_element.
+    APPEND name TO mt_stack.
+    CASE name.
+      WHEN 'object'.
+        append_text( '{' ).
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD if_sxml_writer~close_element.
+    DATA index TYPE i.
+    DATA name TYPE string.
+    index = lines( mt_stack ).
+    READ TABLE mt_stack INDEX index INTO name.
+    DELETE mt_stack INDEX index.
+    CASE name.
+      WHEN 'object'.
+        append_text( '}' ).
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD if_sxml_writer~write_attribute.
+    append_text( '"' ).
+    append_text( value ).
+    append_text( '":' ).
+  ENDMETHOD.
+
+  METHOD if_sxml_writer~write_value.
+    append_text( '"' ).
+    append_text( value ).
+    append_text( '"' ).
   ENDMETHOD.
 
 ENDCLASS.
