@@ -1,0 +1,7 @@
+CLASS cx_sxml_name_error DEFINITION PUBLIC INHERITING FROM cx_sxml_error.
+  PUBLIC SECTION.
+ENDCLASS.
+
+CLASS cx_sxml_name_error IMPLEMENTATION.
+
+ENDCLASS.

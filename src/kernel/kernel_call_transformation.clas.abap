@@ -4,11 +4,18 @@ CLASS kernel_call_transformation DEFINITION PUBLIC.
     CLASS-METHODS call IMPORTING input TYPE any.
   PRIVATE SECTION.
     CLASS-DATA mi_doc TYPE REF TO if_ixml_document.
+    CLASS-DATA mi_writer TYPE REF TO if_sxml_writer.
+
     CLASS-METHODS parse_xml IMPORTING iv_xml TYPE string.
     CLASS-METHODS parse_json IMPORTING iv_json TYPE string.
     CLASS-METHODS traverse IMPORTING
       iv_name TYPE string 
       iv_ref  TYPE REF TO data.
+    CLASS-METHODS traverse_write
+      IMPORTING iv_ref TYPE REF TO data.
+    CLASS-METHODS traverse_write_type
+      IMPORTING iv_ref TYPE REF TO data 
+      RETURNING VALUE(rv_type) TYPE string.
 ENDCLASS.
 
 CLASS kernel_call_transformation IMPLEMENTATION.
@@ -27,8 +34,26 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     WRITE '@KERNEL lv_name.set(INPUT.name);'.
     ASSERT lv_name = 'id'.
 
-    WRITE '@KERNEL if (INPUT.sourceXML.constructor.name === "ABAPObject") this.mi_doc.set(INPUT.sourceXML);'.
-    WRITE '@KERNEL if (INPUT.sourceXML.constructor.name === "String") lv_source.set(INPUT.sourceXML);'.
+*    WRITE '@KERNEL console.dir(INPUT);'.
+    WRITE '@KERNEL if (INPUT.sourceXML?.constructor.name === "ABAPObject") this.mi_doc.set(INPUT.sourceXML);'.
+    WRITE '@KERNEL if (INPUT.sourceXML?.constructor.name === "String") lv_source.set(INPUT.sourceXML);'.
+
+    WRITE '@KERNEL if (typeof INPUT.source === "object" && INPUT.resultXML?.constructor.name === "ABAPObject") {'.
+    WRITE '@KERNEL   this.mi_writer.set(INPUT.resultXML);'.
+    WRITE '@KERNEL }'.
+    IF mi_writer IS NOT INITIAL.
+      mi_writer->open_element( name = 'object' ).
+      WRITE '@KERNEL for (const name in INPUT.source) {'.
+      WRITE '@KERNEL lv_name.set(name);'.
+      WRITE '@KERNEL result.assign(INPUT.source[name]);'.
+      mi_writer->open_element( name = 'str' ).
+      mi_writer->write_attribute( name = 'name' value = to_upper( lv_name ) ).
+      traverse_write( result ).
+      mi_writer->close_element( ).
+      WRITE '@KERNEL }'.
+      mi_writer->close_element( ).
+      RETURN.
+    ENDIF.
 
     IF lv_source IS INITIAL AND mi_doc IS INITIAL.
       RAISE EXCEPTION TYPE cx_xslt_runtime_error.
@@ -65,6 +90,61 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     WRITE '@KERNEL }'.
 
 *    WRITE '@KERNEL console.dir(INPUT.result.data);'.
+
+  ENDMETHOD.
+
+  METHOD traverse_write_type.
+    DATA lo_type TYPE REF TO cl_abap_typedescr.
+    lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
+    CASE lo_type->type_kind.
+      WHEN cl_abap_typedescr=>typekind_int
+          OR cl_abap_typedescr=>typekind_int1 
+          OR cl_abap_typedescr=>typekind_int2
+          OR cl_abap_typedescr=>typekind_int8
+          OR cl_abap_typedescr=>typekind_decfloat
+          OR cl_abap_typedescr=>typekind_decfloat16
+          OR cl_abap_typedescr=>typekind_decfloat34.
+        rv_type = 'num'.
+      WHEN OTHERS.
+        rv_type = 'str'.
+    ENDCASE.
+  ENDMETHOD.
+  
+  METHOD traverse_write.
+
+    DATA lo_type TYPE REF TO cl_abap_typedescr.
+    DATA lo_struc TYPE REF TO cl_abap_structdescr.
+    DATA lt_comps TYPE cl_abap_structdescr=>component_table.
+    DATA li_element TYPE REF TO if_ixml_element.
+    DATA li_sub TYPE REF TO if_ixml_element.
+    DATA ls_compo LIKE LINE OF lt_comps.
+    DATA lv_ref TYPE REF TO data.
+    FIELD-SYMBOLS <structure> TYPE any.
+    FIELD-SYMBOLS <field> TYPE any.
+
+*     WRITE '@KERNEL console.dir(iv_ref.getPointer());'.
+    lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
+*    WRITE '@KERNEL console.dir(lo_type.get().kind.get());'.
+    CASE lo_type->kind.
+      WHEN cl_abap_typedescr=>kind_struct.
+        mi_writer->open_element( name = 'object' ).
+
+        lo_struc ?= lo_type.
+        lt_comps = lo_struc->get_components( ).
+        ASSIGN iv_ref->* TO <structure>.
+        LOOP AT lt_comps INTO ls_compo.
+          ASSIGN COMPONENT ls_compo-name OF STRUCTURE <structure> TO <field>.
+          GET REFERENCE OF <field> INTO lv_ref.
+          mi_writer->open_element( name = traverse_write_type( lv_ref ) ).
+          mi_writer->write_attribute( name = 'name' value = to_upper( ls_compo-name ) ).
+          traverse_write( lv_ref ).
+          mi_writer->close_element( ).
+        ENDLOOP.
+
+        mi_writer->close_element( ).
+      WHEN cl_abap_typedescr=>kind_elem.
+        mi_writer->write_value( iv_ref->* ).
+    ENDCASE.
 
   ENDMETHOD.
 
