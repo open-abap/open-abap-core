@@ -36,12 +36,13 @@ CLASS ltcl_json IMPLEMENTATION.
 
     writer = cl_sxml_string_writer=>create( if_sxml=>co_xt_json ).
     
-* todo    CALL TRANSFORMATION id SOURCE data = source RESULT XML writer.
-* todo    json = cl_abap_conv_codepage=>create_in( )->convert( writer->get_output( ) ).
+    CALL TRANSFORMATION id SOURCE data = source RESULT XML writer.
+    json = cl_abap_conv_codepage=>create_in( )->convert( writer->get_output( ) ).
+*    WRITE '@KERNEL console.dir(json);'.
 
-* todo    cl_abap_unit_assert=>assert_equals(
-* todo      act = json
-* todo      exp = '{"DATA":{"FOO":0}}' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = json
+      exp = '{"DATA":{"FOO":0}}' ).
   ENDMETHOD.
 
 ENDCLASS.

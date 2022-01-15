@@ -75,9 +75,20 @@ CLASS cl_sxml_string_writer IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_sxml_writer~write_value.
-    append_text( '"' ).
-    append_text( value ).
-    append_text( '"' ).
+    DATA index TYPE i.
+    DATA name TYPE string.
+    index = lines( mt_stack ).
+    READ TABLE mt_stack INDEX index INTO name.
+    CASE name.
+      WHEN 'str'.
+        append_text( '"' ).
+        append_text( condense( value ) ).
+        append_text( '"' ).
+      WHEN 'num'.
+        append_text( condense( value ) ).
+      WHEN OTHERS.
+        ASSERT 1 = 'todo'.
+    ENDCASE.
   ENDMETHOD.
 
 ENDCLASS.
