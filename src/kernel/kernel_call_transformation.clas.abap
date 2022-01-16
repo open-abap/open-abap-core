@@ -44,8 +44,12 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     IF mi_writer IS NOT INITIAL.
       mi_writer->open_element( name = 'object' ).
       WRITE '@KERNEL for (const name in INPUT.source) {'.
-      WRITE '@KERNEL lv_name.set(name);'.
-      WRITE '@KERNEL result.assign(INPUT.source[name]);'.
+      WRITE '@KERNEL   lv_name.set(name);'.
+      WRITE '@KERNEL   if (INPUT.source[name].constructor.name === "FieldSymbol") {'.
+      WRITE '@KERNEL     result.assign(INPUT.source[name].getPointer());'.
+      WRITE '@KERNEL   } else {'.
+      WRITE '@KERNEL     result.assign(INPUT.source[name]);'.
+      WRITE '@KERNEL   }'.
       mi_writer->open_element( name = 'str' ).
       mi_writer->write_attribute( name = 'name' value = to_upper( lv_name ) ).
       traverse_write( result ).
@@ -119,7 +123,8 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     DATA li_sub TYPE REF TO if_ixml_element.
     DATA ls_compo LIKE LINE OF lt_comps.
     DATA lv_ref TYPE REF TO data.
-    FIELD-SYMBOLS <structure> TYPE any.
+    FIELD-SYMBOLS <any> TYPE any.
+    FIELD-SYMBOLS <table> TYPE ANY TABLE.
     FIELD-SYMBOLS <field> TYPE any.
 
 *     WRITE '@KERNEL console.dir(iv_ref.getPointer());'.
@@ -131,9 +136,9 @@ CLASS kernel_call_transformation IMPLEMENTATION.
 
         lo_struc ?= lo_type.
         lt_comps = lo_struc->get_components( ).
-        ASSIGN iv_ref->* TO <structure>.
+        ASSIGN iv_ref->* TO <any>.
         LOOP AT lt_comps INTO ls_compo.
-          ASSIGN COMPONENT ls_compo-name OF STRUCTURE <structure> TO <field>.
+          ASSIGN COMPONENT ls_compo-name OF STRUCTURE <any> TO <field>.
           GET REFERENCE OF <field> INTO lv_ref.
           mi_writer->open_element( name = traverse_write_type( lv_ref ) ).
           mi_writer->write_attribute( name = 'name' value = to_upper( ls_compo-name ) ).
@@ -144,6 +149,18 @@ CLASS kernel_call_transformation IMPLEMENTATION.
         mi_writer->close_element( ).
       WHEN cl_abap_typedescr=>kind_elem.
         mi_writer->write_value( iv_ref->* ).
+      WHEN cl_abap_typedescr=>kind_table.
+        mi_writer->open_element( name = 'array' ).
+
+        ASSIGN iv_ref->* TO <table>.
+        LOOP AT <table> ASSIGNING <any>.
+          GET REFERENCE OF <any> INTO lv_ref.
+          traverse_write( lv_ref ).
+        ENDLOOP.
+
+        mi_writer->close_element( ).
+      WHEN OTHERS.
+        ASSERT 1 = 'todo_traverse_write'.
     ENDCASE.
 
   ENDMETHOD.

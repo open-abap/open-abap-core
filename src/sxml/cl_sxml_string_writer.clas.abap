@@ -23,7 +23,13 @@ CLASS cl_sxml_string_writer DEFINITION PUBLIC FINAL CREATE PRIVATE.
     DATA mv_output TYPE xstring.
     DATA mv_type TYPE if_sxml=>xml_stream_type.
     DATA mt_stack TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+
     METHODS append_text IMPORTING text TYPE string.
+    METHODS get_text RETURNING VALUE(text) TYPE string.
+
+* stack operations      
+    METHODS peek RETURNING VALUE(rv_name) TYPE string.
+    METHODS remove RETURNING VALUE(rv_name) TYPE string.
 ENDCLASS.
 
 CLASS cl_sxml_string_writer IMPLEMENTATION.
@@ -48,23 +54,42 @@ CLASS cl_sxml_string_writer IMPLEMENTATION.
     CONCATENATE mv_output append INTO mv_output IN BYTE MODE.
   ENDMETHOD.
 
+  METHOD get_text.
+    text = cl_abap_conv_codepage=>create_in( )->convert( mv_output ).
+  ENDMETHOD.
+
   METHOD if_sxml_writer~open_element.
+    DATA parent TYPE string.
+    parent = peek( ).
+
+    IF parent = 'array' AND get_text( ) NP '*['.
+      append_text( ',' ).
+    ENDIF.
+
     APPEND name TO mt_stack.
     CASE name.
       WHEN 'object'.
         append_text( '{' ).
+      WHEN 'array'.
+        append_text( '[' ).
     ENDCASE.
   ENDMETHOD.
 
-  METHOD if_sxml_writer~close_element.
+  METHOD remove.
     DATA index TYPE i.
-    DATA name TYPE string.
     index = lines( mt_stack ).
-    READ TABLE mt_stack INDEX index INTO name.
+    READ TABLE mt_stack INDEX index INTO rv_name.
     DELETE mt_stack INDEX index.
+  ENDMETHOD.
+
+  METHOD if_sxml_writer~close_element.
+    DATA name TYPE string.
+    name = remove( ).
     CASE name.
       WHEN 'object'.
         append_text( '}' ).
+      WHEN 'array'.
+        append_text( ']' ).
     ENDCASE.
   ENDMETHOD.
 
@@ -74,11 +99,15 @@ CLASS cl_sxml_string_writer IMPLEMENTATION.
     append_text( '":' ).
   ENDMETHOD.
 
-  METHOD if_sxml_writer~write_value.
+  METHOD peek.
     DATA index TYPE i.
-    DATA name TYPE string.
     index = lines( mt_stack ).
-    READ TABLE mt_stack INDEX index INTO name.
+    READ TABLE mt_stack INDEX index INTO rv_name.
+  ENDMETHOD.
+
+  METHOD if_sxml_writer~write_value.
+    DATA name TYPE string.
+    name = peek( ).
     CASE name.
       WHEN 'str'.
         append_text( '"' ).
@@ -87,7 +116,8 @@ CLASS cl_sxml_string_writer IMPLEMENTATION.
       WHEN 'num'.
         append_text( condense( value ) ).
       WHEN OTHERS.
-        ASSERT 1 = 'todo'.
+        WRITE '@KERNEL console.dir(name);'.
+        ASSERT 1 = 'todo_if_sxml_writer_write_value'.
     ENDCASE.
   ENDMETHOD.
 
