@@ -65,6 +65,9 @@ CLASS cl_sxml_string_writer IMPLEMENTATION.
     IF parent = 'array' AND get_text( ) NP '*['.
       append_text( ',' ).
     ENDIF.
+    IF parent = 'object' AND get_text( ) NP '*{'.
+      append_text( ',' ).
+    ENDIF.
 
     APPEND name TO mt_stack.
     CASE name.
