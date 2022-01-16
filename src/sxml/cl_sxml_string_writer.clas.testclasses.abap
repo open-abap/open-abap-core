@@ -6,7 +6,8 @@ CLASS ltcl_json DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS write_array_str FOR TESTING RAISING cx_static_check.
     METHODS write_array_multi FOR TESTING RAISING cx_static_check.
     METHODS call_transformation FOR TESTING RAISING cx_static_check.
-    METHODS empty_array_via_fs FOR TESTING RAISING cx_static_check.
+    METHODS call_empty_array_via_fs FOR TESTING RAISING cx_static_check.
+    METHODS call_nested_array FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -103,7 +104,7 @@ CLASS ltcl_json IMPLEMENTATION.
       exp = '{"DATA":{"FOO":0}}' ).
   ENDMETHOD.
 
-  METHOD empty_array_via_fs.
+  METHOD call_empty_array_via_fs.
     DATA json TYPE string.
     DATA foo TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
     DATA writer TYPE REF TO cl_sxml_string_writer.
@@ -117,6 +118,25 @@ CLASS ltcl_json IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = json
       exp = '{"DATA":[]}' ).
+  ENDMETHOD.
+
+  METHOD call_nested_array.
+    DATA writer TYPE REF TO cl_sxml_string_writer.
+    DATA json TYPE string.
+    TYPES: BEGIN OF source,
+             foo TYPE i,
+           END OF source.
+    DATA source TYPE STANDARD TABLE OF source WITH DEFAULT KEY.
+    APPEND INITIAL LINE TO source.
+    APPEND INITIAL LINE TO source.
+    writer = cl_sxml_string_writer=>create( if_sxml=>co_xt_json ).
+    CALL TRANSFORMATION id SOURCE data = source RESULT XML writer.
+    json = cl_abap_conv_codepage=>create_in( )->convert( writer->get_output( ) ).
+*    WRITE '@KERNEL console.dir(json);'.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = json
+      exp = '{"DATA":[{"FOO":0},{"FOO":0}]}' ).
   ENDMETHOD.
 
 ENDCLASS.

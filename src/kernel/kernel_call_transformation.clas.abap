@@ -154,13 +154,13 @@ CLASS kernel_call_transformation IMPLEMENTATION.
 
         ASSIGN iv_ref->* TO <table>.
         LOOP AT <table> ASSIGNING <any>.
-          GET REFERENCE OF <field> INTO lv_ref.
-*          traverse_write( lv_ref ).
+          GET REFERENCE OF <any> INTO lv_ref.
+          traverse_write( lv_ref ).
         ENDLOOP.
 
         mi_writer->close_element( ).
       WHEN OTHERS.
-        ASSERT 1 = 'todo'.
+        ASSERT 1 = 'todo_traverse_write'.
     ENDCASE.
 
   ENDMETHOD.

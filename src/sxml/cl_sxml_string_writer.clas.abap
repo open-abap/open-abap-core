@@ -116,7 +116,8 @@ CLASS cl_sxml_string_writer IMPLEMENTATION.
       WHEN 'num'.
         append_text( condense( value ) ).
       WHEN OTHERS.
-        ASSERT 1 = 'todo'.
+        WRITE '@KERNEL console.dir(name);'.
+        ASSERT 1 = 'todo_if_sxml_writer_write_value'.
     ENDCASE.
   ENDMETHOD.
 
