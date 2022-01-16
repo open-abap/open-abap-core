@@ -2,6 +2,8 @@ CLASS ltcl_json DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
     METHODS writer FOR TESTING RAISING cx_static_check.
+    METHODS write_empty_array FOR TESTING RAISING cx_static_check.
+    METHODS write_array_str FOR TESTING RAISING cx_static_check.
     METHODS call_transformation FOR TESTING RAISING cx_static_check.
     METHODS empty_array_via_fs FOR TESTING RAISING cx_static_check.
 
@@ -26,6 +28,37 @@ CLASS ltcl_json IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = json
       exp = '{"text":"moo"}' ).
+  ENDMETHOD.
+
+  METHOD write_empty_array.
+    DATA writer TYPE REF TO cl_sxml_string_writer.
+    DATA intf TYPE REF TO if_sxml_writer.
+    DATA json TYPE string.
+    writer = cl_sxml_string_writer=>create( if_sxml=>co_xt_json ).
+    intf ?= writer.
+    intf->open_element( name = 'array' ).
+    intf->close_element( ).
+    json = cl_abap_conv_codepage=>create_in( )->convert( writer->get_output( ) ).
+    cl_abap_unit_assert=>assert_equals(
+      act = json
+      exp = '[]' ).
+  ENDMETHOD.
+
+  METHOD write_array_str.
+    DATA writer TYPE REF TO cl_sxml_string_writer.
+    DATA intf TYPE REF TO if_sxml_writer.
+    DATA json TYPE string.
+    writer = cl_sxml_string_writer=>create( if_sxml=>co_xt_json ).
+    intf ?= writer.
+    intf->open_element( name = 'array' ).
+    intf->open_element( name = 'str' ).
+    intf->write_value( 'moo' ).
+    intf->close_element( ).
+    intf->close_element( ).
+    json = cl_abap_conv_codepage=>create_in( )->convert( writer->get_output( ) ).
+    cl_abap_unit_assert=>assert_equals(
+      act = json
+      exp = '["moo"]' ).
   ENDMETHOD.
 
   METHOD call_transformation.
