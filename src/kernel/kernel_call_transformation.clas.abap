@@ -44,8 +44,12 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     IF mi_writer IS NOT INITIAL.
       mi_writer->open_element( name = 'object' ).
       WRITE '@KERNEL for (const name in INPUT.source) {'.
-      WRITE '@KERNEL lv_name.set(name);'.
-      WRITE '@KERNEL result.assign(INPUT.source[name]);'.
+      WRITE '@KERNEL   lv_name.set(name);'.
+      WRITE '@KERNEL   if (INPUT.source[name].constructor.name === "FieldSymbol") {'.
+      WRITE '@KERNEL     result.assign(INPUT.source[name].getPointer());'.
+      WRITE '@KERNEL   } else {'.
+      WRITE '@KERNEL     result.assign(INPUT.source[name]);'.
+      WRITE '@KERNEL   }'.
       mi_writer->open_element( name = 'str' ).
       mi_writer->write_attribute( name = 'name' value = to_upper( lv_name ) ).
       traverse_write( result ).
@@ -144,6 +148,11 @@ CLASS kernel_call_transformation IMPLEMENTATION.
         mi_writer->close_element( ).
       WHEN cl_abap_typedescr=>kind_elem.
         mi_writer->write_value( iv_ref->* ).
+      WHEN cl_abap_typedescr=>kind_table.
+        mi_writer->open_element( name = 'array' ).
+        mi_writer->close_element( ).
+      WHEN OTHERS.
+        ASSERT 1 = 'todo'.
     ENDCASE.
 
   ENDMETHOD.

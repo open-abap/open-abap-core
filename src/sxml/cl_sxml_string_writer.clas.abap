@@ -53,6 +53,8 @@ CLASS cl_sxml_string_writer IMPLEMENTATION.
     CASE name.
       WHEN 'object'.
         append_text( '{' ).
+      WHEN 'array'.
+        append_text( '[' ).
     ENDCASE.
   ENDMETHOD.
 
@@ -65,6 +67,8 @@ CLASS cl_sxml_string_writer IMPLEMENTATION.
     CASE name.
       WHEN 'object'.
         append_text( '}' ).
+      WHEN 'array'.
+        append_text( ']' ).
     ENDCASE.
   ENDMETHOD.
 
