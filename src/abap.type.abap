@@ -9,6 +9,7 @@ TYPES: BEGIN OF abap_trans_srcbind,
 
 TYPES abap_trans_srcbind_tab TYPE STANDARD TABLE OF abap_trans_srcbind WITH DEFAULT KEY.
 TYPES abap_trans_resbind_tab TYPE abap_trans_srcbind_tab.
+TYPES abap_compname TYPE c LENGTH 30.
 
 CONSTANTS abap_max_comp_name_ln TYPE i VALUE 30.
 
