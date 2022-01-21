@@ -2,10 +2,33 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
     METHODS test01 FOR TESTING.
+    METHODS get_ddic_field_list FOR TESTING.
 
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
+
+  METHOD get_ddic_field_list.
+  
+    DATA struct TYPE REF TO cl_abap_structdescr.
+    DATA lt_ddfields TYPE ddfields.
+    DATA ls_ddfields LIKE LINE OF lt_ddfields.
+
+    struct ?= cl_abap_typedescr=>describe_by_name( 'T000' ).
+    lt_ddfields = struct->get_ddic_field_list( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( lt_ddfields )
+      exp = 3 ).
+
+    READ TABLE lt_ddfields INTO ls_ddfields WITH KEY fieldname = 'MANDT'.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_ddfields-keyflag
+      exp = abap_true ).
+      
+  ENDMETHOD.
+
 
   METHOD test01.
 

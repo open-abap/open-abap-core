@@ -43,7 +43,37 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_ddic_field_list.
-    ASSERT 1 = 'todo'.
+    
+    DATA lt_components TYPE component_table.
+    DATA ls_component LIKE LINE OF lt_components.
+    DATA ls_return LIKE LINE OF rt_components.
+    DATA lv_name TYPE string.
+    DATA lv_keyfield TYPE string.
+    FIELD-SYMBOLS <component> LIKE LINE OF rt_components.
+    
+    lt_components = get_components( ).
+
+    ASSERT absolute_name CP '+TYPE=*'.
+    lv_name = absolute_name+6.
+
+    LOOP AT lt_components INTO ls_component.
+      CLEAR ls_return.
+      ls_return-tabname = lv_name.
+      ls_return-fieldname = ls_component-name.
+* todo, fill more fields in ls_return
+      APPEND ls_return TO rt_components.
+    ENDLOOP.
+
+*    WRITE '@KERNEL console.dir(abap.DDIC[lv_name.get()]?.keyFields);'.
+    WRITE '@KERNEL for (const keyfield of abap.DDIC[lv_name.get()]?.keyFields || [] ) {'.
+    WRITE '@KERNEL lv_keyfield.set(keyfield);'.
+*    WRITE '@KERNEL console.dir(rt_components.array()[0].get());'.
+    READ TABLE rt_components ASSIGNING <component> WITH KEY fieldname = lv_keyfield.
+    ASSERT sy-subrc = 0.
+    <component>-keyflag = abap_true.
+    WRITE '@KERNEL }'.
+*    ASSERT 1 = 'todo'.
+
   ENDMETHOD.
 
   METHOD is_ddic_type.

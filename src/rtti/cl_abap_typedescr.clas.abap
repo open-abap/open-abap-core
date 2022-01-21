@@ -66,16 +66,9 @@ ENDCLASS.
 CLASS cl_abap_typedescr IMPLEMENTATION.
 
   METHOD describe_by_name.
-
-    " DATA ref TYPE REF TO data.
-    " FIELD-SYMBOLS <ref> TYPE any.
-    " CREATE DATA ref TYPE (name).
-    " ASSIGN ref->* TO <ref>.
-
-    " and then call DESCRIBE_BY_DATA_REF ?
-
-    ASSERT 1 = 'todo'.
-
+    DATA ref TYPE REF TO data.
+    CREATE DATA ref TYPE (p_name).
+    type = describe_by_data_ref( ref ).
   ENDMETHOD.
 
   METHOD get_relative_name.
@@ -87,7 +80,9 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
   ENDMETHOD.
   
   METHOD describe_by_data_ref.
-    ASSERT 1 = 'todo'.
+    FIELD-SYMBOLS <ref> TYPE any.
+    ASSIGN data->* TO <ref>.
+    type = describe_by_data( <ref> ).
   ENDMETHOD.
 
   METHOD describe_by_object_ref.
