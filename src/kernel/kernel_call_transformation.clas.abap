@@ -115,6 +115,7 @@ CLASS kernel_call_transformation IMPLEMENTATION.
   ENDMETHOD.
   
   METHOD traverse_write.
+* TODO: refactor this method
 
     DATA lo_type TYPE REF TO cl_abap_typedescr.
     DATA lo_struc TYPE REF TO cl_abap_structdescr.
@@ -155,7 +156,13 @@ CLASS kernel_call_transformation IMPLEMENTATION.
         ASSIGN iv_ref->* TO <table>.
         LOOP AT <table> ASSIGNING <any>.
           GET REFERENCE OF <any> INTO lv_ref.
+          IF cl_abap_typedescr=>describe_by_data( lv_ref->* )->kind = cl_abap_typedescr=>kind_elem.
+            mi_writer->open_element( name = traverse_write_type( lv_ref ) ).
+          ENDIF.
           traverse_write( lv_ref ).
+          IF cl_abap_typedescr=>describe_by_data( lv_ref->* )->kind = cl_abap_typedescr=>kind_elem.
+            mi_writer->close_element( ).
+          ENDIF.
         ENDLOOP.
 
         mi_writer->close_element( ).
