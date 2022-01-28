@@ -101,8 +101,15 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_component_type.
-    " TODO
-    ASSERT 1 = 'todo'.
+    DATA line LIKE LINE OF components.
+    READ TABLE components INTO line WITH KEY name = p_name.
+    IF sy-subrc <> 0.
+* todo, RAISE component_not_found, classic exceptions doesnt work with transpiler as of today
+      RETURN.
+    ELSE.
+      p_descr_ref = line-type.
+    ENDIF.
+
   ENDMETHOD.
 
 ENDCLASS.

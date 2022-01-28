@@ -1,12 +1,25 @@
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
-    METHODS test01 FOR TESTING.
-    METHODS get_ddic_field_list FOR TESTING.
+    METHODS test01 FOR TESTING RAISING cx_static_check.
+    METHODS get_ddic_field_list FOR TESTING RAISING cx_static_check.
+    METHODS get_component_type FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
+
+  METHOD get_component_type.
+
+    DATA struct TYPE REF TO cl_abap_structdescr.
+    DATA type TYPE REF TO cl_abap_typedescr.
+    struct ?= cl_abap_typedescr=>describe_by_name( 'T000' ).
+    type = struct->get_component_type( 'CCCATEGORY' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = type->kind
+      exp = cl_abap_typedescr=>kind_elem ).
+
+  ENDMETHOD.
 
   METHOD get_ddic_field_list.
   
