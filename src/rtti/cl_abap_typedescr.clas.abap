@@ -29,6 +29,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
 
     DATA type_kind TYPE abap_typekind.
     DATA kind TYPE c LENGTH 1.
+    DATA length TYPE i.
     DATA absolute_name TYPE string.
 
     CONSTANTS typekind_any TYPE abap_typekind VALUE '~'.
@@ -95,8 +96,9 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
   METHOD describe_by_data.
 
     DATA lv_name TYPE string.
-
+    DATA lv_length TYPE i.
     WRITE '@KERNEL lv_name.set(p_data.constructor.name);'.
+    WRITE '@KERNEL lv_length.set(p_data.getLength ? p_data.getLength() : 0);'.
 
 * These are the constructor names from the js runtime
     CASE lv_name.
@@ -108,10 +110,12 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         CREATE OBJECT type.
         type->type_kind = typekind_num.
         type->kind = kind_elem.
+        type->length = lv_length.
       WHEN 'Hex'.
         CREATE OBJECT type.
         type->type_kind = typekind_hex.
         type->kind = kind_elem.
+        type->length = lv_length.
       WHEN 'Date'.
         CREATE OBJECT type.
         type->type_kind = typekind_date.
@@ -144,6 +148,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         CREATE OBJECT type.
         type->type_kind = typekind_char.
         type->kind = kind_elem.
+        type->length = lv_length.
       WHEN 'FieldSymbol'.
         WRITE '@KERNEL lv_name = p_data.getPointer();'.
         type = describe_by_data( lv_name ).
