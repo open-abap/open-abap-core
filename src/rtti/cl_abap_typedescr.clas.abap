@@ -27,33 +27,33 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
         RETURNING
           VALUE(p_abap_bool) TYPE abap_bool.
 
-    DATA type_kind TYPE c LENGTH 1.
+    DATA type_kind TYPE abap_typekind.
     DATA kind TYPE c LENGTH 1.
     DATA absolute_name TYPE string.
 
-    CONSTANTS typekind_any TYPE c LENGTH 1 VALUE '~'.
-    CONSTANTS typekind_int TYPE c LENGTH 1 VALUE 'I'.
-    CONSTANTS typekind_struct1 TYPE c LENGTH 1 VALUE 'u'.
-    CONSTANTS typekind_struct2 TYPE c LENGTH 1 VALUE 'v'.
-    CONSTANTS typekind_xstring TYPE c LENGTH 1 VALUE 'y'.
-    CONSTANTS typekind_string TYPE c LENGTH 1 VALUE 'g'.
-    CONSTANTS typekind_char TYPE c LENGTH 1 VALUE 'C'.
-    CONSTANTS typekind_hex TYPE c LENGTH 1 VALUE 'X'.
-    CONSTANTS typekind_dref TYPE c LENGTH 1 VALUE 'l'.
-    CONSTANTS typekind_oref TYPE c LENGTH 1 VALUE 'r'.
-    CONSTANTS typekind_table TYPE c LENGTH 1 VALUE 'h'.
-    CONSTANTS typekind_date TYPE c LENGTH 1 VALUE 'D'.
-    CONSTANTS typekind_num TYPE c LENGTH 1 VALUE 'N'.
-    CONSTANTS typekind_time TYPE c LENGTH 1 VALUE 'T'.
-    CONSTANTS typekind_class TYPE c LENGTH 1 VALUE '*'.
-    CONSTANTS typekind_packed TYPE c LENGTH 1 VALUE 'P'.
-    CONSTANTS typekind_float TYPE c LENGTH 1 VALUE 'F'.
-    CONSTANTS typekind_int1 TYPE c LENGTH 1 VALUE 'b'.
-    CONSTANTS typekind_int2 TYPE c LENGTH 1 VALUE 's'.
-    CONSTANTS typekind_int8 TYPE c LENGTH 1 VALUE '8'.
-    CONSTANTS typekind_decfloat TYPE c LENGTH 1 VALUE '/'.
-    CONSTANTS typekind_decfloat16 TYPE c LENGTH 1 VALUE 'a'.
-    CONSTANTS typekind_decfloat34 TYPE c LENGTH 1 VALUE 'e'.
+    CONSTANTS typekind_any TYPE abap_typekind VALUE '~'.
+    CONSTANTS typekind_char TYPE abap_typekind VALUE 'C'.
+    CONSTANTS typekind_class TYPE abap_typekind VALUE '*'.
+    CONSTANTS typekind_date TYPE abap_typekind VALUE 'D'.
+    CONSTANTS typekind_decfloat TYPE abap_typekind VALUE '/'.
+    CONSTANTS typekind_decfloat16 TYPE abap_typekind VALUE 'a'.
+    CONSTANTS typekind_decfloat34 TYPE abap_typekind VALUE 'e'.
+    CONSTANTS typekind_dref TYPE abap_typekind VALUE 'l'.
+    CONSTANTS typekind_float TYPE abap_typekind VALUE 'F'.
+    CONSTANTS typekind_hex TYPE abap_typekind VALUE 'X'.
+    CONSTANTS typekind_int TYPE abap_typekind VALUE 'I'.
+    CONSTANTS typekind_int1 TYPE abap_typekind VALUE 'b'.
+    CONSTANTS typekind_int2 TYPE abap_typekind VALUE 's'.
+    CONSTANTS typekind_int8 TYPE abap_typekind VALUE '8'.
+    CONSTANTS typekind_num TYPE abap_typekind VALUE 'N'.
+    CONSTANTS typekind_oref TYPE abap_typekind VALUE 'r'.
+    CONSTANTS typekind_packed TYPE abap_typekind VALUE 'P'.
+    CONSTANTS typekind_string TYPE abap_typekind VALUE 'g'.
+    CONSTANTS typekind_struct1 TYPE abap_typekind VALUE 'u'.
+    CONSTANTS typekind_struct2 TYPE abap_typekind VALUE 'v'.
+    CONSTANTS typekind_table TYPE abap_typekind VALUE 'h'.
+    CONSTANTS typekind_time TYPE abap_typekind VALUE 'T'.
+    CONSTANTS typekind_xstring TYPE abap_typekind VALUE 'y'.
     
     CONSTANTS kind_elem TYPE c LENGTH 1 VALUE 'E'.
     CONSTANTS kind_struct TYPE c LENGTH 1 VALUE 'S'.
