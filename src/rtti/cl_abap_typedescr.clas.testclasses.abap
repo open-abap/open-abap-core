@@ -50,17 +50,17 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD typekind_char.
-
     DATA cthing TYPE c LENGTH 3.
     DATA type TYPE REF TO cl_abap_typedescr.
-
     type = cl_abap_typedescr=>describe_by_data( cthing ).
     cl_abap_unit_assert=>assert_not_initial( type ).
     cl_abap_unit_assert=>assert_not_initial( type->type_kind ).
     cl_abap_unit_assert=>assert_equals(
       act = type->type_kind
       exp = cl_abap_typedescr=>typekind_char ).
-
+    cl_abap_unit_assert=>assert_equals(
+      act = type->length
+      exp = 3 ).
   ENDMETHOD.
 
   METHOD typekind_dref.
@@ -160,21 +160,26 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD typekind_hex.
     DATA data TYPE x LENGTH 4.
     DATA type TYPE REF TO cl_abap_typedescr.
-
     type = cl_abap_typedescr=>describe_by_data( data ).
     cl_abap_unit_assert=>assert_equals(
       act = type->type_kind
       exp = cl_abap_typedescr=>typekind_hex ).
+    cl_abap_unit_assert=>assert_equals(
+      act = type->length
+      exp = 4 ).
   ENDMETHOD.
 
   METHOD typekind_numc.
     DATA data TYPE n LENGTH 4.
     DATA type TYPE REF TO cl_abap_typedescr.
-
     type = cl_abap_typedescr=>describe_by_data( data ).
     cl_abap_unit_assert=>assert_equals(
       act = type->type_kind
       exp = cl_abap_typedescr=>typekind_num ).
+* todo, https://github.com/abaplint/transpiler/pull/623
+*    cl_abap_unit_assert=>assert_equals(
+*      act = type->length
+*      exp = 4 ).      
   ENDMETHOD.
 
   METHOD abap_bool_absolute.
