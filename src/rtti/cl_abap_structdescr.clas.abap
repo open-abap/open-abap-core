@@ -105,7 +105,7 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     READ TABLE components INTO line WITH KEY name = p_name.
     IF sy-subrc <> 0.
 * todo, RAISE component_not_found, classic exceptions doesnt work with transpiler as of today
-      RETURN.
+      ASSERT 1 = 'todo'.
     ELSE.
       p_descr_ref = line-type.
     ENDIF.
