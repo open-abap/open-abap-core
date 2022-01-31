@@ -4,12 +4,31 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS test1_xml FOR TESTING RAISING cx_static_check.
     METHODS test2_xml FOR TESTING RAISING cx_static_check.
     METHODS test1_json FOR TESTING RAISING cx_static_check.
+    METHODS test2_json_fs FOR TESTING RAISING cx_static_check.
     METHODS invalid_input FOR TESTING RAISING cx_static_check.
     METHODS empty_input FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
+
+  METHOD test2_json_fs.
+
+    DATA: BEGIN OF ls_message,
+            field TYPE i,
+          END OF ls_message.
+    FIELD-SYMBOLS <fs> LIKE ls_message.
+    DATA lv_input TYPE string.
+    lv_input = '{"DATA": {"FIELD": 321}}'.
+    ASSIGN ls_message TO <fs>.
+
+    CALL TRANSFORMATION id SOURCE XML lv_input RESULT data = <fs>.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = <fs>-field
+      exp = 321 ).
+
+  ENDMETHOD.
 
   METHOD test1_json.
 
