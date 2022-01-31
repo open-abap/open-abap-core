@@ -221,7 +221,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
   
   METHOD if_ixml_element~get_children.
-    ASSERT 1 = 'todo'.
+    val = if_ixml_node~get_children( ).
   ENDMETHOD.
   
   METHOD if_ixml_element~get_elements_by_tag_name.
