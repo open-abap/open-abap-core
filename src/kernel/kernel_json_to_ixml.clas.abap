@@ -38,6 +38,7 @@ CLASS kernel_json_to_ixml IMPLEMENTATION.
           li_open ?= li_node.
 *          WRITE: / 'open: ', li_open->qname-name.
 
+          CLEAR lv_name.
           lt_attributes = li_open->get_attributes( ).
           LOOP AT lt_attributes INTO li_attribute.
 *            WRITE / li_attribute->get_value( ).
