@@ -489,7 +489,7 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~append_child.
-    ASSERT 1 = 'todo'.
+    if_ixml_node~append_child( new_child ).
   ENDMETHOD.
 
   METHOD if_ixml_document~get_first_child.
