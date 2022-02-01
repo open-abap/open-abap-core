@@ -35,7 +35,8 @@ ENDCLASS.
 
 CLASS lcl_named_node_map IMPLEMENTATION.
   METHOD if_ixml_named_node_map~create_iterator.
-    ASSERT 1 = 'todo'.
+    CREATE OBJECT iterator TYPE lcl_node_iterator
+      EXPORTING it_list = mt_list.
   ENDMETHOD.
 
   METHOD if_ixml_named_node_map~get_length.
@@ -221,7 +222,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
   
   METHOD if_ixml_element~get_children.
-    ASSERT 1 = 'todo'.
+    val = if_ixml_node~get_children( ).
   ENDMETHOD.
   
   METHOD if_ixml_element~get_elements_by_tag_name.
@@ -265,7 +266,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
   
   METHOD if_ixml_element~set_value.
-    ASSERT 1 = 'todo'.
+    if_ixml_node~set_value( value ).
   ENDMETHOD.
   
   METHOD if_ixml_node~set_namespace_prefix.
@@ -489,7 +490,7 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~append_child.
-    ASSERT 1 = 'todo'.
+    if_ixml_node~append_child( new_child ).
   ENDMETHOD.
 
   METHOD if_ixml_document~get_first_child.

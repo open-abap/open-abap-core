@@ -3,13 +3,75 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
   PRIVATE SECTION.
     METHODS test1_xml FOR TESTING RAISING cx_static_check.
     METHODS test2_xml FOR TESTING RAISING cx_static_check.
+
     METHODS test1_json FOR TESTING RAISING cx_static_check.
+    METHODS test2_json_fs FOR TESTING RAISING cx_static_check.
+    METHODS test3_json_table FOR TESTING RAISING cx_static_check.
     METHODS invalid_input FOR TESTING RAISING cx_static_check.
     METHODS empty_input FOR TESTING RAISING cx_static_check.
 
+    METHODS convert_json_to_sxml
+      IMPORTING iv_json TYPE string
+      RETURNING VALUE(rv_xml) TYPE string
+      RAISING cx_static_check.
+    METHODS json_to_sxml1 FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
+
+  METHOD convert_json_to_sxml.
+    DATA lo_writer TYPE REF TO cl_sxml_string_writer.
+    lo_writer = cl_sxml_string_writer=>create( ).
+    CALL TRANSFORMATION id SOURCE XML iv_json RESULT XML lo_writer.
+    rv_xml = cl_abap_conv_codepage=>create_in( )->convert( lo_writer->get_output( ) ).
+  ENDMETHOD.
+
+  METHOD json_to_sxml1.
+    DATA lv_xml TYPE string.
+* todo
+*    lv_xml = convert_json_to_sxml( '{}' ).
+*    WRITE '@KERNEL console.dir(lv_xml.get());'.
+*    cl_abap_unit_assert=>assert_equals(
+*      act = lv_xml
+*      exp = '<object/>' ).
+  ENDMETHOD.
+
+  METHOD test3_json_table.
+    TYPES: BEGIN OF ty_message,
+             field TYPE i,
+           END OF ty_message.
+    DATA tab TYPE STANDARD TABLE OF ty_message WITH DEFAULT KEY.
+    DATA row LIKE LINE OF tab.
+    DATA lv_input TYPE string.
+    lv_input = '{"DATA": [{"FIELD": 321}]}'.
+    CALL TRANSFORMATION id SOURCE XML lv_input RESULT data = tab.
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( tab )
+      exp = 1 ).
+    READ TABLE tab INDEX 1 INTO row.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = row-field
+      exp = 321 ).
+  ENDMETHOD.
+
+  METHOD test2_json_fs.
+
+    DATA: BEGIN OF ls_message,
+            field TYPE i,
+          END OF ls_message.
+    FIELD-SYMBOLS <fs> LIKE ls_message.
+    DATA lv_input TYPE string.
+    lv_input = '{"DATA": {"FIELD": 321}}'.
+    ASSIGN ls_message TO <fs>.
+
+    CALL TRANSFORMATION id SOURCE XML lv_input RESULT data = <fs>.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = <fs>-field
+      exp = 321 ).
+
+  ENDMETHOD.
 
   METHOD test1_json.
 
