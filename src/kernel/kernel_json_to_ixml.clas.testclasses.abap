@@ -15,6 +15,7 @@ CLASS ltcl_json_to_ixml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHOR
     METHODS test_empty_object FOR TESTING RAISING cx_static_check.
     METHODS test_empty_array FOR TESTING RAISING cx_static_check.
     METHODS test_simple_object FOR TESTING RAISING cx_static_check.
+    METHODS test_nested_array FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_json_to_ixml IMPLEMENTATION.
@@ -89,7 +90,7 @@ CLASS ltcl_json_to_ixml IMPLEMENTATION.
   METHOD test_simple_object.
     DATA lv_dump TYPE string.
     lv_dump = dump( '{"DATA": 2}' ).
-    WRITE '@KERNEL console.dir(lv_dump.get());'.
+*    WRITE '@KERNEL console.dir(lv_dump.get());'.
     cl_abap_unit_assert=>assert_equals(
       act = lv_dump
       exp = 
@@ -97,6 +98,18 @@ CLASS ltcl_json_to_ixml IMPLEMENTATION.
         |NAME:num,DEPTH:1,VALUE:2\n| && 
         |  ANAME:name,AVALUE:DATA\n| && 
         |NAME:#text,DEPTH:0,VALUE:2,LEAF:X\n| ).
+  ENDMETHOD.
+
+  METHOD test_nested_array.
+    DATA lv_dump TYPE string.
+    lv_dump = dump( '{"DATA": []}' ).
+*    WRITE '@KERNEL console.dir(lv_dump.get());'.
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_dump
+      exp = 
+        |NAME:object,DEPTH:1,VALUE:\n| && 
+        |NAME:array,DEPTH:0,VALUE:,LEAF:X\n| && 
+        |  ANAME:name,AVALUE:DATA\n| ).
   ENDMETHOD.
 
 ENDCLASS.
