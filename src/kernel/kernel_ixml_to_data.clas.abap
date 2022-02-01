@@ -8,7 +8,11 @@ CLASS kernel_ixml_to_data DEFINITION PUBLIC.
   PRIVATE SECTION.
     CLASS-METHODS get_field_name
       IMPORTING ii_node TYPE REF TO if_ixml_node
-      RETURNING VALUE(rv_name) TYPE string.        
+      RETURNING VALUE(rv_name) TYPE string.    
+    CLASS-METHODS traverse
+      IMPORTING 
+        ii_node TYPE REF TO if_ixml_node
+        iv_ref  TYPE REF TO data.
 ENDCLASS.
 
 CLASS kernel_ixml_to_data IMPLEMENTATION.
@@ -56,10 +60,34 @@ CLASS kernel_ixml_to_data IMPLEMENTATION.
       lv_name = get_field_name( li_node ).
       IF lv_name = iv_name.
 *        WRITE '@KERNEL console.dir("found");'. 
-* todo        
+        traverse(
+          iv_ref  = iv_ref
+          ii_node = li_node ).
         RETURN.
       ENDIF.
     ENDDO.
+  ENDMETHOD.
+
+  METHOD traverse.
+
+    DATA lo_type TYPE REF TO cl_abap_typedescr.
+    DATA li_child TYPE REF TO if_ixml_node.
+    FIELD-SYMBOLS <any> TYPE any.
+    
+    lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
+    CASE lo_type->kind.
+      WHEN cl_abap_typedescr=>kind_struct.
+        WRITE '@KERNEL console.dir("todo, struct");'.
+      WHEN cl_abap_typedescr=>kind_elem.
+        li_child = ii_node->get_first_child( ).
+        ASSERT li_child->get_name( ) = '#text'.
+        ASSIGN iv_ref->* TO <any>.
+        <any> = li_child->get_value( ).
+      WHEN cl_abap_typedescr=>kind_table.
+        WRITE '@KERNEL console.dir("todo, table");'.
+      WHEN OTHERS.
+        WRITE '@KERNEL console.dir(lo_type.get().kind.get());'.
+    ENDCASE.
     
   ENDMETHOD.
 

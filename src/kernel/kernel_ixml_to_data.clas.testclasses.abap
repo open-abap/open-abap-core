@@ -18,12 +18,12 @@ CLASS ltcl_ixml_to_data IMPLEMENTATION.
 
     kernel_ixml_to_data=>build(
       iv_name = 'DATA'
-      iv_ref = lv_ref 
-      ii_doc = li_doc ).
+      iv_ref  = lv_ref
+      ii_doc  = li_doc ).
 
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = target
-    "   exp = 2 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = target
+      exp = 2 ).
       
   ENDMETHOD.
 
