@@ -17,6 +17,7 @@ CLASS ltcl_json_to_ixml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHOR
     METHODS test_simple_object FOR TESTING RAISING cx_static_check.
     METHODS test_nested_array FOR TESTING RAISING cx_static_check.
     METHODS test_deep FOR TESTING RAISING cx_static_check.
+    METHODS test_nested_object FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_json_to_ixml IMPLEMENTATION.
@@ -116,7 +117,7 @@ CLASS ltcl_json_to_ixml IMPLEMENTATION.
   METHOD test_deep.
     DATA lv_dump TYPE string.
     lv_dump = dump( '{"DATA": [{"FIELD": 321}]}' ).
-    WRITE '@KERNEL console.dir(lv_dump.get());'.
+*    WRITE '@KERNEL console.dir(lv_dump.get());'.
     cl_abap_unit_assert=>assert_equals(
       act = lv_dump
       exp = 
@@ -124,6 +125,21 @@ CLASS ltcl_json_to_ixml IMPLEMENTATION.
         |NAME:array,DEPTH:3,VALUE:321\n| &&
         |  ANAME:name,AVALUE:DATA\n| &&
         |NAME:object,DEPTH:2,VALUE:321\n| &&
+        |NAME:num,DEPTH:1,VALUE:321\n| &&
+        |  ANAME:name,AVALUE:FIELD\n| &&
+        |NAME:#text,DEPTH:0,VALUE:321,LEAF:X\n| ).
+  ENDMETHOD.
+
+  METHOD test_nested_object.
+    DATA lv_dump TYPE string.
+    lv_dump = dump( '{"DATA": {"FIELD": 321}}' ).
+    WRITE '@KERNEL console.dir(lv_dump.get());'.
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_dump
+      exp = 
+        |NAME:object,DEPTH:3,VALUE:321\n| &&
+        |NAME:object,DEPTH:2,VALUE:321\n| &&
+        |  ANAME:name,AVALUE:DATA\n| &&
         |NAME:num,DEPTH:1,VALUE:321\n| &&
         |  ANAME:name,AVALUE:FIELD\n| &&
         |NAME:#text,DEPTH:0,VALUE:321,LEAF:X\n| ).

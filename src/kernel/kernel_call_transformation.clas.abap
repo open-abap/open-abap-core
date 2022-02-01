@@ -324,6 +324,8 @@ CLASS kernel_call_transformation IMPLEMENTATION.
 
   METHOD parse_json.
 
+    " mi_doc = kernel_json_to_ixml=>build( iv_json ).
+
     DATA li_reader TYPE REF TO if_sxml_reader.
     DATA li_node TYPE REF TO if_sxml_node.
     DATA li_close TYPE REF TO if_sxml_close_element.
