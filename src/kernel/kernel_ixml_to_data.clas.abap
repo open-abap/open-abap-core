@@ -77,6 +77,7 @@ CLASS kernel_ixml_to_data IMPLEMENTATION.
     DATA lv_ref TYPE REF TO data.
     FIELD-SYMBOLS <any> TYPE any.
     FIELD-SYMBOLS <field> TYPE any.
+    FIELD-SYMBOLS <tab> TYPE ANY TABLE.
     
     lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
     CASE lo_type->kind.
@@ -103,7 +104,20 @@ CLASS kernel_ixml_to_data IMPLEMENTATION.
         ASSIGN iv_ref->* TO <any>.
         <any> = li_child->get_value( ).
       WHEN cl_abap_typedescr=>kind_table.
-        WRITE '@KERNEL console.dir("todo, table");'.
+        ASSERT ii_node->get_name( ) = 'array'.
+        ASSIGN iv_ref->* TO <tab>.
+        li_iterator = ii_node->get_children( )->create_iterator( ).
+        DO.
+          li_child = li_iterator->get_next( ).
+          IF li_child IS INITIAL.
+            EXIT. " current loop
+          ENDIF.
+          CREATE DATA lv_ref LIKE LINE OF <tab>.
+          ASSIGN lv_ref->* TO <any>.
+          traverse( ii_node = li_child
+                  iv_ref  = lv_ref ).
+          INSERT <any> INTO TABLE <tab>.
+        ENDDO.
       WHEN OTHERS.
         WRITE '@KERNEL console.dir(lo_type.get().kind.get());'.
     ENDCASE.
