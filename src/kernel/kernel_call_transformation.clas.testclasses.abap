@@ -9,9 +9,31 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS invalid_input FOR TESTING RAISING cx_static_check.
     METHODS empty_input FOR TESTING RAISING cx_static_check.
 
+    METHODS convert_json_to_xml
+      IMPORTING iv_json TYPE string
+      RETURNING VALUE(rv_xml) TYPE string
+      RAISING cx_static_check.
+    METHODS json_to_xml1 FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
+
+  METHOD convert_json_to_xml.
+    DATA lo_writer TYPE REF TO cl_sxml_string_writer.
+    lo_writer = cl_sxml_string_writer=>create( ).
+    CALL TRANSFORMATION id SOURCE XML iv_json RESULT XML lo_writer.
+    rv_xml = cl_abap_conv_codepage=>create_in( )->convert( lo_writer->get_output( ) ).
+  ENDMETHOD.
+
+  METHOD json_to_xml1.
+    DATA lv_xml TYPE string.
+* todo
+*    lv_xml = convert_json_to_xml( '{}' ).
+*    WRITE '@KERNEL console.dir(lv_xml.get());'.
+*    cl_abap_unit_assert=>assert_equals(
+*      act = lv_xml
+*      exp = '<object/>' ).
+  ENDMETHOD.
 
   METHOD test3_json_table.
     TYPES: BEGIN OF ty_message,
@@ -24,6 +46,7 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lines( tab )
       exp = 1 ).
+* todo, additional assertions here
   ENDMETHOD.
 
   METHOD test2_json_fs.

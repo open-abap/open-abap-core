@@ -41,6 +41,7 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     WRITE '@KERNEL if (typeof INPUT.source === "object" && INPUT.resultXML?.constructor.name === "ABAPObject") {'.
     WRITE '@KERNEL   this.mi_writer.set(INPUT.resultXML);'.
     WRITE '@KERNEL }'.
+    WRITE '@KERNEL console.dir(INPUT);'.
     IF mi_writer IS NOT INITIAL.
       mi_writer->open_element( name = 'object' ).
       WRITE '@KERNEL for (const name in INPUT.source) {'.
