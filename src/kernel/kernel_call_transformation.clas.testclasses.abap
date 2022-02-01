@@ -1,9 +1,8 @@
 CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
-* todo, fix these two,
-    METHODS test1_xml RAISING cx_static_check.
-    METHODS test2_xml RAISING cx_static_check.
+    METHODS test1_xml FOR TESTING RAISING cx_static_check.
+    METHODS test2_xml FOR TESTING RAISING cx_static_check.
 
     METHODS test1_json FOR TESTING RAISING cx_static_check.
     METHODS test2_json_fs FOR TESTING RAISING cx_static_check.

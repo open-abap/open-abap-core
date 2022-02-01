@@ -18,7 +18,7 @@ CLASS ltcl_ixml_to_data IMPLEMENTATION.
     li_doc = kernel_json_to_ixml=>build( '{"DATA": 2}' ).
     GET REFERENCE OF target INTO lv_ref.
 
-    kernel_ixml_to_data=>build(
+    kernel_ixml_json_to_data=>build(
       iv_name = 'DATA'
       iv_ref  = lv_ref
       ii_doc  = li_doc ).
@@ -40,7 +40,7 @@ CLASS ltcl_ixml_to_data IMPLEMENTATION.
     li_doc = kernel_json_to_ixml=>build( '{"DATA": {"FIELD": 321}}' ).
     GET REFERENCE OF target INTO lv_ref.
 
-    kernel_ixml_to_data=>build(
+    kernel_ixml_json_to_data=>build(
       iv_name = 'DATA'
       iv_ref  = lv_ref
       ii_doc  = li_doc ).
@@ -65,7 +65,7 @@ CLASS ltcl_ixml_to_data IMPLEMENTATION.
     li_doc = kernel_json_to_ixml=>build( '{"DATA": [{"FIELD": 321}]}' ).
     GET REFERENCE OF target INTO lv_ref.
 
-    kernel_ixml_to_data=>build(
+    kernel_ixml_json_to_data=>build(
       iv_name = 'DATA'
       iv_ref  = lv_ref
       ii_doc  = li_doc ).

@@ -26,6 +26,7 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     DATA result    TYPE REF TO data.
     DATA lt_rtab   TYPE abap_trans_resbind_tab.
     DATA ls_rtab   LIKE LINE OF lt_rtab.
+    DATA lv_type   TYPE string.
 
     CLEAR mi_doc.
 
@@ -40,8 +41,10 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     WRITE '@KERNEL if (INPUT.sourceXML?.constructor.name === "String") lv_source.set(INPUT.sourceXML);'.
     IF lv_source IS NOT INITIAL.
       IF lv_source(1) = '<'.
+        lv_type = 'XML'.
         parse_xml( lv_source ).
       ELSEIF lv_source(1) = '{' OR lv_source(1) = '['.
+        lv_type = 'JSON'.
         parse_json( lv_source ).
       ELSE.
         RAISE EXCEPTION TYPE cx_xslt_format_error.
@@ -77,14 +80,32 @@ CLASS kernel_call_transformation IMPLEMENTATION.
       RAISE EXCEPTION TYPE cx_xslt_runtime_error.
     ENDIF.
 
+    WRITE '@KERNEL if (INPUT.result.constructor.name === "Table") {'.
+* INPUT.result is an ABAP internal table, dynamic result parameter
+    WRITE '@KERNEL lt_rtab = INPUT.result;'.
+    LOOP AT lt_rtab INTO ls_rtab.
+      kernel_ixml_xml_to_data=>build(
+        iv_name = ls_rtab-name
+        iv_ref  = ls_rtab-value
+        ii_doc  = mi_doc ).
+    ENDLOOP.
+    WRITE '@KERNEL } else {'.
 * INPUT.result is a javascript structure
     WRITE '@KERNEL for (const name in INPUT.result) {'.
     WRITE '@KERNEL lv_name.set(name.toUpperCase());'.
     WRITE '@KERNEL result.assign(INPUT.result[name]);'.
-    kernel_ixml_to_data=>build(
-      iv_name = lv_name
-      iv_ref  = result
-      ii_doc  = mi_doc ).
+    IF lv_type = 'JSON'.
+      kernel_ixml_json_to_data=>build(
+        iv_name = lv_name
+        iv_ref  = result
+        ii_doc  = mi_doc ).
+    ELSE.
+      kernel_ixml_xml_to_data=>build(
+        iv_name = lv_name
+        iv_ref  = result
+        ii_doc  = mi_doc ).      
+    ENDIF.
+    WRITE '@KERNEL }'.
     WRITE '@KERNEL }'.
 
 *    WRITE '@KERNEL console.dir(INPUT.result.data);'.
