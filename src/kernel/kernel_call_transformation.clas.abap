@@ -7,7 +7,6 @@ CLASS kernel_call_transformation DEFINITION PUBLIC.
     CLASS-DATA mi_writer TYPE REF TO if_sxml_writer.
 
     CLASS-METHODS parse_xml IMPORTING iv_xml TYPE string.
-    CLASS-METHODS parse_json IMPORTING iv_json TYPE string.
     CLASS-METHODS traverse_write
       IMPORTING iv_ref TYPE REF TO data.
     CLASS-METHODS traverse_write_type
@@ -33,8 +32,8 @@ CLASS kernel_call_transformation IMPLEMENTATION.
 *    WRITE '@KERNEL console.dir(INPUT);'.
 
 * only the ID transformation is implemented
-    WRITE '@KERNEL lv_name.set(INPUT.name);'.
-    ASSERT lv_name = 'id'.
+    WRITE '@KERNEL lv_name.set(INPUT.name.toUpperCase());'.
+    ASSERT lv_name = 'ID'.
 
 * Handle input SOURCE    
     WRITE '@KERNEL if (INPUT.sourceXML?.constructor.name === "ABAPObject") this.mi_doc.set(INPUT.sourceXML);'.
@@ -45,13 +44,13 @@ CLASS kernel_call_transformation IMPLEMENTATION.
         parse_xml( lv_source ).
       ELSEIF lv_source(1) = '{' OR lv_source(1) = '['.
         lv_type = 'JSON'.
-        parse_json( lv_source ).
+        mi_doc = kernel_json_to_ixml=>build( lv_source ).
       ELSE.
         RAISE EXCEPTION TYPE cx_xslt_format_error.
       ENDIF.
     ENDIF.
-
     
+* todo, rewrite this part,    
     WRITE '@KERNEL if (typeof INPUT.source === "object" && INPUT.resultXML?.constructor.name === "ABAPObject") {'.
     WRITE '@KERNEL   this.mi_writer.set(INPUT.resultXML);'.
     WRITE '@KERNEL }'.
@@ -208,12 +207,6 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     li_istream->close( ).
 
     ASSERT lv_subrc = 0.
-
-  ENDMETHOD.
-
-  METHOD parse_json.
-
-    mi_doc = kernel_json_to_ixml=>build( iv_json ).
 
   ENDMETHOD.
 
