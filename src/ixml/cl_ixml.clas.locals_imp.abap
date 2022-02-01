@@ -266,7 +266,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
   
   METHOD if_ixml_element~set_value.
-    ASSERT 1 = 'todo'.
+    if_ixml_node~set_value( value ).
   ENDMETHOD.
   
   METHOD if_ixml_node~set_namespace_prefix.
