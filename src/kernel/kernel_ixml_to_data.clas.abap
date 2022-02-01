@@ -72,12 +72,31 @@ CLASS kernel_ixml_to_data IMPLEMENTATION.
 
     DATA lo_type TYPE REF TO cl_abap_typedescr.
     DATA li_child TYPE REF TO if_ixml_node.
+    DATA lv_name TYPE string.
+    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+    DATA lv_ref TYPE REF TO data.
     FIELD-SYMBOLS <any> TYPE any.
+    FIELD-SYMBOLS <field> TYPE any.
     
     lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
     CASE lo_type->kind.
       WHEN cl_abap_typedescr=>kind_struct.
-        WRITE '@KERNEL console.dir("todo, struct");'.
+        ASSERT ii_node->get_name( ) = 'object'.
+        ASSIGN iv_ref->* TO <any>.
+        li_iterator = ii_node->get_children( )->create_iterator( ).
+        DO.
+          li_child = li_iterator->get_next( ).
+          IF li_child IS INITIAL.
+            EXIT. " current loop
+          ENDIF.
+          lv_name = get_field_name( li_child ).
+          ASSIGN COMPONENT lv_name OF STRUCTURE <any> TO <field>.
+          IF sy-subrc = 0.
+            GET REFERENCE OF <field> INTO lv_ref.
+            traverse( ii_node = li_child
+                      iv_ref  = lv_ref ).
+          ENDIF.
+        ENDDO.
       WHEN cl_abap_typedescr=>kind_elem.
         li_child = ii_node->get_first_child( ).
         ASSERT li_child->get_name( ) = '#text'.
