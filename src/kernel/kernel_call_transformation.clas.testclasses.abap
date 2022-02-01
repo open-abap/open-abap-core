@@ -9,26 +9,26 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS invalid_input FOR TESTING RAISING cx_static_check.
     METHODS empty_input FOR TESTING RAISING cx_static_check.
 
-    METHODS convert_json_to_xml
+    METHODS convert_json_to_sxml
       IMPORTING iv_json TYPE string
       RETURNING VALUE(rv_xml) TYPE string
       RAISING cx_static_check.
-    METHODS json_to_xml1 FOR TESTING RAISING cx_static_check.
+    METHODS json_to_sxml1 FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
 
-  METHOD convert_json_to_xml.
+  METHOD convert_json_to_sxml.
     DATA lo_writer TYPE REF TO cl_sxml_string_writer.
     lo_writer = cl_sxml_string_writer=>create( ).
     CALL TRANSFORMATION id SOURCE XML iv_json RESULT XML lo_writer.
     rv_xml = cl_abap_conv_codepage=>create_in( )->convert( lo_writer->get_output( ) ).
   ENDMETHOD.
 
-  METHOD json_to_xml1.
+  METHOD json_to_sxml1.
     DATA lv_xml TYPE string.
 * todo
-*    lv_xml = convert_json_to_xml( '{}' ).
+*    lv_xml = convert_json_to_sxml( '{}' ).
 *    WRITE '@KERNEL console.dir(lv_xml.get());'.
 *    cl_abap_unit_assert=>assert_equals(
 *      act = lv_xml
@@ -40,13 +40,19 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
              field TYPE i,
            END OF ty_message.
     DATA tab TYPE STANDARD TABLE OF ty_message WITH DEFAULT KEY.
+    DATA row LIKE LINE OF tab.
     DATA lv_input TYPE string.
     lv_input = '{"DATA": [{"FIELD": 321}]}'.
     CALL TRANSFORMATION id SOURCE XML lv_input RESULT data = tab.
     cl_abap_unit_assert=>assert_equals(
       act = lines( tab )
       exp = 1 ).
-* todo, additional assertions here
+    READ TABLE tab INDEX 1 INTO row.
+    cl_abap_unit_assert=>assert_subrc( ).
+* todo    
+*    cl_abap_unit_assert=>assert_equals(
+*      act = row-field
+*      exp = 321 ).
   ENDMETHOD.
 
   METHOD test2_json_fs.

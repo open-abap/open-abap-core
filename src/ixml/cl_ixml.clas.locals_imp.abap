@@ -35,7 +35,8 @@ ENDCLASS.
 
 CLASS lcl_named_node_map IMPLEMENTATION.
   METHOD if_ixml_named_node_map~create_iterator.
-    ASSERT 1 = 'todo'.
+    CREATE OBJECT iterator TYPE lcl_node_iterator
+      EXPORTING it_list = mt_list.
   ENDMETHOD.
 
   METHOD if_ixml_named_node_map~get_length.
