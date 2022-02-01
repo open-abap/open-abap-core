@@ -40,11 +40,12 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
   METHOD test3_json_table.
     TYPES: BEGIN OF ty_message,
              field TYPE i,
+             val TYPE string,
            END OF ty_message.
     DATA tab TYPE STANDARD TABLE OF ty_message WITH DEFAULT KEY.
     DATA row LIKE LINE OF tab.
     DATA lv_input TYPE string.
-    lv_input = '{"DATA": [{"FIELD": 321}]}'.
+    lv_input = '{"DATA": [{"FIELD": 321, "VAL": "hello"}]}'.
     CALL TRANSFORMATION id SOURCE XML lv_input RESULT data = tab.
     cl_abap_unit_assert=>assert_equals(
       act = lines( tab )
@@ -54,6 +55,9 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = row-field
       exp = 321 ).
+    " cl_abap_unit_assert=>assert_equals(
+    "   act = row-val
+    "   exp = 'hello' ).      
   ENDMETHOD.
 
   METHOD test3_json_table_fs.
