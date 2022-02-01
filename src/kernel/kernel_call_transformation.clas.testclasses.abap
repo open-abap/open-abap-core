@@ -21,9 +21,9 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     DATA lv_input TYPE string.
     lv_input = '{"DATA": [{"FIELD": 321}]}'.
     CALL TRANSFORMATION id SOURCE XML lv_input RESULT data = tab.
-*    cl_abap_unit_assert=>assert_equals(
-*      act = lines( tab )
-*      exp = 1 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( tab )
+      exp = 1 ).
   ENDMETHOD.
 
   METHOD test2_json_fs.

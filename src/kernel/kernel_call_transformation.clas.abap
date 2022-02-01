@@ -184,6 +184,7 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     DATA li_node TYPE REF TO if_ixml_node.
     DATA ls_compo LIKE LINE OF lt_comps.
     DATA lv_length TYPE i.
+    DATA lv_rowref TYPE REF TO data.
     FIELD-SYMBOLS <structure> TYPE any.
     FIELD-SYMBOLS <field> TYPE any.
     FIELD-SYMBOLS <tab> TYPE ANY TABLE.
@@ -229,14 +230,15 @@ CLASS kernel_call_transformation IMPLEMENTATION.
         ENDIF.
 
         ASSIGN iv_ref->* TO <tab>.
-        lo_struc ?= lo_table->get_table_line_type( ).
+        CREATE DATA lv_rowref LIKE LINE OF <tab>.
+        ASSIGN lv_rowref->* TO <structure>.
 
         lv_length = li_element->get_children( )->get_length( ).
         DO lv_length TIMES.
           li_node = li_element->get_children( )->get_item( sy-index ).
 *          WRITE '@KERNEL console.dir(li_node.get());'.
-
-*          INSERT <structure> INTO TABLE <tab>.
+* todo
+          INSERT <structure> INTO TABLE <tab>.
         ENDDO.
         
       WHEN OTHERS.
