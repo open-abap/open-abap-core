@@ -92,8 +92,12 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     WRITE '@KERNEL } else {'.
 * INPUT.result is a javascript structure
     WRITE '@KERNEL for (const name in INPUT.result) {'.
-    WRITE '@KERNEL lv_name.set(name.toUpperCase());'.
-    WRITE '@KERNEL result.assign(INPUT.result[name]);'.
+    WRITE '@KERNEL   lv_name.set(name.toUpperCase());'.
+    WRITE '@KERNEL   if (INPUT.result[name].constructor.name === "FieldSymbol") {'.
+    WRITE '@KERNEL     result.assign(INPUT.result[name].getPointer());'.
+    WRITE '@KERNEL   } else {'.
+    WRITE '@KERNEL     result.assign(INPUT.result[name]);'.
+    WRITE '@KERNEL   }'.
     IF lv_type = 'JSON'.
       kernel_ixml_json_to_data=>build(
         iv_name = lv_name

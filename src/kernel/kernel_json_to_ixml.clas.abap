@@ -64,9 +64,9 @@ CLASS kernel_json_to_ixml IMPLEMENTATION.
         WHEN if_sxml_node=>co_nt_element_close.
           li_close ?= li_node.
 *          WRITE: / 'close: ', li_close->qname-name.
-          IF li_close->qname-name = 'object' OR li_close->qname-name = 'array'.
-            li_current = li_current->get_parent( ).
-          ENDIF.
+*          IF li_close->qname-name = 'object' OR li_close->qname-name = 'array'.
+          li_current = li_current->get_parent( ).
+*          ENDIF.
         WHEN if_sxml_node=>co_nt_value.
           li_value ?= li_node.
 *          WRITE / li_value->get_value( ).

@@ -28,11 +28,11 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
       depth     = 0
       namespace = '' ).
     IF li_node IS NOT INITIAL.
-      WRITE '@KERNEL console.dir("found");'.
+*      WRITE '@KERNEL console.dir("found");'.
       traverse( ii_node = li_node
                 iv_ref  = iv_ref ).
-    ELSE.
-      WRITE '@KERNEL console.dir("nah");'.
+*    ELSE.
+*      WRITE '@KERNEL console.dir("nah");'.
     ENDIF.
 
   ENDMETHOD.
