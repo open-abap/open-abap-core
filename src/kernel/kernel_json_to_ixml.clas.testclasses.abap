@@ -133,7 +133,7 @@ CLASS ltcl_json_to_ixml IMPLEMENTATION.
   METHOD test_nested_object.
     DATA lv_dump TYPE string.
     lv_dump = dump( '{"DATA": {"FIELD": 321}}' ).
-    WRITE '@KERNEL console.dir(lv_dump.get());'.
+*    WRITE '@KERNEL console.dir(lv_dump.get());'.
     cl_abap_unit_assert=>assert_equals(
       act = lv_dump
       exp = 
