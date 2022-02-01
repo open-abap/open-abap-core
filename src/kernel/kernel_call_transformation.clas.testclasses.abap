@@ -7,6 +7,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS test1_json FOR TESTING RAISING cx_static_check.
     METHODS test2_json_fs FOR TESTING RAISING cx_static_check.
     METHODS test3_json_table FOR TESTING RAISING cx_static_check.
+    METHODS test3_json_table_fs FOR TESTING RAISING cx_static_check.
     METHODS invalid_input FOR TESTING RAISING cx_static_check.
     METHODS empty_input FOR TESTING RAISING cx_static_check.
 
@@ -45,6 +46,27 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     DATA lv_input TYPE string.
     lv_input = '{"DATA": [{"FIELD": 321}]}'.
     CALL TRANSFORMATION id SOURCE XML lv_input RESULT data = tab.
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( tab )
+      exp = 1 ).
+    READ TABLE tab INDEX 1 INTO row.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = row-field
+      exp = 321 ).
+  ENDMETHOD.
+
+  METHOD test3_json_table_fs.
+    TYPES: BEGIN OF ty_message,
+             field TYPE i,
+           END OF ty_message.
+    DATA tab TYPE STANDARD TABLE OF ty_message WITH DEFAULT KEY.
+    DATA row LIKE LINE OF tab.
+    FIELD-SYMBOLS <fs> TYPE any.
+    DATA lv_input TYPE string.
+    lv_input = '{"DATA": [{"FIELD": 321}]}'.
+    ASSIGN tab TO <fs>.
+    CALL TRANSFORMATION id SOURCE XML lv_input RESULT data = <fs>.
     cl_abap_unit_assert=>assert_equals(
       act = lines( tab )
       exp = 1 ).
