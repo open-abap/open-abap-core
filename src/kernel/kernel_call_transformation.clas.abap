@@ -28,6 +28,7 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     DATA lv_type   TYPE string.
 
     CLEAR mi_doc.
+    CLEAR mi_writer.
 
 *    WRITE '@KERNEL console.dir(INPUT);'.
 
