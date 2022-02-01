@@ -8,6 +8,7 @@ ENDCLASS.
 CLASS kernel_json_to_ixml IMPLEMENTATION.
 
   METHOD build.
+* build IXML by calling SXML json parser and then converting :)
 
     DATA li_reader TYPE REF TO if_sxml_reader.
     DATA li_node TYPE REF TO if_sxml_node.
