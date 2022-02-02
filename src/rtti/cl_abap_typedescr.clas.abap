@@ -106,11 +106,12 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         CREATE OBJECT type.
         type->type_kind = typekind_int.
         type->kind = kind_elem.
+        type->length = 4.
       WHEN 'Numc'.
         CREATE OBJECT type.
         type->type_kind = typekind_num.
         type->kind = kind_elem.
-        type->length = lv_length.
+        type->length = lv_length * 2.
       WHEN 'Hex'.
         CREATE OBJECT type.
         type->type_kind = typekind_hex.
@@ -120,10 +121,12 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         CREATE OBJECT type.
         type->type_kind = typekind_date.
         type->kind = kind_elem.
+        type->length = 16.
       WHEN 'Time'.
         CREATE OBJECT type.
         type->type_kind = typekind_time.
         type->kind = kind_elem.
+        type->length = 12.
       WHEN 'Structure'.
         CREATE OBJECT type TYPE cl_abap_structdescr
           EXPORTING
@@ -140,15 +143,17 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         CREATE OBJECT type.
         type->type_kind = typekind_xstring.
         type->kind = kind_elem.
+        type->length = 8.
       WHEN 'String'.
         CREATE OBJECT type.
         type->type_kind = typekind_string.
         type->kind = kind_elem.
+        type->length = 8.
       WHEN 'Character'.
         CREATE OBJECT type.
         type->type_kind = typekind_char.
         type->kind = kind_elem.
-        type->length = lv_length.
+        type->length = lv_length * 2.
       WHEN 'FieldSymbol'.
         WRITE '@KERNEL lv_name = p_data.getPointer();'.
         type = describe_by_data( lv_name ).

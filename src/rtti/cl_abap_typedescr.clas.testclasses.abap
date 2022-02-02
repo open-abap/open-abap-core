@@ -24,16 +24,12 @@ ENDCLASS.
 CLASS ltcl_test IMPLEMENTATION.
 
   METHOD kind_elem.
-
     DATA lv_int TYPE i.
     DATA type TYPE REF TO cl_abap_typedescr.
-
     type = cl_abap_typedescr=>describe_by_data( lv_int ).
-
     cl_abap_unit_assert=>assert_equals(
       act = type->kind
       exp = cl_abap_typedescr=>kind_elem ).
-
   ENDMETHOD.
 
   METHOD kind_table.
@@ -60,7 +56,7 @@ CLASS ltcl_test IMPLEMENTATION.
       exp = cl_abap_typedescr=>typekind_char ).
     cl_abap_unit_assert=>assert_equals(
       act = type->length
-      exp = 3 ).
+      exp = 6 ). " yes, UTF16 in internal representation
   ENDMETHOD.
 
   METHOD typekind_dref.
@@ -73,17 +69,17 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD typekind_int.
-
     DATA integer TYPE i.
     DATA type TYPE REF TO cl_abap_typedescr.
-
     type = cl_abap_typedescr=>describe_by_data( integer ).
     cl_abap_unit_assert=>assert_not_initial( type ).
     cl_abap_unit_assert=>assert_not_initial( type->type_kind ).
     cl_abap_unit_assert=>assert_equals(
       act = type->type_kind
       exp = cl_abap_typedescr=>typekind_int ).
-
+    cl_abap_unit_assert=>assert_equals(
+      act = type->length
+      exp = 4 ).
   ENDMETHOD.
 
   METHOD typekind_xstring.
@@ -94,6 +90,9 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = type->type_kind
       exp = cl_abap_typedescr=>typekind_xstring ).
+    cl_abap_unit_assert=>assert_equals(
+      act = type->length
+      exp = 8 ).
   ENDMETHOD.
 
   METHOD typekind_string.
@@ -104,6 +103,9 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = type->type_kind
       exp = cl_abap_typedescr=>typekind_string ).
+    cl_abap_unit_assert=>assert_equals(
+      act = type->length
+      exp = 8 ).
   ENDMETHOD.
 
   METHOD typekind_structure.
@@ -145,6 +147,9 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = type->type_kind
       exp = cl_abap_typedescr=>typekind_date ).
+    cl_abap_unit_assert=>assert_equals(
+      act = type->length
+      exp = 16 ).      
   ENDMETHOD.
 
   METHOD typekind_time.
@@ -155,6 +160,9 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = type->type_kind
       exp = cl_abap_typedescr=>typekind_time ).
+    cl_abap_unit_assert=>assert_equals(
+      act = type->length
+      exp = 12 ).          
   ENDMETHOD.
 
   METHOD typekind_hex.
@@ -176,10 +184,9 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = type->type_kind
       exp = cl_abap_typedescr=>typekind_num ).
-* todo, https://github.com/abaplint/transpiler/pull/623
-*    cl_abap_unit_assert=>assert_equals(
-*      act = type->length
-*      exp = 4 ).      
+    cl_abap_unit_assert=>assert_equals(
+      act = type->length
+      exp = 8 ).      
   ENDMETHOD.
 
   METHOD abap_bool_absolute.
