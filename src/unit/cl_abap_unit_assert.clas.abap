@@ -89,7 +89,7 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
     CLASS-METHODS
       assert_bound
         IMPORTING
-          act TYPE string
+          act TYPE any
           msg TYPE string OPTIONAL
           quit TYPE i OPTIONAL
           level TYPE i OPTIONAL.
@@ -97,7 +97,7 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
     CLASS-METHODS
       assert_not_bound
         IMPORTING
-          act TYPE string
+          act TYPE any
           msg TYPE string OPTIONAL
           quit TYPE i OPTIONAL
           level TYPE i OPTIONAL.
