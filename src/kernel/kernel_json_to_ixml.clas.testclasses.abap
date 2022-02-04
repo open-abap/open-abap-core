@@ -150,7 +150,7 @@ CLASS ltcl_json_to_ixml IMPLEMENTATION.
   METHOD test_object_fields.
     DATA lv_dump TYPE string.
     lv_dump = dump( '{"DATA": [{"FIELD": 321, "VAL": "hello"}]}' ).
-    WRITE '@KERNEL console.dir(lv_dump.get());'.
+*    WRITE '@KERNEL console.dir(lv_dump.get());'.
     cl_abap_unit_assert=>assert_equals(
       act = lv_dump
       exp = 
@@ -169,7 +169,7 @@ CLASS ltcl_json_to_ixml IMPLEMENTATION.
   METHOD test_array_values.
     DATA lv_dump TYPE string.
     lv_dump = dump( '{"DATA": [2, 3]}' ).
-    WRITE '@KERNEL console.dir(lv_dump.get());'.
+*    WRITE '@KERNEL console.dir(lv_dump.get());'.
     cl_abap_unit_assert=>assert_equals(
       act = lv_dump
       exp = 
