@@ -31,6 +31,7 @@ CLASS kernel_unit_runner IMPLEMENTATION.
     DATA ls_input LIKE LINE OF it_input.
     DATA lv_time TYPE i.
     DATA lo_obj TYPE REF TO object.
+    DATA lv_name TYPE string.
     FIELD-SYMBOLS <ls_result> LIKE LINE OF rt_result.
 
     LOOP AT it_input INTO ls_input.
@@ -39,8 +40,11 @@ CLASS kernel_unit_runner IMPLEMENTATION.
       GET RUN TIME FIELD lv_time.
 
 * default quit level = method?
-*      CREATE OBJECT lo_obj TYPE ('sdf').
-* todo
+
+* this is special, and must match the runtime:
+      lv_name = |CLAS-{ ls_input-class_name }-{ ls_input-testclass_name }|.
+      CREATE OBJECT lo_obj TYPE (lv_name).
+*      CALL METHOD lo_obj->(ls_input-method_name).
 
       GET RUN TIME FIELD lv_time.
       <ls_result>-runtime = lv_time.
