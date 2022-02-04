@@ -38,6 +38,7 @@ CLASS kernel_unit_runner IMPLEMENTATION.
       MOVE-CORRESPONDING ls_input TO <ls_result>.
       GET RUN TIME FIELD lv_time.
 
+* default quit level = method?
 *      CREATE OBJECT lo_obj TYPE ('sdf').
 * todo
 
