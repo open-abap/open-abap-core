@@ -18,7 +18,7 @@ CLASS kernel_unit_runner DEFINITION PUBLIC.
     TYPES ty_result TYPE STANDARD TABLE OF ty_result_item WITH DEFAULT KEY.
 
     CLASS-METHODS run
-      IMPORTING 
+      IMPORTING
         it_input TYPE ty_input
       RETURNING
         VALUE(rt_result) TYPE ty_result.
@@ -44,7 +44,7 @@ CLASS kernel_unit_runner IMPLEMENTATION.
 * this is special, and must match the runtime:
       lv_name = |CLAS-{ ls_input-class_name }-{ ls_input-testclass_name }|.
       CREATE OBJECT lo_obj TYPE (lv_name).
-*      CALL METHOD lo_obj->(ls_input-method_name).
+      CALL METHOD lo_obj->(ls_input-method_name).
 
       GET RUN TIME FIELD lv_time.
       <ls_result>-runtime = lv_time.
