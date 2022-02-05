@@ -85,8 +85,17 @@ CLASS cl_http_client IMPLEMENTATION.
       lv_method = 'GET'.
     ENDIF.
 
+* default user-agent if not set
+    IF if_http_client~request->get_header_field( 'user-agent' ) IS INITIAL.
+      if_http_client~request->set_header_field(
+        name  = 'user-agent' 
+        value = 'open-abap-http' ).
+    ENDIF.
+
 * building URL
-    lv_url = mv_host && if_http_client~request->get_header_field( '~request_uri' ).
+    lv_url = if_http_client~request->get_header_field( '~request_uri' ).
+    REPLACE FIRST OCCURRENCE OF mv_host IN lv_url WITH ''.
+    lv_url = mv_host && lv_url.
     if_http_client~request->get_form_fields( CHANGING fields = lt_form_fields ).
     IF lines( lt_form_fields ) > 0.
       lv_url = lv_url && '?' && cl_http_utility=>fields_to_string( lt_form_fields ).

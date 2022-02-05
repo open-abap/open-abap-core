@@ -29,7 +29,7 @@ CLASS cl_http_entity IMPLEMENTATION.
 
   METHOD if_http_response~get_header_field.
     DATA ls_header LIKE LINE OF mt_headers.
-    READ TABLE mt_headers WITH KEY name = to_lower( field ) INTO ls_header.
+    READ TABLE mt_headers WITH KEY name = to_lower( name ) INTO ls_header.
     IF sy-subrc = 0.
       value = ls_header-value.
     ENDIF.
@@ -109,7 +109,7 @@ CLASS cl_http_entity IMPLEMENTATION.
 
   METHOD if_http_request~get_header_field.
     DATA ls_header LIKE LINE OF mt_headers.
-    READ TABLE mt_headers WITH KEY name = to_lower( field ) INTO ls_header.
+    READ TABLE mt_headers WITH KEY name = to_lower( name ) INTO ls_header.
     IF sy-subrc = 0.
       value = ls_header-value.
     ENDIF.
