@@ -1,4 +1,4 @@
-CLASS cx_sy_dyn_call_illegal_class DEFINITION PUBLIC INHERITING FROM cx_dynamic_check.
+CLASS cx_sy_dyn_call_illegal_class DEFINITION PUBLIC INHERITING FROM cx_sy_dyn_call_error.
 
 ENDCLASS.
 
