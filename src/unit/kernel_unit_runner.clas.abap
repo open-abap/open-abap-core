@@ -10,10 +10,11 @@ CLASS kernel_unit_runner DEFINITION PUBLIC.
 
     TYPES BEGIN OF ty_result_item.
     INCLUDE TYPE ty_input_item.
-    TYPES:   expected TYPE string,
-             actual   TYPE string,
-             runtime  TYPE i,
-             message  TYPE string,
+    TYPES:   expected    TYPE string,
+             actual      TYPE string,
+             runtime     TYPE i,
+             message     TYPE string,
+             js_location TYPE string,
            END OF ty_result_item.
     TYPES ty_result TYPE STANDARD TABLE OF ty_result_item WITH DEFAULT KEY.
 
