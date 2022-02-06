@@ -70,7 +70,8 @@ CLASS kernel_unit_runner IMPLEMENTATION.
         lv_found = abap_true.
         CONTINUE.
       ELSEIF lv_found = abap_true.
-        rv_location = lv_stack.
+        REPLACE FIRST OCCURRENCE OF |at | IN lv_stack WITH ''.
+        rv_location = condense( lv_stack ).
         EXIT.
       ENDIF.
     ENDLOOP.

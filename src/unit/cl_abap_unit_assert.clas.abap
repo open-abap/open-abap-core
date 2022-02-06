@@ -109,31 +109,71 @@ ENDCLASS.
 CLASS cl_abap_unit_assert IMPLEMENTATION.
 
   METHOD assert_bound.
-    ASSERT act IS BOUND.
+    IF mv_exceptions = abap_true.
+      IF act IS NOT BOUND.
+        RAISE EXCEPTION TYPE kernel_cx_assert.
+      ENDIF.
+    ELSE.
+      ASSERT act IS BOUND.
+    ENDIF.
   ENDMETHOD.
 
   METHOD assert_not_bound.
-    ASSERT act IS NOT BOUND.
+    IF mv_exceptions = abap_true.
+      IF act IS BOUND.
+        RAISE EXCEPTION TYPE kernel_cx_assert.
+      ENDIF.
+    ELSE.
+      ASSERT act IS NOT BOUND.
+    ENDIF.
   ENDMETHOD.
 
   METHOD assert_char_cp.
-    ASSERT act CP exp.
+    IF mv_exceptions = abap_true.
+      IF act NP exp.
+        RAISE EXCEPTION TYPE kernel_cx_assert.
+      ENDIF.
+    ELSE.
+      ASSERT act CP exp.
+    ENDIF.
   ENDMETHOD.
 
   METHOD fail.
-    ASSERT 1 = 2.
+    IF mv_exceptions = abap_true.
+      RAISE EXCEPTION TYPE kernel_cx_assert.
+    ELSE.
+      ASSERT 1 = 2.
+    ENDIF.
   ENDMETHOD.
 
   METHOD assert_differs.
-    ASSERT act <> exp.
+    IF mv_exceptions = abap_true.
+      IF act = exp.
+        RAISE EXCEPTION TYPE kernel_cx_assert.
+      ENDIF.
+    ELSE.
+      ASSERT act <> exp.
+    ENDIF.
   ENDMETHOD.
 
   METHOD assert_true.
-    ASSERT act = abap_true.
+    IF mv_exceptions = abap_true.
+      IF act <> abap_true.
+        RAISE EXCEPTION TYPE kernel_cx_assert.
+      ENDIF.
+    ELSE.
+      ASSERT act = abap_true.
+    ENDIF.
   ENDMETHOD.
 
   METHOD assert_false.
-    ASSERT act = abap_false.
+    IF mv_exceptions = abap_true.
+      IF act <> abap_false.
+        RAISE EXCEPTION TYPE kernel_cx_assert.
+      ENDIF.
+    ELSE.
+      ASSERT act = abap_false.
+    ENDIF.
   ENDMETHOD.
 
   METHOD assert_equals.
@@ -152,11 +192,23 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
 *    WRITE '@KERNEL console.dir(type2.get());'.
     IF type1 CA 'CgyIFPDTX'. " basic types
       IF NOT type2 IS INITIAL.
-        ASSERT type2 CA 'CgyIFPDTX'.
+        IF mv_exceptions = abap_true.
+          IF type2 NA 'CgyIFPDTX'.
+            RAISE EXCEPTION TYPE kernel_cx_assert.
+          ENDIF.
+        ELSE.
+          ASSERT type2 CA 'CgyIFPDTX'.
+        ENDIF.
       ENDIF.
     ELSEIF NOT type1 IS INITIAL AND NOT type2 IS INITIAL.
 * else check the types are identical      
-      ASSERT type1 = type2.
+      IF mv_exceptions = abap_true.
+        IF type1 <> type2.
+          RAISE EXCEPTION TYPE kernel_cx_assert.
+        ENDIF.
+      ELSE.
+        ASSERT type1 = type2.
+      ENDIF.
     ENDIF.
 
     IF type1 = 'h'.
@@ -166,9 +218,9 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
       DO lines( act ) TIMES.
         index = sy-index.
         READ TABLE <tab1> INDEX index ASSIGNING <row1>.
-        ASSERT sy-subrc = 0.
+        assert_subrc( ).
         READ TABLE <tab2> INDEX index ASSIGNING <row2>.
-        ASSERT sy-subrc = 0.
+        assert_subrc( ).
         assert_equals( act = <row1>
                        exp = <row2> ).
       ENDDO.
@@ -176,7 +228,13 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
       diff = exp - act.
 *      WRITE '@KERNEL console.dir(tol);'.
 *      WRITE '@KERNEL console.dir(diff);'.
-      ASSERT diff < tol.
+      IF mv_exceptions = abap_true.
+        IF diff >= tol.
+          RAISE EXCEPTION TYPE kernel_cx_assert.
+        ENDIF.
+      ELSE.
+        ASSERT diff < tol.
+      ENDIF.
     ELSEIF mv_exceptions = abap_true.
       IF act <> exp.
         RAISE EXCEPTION TYPE kernel_cx_assert
@@ -200,16 +258,34 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD assert_initial.
-    ASSERT act IS INITIAL.
+    IF mv_exceptions = abap_true.
+      IF act IS NOT INITIAL.
+        RAISE EXCEPTION TYPE kernel_cx_assert.
+      ENDIF.
+    ELSE.
+      ASSERT act IS INITIAL.
+    ENDIF.
   ENDMETHOD.
 
   METHOD assert_subrc.
-    ASSERT sy-subrc = exp.
+    IF mv_exceptions = abap_true.
+      IF sy-subrc <> exp.
+        RAISE EXCEPTION TYPE kernel_cx_assert.
+      ENDIF.
+    ELSE.
+      ASSERT sy-subrc = exp.
+    ENDIF.
   ENDMETHOD.
 
   METHOD assert_number_between.
-    ASSERT number >= lower.
-    ASSERT number <= upper.
+    IF mv_exceptions = abap_true.
+      IF number < lower OR number > upper.
+        RAISE EXCEPTION TYPE kernel_cx_assert.
+      ENDIF.
+    ELSE.
+      ASSERT number >= lower.
+      ASSERT number <= upper.
+    ENDIF.
   ENDMETHOD.
 
 ENDCLASS.
