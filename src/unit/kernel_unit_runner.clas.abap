@@ -69,28 +69,37 @@ CLASS kernel_unit_runner IMPLEMENTATION.
       lv_name = |CLAS-{ ls_class-class_name }-{ ls_class-testclass_name }|.
       CREATE OBJECT lo_obj TYPE (lv_name).
 
-* todo, method CLASS_SETUP
-*      TRY.
-*          CALL METHOD lo_obj->('CLASS_SETUP').
-*        CATCH cx_sy_dyn_call_illegal_method.
-*      ENDTRY.
+      TRY.
+          CALL METHOD lo_obj->('CLASS_SETUP').
+        CATCH cx_sy_dyn_call_illegal_method.
+      ENDTRY.
       
       LOOP AT it_input INTO ls_input WHERE class_name = ls_class-class_name AND testclass_name = ls_class-testclass_name.
         APPEND INITIAL LINE TO rt_result ASSIGNING <ls_result>.
         MOVE-CORRESPONDING ls_input TO <ls_result>.
         GET RUN TIME FIELD lv_time.
 
-* todo, method SETUP
-* CALL METHOD lo_obj->('SETUP').
+        TRY.
+            CALL METHOD lo_obj->('SETUP').
+          CATCH cx_sy_dyn_call_illegal_method.
+        ENDTRY.
+
         CALL METHOD lo_obj->(ls_input-method_name).
-* todo, method TEARDOWN
-* CALL METHOD lo_obj->('TEARDOWN').
+
+        TRY.
+            CALL METHOD lo_obj->('TEARDOWN').
+          CATCH cx_sy_dyn_call_illegal_method.
+        ENDTRY.
 
         GET RUN TIME FIELD lv_time.
         <ls_result>-runtime = lv_time.
       ENDLOOP.
-* todo, method CLASS_TEARDOWN      
-* CALL METHOD lo_obj->('CLASS_TEARDOWN').
+
+      TRY.
+          CALL METHOD lo_obj->('CLASS_TEARDOWN').
+        CATCH cx_sy_dyn_call_illegal_method.
+      ENDTRY.
+
     ENDLOOP.
 
   ENDMETHOD.
