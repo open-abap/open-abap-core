@@ -1,16 +1,40 @@
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
   PRIVATE SECTION.
     METHODS single_method FOR TESTING RAISING cx_static_check.
+    METHODS single_method_fail FOR TESTING RAISING cx_static_check.
+    METHODS failing_not_for_testing RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
-  METHOD single_method.
+  METHOD failing_not_for_testing.
+    cl_abap_unit_assert=>assert_equals(
+      act = 1
+      exp = 2 ).
+  ENDMETHOD.
 
+  METHOD single_method_fail.
     DATA lt_input TYPE kernel_unit_runner=>ty_input.
     DATA ls_input LIKE LINE OF lt_input.
     DATA ls_result TYPE kernel_unit_runner=>ty_result.
     DATA ls_list LIKE LINE OF ls_result-list.
-    FIELD-SYMBOLS <ls_input> LIKE LINE OF lt_input.
+
+    ls_input-class_name     = 'KERNEL_UNIT_RUNNER'.
+    ls_input-testclass_name = 'LTCL_TEST'.
+    ls_input-method_name    = 'FAILING_NOT_FOR_TESTING'.
+    APPEND ls_input TO lt_input.
+
+    " ls_result = kernel_unit_runner=>run( lt_input ).
+
+    " cl_abap_unit_assert=>assert_equals(
+    "   act = lines( ls_result-list )
+    "   exp = 1 ).
+  ENDMETHOD.
+
+  METHOD single_method.
+    DATA lt_input TYPE kernel_unit_runner=>ty_input.
+    DATA ls_input LIKE LINE OF lt_input.
+    DATA ls_result TYPE kernel_unit_runner=>ty_result.
+    DATA ls_list LIKE LINE OF ls_result-list.
 
     ls_input-class_name     = 'CL_ABAP_UNIT_ASSERT'.
     ls_input-testclass_name = 'LTCL_TEST'.
@@ -34,6 +58,9 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = ls_list-method_name
       exp = ls_input-method_name ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_list-status
+      exp = kernel_unit_runner=>gc_status-success ).
 
     cl_abap_unit_assert=>assert_not_initial( ls_result-json ).
   ENDMETHOD.
