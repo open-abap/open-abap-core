@@ -24,13 +24,16 @@ CLASS kernel_unit_runner DEFINITION PUBLIC.
              message     TYPE string,
              js_location TYPE string,
            END OF ty_result_item.
-    TYPES ty_result TYPE STANDARD TABLE OF ty_result_item WITH DEFAULT KEY.
+    TYPES: BEGIN OF ty_result,
+             list TYPE STANDARD TABLE OF ty_result_item WITH DEFAULT KEY,
+             json TYPE string,
+           END OF ty_result.
 
     CLASS-METHODS run
       IMPORTING
         it_input TYPE ty_input
       RETURNING
-        VALUE(rt_result) TYPE ty_result.
+        VALUE(rs_result) TYPE ty_result.
   PRIVATE SECTION.
     TYPES: BEGIN OF ty_class_item,
              class_name     TYPE abap_compname,
@@ -43,9 +46,23 @@ CLASS kernel_unit_runner DEFINITION PUBLIC.
        it_input TYPE ty_input
       RETURNING
         VALUE(rt_classes) TYPE ty_classes.
+
+    CLASS-METHODS to_json
+      IMPORTING it_list TYPE ty_result-list
+      RETURNING VALUE(rv_json) TYPE string.
 ENDCLASS.
 
 CLASS kernel_unit_runner IMPLEMENTATION.
+
+  METHOD to_json.
+    DATA writer TYPE REF TO cl_sxml_string_writer.
+    writer = cl_sxml_string_writer=>create( if_sxml=>co_xt_json ).
+    CALL TRANSFORMATION id
+      SOURCE
+        list = it_list
+      RESULT XML writer.
+    rv_json = cl_abap_codepage=>convert_from( writer->get_output( ) ).
+  ENDMETHOD.
 
   METHOD unique_classes.
     DATA ls_input LIKE LINE OF it_input.
@@ -66,7 +83,8 @@ CLASS kernel_unit_runner IMPLEMENTATION.
     DATA lv_name TYPE string.
     DATA lt_classes TYPE ty_classes.
     DATA ls_class LIKE LINE OF lt_classes.
-    FIELD-SYMBOLS <ls_result> LIKE LINE OF rt_result.
+    DATA lx_root TYPE REF TO cx_root.
+    FIELD-SYMBOLS <ls_result> LIKE LINE OF rs_result-list.
 
 * todo, respect quit level, default = method?
 
@@ -83,24 +101,28 @@ CLASS kernel_unit_runner IMPLEMENTATION.
       ENDTRY.
       
       LOOP AT it_input INTO ls_input WHERE class_name = ls_class-class_name AND testclass_name = ls_class-testclass_name.
-        APPEND INITIAL LINE TO rt_result ASSIGNING <ls_result>.
+        APPEND INITIAL LINE TO rs_result-list ASSIGNING <ls_result>.
         MOVE-CORRESPONDING ls_input TO <ls_result>.
-        GET RUN TIME FIELD lv_time.
 
         TRY.
             CALL METHOD lo_obj->('SETUP').
           CATCH cx_sy_dyn_call_illegal_method.
         ENDTRY.
 
-        CALL METHOD lo_obj->(ls_input-method_name).
+        GET RUN TIME FIELD lv_time.
+        TRY.
+            CALL METHOD lo_obj->(ls_input-method_name).
+            <ls_result>-status = gc_status-success.
+          CATCH cx_root INTO lx_root.
+            <ls_result>-status = gc_status-failed.
+        ENDTRY.
+        GET RUN TIME FIELD lv_time.
+        <ls_result>-runtime = lv_time.
 
         TRY.
             CALL METHOD lo_obj->('TEARDOWN').
           CATCH cx_sy_dyn_call_illegal_method.
         ENDTRY.
-
-        GET RUN TIME FIELD lv_time.
-        <ls_result>-runtime = lv_time.
       ENDLOOP.
 
       TRY.
@@ -109,6 +131,8 @@ CLASS kernel_unit_runner IMPLEMENTATION.
       ENDTRY.
 
     ENDLOOP.
+
+    rs_result-json = to_json( rs_result-list ).
 
   ENDMETHOD.
 
