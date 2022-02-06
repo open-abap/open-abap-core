@@ -2,9 +2,9 @@ CLASS kernel_unit_runner DEFINITION PUBLIC.
   PUBLIC SECTION.
 * as of now, only global classes with local testclasses are supported
     TYPES: BEGIN OF ty_input_item,
-             class_name     TYPE abap_compname,
-             testclass_name TYPE abap_compname,
-             method_name    TYPE abap_compname,
+             class_name     TYPE c LENGTH 30,
+             testclass_name TYPE c LENGTH 30,
+             method_name    TYPE c LENGTH 30,
            END OF ty_input_item.
     TYPES ty_input TYPE STANDARD TABLE OF ty_input_item WITH DEFAULT KEY.
 
@@ -36,8 +36,8 @@ CLASS kernel_unit_runner DEFINITION PUBLIC.
         VALUE(rs_result) TYPE ty_result.
   PRIVATE SECTION.
     TYPES: BEGIN OF ty_class_item,
-             class_name     TYPE abap_compname,
-             testclass_name TYPE abap_compname,
+             class_name     TYPE c LENGTH 30,
+             testclass_name TYPE c LENGTH 30,
            END OF ty_class_item.
     TYPES ty_classes TYPE STANDARD TABLE OF ty_class_item WITH DEFAULT KEY.
 
