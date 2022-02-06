@@ -50,9 +50,31 @@ CLASS kernel_unit_runner DEFINITION PUBLIC.
     CLASS-METHODS to_json
       IMPORTING it_list TYPE ty_result-list
       RETURNING VALUE(rv_json) TYPE string.
+
+    CLASS-METHODS get_location
+      IMPORTING ix_error TYPE REF TO cx_root
+      RETURNING VALUE(rv_location) TYPE string.
 ENDCLASS.
 
 CLASS kernel_unit_runner IMPLEMENTATION.
+
+  METHOD get_location.
+    DATA lv_stack TYPE string.
+    DATA lt_lines TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA lv_found TYPE abap_bool.
+    WRITE '@KERNEL lv_stack.set(INPUT.ix_error.get().stack);'.
+    SPLIT lv_stack AT |\n| INTO TABLE lt_lines.
+* find whatever comes after "cl_abap_unit_assert"
+    LOOP AT lt_lines INTO lv_stack.
+      IF lv_stack CP '*cl_abap_unit_assert*'.
+        lv_found = abap_true.
+        CONTINUE.
+      ELSEIF lv_found = abap_true.
+        rv_location = lv_stack.
+        EXIT.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
 
   METHOD to_json.
     DATA writer TYPE REF TO cl_sxml_string_writer.
@@ -84,6 +106,7 @@ CLASS kernel_unit_runner IMPLEMENTATION.
     DATA lt_classes TYPE ty_classes.
     DATA ls_class   LIKE LINE OF lt_classes.
     DATA lx_root    TYPE REF TO cx_root.
+    DATA lx_assert  TYPE REF TO kernel_cx_assert.
     FIELD-SYMBOLS <ls_result> LIKE LINE OF rs_result-list.
 
 * todo, respect quit level, default = method?
@@ -115,8 +138,16 @@ CLASS kernel_unit_runner IMPLEMENTATION.
         TRY.
             CALL METHOD lo_obj->(ls_input-method_name).
             <ls_result>-status = gc_status-success.
+          CATCH kernel_cx_assert INTO lx_assert.
+            <ls_result>-status   = gc_status-failed.
+            <ls_result>-actual   = lx_assert->actual.
+            <ls_result>-expected = lx_assert->expected.
+            <ls_result>-message  = |Assert failed|.
+            <ls_result>-js_location = get_location( lx_assert ).
           CATCH cx_root INTO lx_root.
-            <ls_result>-status = gc_status-failed.
+            <ls_result>-status  = gc_status-failed.
+            <ls_result>-message = |Some exception raised|. " todo, use RTTI to find the class name?
+            <ls_result>-js_location = get_location( lx_root ).
         ENDTRY.
         GET RUN TIME FIELD lv_time.
         <ls_result>-runtime = lv_time.

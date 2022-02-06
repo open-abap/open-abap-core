@@ -14,10 +14,10 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD single_method_fail.
-    DATA lt_input TYPE kernel_unit_runner=>ty_input.
-    DATA ls_input LIKE LINE OF lt_input.
+    DATA lt_input  TYPE kernel_unit_runner=>ty_input.
+    DATA ls_input  LIKE LINE OF lt_input.
     DATA ls_result TYPE kernel_unit_runner=>ty_result.
-    DATA ls_list LIKE LINE OF ls_result-list.
+    DATA ls_list   LIKE LINE OF ls_result-list.
 
     ls_input-class_name     = 'KERNEL_UNIT_RUNNER'.
     ls_input-testclass_name = 'LTCL_TEST'.
@@ -33,7 +33,10 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_subrc( ).
     cl_abap_unit_assert=>assert_equals(
       act = ls_list-status
-      exp = kernel_unit_runner=>gc_status-failed ).      
+      exp = kernel_unit_runner=>gc_status-failed ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = ls_list-js_location
+      exp = '*failing_not_for_testing*' ).      
   ENDMETHOD.
 
   METHOD single_method.
