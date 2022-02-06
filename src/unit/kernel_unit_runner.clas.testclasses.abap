@@ -7,6 +7,7 @@ ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
   METHOD failing_not_for_testing.
+* this method is used internally for testing, dont set it FOR TESTING    
     cl_abap_unit_assert=>assert_equals(
       act = 1
       exp = 2 ).
@@ -23,11 +24,16 @@ CLASS ltcl_test IMPLEMENTATION.
     ls_input-method_name    = 'FAILING_NOT_FOR_TESTING'.
     APPEND ls_input TO lt_input.
 
-    " ls_result = kernel_unit_runner=>run( lt_input ).
+    ls_result = kernel_unit_runner=>run( lt_input ).
 
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = lines( ls_result-list )
-    "   exp = 1 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( ls_result-list )
+      exp = 1 ).
+    READ TABLE ls_result-list INDEX 1 INTO ls_list.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_list-status
+      exp = kernel_unit_runner=>gc_status-failed ).      
   ENDMETHOD.
 
   METHOD single_method.

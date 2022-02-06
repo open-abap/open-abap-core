@@ -102,6 +102,8 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
           quit TYPE i OPTIONAL
           level TYPE i OPTIONAL.
 
+* temporary feature flag,          
+    CLASS-DATA mv_exceptions TYPE abap_bool VALUE abap_false.
 ENDCLASS.
 
 CLASS cl_abap_unit_assert IMPLEMENTATION.
@@ -153,6 +155,7 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
         ASSERT type2 CA 'CgyIFPDTX'.
       ENDIF.
     ELSEIF NOT type1 IS INITIAL AND NOT type2 IS INITIAL.
+* else check the types are identical      
       ASSERT type1 = type2.
     ENDIF.
 
@@ -174,6 +177,10 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
 *      WRITE '@KERNEL console.dir(tol);'.
 *      WRITE '@KERNEL console.dir(diff);'.
       ASSERT diff < tol.
+    ELSEIF mv_exceptions = abap_true.
+      IF act <> exp.
+        RAISE EXCEPTION TYPE kernel_cx_assert.
+      ENDIF.
     ELSE.
       ASSERT act = exp.
     ENDIF.

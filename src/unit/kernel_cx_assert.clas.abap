@@ -1,0 +1,7 @@
+CLASS kernel_cx_assert DEFINITION PUBLIC INHERITING FROM cx_dynamic_check.
+
+ENDCLASS.
+
+CLASS kernel_cx_assert IMPLEMENTATION.
+
+ENDCLASS.

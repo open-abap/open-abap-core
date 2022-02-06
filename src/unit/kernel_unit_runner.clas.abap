@@ -77,16 +77,18 @@ CLASS kernel_unit_runner IMPLEMENTATION.
 
   METHOD run.
 
-    DATA ls_input LIKE LINE OF it_input.
-    DATA lv_time TYPE i.
-    DATA lo_obj TYPE REF TO object.
-    DATA lv_name TYPE string.
+    DATA ls_input   LIKE LINE OF it_input.
+    DATA lv_time    TYPE i.
+    DATA lo_obj     TYPE REF TO object.
+    DATA lv_name    TYPE string.
     DATA lt_classes TYPE ty_classes.
-    DATA ls_class LIKE LINE OF lt_classes.
-    DATA lx_root TYPE REF TO cx_root.
+    DATA ls_class   LIKE LINE OF lt_classes.
+    DATA lx_root    TYPE REF TO cx_root.
     FIELD-SYMBOLS <ls_result> LIKE LINE OF rs_result-list.
 
 * todo, respect quit level, default = method?
+
+    cl_abap_unit_assert=>mv_exceptions = abap_true.
 
     lt_classes = unique_classes( it_input ).
 
