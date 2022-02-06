@@ -11,7 +11,7 @@ CLASS kernel_unit_runner DEFINITION PUBLIC.
     TYPES ty_status TYPE string.
     CONSTANTS: BEGIN OF gc_status,
                 success TYPE ty_status VALUE 'SUCCESS',
-                failed TYPE ty_status VALUE 'FAILED',
+                failed  TYPE ty_status VALUE 'FAILED',
                 skipped TYPE ty_status VALUE 'SKIPPED',
                END OF gc_status.
 
