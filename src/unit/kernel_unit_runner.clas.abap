@@ -78,13 +78,27 @@ CLASS kernel_unit_runner IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD to_json.
-    DATA writer TYPE REF TO cl_sxml_string_writer.
-    writer = cl_sxml_string_writer=>create( if_sxml=>co_xt_json ).
-    CALL TRANSFORMATION id
-      SOURCE
-        list = it_list
-      RESULT XML writer.
-    rv_json = cl_abap_codepage=>convert_from( writer->get_output( ) ).
+* would like to keep the dependencies of this class minimal, 
+* so not using CALL TRANSFORMATION or any other ABAP classes    
+
+    DATA ls_list LIKE LINE OF it_list.
+    DATA lt_strings TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA lv_string LIKE LINE OF lt_strings.
+
+    LOOP AT it_list INTO ls_list.
+      lv_string = |\{"class_name": "{ ls_list-class_name
+        }","testclass_name": "{ ls_list-testclass_name 
+        }","method_name": "{ ls_list-method_name 
+        }","expected": "{ ls_list-expected 
+        }","actual": "{ ls_list-actual 
+        }","status": "{ ls_list-status 
+        }","runtime": { ls_list-runtime 
+        },"message": "{ ls_list-message 
+        }","js_location": "{ ls_list-js_location }"\}|.
+      APPEND lv_string TO lt_strings.
+    ENDLOOP.
+    CONCATENATE LINES OF lt_strings INTO rv_json SEPARATED BY ','.
+    rv_json = '[' && rv_json && ']'.
   ENDMETHOD.
 
   METHOD unique_classes.
