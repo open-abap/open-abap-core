@@ -179,7 +179,10 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
       ASSERT diff < tol.
     ELSEIF mv_exceptions = abap_true.
       IF act <> exp.
-        RAISE EXCEPTION TYPE kernel_cx_assert.
+        RAISE EXCEPTION TYPE kernel_cx_assert
+          EXPORTING
+            actual   = act
+            expected = exp.
       ENDIF.
     ELSE.
       ASSERT act = exp.
@@ -187,7 +190,13 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD assert_not_initial.
-    ASSERT NOT act IS INITIAL.
+    IF mv_exceptions = abap_true.
+      IF act IS INITIAL.
+        RAISE EXCEPTION TYPE kernel_cx_assert.
+      ENDIF.
+    ELSE.
+      ASSERT NOT act IS INITIAL.
+    ENDIF.
   ENDMETHOD.
 
   METHOD assert_initial.

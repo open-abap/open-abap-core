@@ -9,8 +9,8 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD failing_not_for_testing.
 * this method is used internally for testing, dont set it FOR TESTING    
     cl_abap_unit_assert=>assert_equals(
-      act = 1
-      exp = 2 ).
+      act = 'a'
+      exp = 'b' ).
   ENDMETHOD.
 
   METHOD single_method_fail.
@@ -37,6 +37,9 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = ls_list-js_location
       exp = '*failing_not_for_testing*' ).      
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_list-actual
+      exp = 'a' ).         
   ENDMETHOD.
 
   METHOD single_method.
