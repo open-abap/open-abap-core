@@ -126,8 +126,6 @@ CLASS kernel_unit_runner IMPLEMENTATION.
 
 * todo, respect quit level, default = method?
 
-    cl_abap_unit_assert=>mv_exceptions = abap_true.
-
     lt_classes = unique_classes( it_input ).
 
     LOOP AT lt_classes INTO ls_class.
@@ -154,10 +152,10 @@ CLASS kernel_unit_runner IMPLEMENTATION.
             CALL METHOD lo_obj->(ls_input-method_name).
             <ls_result>-status = gc_status-success.
           CATCH kernel_cx_assert INTO lx_assert.
-            <ls_result>-status   = gc_status-failed.
-            <ls_result>-actual   = lx_assert->actual.
-            <ls_result>-expected = lx_assert->expected.
-            <ls_result>-message  = |Assert failed|.
+            <ls_result>-status      = gc_status-failed.
+            <ls_result>-actual      = lx_assert->actual.
+            <ls_result>-expected    = lx_assert->expected.
+            <ls_result>-message     = lx_assert->message.
             <ls_result>-js_location = get_location( lx_assert ).
           CATCH cx_root INTO lx_root.
             <ls_result>-status  = gc_status-failed.

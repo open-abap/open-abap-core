@@ -40,6 +40,7 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = ls_list-actual
       exp = 'a' ).
+*    WRITE / ls_result-json.
   ENDMETHOD.
 
   METHOD single_method.

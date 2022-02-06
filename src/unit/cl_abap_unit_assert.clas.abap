@@ -102,77 +102,59 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
           quit TYPE i OPTIONAL
           level TYPE i OPTIONAL.
 
-* temporary feature flag,          
-    CLASS-DATA mv_exceptions TYPE abap_bool VALUE abap_false.
 ENDCLASS.
 
 CLASS cl_abap_unit_assert IMPLEMENTATION.
 
   METHOD assert_bound.
-    IF mv_exceptions = abap_true.
-      IF act IS NOT BOUND.
-        RAISE EXCEPTION TYPE kernel_cx_assert.
-      ENDIF.
-    ELSE.
-      ASSERT act IS BOUND.
+    IF act IS NOT BOUND.
+      RAISE EXCEPTION TYPE kernel_cx_assert
+        EXPORTING 
+          message = |Expected value to be bound|.
     ENDIF.
   ENDMETHOD.
 
   METHOD assert_not_bound.
-    IF mv_exceptions = abap_true.
-      IF act IS BOUND.
-        RAISE EXCEPTION TYPE kernel_cx_assert.
-      ENDIF.
-    ELSE.
-      ASSERT act IS NOT BOUND.
+    IF act IS BOUND.
+      RAISE EXCEPTION TYPE kernel_cx_assert
+        EXPORTING 
+          message = |Expected value to not be bound|.
     ENDIF.
   ENDMETHOD.
 
   METHOD assert_char_cp.
-    IF mv_exceptions = abap_true.
-      IF act NP exp.
-        RAISE EXCEPTION TYPE kernel_cx_assert.
-      ENDIF.
-    ELSE.
-      ASSERT act CP exp.
+    IF act NP exp.
+      RAISE EXCEPTION TYPE kernel_cx_assert.
     ENDIF.
   ENDMETHOD.
 
   METHOD fail.
-    IF mv_exceptions = abap_true.
-      RAISE EXCEPTION TYPE kernel_cx_assert.
-    ELSE.
-      ASSERT 1 = 2.
-    ENDIF.
+    RAISE EXCEPTION TYPE kernel_cx_assert.
   ENDMETHOD.
 
   METHOD assert_differs.
-    IF mv_exceptions = abap_true.
-      IF act = exp.
-        RAISE EXCEPTION TYPE kernel_cx_assert.
-      ENDIF.
-    ELSE.
-      ASSERT act <> exp.
+    IF act = exp.
+      RAISE EXCEPTION TYPE kernel_cx_assert
+        EXPORTING 
+          message = |Expected different values|
+          act     = act
+          exp     = exp. 
     ENDIF.
   ENDMETHOD.
 
   METHOD assert_true.
-    IF mv_exceptions = abap_true.
-      IF act <> abap_true.
-        RAISE EXCEPTION TYPE kernel_cx_assert.
-      ENDIF.
-    ELSE.
-      ASSERT act = abap_true.
+    IF act <> abap_true.
+      RAISE EXCEPTION TYPE kernel_cx_assert
+        EXPORTING 
+          message = |Expected abap_true|.       
     ENDIF.
   ENDMETHOD.
 
   METHOD assert_false.
-    IF mv_exceptions = abap_true.
-      IF act <> abap_false.
-        RAISE EXCEPTION TYPE kernel_cx_assert.
-      ENDIF.
-    ELSE.
-      ASSERT act = abap_false.
+    IF act <> abap_false.
+      RAISE EXCEPTION TYPE kernel_cx_assert
+        EXPORTING 
+          message = |Expected abap_false|.     
     ENDIF.
   ENDMETHOD.
 
@@ -192,22 +174,14 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
 *    WRITE '@KERNEL console.dir(type2.get());'.
     IF type1 CA 'CgyIFPDTX'. " basic types
       IF NOT type2 IS INITIAL.
-        IF mv_exceptions = abap_true.
-          IF type2 NA 'CgyIFPDTX'.
-            RAISE EXCEPTION TYPE kernel_cx_assert.
-          ENDIF.
-        ELSE.
-          ASSERT type2 CA 'CgyIFPDTX'.
+        IF type2 NA 'CgyIFPDTX'.
+          RAISE EXCEPTION TYPE kernel_cx_assert.
         ENDIF.
       ENDIF.
     ELSEIF NOT type1 IS INITIAL AND NOT type2 IS INITIAL.
 * else check the types are identical      
-      IF mv_exceptions = abap_true.
-        IF type1 <> type2.
-          RAISE EXCEPTION TYPE kernel_cx_assert.
-        ENDIF.
-      ELSE.
-        ASSERT type1 = type2.
+      IF type1 <> type2.
+        RAISE EXCEPTION TYPE kernel_cx_assert.
       ENDIF.
     ENDIF.
 
@@ -228,63 +202,45 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
       diff = exp - act.
 *      WRITE '@KERNEL console.dir(tol);'.
 *      WRITE '@KERNEL console.dir(diff);'.
-      IF mv_exceptions = abap_true.
-        IF diff >= tol.
-          RAISE EXCEPTION TYPE kernel_cx_assert.
-        ENDIF.
-      ELSE.
-        ASSERT diff < tol.
+      IF diff >= tol.
+        RAISE EXCEPTION TYPE kernel_cx_assert.
       ENDIF.
-    ELSEIF mv_exceptions = abap_true.
-      IF act <> exp.
-        RAISE EXCEPTION TYPE kernel_cx_assert
-          EXPORTING
-            actual   = act
-            expected = exp.
-      ENDIF.
-    ELSE.
-      ASSERT act = exp.
+    ELSEIF act <> exp.
+      RAISE EXCEPTION TYPE kernel_cx_assert
+        EXPORTING
+          message  = |Expected { exp }, got { act }|
+          actual   = act
+          expected = exp.
     ENDIF.
   ENDMETHOD.
 
   METHOD assert_not_initial.
-    IF mv_exceptions = abap_true.
-      IF act IS INITIAL.
-        RAISE EXCEPTION TYPE kernel_cx_assert.
-      ENDIF.
-    ELSE.
-      ASSERT NOT act IS INITIAL.
+    IF act IS INITIAL.
+      RAISE EXCEPTION TYPE kernel_cx_assert
+        EXPORTING 
+          message = |Expected non initial value|.        
     ENDIF.
   ENDMETHOD.
 
   METHOD assert_initial.
-    IF mv_exceptions = abap_true.
-      IF act IS NOT INITIAL.
-        RAISE EXCEPTION TYPE kernel_cx_assert.
-      ENDIF.
-    ELSE.
-      ASSERT act IS INITIAL.
+    IF act IS NOT INITIAL.
+      RAISE EXCEPTION TYPE kernel_cx_assert
+        EXPORTING 
+          message = |Expected initial value|.      
     ENDIF.
   ENDMETHOD.
 
   METHOD assert_subrc.
-    IF mv_exceptions = abap_true.
-      IF sy-subrc <> exp.
-        RAISE EXCEPTION TYPE kernel_cx_assert.
-      ENDIF.
-    ELSE.
-      ASSERT sy-subrc = exp.
+    IF sy-subrc <> exp.
+      RAISE EXCEPTION TYPE kernel_cx_assert
+        EXPORTING 
+          message = |Expected sy-subrc to equal { exp }, got { sy-subrc }|.
     ENDIF.
   ENDMETHOD.
 
   METHOD assert_number_between.
-    IF mv_exceptions = abap_true.
-      IF number < lower OR number > upper.
-        RAISE EXCEPTION TYPE kernel_cx_assert.
-      ENDIF.
-    ELSE.
-      ASSERT number >= lower.
-      ASSERT number <= upper.
+    IF number < lower OR number > upper.
+      RAISE EXCEPTION TYPE kernel_cx_assert.
     ENDIF.
   ENDMETHOD.
 
