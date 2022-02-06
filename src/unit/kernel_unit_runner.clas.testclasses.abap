@@ -39,7 +39,7 @@ CLASS ltcl_test IMPLEMENTATION.
       exp = '*failing_not_for_testing*' ).      
     cl_abap_unit_assert=>assert_equals(
       act = ls_list-actual
-      exp = 'a' ).         
+      exp = 'a' ).
   ENDMETHOD.
 
   METHOD single_method.
