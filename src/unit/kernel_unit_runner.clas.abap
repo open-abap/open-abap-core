@@ -8,10 +8,18 @@ CLASS kernel_unit_runner DEFINITION PUBLIC.
            END OF ty_input_item.
     TYPES ty_input TYPE STANDARD TABLE OF ty_input_item WITH DEFAULT KEY.
 
+    TYPES ty_status TYPE string.
+    CONSTANTS: BEGIN OF gc_status,
+                success TYPE ty_status VALUE 'SUCCESS',
+                failed TYPE ty_status VALUE 'FAILED',
+                skipped TYPE ty_status VALUE 'SKIPPED',
+               END OF gc_status.
+
     TYPES BEGIN OF ty_result_item.
     INCLUDE TYPE ty_input_item.
-    TYPES:   expected    TYPE string,
+    TYPES: expected    TYPE string,
              actual      TYPE string,
+             status      TYPE ty_status,
              runtime     TYPE i,
              message     TYPE string,
              js_location TYPE string,
