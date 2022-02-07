@@ -208,7 +208,7 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
     ELSEIF act <> exp.
       RAISE EXCEPTION TYPE kernel_cx_assert
         EXPORTING
-          message  = |Expected { exp }, got { act }|
+          message  = |Expected "{ exp }", got "{ act }"|
           actual   = act
           expected = exp.
     ENDIF.
