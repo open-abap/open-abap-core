@@ -84,8 +84,12 @@ CLASS kernel_unit_runner IMPLEMENTATION.
     DATA ls_list LIKE LINE OF it_list.
     DATA lt_strings TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
     DATA lv_string LIKE LINE OF lt_strings.
+    DATA lv_message TYPE string.
+
 
     LOOP AT it_list INTO ls_list.
+      lv_message = ls_list-message.
+      REPLACE ALL OCCURENCES OF |"| IN lv_message WITH |\"|.
       lv_string = |\{"class_name": "{ ls_list-class_name
         }","testclass_name": "{ ls_list-testclass_name 
         }","method_name": "{ ls_list-method_name 
@@ -93,7 +97,7 @@ CLASS kernel_unit_runner IMPLEMENTATION.
         }","actual": "{ ls_list-actual 
         }","status": "{ ls_list-status 
         }","runtime": { ls_list-runtime 
-        },"message": "{ ls_list-message 
+        },"message": "{ lv_message 
         }","js_location": "{ ls_list-js_location }"\}|.
       APPEND lv_string TO lt_strings.
     ENDLOOP.
