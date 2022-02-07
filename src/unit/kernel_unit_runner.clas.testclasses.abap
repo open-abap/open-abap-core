@@ -69,6 +69,9 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = ls_list-actual
       exp = 'a' ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = ls_result-json
+      exp = |*"Expected 'b', got 'a'"*| ).  
 *    WRITE / ls_result-json.
   ENDMETHOD.
 
