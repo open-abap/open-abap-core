@@ -186,7 +186,11 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
     ENDIF.
 
     IF type1 = 'h'.
-      ASSERT lines( act ) = lines( exp ).
+      IF lines( act ) <> lines( exp ).
+        RAISE EXCEPTION TYPE kernel_cx_assert
+          EXPORTING
+            message = |Expected table to contain '{ lines( exp ) }' rows , got '{ lines( act ) }'|.
+      ENDIF.
       ASSIGN act TO <tab1>.
       ASSIGN exp TO <tab2>.
       DO lines( act ) TIMES.
