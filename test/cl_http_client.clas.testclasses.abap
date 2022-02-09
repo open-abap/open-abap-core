@@ -1,7 +1,8 @@
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
-    METHODS basic_get FOR TESTING RAISING cx_static_check.
+    METHODS basic_get_https FOR TESTING RAISING cx_static_check.
+    METHODS basic_get_http FOR TESTING RAISING cx_static_check.
     METHODS basic_post FOR TESTING RAISING cx_static_check.
     METHODS basic_auth FOR TESTING RAISING cx_static_check.
     METHODS call_set_method FOR TESTING RAISING cx_static_check.
@@ -18,7 +19,7 @@ ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
 
-  METHOD basic_get.
+  METHOD basic_get_https.
 
     DATA li_client TYPE REF TO if_http_client.
     DATA lv_code TYPE i.
@@ -53,6 +54,26 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = li_client->response->get_header_field( 'server' )
       exp = '*gunicorn*' ).
+
+  ENDMETHOD.
+
+  METHOD basic_get_http.
+
+    DATA li_client TYPE REF TO if_http_client.
+    DATA lv_code TYPE i.
+
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = 'http://httpbin.org/get'
+      IMPORTING
+        client = li_client ).
+    li_client->send( ).
+    li_client->receive( ).
+
+    li_client->response->get_status( IMPORTING code = lv_code ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_code
+      exp = 200 ).
 
   ENDMETHOD.
 
