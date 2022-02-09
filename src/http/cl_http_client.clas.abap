@@ -113,9 +113,11 @@ CLASS cl_http_client IMPLEMENTATION.
     lv_body = if_http_client~request->get_cdata( ).
 
     WRITE '@KERNEL const https = await import("https");'.
+    WRITE '@KERNEL const http = await import("http");'.
     WRITE '@KERNEL function postData(url, options, requestBody) {'.
     WRITE '@KERNEL   return new Promise((resolve, reject) => {'.
-    WRITE '@KERNEL     const req = https.request(url, options,'.
+    WRITE '@KERNEL     const prot = url.startsWith("http://") ? http : https;'.
+    WRITE '@KERNEL     const req = prot.request(url, options,'.
     WRITE '@KERNEL       (res) => {'.
     WRITE '@KERNEL         let chunks = [];'.
     WRITE '@KERNEL         res.on("data", (chunk) => {chunks.push(chunk);});'.
@@ -135,7 +137,8 @@ CLASS cl_http_client IMPLEMENTATION.
     WRITE '@KERNEL   });'.
     WRITE '@KERNEL }'.
 
-    WRITE '@KERNEL if (this.agent === undefined) {this.agent = new https.Agent({keepAlive: true, maxSockets: 1});}'.
+    WRITE '@KERNEL const prot = lv_url.get().startsWith("http://") ? http : https;'.
+    WRITE '@KERNEL if (this.agent === undefined) {this.agent = new prot.Agent({keepAlive: true, maxSockets: 1});}'.
     WRITE '@KERNEL let response = await postData(lv_url.get(), {method: lv_method.get(), headers: headers, agent: this.agent}, lv_body.get());'.
 
     " WRITE '@KERNEL console.dir(response);'.
