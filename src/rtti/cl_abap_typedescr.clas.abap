@@ -150,7 +150,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->kind = kind_elem.
         type->length = 8.
       WHEN 'Character'.
-        CREATE OBJECT type.
+        CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_char.
         type->kind = kind_elem.
         type->length = lv_length * 2.
