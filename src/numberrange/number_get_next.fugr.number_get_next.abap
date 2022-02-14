@@ -16,8 +16,11 @@ FUNCTION number_get_next.
 *"      BUFFER_OVERFLOW
 *"----------------------------------------------------------------------
 
-* todo
-
-  number = number + 1.
+  kernel_numberrange=>number_get(
+    EXPORTING
+      nr_range_nr = nr_range_nr
+      object      = object
+    IMPORTING 
+      number      = number ).
 
 ENDFUNCTION.
