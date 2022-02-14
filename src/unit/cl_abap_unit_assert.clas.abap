@@ -172,16 +172,20 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
     DESCRIBE FIELD exp TYPE type2.
 *    WRITE '@KERNEL console.dir(type1.get());'.
 *    WRITE '@KERNEL console.dir(type2.get());'.
-    IF type1 CA 'CgyIFPDTX'. " basic types
+    IF type1 CA 'CgyIFPDTXN'. " basic types
       IF NOT type2 IS INITIAL.
-        IF type2 NA 'CgyIFPDTX'.
-          RAISE EXCEPTION TYPE kernel_cx_assert.
+        IF type2 NA 'CgyIFPDTXN'.
+          RAISE EXCEPTION TYPE kernel_cx_assert
+            EXPORTING
+              message = |Unexpected types|.        
         ENDIF.
       ENDIF.
     ELSEIF NOT type1 IS INITIAL AND NOT type2 IS INITIAL.
 * else check the types are identical      
       IF type1 <> type2.
-        RAISE EXCEPTION TYPE kernel_cx_assert.
+        RAISE EXCEPTION TYPE kernel_cx_assert
+          EXPORTING
+            message = |Unexpected types|.        
       ENDIF.
     ENDIF.
 
