@@ -3,12 +3,11 @@
  <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
   <asx:values>
    <PROGDIR>
-    <NAME>SAPLZNUMBER_GET_NEXT</NAME>
+    <NAME>LNUMBER_GET_NEXTTOP</NAME>
     <DBAPL>S</DBAPL>
     <DBNA>D$</DBNA>
-    <SUBC>F</SUBC>
+    <SUBC>I</SUBC>
     <APPL>S</APPL>
-    <RLOAD>E</RLOAD>
     <FIXPT>X</FIXPT>
     <LDBNAME>D$S</LDBNAME>
     <UCCHECK>X</UCCHECK>

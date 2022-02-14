@@ -19,7 +19,7 @@ CLASS cl_numberrange_runtime IMPLEMENTATION.
 
   METHOD number_get.
 
-    CALL FUNCTION 'ZNUMBER_GET_NEXT'
+    CALL FUNCTION 'NUMBER_GET_NEXT'
       EXPORTING
         nr_range_nr             = nr_range_nr
         object                  = object

@@ -1,4 +1,4 @@
-FUNCTION znumber_get_next.
+FUNCTION number_get_next.
 *"----------------------------------------------------------------------
 *"*"Local Interface:
 *"  IMPORTING
