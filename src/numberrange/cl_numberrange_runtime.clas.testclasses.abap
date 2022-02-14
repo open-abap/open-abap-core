@@ -15,7 +15,7 @@ CLASS ltcl_numberrange_runtime IMPLEMENTATION.
     cl_numberrange_runtime=>number_get(
       EXPORTING
         nr_range_nr = '01'
-        object      = 'HELLO' 
+        object      = 'HELLO'
       IMPORTING
         number      = lv_num ).
 
