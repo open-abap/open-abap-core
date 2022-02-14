@@ -20,6 +20,24 @@ CLASS ltcl_numberrange_runtime IMPLEMENTATION.
         number      = lv_num ).
 
     cl_abap_unit_assert=>assert_not_initial( lv_num ).
+
+    cl_abap_unit_assert=>assert_equals(
+      exp = '0000000001'
+      act = lv_num ).
+
+    CLEAR lv_num.
+
+    cl_numberrange_runtime=>number_get(
+      EXPORTING
+        nr_range_nr = '01'
+        object      = 'HELLO'
+      IMPORTING
+        number      = lv_num ).
+
+    cl_abap_unit_assert=>assert_equals(
+      exp = '0000000002'
+      act = lv_num ).
+
   ENDMETHOD.
 
 ENDCLASS.
