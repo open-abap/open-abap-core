@@ -23,4 +23,7 @@ FUNCTION number_get_next.
     IMPORTING 
       number      = number ).
 
+* todo, hack to set return value
+  sy-subrc = 0.
+
 ENDFUNCTION.
