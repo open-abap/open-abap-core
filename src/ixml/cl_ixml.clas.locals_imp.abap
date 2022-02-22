@@ -192,7 +192,7 @@ CLASS lcl_node IMPLEMENTATION.
 *        WRITE '@KERNEL console.dir(li_node.value.mv_name);'.
 *        WRITE '@KERNEL console.dir(name);'.
         IF li_node->get_name( ) = name.
-          val = li_node.
+          val ?= li_node.
           RETURN.
         ENDIF.
         APPEND li_node TO lt_nodes.
