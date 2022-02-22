@@ -678,7 +678,7 @@ CLASS lcl_parser IMPLEMENTATION.
     DATA lo_node TYPE REF TO lcl_node.
 
 
-    lo_parent = mi_document->get_root( ).
+    lo_parent ?= mi_document->get_root( ).
 
 * get the private value from istream,
     WRITE '@KERNEL lv_xml.set(this.mi_istream.get().mv_xml);'.
