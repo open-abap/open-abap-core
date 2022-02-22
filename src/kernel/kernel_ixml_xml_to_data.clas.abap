@@ -21,7 +21,7 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
     DATA lv_name TYPE string.
     DATA li_iterator TYPE REF TO if_ixml_node_iterator.
     
-    li_first = ii_doc->get_root( )->get_first_child( ).
+    li_first ?= ii_doc->get_root( )->get_first_child( ).
  
     li_node = li_first->find_from_name_ns(
       name      = iv_name

@@ -107,7 +107,7 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
 * todo, RAISE component_not_found, classic exceptions doesnt work with transpiler as of today
       ASSERT 1 = 'todo'.
     ELSE.
-      p_descr_ref = line-type.
+      p_descr_ref ?= line-type.
     ENDIF.
 
   ENDMETHOD.

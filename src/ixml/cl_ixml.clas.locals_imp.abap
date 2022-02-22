@@ -704,7 +704,7 @@ CLASS lcl_parser IMPLEMENTATION.
   
         IF lv_xml CP '</*'.
 * todo: check its the right name
-          lo_parent = lo_parent->if_ixml_node~get_parent( ).
+          lo_parent ?= lo_parent->if_ixml_node~get_parent( ).
         ELSE.
           CREATE OBJECT lo_node EXPORTING ii_parent = lo_parent.
           IF lv_name CA ':'.
