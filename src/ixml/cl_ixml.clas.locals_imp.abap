@@ -192,7 +192,7 @@ CLASS lcl_node IMPLEMENTATION.
 *        WRITE '@KERNEL console.dir(li_node.value.mv_name);'.
 *        WRITE '@KERNEL console.dir(name);'.
         IF li_node->get_name( ) = name.
-          val = li_node.
+          val ?= li_node.
           RETURN.
         ENDIF.
         APPEND li_node TO lt_nodes.
@@ -678,7 +678,7 @@ CLASS lcl_parser IMPLEMENTATION.
     DATA lo_node TYPE REF TO lcl_node.
 
 
-    lo_parent = mi_document->get_root( ).
+    lo_parent ?= mi_document->get_root( ).
 
 * get the private value from istream,
     WRITE '@KERNEL lv_xml.set(this.mi_istream.get().mv_xml);'.
