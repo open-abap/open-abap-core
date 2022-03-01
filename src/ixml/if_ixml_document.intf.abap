@@ -22,7 +22,7 @@ INTERFACE if_ixml_document PUBLIC.
         name TYPE string
         prefix TYPE string OPTIONAL
       RETURNING
-        VALUE(element) TYPE REF TO if_ixml_element,
+        VALUE(element) TYPE REF TO if_ixml_attribute,
     create_element_ns
       IMPORTING
         name TYPE string
