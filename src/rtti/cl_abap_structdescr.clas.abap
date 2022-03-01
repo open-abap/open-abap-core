@@ -1,4 +1,4 @@
-CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
+CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr.
 
   PUBLIC SECTION.
     METHODS
