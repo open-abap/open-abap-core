@@ -2,10 +2,10 @@ CLASS cl_salv_table DEFINITION PUBLIC.
   PUBLIC SECTION.
     CLASS-METHODS factory
       IMPORTING
-        r_container TYPE any
-      EXPORTING 
+        r_container TYPE any OPTIONAL
+      EXPORTING
         r_salv_table TYPE any
-      CHANGING 
+      CHANGING
         t_table TYPE any.
     METHODS get_selections RETURNING VALUE(val) TYPE REF TO cl_salv_table.
     METHODS set_selection_mode IMPORTING val TYPE any.
