@@ -51,7 +51,7 @@ INTERFACE if_ixml_document PUBLIC.
     create_simple_element_ns
       IMPORTING
         name TYPE string
-        parent TYPE string
+        parent TYPE REF TO if_ixml_node
         prefix TYPE string OPTIONAL
       RETURNING VALUE(val) TYPE REF TO if_ixml_element,
     create_filter_attribute

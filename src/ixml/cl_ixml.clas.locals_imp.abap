@@ -133,6 +133,14 @@ CLASS lcl_node IMPLEMENTATION.
     mi_parent = ii_parent.
   ENDMETHOD.
 
+  METHOD if_ixml_node~get_namespace_prefix.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_namespace_uri.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_element~get_attributes.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
@@ -397,6 +405,14 @@ CLASS lcl_document IMPLEMENTATION.
   METHOD constructor.
     CREATE OBJECT mi_node TYPE lcl_node.
     mi_node->if_ixml_node~set_name( '#document' ).
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_namespace_prefix.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_namespace_uri.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_ixml_node~append_child.

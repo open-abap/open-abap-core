@@ -30,6 +30,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     DATA type_kind TYPE abap_typekind.
     DATA kind TYPE c LENGTH 1.
     DATA length TYPE i.
+    DATA decimals TYPE i.
     DATA absolute_name TYPE string.
 
     CONSTANTS typekind_any TYPE abap_typekind VALUE '~'.

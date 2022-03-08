@@ -12,7 +12,7 @@ INTERFACE if_ixml_element PUBLIC.
       RETURNING VALUE(name) TYPE string,
     append_child
       IMPORTING
-        new_child TYPE REF TO if_ixml_element
+        new_child TYPE REF TO if_ixml_node
       RETURNING
         VALUE(rc) TYPE i,
     clone
