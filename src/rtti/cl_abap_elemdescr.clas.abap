@@ -13,9 +13,22 @@ CLASS cl_abap_elemdescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
     METHODS get_ddic_fixed_values
       RETURNING
         VALUE(p_fixed_values) TYPE fixvalues.
+
+    METHODS get_ddic_field
+      IMPORTING
+        VALUE(p_langu) TYPE sy-langu DEFAULT sy-langu
+      RETURNING
+        VALUE(p_flddescr) TYPE dfies
+      EXCEPTIONS
+        not_found
+        no_ddic_type.
 ENDCLASS.
 
 CLASS cl_abap_elemdescr IMPLEMENTATION.
+
+  METHOD get_ddic_field.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD get_ddic_fixed_values.
 
