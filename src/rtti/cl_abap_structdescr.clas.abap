@@ -34,6 +34,7 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
         VALUE(ref)   TYPE REF TO cl_abap_structdescr.
 
     DATA components TYPE component_table.
+    DATA struct_kind TYPE abap_structkind READ-ONLY.
 ENDCLASS.
 
 CLASS cl_abap_structdescr IMPLEMENTATION.

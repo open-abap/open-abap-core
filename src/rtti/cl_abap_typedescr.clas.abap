@@ -41,6 +41,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_decfloat16 TYPE abap_typekind VALUE 'a'.
     CONSTANTS typekind_decfloat34 TYPE abap_typekind VALUE 'e'.
     CONSTANTS typekind_dref TYPE abap_typekind VALUE 'l'.
+    CONSTANTS typekind_utclong TYPE abap_typekind VALUE 'p'.
     CONSTANTS typekind_float TYPE abap_typekind VALUE 'F'.
     CONSTANTS typekind_hex TYPE abap_typekind VALUE 'X'.
     CONSTANTS typekind_int TYPE abap_typekind VALUE 'I'.
@@ -56,7 +57,9 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_table TYPE abap_typekind VALUE 'h'.
     CONSTANTS typekind_time TYPE abap_typekind VALUE 'T'.
     CONSTANTS typekind_xstring TYPE abap_typekind VALUE 'y'.
-    
+    CONSTANTS typekind_csequence TYPE abap_typekind VALUE '?'.
+    CONSTANTS typekind_numeric TYPE abap_typekind VALUE '%'.
+
     CONSTANTS kind_elem TYPE c LENGTH 1 VALUE 'E'.
     CONSTANTS kind_struct TYPE c LENGTH 1 VALUE 'S'.
     CONSTANTS kind_table TYPE c LENGTH 1 VALUE 'T'.

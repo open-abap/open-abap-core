@@ -19,6 +19,7 @@ CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
       RETURNING VALUE(ref) TYPE REF TO cl_abap_tabledescr.
 
     DATA table_kind TYPE c LENGTH 1.
+    DATA has_unique_key TYPE abap_bool READ-ONLY.
 
     CONSTANTS tablekind_any TYPE c LENGTH 1 VALUE 'A'.
     CONSTANTS tablekind_std TYPE c LENGTH 1 VALUE 'S'.
