@@ -43,6 +43,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_decfloat16 TYPE abap_typekind VALUE 'a'.
     CONSTANTS typekind_decfloat34 TYPE abap_typekind VALUE 'e'.
     CONSTANTS typekind_dref TYPE abap_typekind VALUE 'l'.
+    CONSTANTS typekind_enum TYPE abap_typekind VALUE 'k'.
     CONSTANTS typekind_float TYPE abap_typekind VALUE 'F'.
     CONSTANTS typekind_hex TYPE abap_typekind VALUE 'X'.
     CONSTANTS typekind_int TYPE abap_typekind VALUE 'I'.
