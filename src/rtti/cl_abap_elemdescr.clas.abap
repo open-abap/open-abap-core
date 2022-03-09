@@ -10,6 +10,9 @@ CLASS cl_abap_elemdescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
       END OF fixvalue.
     TYPES fixvalues TYPE STANDARD TABLE OF fixvalue WITH DEFAULT KEY.
 
+    DATA output_length TYPE i READ-ONLY.
+    DATA edit_mask TYPE abap_editmask READ-ONLY.
+
     METHODS get_ddic_fixed_values
       RETURNING
         VALUE(p_fixed_values) TYPE fixvalues.

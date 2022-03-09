@@ -36,12 +36,13 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_any TYPE abap_typekind VALUE '~'.
     CONSTANTS typekind_char TYPE abap_typekind VALUE 'C'.
     CONSTANTS typekind_class TYPE abap_typekind VALUE '*'.
+    CONSTANTS typekind_clike TYPE abap_typekind VALUE '&'.
+    CONSTANTS typekind_csequence TYPE abap_typekind VALUE '?'.
     CONSTANTS typekind_date TYPE abap_typekind VALUE 'D'.
     CONSTANTS typekind_decfloat TYPE abap_typekind VALUE '/'.
     CONSTANTS typekind_decfloat16 TYPE abap_typekind VALUE 'a'.
     CONSTANTS typekind_decfloat34 TYPE abap_typekind VALUE 'e'.
     CONSTANTS typekind_dref TYPE abap_typekind VALUE 'l'.
-    CONSTANTS typekind_utclong TYPE abap_typekind VALUE 'p'.
     CONSTANTS typekind_float TYPE abap_typekind VALUE 'F'.
     CONSTANTS typekind_hex TYPE abap_typekind VALUE 'X'.
     CONSTANTS typekind_int TYPE abap_typekind VALUE 'I'.
@@ -49,6 +50,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_int2 TYPE abap_typekind VALUE 's'.
     CONSTANTS typekind_int8 TYPE abap_typekind VALUE '8'.
     CONSTANTS typekind_num TYPE abap_typekind VALUE 'N'.
+    CONSTANTS typekind_numeric TYPE abap_typekind VALUE '%'.
     CONSTANTS typekind_oref TYPE abap_typekind VALUE 'r'.
     CONSTANTS typekind_packed TYPE abap_typekind VALUE 'P'.
     CONSTANTS typekind_string TYPE abap_typekind VALUE 'g'.
@@ -56,9 +58,9 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_struct2 TYPE abap_typekind VALUE 'v'.
     CONSTANTS typekind_table TYPE abap_typekind VALUE 'h'.
     CONSTANTS typekind_time TYPE abap_typekind VALUE 'T'.
+    CONSTANTS typekind_utclong TYPE abap_typekind VALUE 'p'.
+    CONSTANTS typekind_w TYPE abap_typekind VALUE 'w'.
     CONSTANTS typekind_xstring TYPE abap_typekind VALUE 'y'.
-    CONSTANTS typekind_csequence TYPE abap_typekind VALUE '?'.
-    CONSTANTS typekind_numeric TYPE abap_typekind VALUE '%'.
 
     CONSTANTS kind_elem TYPE c LENGTH 1 VALUE 'E'.
     CONSTANTS kind_struct TYPE c LENGTH 1 VALUE 'S'.
