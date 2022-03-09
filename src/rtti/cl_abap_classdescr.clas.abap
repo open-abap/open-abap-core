@@ -1,4 +1,4 @@
-CLASS cl_abap_classdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
+CLASS cl_abap_classdescr DEFINITION PUBLIC INHERITING FROM cl_abap_objectdescr.
   PUBLIC SECTION.
 
 ENDCLASS.

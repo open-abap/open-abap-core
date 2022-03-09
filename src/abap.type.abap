@@ -12,6 +12,7 @@ TYPES abap_trans_resbind_tab TYPE abap_trans_srcbind_tab.
 TYPES abap_compname TYPE c LENGTH 30.
 TYPES abap_typekind TYPE c LENGTH 1.
 TYPES abap_structkind TYPE c LENGTH 1.
+TYPES abap_editmask TYPE c LENGTH 7.
 
 CONSTANTS abap_max_comp_name_ln TYPE i VALUE 30.
 
