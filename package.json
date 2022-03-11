@@ -3,18 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "description": "test",
-  "main": "index.js",
   "scripts": {
     "lint": "abaplint",
     "unit": "rm -rf output && abap_transpile && echo RUNNING && node output/index.mjs",
     "integration": "rm -rf output_test && abap_transpile ./abap_transpile_test.json && node output_test/index.mjs",
     "test": "npm run lint && npm run unit"
   },
-  "author": "",
   "license": "MIT",
   "dependencies": {
-    "@abaplint/cli": "^2.85.41",
-    "@abaplint/runtime": "^1.8.12",
-    "@abaplint/transpiler-cli": "^1.8.12"
+    "@abaplint/cli": "^2.85.42",
+    "@abaplint/runtime": "^1.8.13",
+    "@abaplint/transpiler-cli": "^1.8.13"
   }
 }
