@@ -25,6 +25,10 @@ CLASS cl_abap_matcher DEFINITION PUBLIC.
       RETURNING 
         VALUE(offset) TYPE i.
 
+    METHODS match
+      RETURNING
+        VALUE(success) TYPE abap_bool.
+
     METHODS get_length
       RETURNING 
         VALUE(length) TYPE i.
@@ -45,6 +49,10 @@ CLASS cl_abap_matcher IMPLEMENTATION.
       FIND ALL OCCURRENCES OF REGEX pattern IN text RESULTS mt_matches.
     ENDIF.
     mv_text = text.
+  ENDMETHOD.
+
+  METHOD match.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD find_all.
