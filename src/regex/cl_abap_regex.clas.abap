@@ -15,6 +15,7 @@ CLASS cl_abap_regex DEFINITION PUBLIC.
     CLASS-METHODS create_pcre
       IMPORTING
         pattern TYPE clike
+        VALUE(ignore_case) TYPE abap_bool DEFAULT abap_false
       RETURNING
         VALUE(regex) TYPE REF TO cl_abap_regex.
 
