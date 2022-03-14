@@ -1,0 +1,7 @@
+CLASS cx_shm_error DEFINITION PUBLIC INHERITING FROM cx_static_check.
+
+ENDCLASS.
+
+CLASS cx_shm_error IMPLEMENTATION.
+
+ENDCLASS.
