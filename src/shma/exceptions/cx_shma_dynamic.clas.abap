@@ -1,0 +1,7 @@
+CLASS cx_shma_dynamic DEFINITION PUBLIC INHERITING FROM cx_dynamic_check.
+
+ENDCLASS.
+
+CLASS cx_shma_dynamic IMPLEMENTATION.
+
+ENDCLASS.
