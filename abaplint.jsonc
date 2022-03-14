@@ -27,7 +27,10 @@
     "sequential_blank": true,
     "superclass_final": true,
     "space_before_colon": true,
-    "space_before_dot": true,
+    "space_before_dot": {
+      "ignoreGlobalDefinition": false,
+      "ignoreExceptions": false
+    },
     "unreachable_code": true,
     "use_line_exists": false,
     "inline_data_old_versions": false,

@@ -1,4 +1,4 @@
-CLASS lcl_handler DEFINITION FINAL .
+CLASS lcl_handler DEFINITION FINAL.
   PUBLIC SECTION.
     INTERFACES if_apc_wsp_event_handler.
     DATA message TYPE xstring.
