@@ -1,8 +1,15 @@
 INTERFACE if_shm_trace PUBLIC.
 
   DATA: BEGIN OF variant,
-          def_name       TYPE shmm_trc_variant_name,
-          attach_for_upd TYPE abap_bool,
+          def_name         TYPE shmm_trc_variant_name,
+          attach_for_upd   TYPE abap_bool,
+          attach_for_read  TYPE abap_bool,
+          free_area        TYPE abap_bool,
+          detach_area      TYPE abap_bool,
+          set_root         TYPE abap_bool,
+          invalidate_inst  TYPE abap_bool,
+          get_instance_inf TYPE abap_bool,
+          free_instance    TYPE abap_bool,
         END OF variant.
 
   METHODS trin_attach_for_write
