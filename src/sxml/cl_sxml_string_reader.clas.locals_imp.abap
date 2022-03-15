@@ -274,6 +274,10 @@ CLASS lcl_reader IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
+  METHOD if_sxml_reader~skip_node.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_sxml_reader~read_next_node.
     READ TABLE mt_nodes INDEX mv_pointer INTO node.
     mv_pointer = mv_pointer + 1.
