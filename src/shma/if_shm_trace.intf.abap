@@ -10,6 +10,9 @@ INTERFACE if_shm_trace PUBLIC.
           invalidate_inst  TYPE abap_bool,
           get_instance_inf TYPE abap_bool,
           free_instance    TYPE abap_bool,
+          invalidate_area  TYPE abap_bool,
+          build            TYPE abap_bool,
+          attach_for_write TYPE abap_bool,
         END OF variant.
 
   METHODS trin_attach_for_write

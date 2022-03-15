@@ -29,4 +29,9 @@ INTERFACE if_sxml_writer PUBLIC.
     RAISING
       cx_sxml_state_error.
 
+  METHODS set_option
+    IMPORTING
+      option TYPE i
+      value  TYPE abap_bool DEFAULT abap_true.
+
 ENDINTERFACE.
