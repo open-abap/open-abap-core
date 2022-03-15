@@ -5,6 +5,7 @@ CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error.
     CONSTANTS life_context_appserver TYPE shm_life_context VALUE 109200001.
     CONSTANTS attach_mode_default TYPE shm_attach_mode VALUE 1302197000.
     CONSTANTS attach_mode_wait TYPE shm_attach_mode VALUE 1302197002.
+    CONSTANTS affect_local_server TYPE shm_affect_server VALUE 281119720.
 ENDCLASS.
 
 CLASS cl_shm_area IMPLEMENTATION.
