@@ -44,6 +44,10 @@ CLASS cl_sxml_string_writer IMPLEMENTATION.
         type = type.
   ENDMETHOD.
 
+  METHOD if_sxml_writer~set_option.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD get_output.
     output = mv_output.
   ENDMETHOD.
