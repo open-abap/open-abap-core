@@ -19,6 +19,15 @@
      <LENG>000001</LENG>
      <MASK>  CHAR</MASK>
     </DD03P>
+    <DD03P>
+     <FIELDNAME>HAS_VERSIONS</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000002</INTLEN>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000001</LENG>
+     <MASK>  CHAR</MASK>
+    </DD03P>
    </DD03P_TABLE>
   </asx:values>
  </asx:abap>

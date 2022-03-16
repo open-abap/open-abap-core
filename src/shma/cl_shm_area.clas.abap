@@ -154,10 +154,30 @@ CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error ABSTRAC
         client_dependent TYPE abap_bool DEFAULT abap_false
         life_context     TYPE shm_life_context
       RETURNING
-        VALUE(infos)     TYPE shm_inst_infos.        
+        VALUE(infos)     TYPE shm_inst_infos.      
+        
+    CLASS-METHODS _free_instance71
+      IMPORTING
+        area_name         TYPE shm_area_name
+        inst_name         TYPE shm_inst_name
+        client            TYPE shm_client
+        client_supplied   TYPE abap_bool DEFAULT abap_false
+        transactional     TYPE abap_bool DEFAULT abap_false
+        client_dependent  TYPE abap_bool DEFAULT abap_false
+        terminate_changer TYPE abap_bool
+        affect_server     TYPE shm_affect_server
+        life_context      TYPE shm_life_context DEFAULT life_context_appserver
+      RETURNING
+        VALUE(rc)         TYPE shm_rc
+      RAISING
+        cx_shm_parameter_error.
 ENDCLASS.
 
 CLASS cl_shm_area IMPLEMENTATION.
+
+  METHOD _free_instance71.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD detach_commit.
     ASSERT 1 = 'todo'.
