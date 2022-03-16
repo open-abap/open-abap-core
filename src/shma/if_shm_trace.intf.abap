@@ -86,4 +86,51 @@ INTERFACE if_shm_trace PUBLIC.
       root TYPE REF TO object
       cx TYPE REF TO cx_root.
 
+  METHODS trin_detach_area
+    IMPORTING
+      area_name TYPE shm_area_name
+      client TYPE shm_client DEFAULT sy-mandt
+      rc TYPE shm_rc.
+
+  METHODS trin_free_area
+    IMPORTING
+      area_name         TYPE shm_area_name
+      client            TYPE shm_client DEFAULT sy-mandt
+      terminate_changer TYPE abap_bool DEFAULT abap_true
+      affect_server     TYPE shm_affect_server OPTIONAL
+      rc                TYPE shm_rc.
+
+  METHODS trin_free_instance
+    IMPORTING
+      area_name TYPE shm_area_name
+      inst_name TYPE shm_inst_name DEFAULT cl_shm_area=>default_instance
+      client TYPE shm_client DEFAULT sy-mandt
+      terminate_changer TYPE abap_bool DEFAULT abap_true
+      affect_server TYPE shm_affect_server OPTIONAL
+      rc TYPE shm_rc.
+
+  METHODS trin_get_instance_infos
+    IMPORTING
+      area_name TYPE shm_area_name
+      inst_name TYPE shm_inst_name OPTIONAL
+      client TYPE shm_client DEFAULT sy-mandt
+      infos TYPE shm_inst_infos.
+
+  METHODS trin_invalidate_area
+    IMPORTING
+      area_name TYPE shm_area_name
+      client TYPE shm_client DEFAULT sy-mandt
+      rc TYPE shm_rc
+      affect_server TYPE shm_affect_server OPTIONAL
+      terminate_changer TYPE abap_bool DEFAULT abap_true.
+
+  METHODS trin_invalidate_instance
+    IMPORTING
+      area_name TYPE shm_area_name
+      inst_name TYPE shm_inst_name DEFAULT cl_shm_area=>default_instance
+      client TYPE shm_client DEFAULT sy-mandt
+      terminate_changer TYPE abap_bool DEFAULT abap_true
+      affect_server TYPE shm_affect_server OPTIONAL
+      rc TYPE shm_rc.
+
 ENDINTERFACE.
