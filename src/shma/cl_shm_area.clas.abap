@@ -15,6 +15,7 @@ CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error.
     DATA inst_trace_active TYPE abap_bool VALUE abap_false.
     DATA inst_trace_service TYPE REF TO if_shm_trace.
     DATA _lock TYPE %_c_pointer.
+    CONSTANTS attach_mode_wait_2nd_try TYPE shm_attach_mode VALUE 1302197003.
 
     METHODS _attach_read71
       IMPORTING
@@ -34,9 +35,9 @@ CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error.
     METHODS _attach_update70
       IMPORTING
         area_name TYPE shm_area_name
-        mode TYPE shm_attach_mode
+        mode      TYPE shm_attach_mode
       EXPORTING
-        root TYPE REF TO object
+        root      TYPE REF TO object
       CHANGING
         wait_time TYPE i OPTIONAL
       RAISING
@@ -51,9 +52,9 @@ CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error.
     METHODS _attach_write70
       IMPORTING
         area_name TYPE shm_area_name
-        mode TYPE shm_attach_mode
+        mode      TYPE shm_attach_mode
       EXPORTING
-        root TYPE REF TO object
+        root      TYPE REF TO object
       CHANGING
         wait_time TYPE i OPTIONAL
       RAISING
@@ -124,12 +125,26 @@ CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error.
       RETURNING
         VALUE(rc) TYPE shm_rc
       RAISING
-        cx_shm_parameter_error.               
+        cx_shm_parameter_error.          
+        
+    CLASS-METHODS _get_instance_infos71
+      IMPORTING
+        area_name TYPE shm_area_name
+        client TYPE shm_client
+        client_supplied TYPE abap_bool DEFAULT abap_false
+        client_dependent TYPE abap_bool DEFAULT abap_false
+        life_context TYPE shm_life_context
+      RETURNING
+        VALUE(infos) TYPE shm_inst_infos.        
 ENDCLASS.
 
 CLASS cl_shm_area IMPLEMENTATION.
 
   METHOD _attach_read71.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD _get_instance_infos71.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
