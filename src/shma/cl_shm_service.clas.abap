@@ -41,7 +41,8 @@ CLASS cl_shm_service IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD trace_get_service.
-    ASSERT 1 = 'todo'.
+* dont dump, this method is called from area CLASS_CONSTRUCTORs    
+    RETURN.
   ENDMETHOD.
 
   METHOD trace_is_variant_active.
