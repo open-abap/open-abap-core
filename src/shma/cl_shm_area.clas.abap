@@ -30,6 +30,10 @@ CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error ABSTRAC
       RAISING
         cx_shm_already_detached.
 
+    METHODS is_valid
+      RETURNING
+        VALUE(valid) TYPE abap_bool.
+
   PROTECTED SECTION.
     DATA inst_trace_active TYPE abap_bool VALUE abap_false.
     DATA inst_trace_service TYPE REF TO if_shm_trace.
@@ -174,6 +178,10 @@ CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error ABSTRAC
 ENDCLASS.
 
 CLASS cl_shm_area IMPLEMENTATION.
+
+  METHOD is_valid.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD _free_instance71.
     ASSERT 1 = 'todo'.

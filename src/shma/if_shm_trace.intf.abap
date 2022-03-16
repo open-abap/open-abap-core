@@ -134,4 +134,13 @@ INTERFACE if_shm_trace PUBLIC.
       affect_server TYPE shm_affect_server OPTIONAL
       rc TYPE shm_rc.
 
+  METHODS trin_get_root
+    IMPORTING
+      area_name TYPE shm_area_name.
+
+  METHODS trcx_get_root
+    IMPORTING
+      area_name TYPE shm_area_name
+      cx        TYPE REF TO cx_root.
+
 ENDINTERFACE.
