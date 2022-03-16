@@ -86,4 +86,18 @@ INTERFACE if_shm_trace PUBLIC.
       root TYPE REF TO object
       cx TYPE REF TO cx_root.
 
+  METHODS trin_detach_area
+    IMPORTING
+      area_name TYPE shm_area_name
+      client TYPE shm_client DEFAULT sy-mandt
+      rc TYPE shm_rc.
+
+  METHODS trin_free_area
+    IMPORTING
+      area_name         TYPE shm_area_name
+      client            TYPE shm_client DEFAULT sy-mandt
+      terminate_changer TYPE abap_bool DEFAULT abap_true
+      affect_server     TYPE shm_affect_server OPTIONAL
+      rc                TYPE shm_rc.
+
 ENDINTERFACE.
