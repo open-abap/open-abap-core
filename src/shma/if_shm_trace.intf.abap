@@ -49,4 +49,28 @@ INTERFACE if_shm_trace PUBLIC.
       wait_time TYPE i DEFAULT 0
       cx        TYPE REF TO cx_root.
 
+  METHODS trin_attach_for_read
+    IMPORTING
+      area_name TYPE shm_area_name
+      inst_name TYPE shm_inst_name DEFAULT cl_shm_area=>default_instance
+      client    TYPE shm_client DEFAULT sy-mandt.
+
+  METHODS trcx_attach_for_read
+    IMPORTING
+      area_name TYPE shm_area_name
+      inst_name TYPE shm_inst_name DEFAULT cl_shm_area=>default_instance
+      client    TYPE shm_client DEFAULT sy-mandt
+      cx        TYPE REF TO cx_root.
+
+  METHODS trin_build
+    IMPORTING
+      area_name TYPE shm_area_name
+      inst_name TYPE shm_inst_name DEFAULT cl_shm_area=>default_instance.
+
+  METHODS trcx_build
+    IMPORTING
+      area_name TYPE shm_area_name
+      inst_name TYPE shm_inst_name DEFAULT cl_shm_area=>default_instance
+      cx TYPE REF TO cx_root.
+
 ENDINTERFACE.
