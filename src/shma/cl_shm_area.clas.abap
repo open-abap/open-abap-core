@@ -1,4 +1,4 @@
-CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error.
+CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error ABSTRACT.
   PUBLIC SECTION.
     CONSTANTS default_instance TYPE shm_inst_name VALUE '$DEFAULT_INSTANCE$'.
     CONSTANTS invocation_mode_explicit TYPE shm_constr_invocation_mode VALUE 319200300.
@@ -10,6 +10,25 @@ CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error.
     DATA properties TYPE shm_properties READ-ONLY.
     DATA inst_name TYPE shm_inst_name READ-ONLY.
     DATA client TYPE mandt READ-ONLY.
+
+    METHODS detach_commit
+      RAISING
+        cx_shm_wrong_handle
+        cx_shm_already_detached
+        cx_shm_secondary_commit
+        cx_shm_event_execution_failed
+        cx_shm_completion_error.
+
+    METHODS detach
+      RAISING
+        cx_shm_wrong_handle
+        cx_shm_already_detached.
+
+    METHODS get_root ABSTRACT
+      RETURNING
+        VALUE(root) TYPE REF TO object
+      RAISING
+        cx_shm_already_detached.
 
   PROTECTED SECTION.
     DATA inst_trace_active TYPE abap_bool VALUE abap_false.
@@ -129,16 +148,24 @@ CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error.
         
     CLASS-METHODS _get_instance_infos71
       IMPORTING
-        area_name TYPE shm_area_name
-        client TYPE shm_client
-        client_supplied TYPE abap_bool DEFAULT abap_false
+        area_name        TYPE shm_area_name
+        client           TYPE shm_client
+        client_supplied  TYPE abap_bool DEFAULT abap_false
         client_dependent TYPE abap_bool DEFAULT abap_false
-        life_context TYPE shm_life_context
+        life_context     TYPE shm_life_context
       RETURNING
-        VALUE(infos) TYPE shm_inst_infos.        
+        VALUE(infos)     TYPE shm_inst_infos.        
 ENDCLASS.
 
 CLASS cl_shm_area IMPLEMENTATION.
+
+  METHOD detach_commit.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD detach.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD _attach_read71.
     ASSERT 1 = 'todo'.
