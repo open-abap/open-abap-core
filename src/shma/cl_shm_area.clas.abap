@@ -93,11 +93,22 @@ CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error.
         VALUE(rc) TYPE shm_rc
       RAISING
         cx_shm_parameter_error.   
+
+    METHODS _set_root
+      IMPORTING
+        root TYPE REF TO object
+      RAISING
+        cx_shm_wrong_handle
+        cx_shm_initial_reference.
 ENDCLASS.
 
 CLASS cl_shm_area IMPLEMENTATION.
 
   METHOD _attach_read71.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD _set_root.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 

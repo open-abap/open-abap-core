@@ -73,4 +73,17 @@ INTERFACE if_shm_trace PUBLIC.
       inst_name TYPE shm_inst_name DEFAULT cl_shm_area=>default_instance
       cx TYPE REF TO cx_root.
 
+  METHODS trin_set_root
+    IMPORTING
+      area_name TYPE shm_area_name
+      inst_name TYPE shm_inst_name
+      root TYPE REF TO object.
+
+  METHODS trcx_set_root
+    IMPORTING
+      area_name TYPE shm_area_name
+      inst_name TYPE shm_inst_name
+      root TYPE REF TO object
+      cx TYPE REF TO cx_root.
+
 ENDINTERFACE.
