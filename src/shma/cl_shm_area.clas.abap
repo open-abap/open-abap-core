@@ -158,17 +158,17 @@ CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error ABSTRAC
         
     CLASS-METHODS _free_instance71
       IMPORTING
-        area_name TYPE shm_area_name
-        inst_name TYPE shm_inst_name
-        client TYPE shm_client
-        client_supplied TYPE abap_bool DEFAULT abap_false
-        transactional TYPE abap_bool DEFAULT abap_false
-        client_dependent TYPE abap_bool DEFAULT abap_false
+        area_name         TYPE shm_area_name
+        inst_name         TYPE shm_inst_name
+        client            TYPE shm_client
+        client_supplied   TYPE abap_bool DEFAULT abap_false
+        transactional     TYPE abap_bool DEFAULT abap_false
+        client_dependent  TYPE abap_bool DEFAULT abap_false
         terminate_changer TYPE abap_bool
-        affect_server TYPE shm_affect_server
-        life_context TYPE shm_life_context DEFAULT life_context_appserver
+        affect_server     TYPE shm_affect_server
+        life_context      TYPE shm_life_context DEFAULT life_context_appserver
       RETURNING
-        VALUE(rc) TYPE shm_rc
+        VALUE(rc)         TYPE shm_rc
       RAISING
         cx_shm_parameter_error.
 ENDCLASS.
