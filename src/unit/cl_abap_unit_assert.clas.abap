@@ -46,11 +46,18 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
           level TYPE i OPTIONAL.
 
     CLASS-METHODS
+      skip
+        IMPORTING   
+          msg    TYPE csequence
+          detail TYPE csequence OPTIONAL.
+
+    CLASS-METHODS
       fail
         IMPORTING
-          msg TYPE csequence OPTIONAL
-          quit TYPE i OPTIONAL
-          level TYPE i OPTIONAL
+          msg    TYPE csequence OPTIONAL
+          quit   TYPE i OPTIONAL
+          level  TYPE i OPTIONAL
+          detail TYPE csequence OPTIONAL
         PREFERRED PARAMETER msg.
 
     CLASS-METHODS
@@ -130,6 +137,10 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
 
   METHOD fail.
     RAISE EXCEPTION TYPE kernel_cx_assert.
+  ENDMETHOD.
+
+  METHOD skip.
+    RETURN.
   ENDMETHOD.
 
   METHOD assert_differs.
