@@ -48,9 +48,10 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
     CLASS-METHODS
       fail
         IMPORTING
-          msg TYPE csequence OPTIONAL
-          quit TYPE i OPTIONAL
-          level TYPE i OPTIONAL
+          msg    TYPE csequence OPTIONAL
+          quit   TYPE i OPTIONAL
+          level  TYPE i OPTIONAL
+          detail TYPE csequence OPTIONAL
         PREFERRED PARAMETER msg.
 
     CLASS-METHODS
