@@ -13,7 +13,12 @@ CLASS cl_sxml_string_writer DEFINITION PUBLIC FINAL CREATE PRIVATE.
 
     CLASS-METHODS create
       IMPORTING
-        type          TYPE if_sxml=>xml_stream_type DEFAULT if_sxml=>co_xt_xml10
+        type                     TYPE if_sxml=>xml_stream_type DEFAULT if_sxml=>co_xt_xml10
+        ignore_conversion_errors TYPE abap_bool DEFAULT abap_false
+        normalizing              TYPE abap_bool DEFAULT abap_false
+        no_empty_elements        TYPE abap_bool DEFAULT abap_false
+        encoding                 TYPE string DEFAULT `UTF-8`
+        PREFERRED PARAMETER type
       RETURNING
         VALUE(writer) TYPE REF TO cl_sxml_string_writer
       RAISING
