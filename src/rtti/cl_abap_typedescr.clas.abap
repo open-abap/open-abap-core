@@ -20,7 +20,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
 
     METHODS
       get_relative_name
-        RETURNING 
+        RETURNING
           VALUE(name) TYPE string.
     METHODS
       is_ddic_type
@@ -68,6 +68,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS kind_table TYPE c LENGTH 1 VALUE 'T'.
     CONSTANTS kind_ref TYPE c LENGTH 1 VALUE 'R'.
     CONSTANTS kind_class TYPE c LENGTH 1 VALUE 'C'.
+    CONSTANTS kind_intf TYPE c LENGTH 1 VALUE 'I'.
 
 ENDCLASS.
 
@@ -82,11 +83,11 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
   METHOD get_relative_name.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-  
+
   METHOD is_ddic_type.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-  
+
   METHOD describe_by_data_ref.
     FIELD-SYMBOLS <ref> TYPE any.
     ASSIGN data->* TO <ref>.
