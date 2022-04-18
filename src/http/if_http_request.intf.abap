@@ -36,7 +36,7 @@ INTERFACE if_http_request PUBLIC.
 
   METHODS set_content_type
     IMPORTING
-      val TYPE string.     
+      val TYPE string.
 
   METHODS set_form_field
     IMPORTING

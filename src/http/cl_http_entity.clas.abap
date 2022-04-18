@@ -58,7 +58,7 @@ CLASS cl_http_entity IMPLEMENTATION.
   METHOD if_http_response~set_cdata.
     cl_abap_conv_out_ce=>create( encoding = 'UTF-8' )->convert(
       EXPORTING data = data
-      IMPORTING buffer = mv_data ).   
+      IMPORTING buffer = mv_data ).
   ENDMETHOD.
 
   METHOD if_http_response~get_content_type.
@@ -81,7 +81,7 @@ CLASS cl_http_entity IMPLEMENTATION.
     mv_data = val.
   ENDMETHOD.
 
-*****************************************  
+*****************************************
 
   METHOD if_http_request~set_form_fields.
     mt_form_fields = fields.
@@ -138,7 +138,7 @@ CLASS cl_http_entity IMPLEMENTATION.
   METHOD if_http_request~set_cdata.
     cl_abap_conv_out_ce=>create( encoding = 'UTF-8' )->convert(
       EXPORTING data = data
-      IMPORTING buffer = mv_data ).      
+      IMPORTING buffer = mv_data ).
   ENDMETHOD.
 
   METHOD if_http_request~get_cdata.

@@ -12,7 +12,7 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA obj  TYPE REF TO cl_abap_codepage.
     DATA type TYPE REF TO cl_abap_classdescr.
     DATA ref  TYPE REF TO cl_abap_refdescr.
-    
+
     CREATE OBJECT obj.
     type ?= cl_abap_typedescr=>describe_by_object_ref( obj ).
     ref ?= cl_abap_typedescr=>describe_by_data( obj ).

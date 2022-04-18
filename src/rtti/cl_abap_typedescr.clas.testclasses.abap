@@ -149,7 +149,7 @@ CLASS ltcl_test IMPLEMENTATION.
       exp = cl_abap_typedescr=>typekind_date ).
     cl_abap_unit_assert=>assert_equals(
       act = type->length
-      exp = 16 ).      
+      exp = 16 ).
   ENDMETHOD.
 
   METHOD typekind_time.
@@ -162,7 +162,7 @@ CLASS ltcl_test IMPLEMENTATION.
       exp = cl_abap_typedescr=>typekind_time ).
     cl_abap_unit_assert=>assert_equals(
       act = type->length
-      exp = 12 ).          
+      exp = 12 ).
   ENDMETHOD.
 
   METHOD typekind_hex.
@@ -186,14 +186,14 @@ CLASS ltcl_test IMPLEMENTATION.
       exp = cl_abap_typedescr=>typekind_num ).
     cl_abap_unit_assert=>assert_equals(
       act = type->length
-      exp = 8 ).      
+      exp = 8 ).
   ENDMETHOD.
 
   METHOD abap_bool_absolute.
     DATA bool TYPE abap_bool.
     DATA lo_type TYPE REF TO cl_abap_typedescr.
     lo_type = cl_abap_typedescr=>describe_by_data( bool ).
-* this is checked in ajson(which is used by abapGit)    
+* this is checked in ajson(which is used by abapGit)
     cl_abap_unit_assert=>assert_equals(
       act = lo_type->absolute_name
       exp = '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL' ).
@@ -202,7 +202,7 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD abap_true_absolute.
     DATA lo_type TYPE REF TO cl_abap_typedescr.
     lo_type = cl_abap_typedescr=>describe_by_data( abap_true ).
-* this is checked in ajson(which is used by abapGit)    
+* this is checked in ajson(which is used by abapGit)
     cl_abap_unit_assert=>assert_equals(
       act = lo_type->absolute_name
       exp = '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL' ).
@@ -212,7 +212,7 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lo_type TYPE REF TO cl_abap_typedescr.
     DATA lv_xsd TYPE xsdboolean.
     lo_type = cl_abap_typedescr=>describe_by_data( lv_xsd ).
-* this is checked in ajson(which is used by abapGit)    
+* this is checked in ajson(which is used by abapGit)
     cl_abap_unit_assert=>assert_equals(
       act = lo_type->absolute_name
       exp = '\TYPE=XSDBOOLEAN' ).

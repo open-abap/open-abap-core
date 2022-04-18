@@ -226,7 +226,7 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lv_str TYPE string.
     DATA lv_hex TYPE xstring.
     DATA lv_resp TYPE xstring.
-    
+
     cl_http_client=>create_by_url(
       EXPORTING
         url    = 'https://github.com'
@@ -287,7 +287,7 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lv_string TYPE string.
     DATA lv_xstring TYPE xstring.
     DATA li_client TYPE REF TO if_http_client.
-    
+
     cl_http_client=>create_by_url(
       EXPORTING
         url    = 'https://github.com'
@@ -299,25 +299,25 @@ CLASS ltcl_test IMPLEMENTATION.
     lv_string = li_client->request->get_cdata( ).
     cl_abap_unit_assert=>assert_equals(
       act = lv_string
-      exp = 'ABC' ).  
+      exp = 'ABC' ).
 
     lv_xstring = li_client->request->get_data( ).
     cl_abap_unit_assert=>assert_equals(
       act = lv_xstring
-      exp = '414243' ).  
+      exp = '414243' ).
 
     li_client->request->set_data( lv_xstring ).
-    
+
     lv_xstring = li_client->request->get_data( ).
     cl_abap_unit_assert=>assert_equals(
       act = lv_xstring
-      exp = '414243' ).    
+      exp = '414243' ).
 
     lv_string = li_client->request->get_cdata( ).
     cl_abap_unit_assert=>assert_equals(
       act = lv_string
       exp = 'ABC' ).
-  
+
   ENDMETHOD.
 
   METHOD co_disabled.
@@ -334,7 +334,7 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lv_uri TYPE string VALUE 'https://api.github.com/gists/7178e319d3b699dbc30ee963c1a35219'.
     DATA lv_val TYPE string.
     DATA lv_code TYPE i.
-    
+
     cl_http_client=>create_by_url(
       EXPORTING
         url    = 'https://api.github.com'

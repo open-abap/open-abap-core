@@ -2,8 +2,8 @@ CLASS cl_ixml DEFINITION PUBLIC CREATE PRIVATE.
   PUBLIC SECTION.
     INTERFACES if_ixml.
     CLASS-METHODS
-      create 
-        RETURNING 
+      create
+        RETURNING
           VALUE(xml) TYPE REF TO if_ixml.
 ENDCLASS.
 

@@ -53,7 +53,7 @@ CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error ABSTRAC
         cx_shm_read_lock_active
         cx_shm_exclusive_lock_active
         cx_shm_parameter_error
-        cx_shm_change_lock_active.    
+        cx_shm_change_lock_active.
 
     METHODS _attach_update70
       IMPORTING
@@ -70,7 +70,7 @@ CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error ABSTRAC
         cx_shm_version_limit_exceeded
         cx_shm_no_active_version
         cx_shm_parameter_error
-        cx_shm_pending_lock_removed.        
+        cx_shm_pending_lock_removed.
 
     METHODS _attach_write70
       IMPORTING
@@ -85,7 +85,7 @@ CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error ABSTRAC
         cx_shm_exclusive_lock_active
         cx_shm_change_lock_active
         cx_shm_parameter_error
-        cx_shm_pending_lock_removed. 
+        cx_shm_pending_lock_removed.
 
     CLASS-METHODS _invalidate_area71
       IMPORTING
@@ -116,7 +116,7 @@ CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error ABSTRAC
       RETURNING
         VALUE(rc) TYPE shm_rc
       RAISING
-        cx_shm_parameter_error.   
+        cx_shm_parameter_error.
 
     METHODS _set_root
       IMPORTING
@@ -133,8 +133,8 @@ CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error ABSTRAC
         client_dependent TYPE abap_bool DEFAULT abap_false
         life_context     TYPE shm_life_context
       RETURNING
-        VALUE(rc)        TYPE shm_rc.       
-          
+        VALUE(rc)        TYPE shm_rc.
+
     CLASS-METHODS _free_area71
       IMPORTING
         area_name TYPE shm_area_name
@@ -148,8 +148,8 @@ CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error ABSTRAC
       RETURNING
         VALUE(rc) TYPE shm_rc
       RAISING
-        cx_shm_parameter_error.          
-        
+        cx_shm_parameter_error.
+
     CLASS-METHODS _get_instance_infos71
       IMPORTING
         area_name        TYPE shm_area_name
@@ -158,8 +158,8 @@ CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error ABSTRAC
         client_dependent TYPE abap_bool DEFAULT abap_false
         life_context     TYPE shm_life_context
       RETURNING
-        VALUE(infos)     TYPE shm_inst_infos.      
-        
+        VALUE(infos)     TYPE shm_inst_infos.
+
     CLASS-METHODS _free_instance71
       IMPORTING
         area_name         TYPE shm_area_name
@@ -226,7 +226,7 @@ CLASS cl_shm_area IMPLEMENTATION.
   METHOD _attach_update70.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-  
+
   METHOD _attach_write70.
     ASSERT 1 = 'todo'.
   ENDMETHOD.

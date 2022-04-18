@@ -22,7 +22,7 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_ddic_field_list.
-  
+
     DATA struct TYPE REF TO cl_abap_structdescr.
     DATA lt_ddfields TYPE ddfields.
     DATA ls_ddfields LIKE LINE OF lt_ddfields.
@@ -39,7 +39,7 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = ls_ddfields-keyflag
       exp = abap_true ).
-      
+
   ENDMETHOD.
 
 

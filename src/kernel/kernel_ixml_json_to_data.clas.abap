@@ -1,16 +1,16 @@
 CLASS kernel_ixml_json_to_data DEFINITION PUBLIC.
   PUBLIC SECTION.
     CLASS-METHODS build
-      IMPORTING 
+      IMPORTING
         iv_name TYPE string
         iv_ref  TYPE REF TO data
         ii_doc  TYPE REF TO if_ixml_document.
   PRIVATE SECTION.
     CLASS-METHODS get_field_name
       IMPORTING ii_node TYPE REF TO if_ixml_node
-      RETURNING VALUE(rv_name) TYPE string.    
+      RETURNING VALUE(rv_name) TYPE string.
     CLASS-METHODS traverse
-      IMPORTING 
+      IMPORTING
         ii_node TYPE REF TO if_ixml_node
         iv_ref  TYPE REF TO data.
 ENDCLASS.
@@ -21,7 +21,7 @@ CLASS kernel_ixml_json_to_data IMPLEMENTATION.
     DATA li_aiterator TYPE REF TO if_ixml_node_iterator.
     DATA li_anode TYPE REF TO if_ixml_node.
     DATA attr TYPE REF TO if_ixml_named_node_map.
-    
+
     attr = ii_node->get_attributes( ).
     IF attr IS NOT INITIAL.
       li_aiterator = attr->create_iterator( ).
@@ -44,7 +44,7 @@ CLASS kernel_ixml_json_to_data IMPLEMENTATION.
     DATA li_node TYPE REF TO if_ixml_node.
     DATA lv_name TYPE string.
     DATA li_iterator TYPE REF TO if_ixml_node_iterator.
-    
+
     li_first = ii_doc->get_root( )->get_first_child( ).
     ASSERT li_first->get_name( ) = 'object'.
 
@@ -57,7 +57,7 @@ CLASS kernel_ixml_json_to_data IMPLEMENTATION.
 
       lv_name = get_field_name( li_node ).
       IF lv_name = iv_name.
-*        WRITE '@KERNEL console.dir("found");'. 
+*        WRITE '@KERNEL console.dir("found");'.
         traverse(
           iv_ref  = iv_ref
           ii_node = li_node ).
@@ -76,7 +76,7 @@ CLASS kernel_ixml_json_to_data IMPLEMENTATION.
     FIELD-SYMBOLS <any> TYPE any.
     FIELD-SYMBOLS <field> TYPE any.
     FIELD-SYMBOLS <tab> TYPE ANY TABLE.
-    
+
     lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
     CASE lo_type->kind.
       WHEN cl_abap_typedescr=>kind_struct.
@@ -119,7 +119,7 @@ CLASS kernel_ixml_json_to_data IMPLEMENTATION.
       WHEN OTHERS.
         WRITE '@KERNEL console.dir(lo_type.get().kind.get());'.
     ENDCASE.
-    
+
   ENDMETHOD.
 
 ENDCLASS.

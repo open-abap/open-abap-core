@@ -112,7 +112,7 @@ CLASS ltcl_test IMPLEMENTATION.
 
     cl_abap_unit_assert=>assert_equals(
       act = encoded
-      exp = 'YWJhcA==' ).    
+      exp = 'YWJhcA==' ).
 
   ENDMETHOD.
 

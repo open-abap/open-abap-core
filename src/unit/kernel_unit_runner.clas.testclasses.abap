@@ -1,34 +1,34 @@
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
   PRIVATE SECTION.
     METHODS single_method FOR TESTING RAISING cx_static_check.
-      
+
     METHODS failing_not_for_testing RAISING cx_static_check.
     METHODS single_method_fail FOR TESTING RAISING cx_static_check.
 
     METHODS failing_not_for_testing_str RAISING cx_static_check.
     METHODS single_method_fail_str FOR TESTING RAISING cx_static_check.
-      
+
     METHODS failing_not_for_testing_tab RAISING cx_static_check.
     METHODS single_method_fail_tab FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
   METHOD failing_not_for_testing.
-* this method is used internally for testing, dont set it FOR TESTING    
+* this method is used internally for testing, dont set it FOR TESTING
     cl_abap_unit_assert=>assert_equals(
       act = 'a'
       exp = 'b' ).
   ENDMETHOD.
 
   METHOD failing_not_for_testing_str.
-* this method is used internally for testing, dont set it FOR TESTING    
+* this method is used internally for testing, dont set it FOR TESTING
     cl_abap_unit_assert=>assert_equals(
       act = `sdfds`
       exp = `sdfdsfds` ).
   ENDMETHOD.
 
   METHOD failing_not_for_testing_tab.
-* this method is used internally for testing, dont set it FOR TESTING    
+* this method is used internally for testing, dont set it FOR TESTING
     DATA tab1 TYPE string_table.
     DATA tab2 TYPE string_table.
     INSERT |asdf| INTO TABLE tab1.
@@ -96,13 +96,13 @@ CLASS ltcl_test IMPLEMENTATION.
       exp = kernel_unit_runner=>gc_status-failed ).
     cl_abap_unit_assert=>assert_char_cp(
       act = ls_list-js_location
-      exp = '*failing_not_for_testing*' ).      
+      exp = '*failing_not_for_testing*' ).
     cl_abap_unit_assert=>assert_equals(
       act = ls_list-actual
       exp = 'a' ).
     cl_abap_unit_assert=>assert_char_cp(
       act = ls_result-json
-      exp = |*"Expected 'b', got 'a'"*| ).  
+      exp = |*"Expected 'b', got 'a'"*| ).
 *    WRITE / ls_result-json.
   ENDMETHOD.
 
@@ -118,7 +118,7 @@ CLASS ltcl_test IMPLEMENTATION.
     APPEND ls_input TO lt_input.
 
     ls_result = kernel_unit_runner=>run( lt_input ).
- 
+
     cl_abap_unit_assert=>assert_equals(
       act = lines( ls_result-list )
       exp = 1 ).

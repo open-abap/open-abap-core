@@ -25,5 +25,5 @@ CLASS cl_abap_conv_codepage IMPLEMENTATION.
   METHOD create_out.
     CREATE OBJECT instance TYPE lcl_out.
   ENDMETHOD.
-  
+
 ENDCLASS.

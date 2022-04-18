@@ -4,7 +4,7 @@ CLASS cl_sxml_string_writer DEFINITION PUBLIC FINAL CREATE PRIVATE.
     INTERFACES if_sxml_writer.
 
     METHODS constructor
-      IMPORTING 
+      IMPORTING
         type TYPE if_sxml=>xml_stream_type.
 
     METHODS get_output
@@ -32,7 +32,7 @@ CLASS cl_sxml_string_writer DEFINITION PUBLIC FINAL CREATE PRIVATE.
     METHODS append_text IMPORTING text TYPE string.
     METHODS get_text RETURNING VALUE(text) TYPE string.
 
-* stack operations      
+* stack operations
     METHODS peek RETURNING VALUE(rv_name) TYPE string.
     METHODS remove RETURNING VALUE(rv_name) TYPE string.
 ENDCLASS.
@@ -45,7 +45,7 @@ CLASS cl_sxml_string_writer IMPLEMENTATION.
 
   METHOD create.
     CREATE OBJECT writer
-      EXPORTING 
+      EXPORTING
         type = type.
   ENDMETHOD.
 

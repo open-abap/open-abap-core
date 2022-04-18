@@ -66,7 +66,7 @@ CLASS cl_http_client IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_client~close.
-* todo    
+* todo
     RETURN.
   ENDMETHOD.
 
@@ -88,7 +88,7 @@ CLASS cl_http_client IMPLEMENTATION.
 * default user-agent if not set
     IF if_http_client~request->get_header_field( 'user-agent' ) IS INITIAL.
       if_http_client~request->set_header_field(
-        name  = 'user-agent' 
+        name  = 'user-agent'
         value = 'open-abap-http' ).
     ENDIF.
 
@@ -156,7 +156,7 @@ CLASS cl_http_client IMPLEMENTATION.
     WRITE '@KERNEL this.if_http_client$response.get().content_type.set(response.headers["content-type"] || "");'.
     WRITE '@KERNEL this.if_http_client$response.get().mv_status.set(response.statusCode);'.
     WRITE '@KERNEL this.if_http_client$response.get().mv_data.set(response.body.toString("hex").toUpperCase());'.
-  
+
 * workaround for classic exceptions, this should work sometime in the transpiler instead
     sy-subrc = 0.
 

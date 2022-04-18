@@ -44,14 +44,14 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_ddic_field_list.
-    
+
     DATA lt_components TYPE component_table.
     DATA ls_component LIKE LINE OF lt_components.
     DATA ls_return LIKE LINE OF rt_components.
     DATA lv_name TYPE string.
     DATA lv_keyfield TYPE string.
     FIELD-SYMBOLS <component> LIKE LINE OF rt_components.
-    
+
     lt_components = get_components( ).
 
     ASSERT absolute_name CP '+TYPE=*'.

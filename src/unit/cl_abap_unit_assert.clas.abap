@@ -47,7 +47,7 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
 
     CLASS-METHODS
       skip
-        IMPORTING   
+        IMPORTING
           msg    TYPE csequence
           detail TYPE csequence OPTIONAL.
 
@@ -116,7 +116,7 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
   METHOD assert_bound.
     IF act IS NOT BOUND.
       RAISE EXCEPTION TYPE kernel_cx_assert
-        EXPORTING 
+        EXPORTING
           message = |Expected value to be bound|.
     ENDIF.
   ENDMETHOD.
@@ -124,7 +124,7 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
   METHOD assert_not_bound.
     IF act IS BOUND.
       RAISE EXCEPTION TYPE kernel_cx_assert
-        EXPORTING 
+        EXPORTING
           message = |Expected value to not be bound|.
     ENDIF.
   ENDMETHOD.
@@ -146,26 +146,26 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
   METHOD assert_differs.
     IF act = exp.
       RAISE EXCEPTION TYPE kernel_cx_assert
-        EXPORTING 
+        EXPORTING
           message = |Expected different values|
           act     = act
-          exp     = exp. 
+          exp     = exp.
     ENDIF.
   ENDMETHOD.
 
   METHOD assert_true.
     IF act <> abap_true.
       RAISE EXCEPTION TYPE kernel_cx_assert
-        EXPORTING 
-          message = |Expected abap_true|.       
+        EXPORTING
+          message = |Expected abap_true|.
     ENDIF.
   ENDMETHOD.
 
   METHOD assert_false.
     IF act <> abap_false.
       RAISE EXCEPTION TYPE kernel_cx_assert
-        EXPORTING 
-          message = |Expected abap_false|.     
+        EXPORTING
+          message = |Expected abap_false|.
     ENDIF.
   ENDMETHOD.
 
@@ -188,15 +188,15 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
         IF type2 NA 'CgyIFPDTXN'.
           RAISE EXCEPTION TYPE kernel_cx_assert
             EXPORTING
-              message = |Unexpected types|.        
+              message = |Unexpected types|.
         ENDIF.
       ENDIF.
     ELSEIF NOT type1 IS INITIAL AND NOT type2 IS INITIAL.
-* else check the types are identical      
+* else check the types are identical
       IF type1 <> type2.
         RAISE EXCEPTION TYPE kernel_cx_assert
           EXPORTING
-            message = |Unexpected types|.        
+            message = |Unexpected types|.
       ENDIF.
     ENDIF.
 
@@ -236,23 +236,23 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
   METHOD assert_not_initial.
     IF act IS INITIAL.
       RAISE EXCEPTION TYPE kernel_cx_assert
-        EXPORTING 
-          message = |Expected non initial value|.        
+        EXPORTING
+          message = |Expected non initial value|.
     ENDIF.
   ENDMETHOD.
 
   METHOD assert_initial.
     IF act IS NOT INITIAL.
       RAISE EXCEPTION TYPE kernel_cx_assert
-        EXPORTING 
-          message = |Expected initial value|.      
+        EXPORTING
+          message = |Expected initial value|.
     ENDIF.
   ENDMETHOD.
 
   METHOD assert_subrc.
     IF sy-subrc <> exp.
       RAISE EXCEPTION TYPE kernel_cx_assert
-        EXPORTING 
+        EXPORTING
           message = |Expected sy-subrc to equal { exp }, got { sy-subrc }|.
     ENDIF.
   ENDMETHOD.

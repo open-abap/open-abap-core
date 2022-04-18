@@ -7,10 +7,10 @@ CLASS ltcl_json_to_ixml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHOR
       RETURNING
         VALUE(rv_dump) TYPE string.
     METHODS dump
-      IMPORTING 
+      IMPORTING
         iv_json TYPE string
       RETURNING
-        VALUE(rv_dump) TYPE string.    
+        VALUE(rv_dump) TYPE string.
 
     METHODS test_empty_object FOR TESTING RAISING cx_static_check.
     METHODS test_empty_array FOR TESTING RAISING cx_static_check.
@@ -76,7 +76,7 @@ CLASS ltcl_json_to_ixml IMPLEMENTATION.
   METHOD test_empty_object.
     DATA lv_dump TYPE string.
     lv_dump = dump( '{}' ).
-*    WRITE '@KERNEL console.dir(lv_dump);'.    
+*    WRITE '@KERNEL console.dir(lv_dump);'.
     cl_abap_unit_assert=>assert_equals(
       act = lv_dump
       exp = |NAME:object,DEPTH:0,VALUE:,LEAF:X\n| ).
@@ -97,10 +97,10 @@ CLASS ltcl_json_to_ixml IMPLEMENTATION.
 *    WRITE '@KERNEL console.dir(lv_dump.get());'.
     cl_abap_unit_assert=>assert_equals(
       act = lv_dump
-      exp = 
-        |NAME:object,DEPTH:2,VALUE:2\n| && 
-        |NAME:num,DEPTH:1,VALUE:2\n| && 
-        |  ANAME:name,AVALUE:DATA\n| && 
+      exp =
+        |NAME:object,DEPTH:2,VALUE:2\n| &&
+        |NAME:num,DEPTH:1,VALUE:2\n| &&
+        |  ANAME:name,AVALUE:DATA\n| &&
         |NAME:#text,DEPTH:0,VALUE:2,LEAF:X\n| ).
   ENDMETHOD.
 
@@ -110,9 +110,9 @@ CLASS ltcl_json_to_ixml IMPLEMENTATION.
 *    WRITE '@KERNEL console.dir(lv_dump.get());'.
     cl_abap_unit_assert=>assert_equals(
       act = lv_dump
-      exp = 
-        |NAME:object,DEPTH:1,VALUE:\n| && 
-        |NAME:array,DEPTH:0,VALUE:,LEAF:X\n| && 
+      exp =
+        |NAME:object,DEPTH:1,VALUE:\n| &&
+        |NAME:array,DEPTH:0,VALUE:,LEAF:X\n| &&
         |  ANAME:name,AVALUE:DATA\n| ).
   ENDMETHOD.
 
@@ -122,7 +122,7 @@ CLASS ltcl_json_to_ixml IMPLEMENTATION.
 *    WRITE '@KERNEL console.dir(lv_dump.get());'.
     cl_abap_unit_assert=>assert_equals(
       act = lv_dump
-      exp = 
+      exp =
         |NAME:object,DEPTH:4,VALUE:321\n| &&
         |NAME:array,DEPTH:3,VALUE:321\n| &&
         |  ANAME:name,AVALUE:DATA\n| &&
@@ -138,7 +138,7 @@ CLASS ltcl_json_to_ixml IMPLEMENTATION.
 *    WRITE '@KERNEL console.dir(lv_dump.get());'.
     cl_abap_unit_assert=>assert_equals(
       act = lv_dump
-      exp = 
+      exp =
         |NAME:object,DEPTH:3,VALUE:321\n| &&
         |NAME:object,DEPTH:2,VALUE:321\n| &&
         |  ANAME:name,AVALUE:DATA\n| &&
@@ -153,7 +153,7 @@ CLASS ltcl_json_to_ixml IMPLEMENTATION.
 *    WRITE '@KERNEL console.dir(lv_dump.get());'.
     cl_abap_unit_assert=>assert_equals(
       act = lv_dump
-      exp = 
+      exp =
         |NAME:object,DEPTH:4,VALUE:321hello\n| &&
         |NAME:array,DEPTH:3,VALUE:321hello\n| &&
         |  ANAME:name,AVALUE:DATA\n| &&
@@ -172,7 +172,7 @@ CLASS ltcl_json_to_ixml IMPLEMENTATION.
 *    WRITE '@KERNEL console.dir(lv_dump.get());'.
     cl_abap_unit_assert=>assert_equals(
       act = lv_dump
-      exp = 
+      exp =
         |NAME:object,DEPTH:3,VALUE:23\n| &&
         |NAME:array,DEPTH:2,VALUE:23\n| &&
         |  ANAME:name,AVALUE:DATA\n| &&

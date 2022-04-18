@@ -81,7 +81,7 @@ CLASS ltcl_json IMPLEMENTATION.
     intf->open_element( name = 'str' ).
     intf->write_value( 'bar' ).
     intf->close_element( ).
-    
+
     intf->close_element( ).
     json = cl_abap_conv_codepage=>create_in( )->convert( writer->get_output( ) ).
     cl_abap_unit_assert=>assert_equals(
@@ -119,7 +119,7 @@ CLASS ltcl_json IMPLEMENTATION.
           END OF source.
 
     writer = cl_sxml_string_writer=>create( if_sxml=>co_xt_json ).
-    
+
     CALL TRANSFORMATION id SOURCE data = source RESULT XML writer.
     json = cl_abap_conv_codepage=>create_in( )->convert( writer->get_output( ) ).
 *    WRITE '@KERNEL console.dir(json);'.

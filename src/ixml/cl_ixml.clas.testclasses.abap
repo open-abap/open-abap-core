@@ -10,11 +10,11 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_attributes2 FOR TESTING RAISING cx_static_check.
     METHODS parse_attributes3 FOR TESTING RAISING cx_static_check.
     METHODS create FOR TESTING RAISING cx_static_check.
-          
+
     METHODS parse
-      IMPORTING 
-        iv_xml TYPE string 
-      RETURNING 
+      IMPORTING
+        iv_xml TYPE string
+      RETURNING
         VALUE(ri_doc) TYPE REF TO if_ixml_document.
     METHODS dump
       IMPORTING
@@ -52,7 +52,7 @@ CLASS ltcl_xml IMPLEMENTATION.
       rv_dump = |{ rv_dump }NAME:{
         li_node->get_name( ) }|.
       rv_dump = |{ rv_dump },DEPTH:{
-        li_node->get_depth( ) },VALUE:{ 
+        li_node->get_depth( ) },VALUE:{
         li_node->get_value( ) }|.
       IF li_node->get_namespace( ) IS NOT INITIAL.
         rv_dump = |{ rv_dump },NS:{ li_node->get_namespace( ) }|.
@@ -99,10 +99,10 @@ CLASS ltcl_xml IMPLEMENTATION.
     DATA li_ixml    TYPE REF TO if_ixml.
     DATA lv_subrc   TYPE i.
 
-  
+
     li_ixml = cl_ixml=>create( ).
     ri_doc  = li_ixml->create_document( ).
- 
+
     li_factory = li_ixml->create_stream_factory( ).
     li_istream = li_factory->create_istream_string( iv_xml ).
     li_parser = li_ixml->create_parser( stream_factory = li_factory
@@ -119,7 +119,7 @@ CLASS ltcl_xml IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD parse_basic.
-    
+
     DATA lv_xml     TYPE string.
     DATA lv_dump    TYPE string.
     DATA lv_expected TYPE string.
@@ -129,7 +129,7 @@ CLASS ltcl_xml IMPLEMENTATION.
       | <foo>blah</foo>\n| &&
       | <bar>moo</bar>\n| &&
       |</abapGit>|.
-    
+
     lv_expected =
       |NAME:abapGit,DEPTH:2,VALUE:blahmoo\n| &&
       |NAME:foo,DEPTH:1,VALUE:blah\n| &&
@@ -161,7 +161,7 @@ CLASS ltcl_xml IMPLEMENTATION.
       |  </asx:values>\n| &&
       | </asx:abap>\n| &&
       |</abapGit>|.
-    
+
     lv_expected =
       |NAME:abapGit,DEPTH:5,VALUE:val\n| &&
       |NAME:abap,DEPTH:4,VALUE:val,NS:asx\n| &&
@@ -191,7 +191,7 @@ CLASS ltcl_xml IMPLEMENTATION.
 
     li_doc = parse( lv_xml ).
     lv_dump = dump( li_doc->if_ixml_node~get_children( ) ).
-    
+
     li_git ?= li_doc->find_from_name_ns( depth = 0
                                          name = 'abapGit' ).
     li_sub = li_git->get_first_child( ).
@@ -219,7 +219,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     DATA li_doc     TYPE REF TO if_ixml_document.
     DATA li_node    TYPE REF TO if_ixml_node.
     DATA li_version TYPE REF TO if_ixml_node.
-    
+
 
     lv_xml = |<?xml version="1.0" encoding="utf-16"?><abapGit vers="abc" foo="2"></abapGit>|.
     li_doc = parse( lv_xml ).
@@ -231,7 +231,7 @@ CLASS ltcl_xml IMPLEMENTATION.
 
     cl_abap_unit_assert=>assert_equals(
       act = li_version->get_value( )
-      exp = |abc| ).  
+      exp = |abc| ).
 
   ENDMETHOD.
 
@@ -241,7 +241,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     DATA li_doc     TYPE REF TO if_ixml_document.
     DATA li_element TYPE REF TO if_ixml_element.
     DATA li_version TYPE REF TO if_ixml_node.
-    
+
 
     lv_xml = |<?xml version="1.0" encoding="utf-16"?><abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL"></abapGit>|.
     li_doc = parse( lv_xml ).
@@ -251,7 +251,7 @@ CLASS ltcl_xml IMPLEMENTATION.
 
     cl_abap_unit_assert=>assert_equals(
       act = li_element->get_attribute_ns( 'serializer' )
-      exp = |LCL_OBJECT_DTEL| ).  
+      exp = |LCL_OBJECT_DTEL| ).
 
   ENDMETHOD.
 
@@ -261,7 +261,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     DATA li_doc     TYPE REF TO if_ixml_document.
     DATA li_element TYPE REF TO if_ixml_element.
     DATA li_version TYPE REF TO if_ixml_node.
-    
+
 
     lv_xml = |<?xml version="1.0" encoding="utf-16"?><abapGit></abapGit>|.
     li_doc = parse( lv_xml ).
@@ -269,10 +269,10 @@ CLASS ltcl_xml IMPLEMENTATION.
     li_element ?= li_doc->find_from_name_ns( depth = 0 name = 'abapGit' ).
     cl_abap_unit_assert=>assert_not_initial( li_element ).
 
-* not found, should return blank    
+* not found, should return blank
     cl_abap_unit_assert=>assert_equals(
       act = li_element->get_attribute_ns( 'sdfsdfsd' )
-      exp = || ).  
+      exp = || ).
 
   ENDMETHOD.
 
