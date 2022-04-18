@@ -8,19 +8,19 @@ CLASS cl_abap_regex DEFINITION PUBLIC.
 
     METHODS create_matcher
       IMPORTING
-        text TYPE clike
+        text              TYPE clike
       RETURNING
         VALUE(ro_matcher) TYPE REF TO cl_abap_matcher.
 
     CLASS-METHODS create_pcre
       IMPORTING
-        pattern TYPE clike
-        VALUE(ignore_case) TYPE abap_bool DEFAULT abap_false
+        pattern      TYPE clike
+        ignore_case  TYPE abap_bool DEFAULT abap_false
       RETURNING
         VALUE(regex) TYPE REF TO cl_abap_regex.
 
   PRIVATE SECTION.
-    DATA mv_pattern TYPE string.
+    DATA mv_pattern     TYPE string.
     DATA mv_ignore_case TYPE abap_bool.
 
 ENDCLASS.

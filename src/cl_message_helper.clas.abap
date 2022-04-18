@@ -2,13 +2,13 @@ CLASS cl_message_helper DEFINITION PUBLIC.
   PUBLIC SECTION.
     CLASS-METHODS set_msg_vars_for_if_msg
       IMPORTING
-        VALUE(text) TYPE REF TO if_message
+        text TYPE REF TO if_message
       EXPORTING
         VALUE(string) TYPE string.
 
     CLASS-METHODS set_msg_vars_for_clike
       IMPORTING
-        VALUE(text) TYPE clike.
+        text TYPE clike.
 ENDCLASS.
 
 CLASS cl_message_helper IMPLEMENTATION.

@@ -80,7 +80,7 @@ ENDCLASS.
 
 CLASS lcl_node_list IMPLEMENTATION.
   METHOD append.
-    ASSERT NOT ii_node IS INITIAL.
+    ASSERT ii_node IS NOT INITIAL.
     APPEND ii_node TO mt_list.
   ENDMETHOD.
 

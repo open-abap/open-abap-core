@@ -24,7 +24,7 @@ CLASS cl_sxml_string_reader IMPLEMENTATION.
       CASE ls_parsed-type.
         WHEN if_sxml_node=>co_nt_element_open.
           CLEAR lt_attributes.
-          IF NOT ls_parsed-key IS INITIAL.
+          IF ls_parsed-key IS NOT INITIAL.
             CREATE OBJECT li_attribute TYPE lcl_attribute
               EXPORTING
                 name       = 'name'
