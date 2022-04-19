@@ -20,7 +20,7 @@ INTERFACE if_http_response PUBLIC.
       VALUE(val) TYPE string.
   METHODS set_content_type
     IMPORTING
-      val TYPE string.      
+      val TYPE string.
 
   METHODS get_data
     RETURNING VALUE(val) TYPE xstring.

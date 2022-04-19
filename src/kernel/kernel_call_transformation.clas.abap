@@ -1,5 +1,5 @@
 CLASS kernel_call_transformation DEFINITION PUBLIC.
-* handling of ABAP statement CALL TRANSFORMATION  
+* handling of ABAP statement CALL TRANSFORMATION
   PUBLIC SECTION.
     CLASS-METHODS call IMPORTING input TYPE any.
   PRIVATE SECTION.
@@ -10,7 +10,7 @@ CLASS kernel_call_transformation DEFINITION PUBLIC.
     CLASS-METHODS traverse_write
       IMPORTING iv_ref TYPE REF TO data.
     CLASS-METHODS traverse_write_type
-      IMPORTING iv_ref TYPE REF TO data 
+      IMPORTING iv_ref TYPE REF TO data
       RETURNING VALUE(rv_type) TYPE string.
 ENDCLASS.
 
@@ -36,7 +36,7 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     WRITE '@KERNEL lv_name.set(INPUT.name.toUpperCase());'.
     ASSERT lv_name = 'ID'.
 
-* Handle input SOURCE    
+* Handle input SOURCE
     WRITE '@KERNEL if (INPUT.sourceXML?.constructor.name === "ABAPObject") this.mi_doc.set(INPUT.sourceXML);'.
     WRITE '@KERNEL if (INPUT.sourceXML?.constructor.name === "String") lv_source.set(INPUT.sourceXML);'.
     IF lv_source IS NOT INITIAL.
@@ -50,8 +50,8 @@ CLASS kernel_call_transformation IMPLEMENTATION.
         RAISE EXCEPTION TYPE cx_xslt_format_error.
       ENDIF.
     ENDIF.
-    
-* todo, rewrite this part,    
+
+* todo, rewrite this part,
     WRITE '@KERNEL if (typeof INPUT.source === "object" && INPUT.resultXML?.constructor.name === "ABAPObject") {'.
     WRITE '@KERNEL   this.mi_writer.set(INPUT.resultXML);'.
     WRITE '@KERNEL }'.
@@ -107,7 +107,7 @@ CLASS kernel_call_transformation IMPLEMENTATION.
       kernel_ixml_xml_to_data=>build(
         iv_name = lv_name
         iv_ref  = result
-        ii_doc  = mi_doc ).      
+        ii_doc  = mi_doc ).
     ENDIF.
     WRITE '@KERNEL }'.
     WRITE '@KERNEL }'.
@@ -121,7 +121,7 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
     CASE lo_type->type_kind.
       WHEN cl_abap_typedescr=>typekind_int
-          OR cl_abap_typedescr=>typekind_int1 
+          OR cl_abap_typedescr=>typekind_int1
           OR cl_abap_typedescr=>typekind_int2
           OR cl_abap_typedescr=>typekind_int8
           OR cl_abap_typedescr=>typekind_decfloat
@@ -132,7 +132,7 @@ CLASS kernel_call_transformation IMPLEMENTATION.
         rv_type = 'str'.
     ENDCASE.
   ENDMETHOD.
-  
+
   METHOD traverse_write.
 * TODO: refactor this method
 
@@ -198,10 +198,10 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     DATA li_parser  TYPE REF TO if_ixml_parser.
     DATA li_ixml    TYPE REF TO if_ixml.
     DATA lv_subrc   TYPE i.
-  
+
     li_ixml = cl_ixml=>create( ).
     mi_doc  = li_ixml->create_document( ).
- 
+
     li_factory = li_ixml->create_stream_factory( ).
     li_istream = li_factory->create_istream_string( iv_xml ).
     li_parser = li_ixml->create_parser( stream_factory = li_factory

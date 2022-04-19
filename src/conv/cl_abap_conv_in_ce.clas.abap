@@ -53,11 +53,11 @@ CLASS cl_abap_conv_in_ce IMPLEMENTATION.
 
     lv_hex(1) = value MOD 255.
     lv_hex+1(1) = value DIV 255.
-  
+
     lo_in = create( encoding = '4103' ).
 
     lo_in->convert(
-      EXPORTING 
+      EXPORTING
         input = lv_hex
       IMPORTING
         data  = ret ).

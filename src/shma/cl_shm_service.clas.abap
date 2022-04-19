@@ -15,7 +15,7 @@ CLASS cl_shm_service DEFINITION PUBLIC.
       RAISING
         cx_shma_not_configured
         cx_shma_inconsistent.
-        
+
     CLASS-METHODS trace_get_service
       IMPORTING
         !area_name TYPE shm_area_name OPTIONAL
@@ -41,7 +41,7 @@ CLASS cl_shm_service IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD trace_get_service.
-* dont dump, this method is called from area CLASS_CONSTRUCTORs    
+* dont dump, this method is called from area CLASS_CONSTRUCTORs
     RETURN.
   ENDMETHOD.
 

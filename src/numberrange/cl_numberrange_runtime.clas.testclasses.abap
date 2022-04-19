@@ -11,7 +11,7 @@ CLASS ltcl_numberrange_runtime IMPLEMENTATION.
 
     DATA lv_num TYPE n LENGTH 10.
 
-* as of now, the range and object is not checked, everything returns a number, always    
+* as of now, the range and object is not checked, everything returns a number, always
     cl_numberrange_runtime=>number_get(
       EXPORTING
         nr_range_nr = '01'

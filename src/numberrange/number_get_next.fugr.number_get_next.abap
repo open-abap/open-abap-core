@@ -20,7 +20,7 @@ FUNCTION number_get_next.
     EXPORTING
       nr_range_nr = nr_range_nr
       object      = object
-    IMPORTING 
+    IMPORTING
       number      = number ).
 
 * todo, hack to set return value

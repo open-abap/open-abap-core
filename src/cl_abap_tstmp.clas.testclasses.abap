@@ -90,7 +90,7 @@ CLASS ltcl_test IMPLEMENTATION.
         syst_time = '112233'
       IMPORTING
         utc_tstmp = lv_timestamp ).
-    
+
     cl_abap_unit_assert=>assert_equals(
       act = lv_timestamp
       exp = 20220101112233 ).

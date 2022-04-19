@@ -19,7 +19,7 @@ CLASS cl_abap_elemdescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
 
     METHODS get_ddic_field
       IMPORTING
-        VALUE(p_langu) TYPE sy-langu DEFAULT sy-langu
+        p_langu TYPE sy-langu DEFAULT sy-langu
       RETURNING
         VALUE(p_flddescr) TYPE dfies
       EXCEPTIONS

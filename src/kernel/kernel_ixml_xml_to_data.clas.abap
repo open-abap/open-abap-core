@@ -1,13 +1,13 @@
 CLASS kernel_ixml_xml_to_data DEFINITION PUBLIC.
   PUBLIC SECTION.
     CLASS-METHODS build
-      IMPORTING 
+      IMPORTING
         iv_name TYPE string
         iv_ref  TYPE REF TO data
         ii_doc  TYPE REF TO if_ixml_document.
   PRIVATE SECTION.
     CLASS-METHODS traverse
-      IMPORTING 
+      IMPORTING
         ii_node TYPE REF TO if_ixml_node
         iv_ref  TYPE REF TO data.
 ENDCLASS.
@@ -20,9 +20,9 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
     DATA li_node TYPE REF TO if_ixml_node.
     DATA lv_name TYPE string.
     DATA li_iterator TYPE REF TO if_ixml_node_iterator.
-    
+
     li_first ?= ii_doc->get_root( )->get_first_child( ).
- 
+
     li_node = li_first->find_from_name_ns(
       name      = iv_name
       depth     = 0
@@ -47,7 +47,7 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
     FIELD-SYMBOLS <any> TYPE any.
     FIELD-SYMBOLS <field> TYPE any.
     FIELD-SYMBOLS <tab> TYPE ANY TABLE.
-    
+
     lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
     CASE lo_type->kind.
       WHEN cl_abap_typedescr=>kind_struct.
@@ -87,7 +87,7 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
       WHEN OTHERS.
         WRITE '@KERNEL console.dir(lo_type.get().kind.get());'.
     ENDCASE.
-    
+
   ENDMETHOD.
 
 ENDCLASS.

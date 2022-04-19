@@ -3,14 +3,14 @@ CLASS cl_abap_random DEFINITION PUBLIC.
     CLASS-METHODS create
       IMPORTING
         seed TYPE i OPTIONAL
-      RETURNING 
+      RETURNING
         VALUE(ro_random) TYPE REF TO cl_abap_random.
     METHODS int RETURNING VALUE(rv_integer) TYPE i.
     METHODS intinrange
-      IMPORTING 
+      IMPORTING
         low  TYPE i
         high TYPE i
-      RETURNING 
+      RETURNING
         VALUE(rv_integer) TYPE i.
     CLASS-METHODS seed RETURNING VALUE(rv_seed) TYPE i.
 * todo, use "crypto." instead, see cl_abap_hmac which also uses crypto

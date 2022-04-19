@@ -24,7 +24,7 @@ CLASS lcl_client DEFINITION.
     INTERFACES if_apc_wsp_client.
     INTERFACES if_apc_wsp_message_manager.
     METHODS constructor
-      IMPORTING 
+      IMPORTING
         iv_host TYPE string
         iv_port TYPE i
         io_handler TYPE REF TO if_apc_wsp_event_handler.

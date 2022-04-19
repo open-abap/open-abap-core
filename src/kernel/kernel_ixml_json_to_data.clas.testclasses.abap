@@ -4,7 +4,7 @@ CLASS ltcl_ixml_to_data DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHOR
     METHODS test_elem FOR TESTING RAISING cx_static_check.
     METHODS test_stru FOR TESTING RAISING cx_static_check.
     METHODS test_table FOR TESTING RAISING cx_static_check.
-  
+
 ENDCLASS.
 
 CLASS ltcl_ixml_to_data IMPLEMENTATION.
@@ -26,7 +26,7 @@ CLASS ltcl_ixml_to_data IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = target
       exp = 2 ).
-      
+
   ENDMETHOD.
 
   METHOD test_stru.
@@ -48,7 +48,7 @@ CLASS ltcl_ixml_to_data IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = target-field
       exp = 321 ).
-      
+
   ENDMETHOD.
 
   METHOD test_table.
@@ -61,7 +61,7 @@ CLASS ltcl_ixml_to_data IMPLEMENTATION.
     DATA lv_ref TYPE REF TO data.
     DATA li_doc TYPE REF TO if_ixml_document.
     DATA lv_input TYPE string.
-    
+
     li_doc = kernel_json_to_ixml=>build( '{"DATA": [{"FIELD": 321}]}' ).
     GET REFERENCE OF target INTO lv_ref.
 

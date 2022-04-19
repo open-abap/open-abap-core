@@ -78,8 +78,8 @@ CLASS kernel_unit_runner IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD to_json.
-* would like to keep the dependencies of this class minimal, 
-* so not using CALL TRANSFORMATION or any other ABAP classes    
+* would like to keep the dependencies of this class minimal,
+* so not using CALL TRANSFORMATION or any other ABAP classes
 
     DATA ls_list LIKE LINE OF it_list.
     DATA lt_strings TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
@@ -89,15 +89,15 @@ CLASS kernel_unit_runner IMPLEMENTATION.
 
     LOOP AT it_list INTO ls_list.
       lv_message = ls_list-message.
-      REPLACE ALL OCCURENCES OF |"| IN lv_message WITH |\"|.
+      REPLACE ALL OCCURRENCES OF |"| IN lv_message WITH |\"|.
       lv_string = |\{"class_name": "{ ls_list-class_name
-        }","testclass_name": "{ ls_list-testclass_name 
-        }","method_name": "{ ls_list-method_name 
-        }","expected": "{ ls_list-expected 
-        }","actual": "{ ls_list-actual 
-        }","status": "{ ls_list-status 
-        }","runtime": { ls_list-runtime 
-        },"message": "{ lv_message 
+        }","testclass_name": "{ ls_list-testclass_name
+        }","method_name": "{ ls_list-method_name
+        }","expected": "{ ls_list-expected
+        }","actual": "{ ls_list-actual
+        }","status": "{ ls_list-status
+        }","runtime": { ls_list-runtime
+        },"message": "{ lv_message
         }","js_location": "{ ls_list-js_location }"\}|.
       APPEND lv_string TO lt_strings.
     ENDLOOP.
@@ -141,7 +141,7 @@ CLASS kernel_unit_runner IMPLEMENTATION.
           CALL METHOD lo_obj->('CLASS_SETUP').
         CATCH cx_sy_dyn_call_illegal_method.
       ENDTRY.
-      
+
       LOOP AT it_input INTO ls_input WHERE class_name = ls_class-class_name AND testclass_name = ls_class-testclass_name.
         APPEND INITIAL LINE TO rs_result-list ASSIGNING <ls_result>.
         MOVE-CORRESPONDING ls_input TO <ls_result>.

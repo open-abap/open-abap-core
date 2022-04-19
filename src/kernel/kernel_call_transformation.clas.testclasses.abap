@@ -57,7 +57,7 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
       exp = 321 ).
     " cl_abap_unit_assert=>assert_equals(
     "   act = row-val
-    "   exp = 'hello' ).      
+    "   exp = 'hello' ).
   ENDMETHOD.
 
   METHOD test3_json_table_fs.
@@ -142,7 +142,7 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     DATA: BEGIN OF ls_foo,
             foo TYPE i,
           END OF ls_foo.
-    
+
     lv_xml = |<?xml version="1.0" encoding="utf-16"?>\n| &&
       |<asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">\n| &&
       | <asx:values>\n| &&
@@ -151,7 +151,7 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
       |  </DATA>\n| &&
       | </asx:values>\n| &&
       |</asx:abap>|.
-    
+
     CALL TRANSFORMATION id
       SOURCE XML lv_xml
       RESULT data = ls_foo.
@@ -201,7 +201,7 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
                                         document       = mi_xml_doc ).
     li_parser->add_strip_space_element( ).
     cl_abap_unit_assert=>assert_equals(
-      act = li_parser->parse( ) 
+      act = li_parser->parse( )
       exp = 0 ).
     li_istream->close( ).
 
@@ -212,7 +212,7 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     mi_xml_doc->get_root( )->remove_child( li_git ).
     mi_xml_doc->get_root( )->append_child( li_abap ).
 
-* CALL TRANSFORMATION    
+* CALL TRANSFORMATION
     CALL TRANSFORMATION id
       OPTIONS value_handling = 'accept_data_loss'
       SOURCE XML mi_xml_doc
@@ -222,7 +222,7 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
       act = ls_data-foo
       exp = 2 ).
 
-* via dynamic table    
+* via dynamic table
     CLEAR ls_data.
     APPEND INITIAL LINE TO lt_rtab ASSIGNING <ls_rtab>.
     <ls_rtab>-name = 'DATA'.

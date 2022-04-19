@@ -20,7 +20,7 @@ ENDCLASS.
 CLASS kernel_numberrange IMPLEMENTATION.
 
   METHOD number_get.
-* for now, only in memory for the current session    
+* for now, only in memory for the current session
     FIELD-SYMBOLS <row> LIKE LINE OF status.
     READ TABLE status WITH KEY nr_range_nr = nr_range_nr object = object ASSIGNING <row>.
     IF sy-subrc = 0.

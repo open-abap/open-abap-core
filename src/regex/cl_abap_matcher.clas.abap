@@ -16,13 +16,13 @@ CLASS cl_abap_matcher DEFINITION PUBLIC.
         VALUE(found) TYPE abap_bool.
 
     METHODS get_submatch
-      IMPORTING 
+      IMPORTING
         index TYPE i
-      RETURNING 
+      RETURNING
         VALUE(match) TYPE string.
 
     METHODS get_offset
-      RETURNING 
+      RETURNING
         VALUE(offset) TYPE i.
 
     METHODS match
@@ -30,7 +30,7 @@ CLASS cl_abap_matcher DEFINITION PUBLIC.
         VALUE(success) TYPE abap_bool.
 
     METHODS get_length
-      RETURNING 
+      RETURNING
         VALUE(length) TYPE i.
 
   PRIVATE SECTION.

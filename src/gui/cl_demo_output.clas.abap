@@ -14,7 +14,7 @@ CLASS cl_demo_output IMPLEMENTATION.
   METHOD write.
     ASSERT 1 = 'not supported'.
   ENDMETHOD.
-  
+
   METHOD display.
     ASSERT 1 = 'not supported'.
   ENDMETHOD.

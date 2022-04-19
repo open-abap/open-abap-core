@@ -14,7 +14,7 @@ CLASS cl_abap_conv_out_ce DEFINITION PUBLIC.
         IMPORTING
           value TYPE string
         RETURNING
-          VALUE(ret) TYPE i.          
+          VALUE(ret) TYPE i.
     METHODS
       convert
         IMPORTING
@@ -23,10 +23,10 @@ CLASS cl_abap_conv_out_ce DEFINITION PUBLIC.
         EXPORTING
           buffer TYPE xstring.
     METHODS write
-      IMPORTING 
+      IMPORTING
         data TYPE string.
     METHODS get_buffer
-      RETURNING 
+      RETURNING
         VALUE(buffer) TYPE xstring.
     METHODS reset.
   PRIVATE SECTION.
@@ -53,7 +53,7 @@ CLASS cl_abap_conv_out_ce IMPLEMENTATION.
     lo_out = create( encoding = '4103' ).
     lo_out->convert(
       EXPORTING
-        data = value 
+        data = value
       IMPORTING
         buffer = lv_hex ).
     ASSERT xstrlen( lv_hex ) = 2.

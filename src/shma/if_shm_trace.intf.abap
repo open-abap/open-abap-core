@@ -23,7 +23,7 @@ INTERFACE if_shm_trace PUBLIC.
       client    TYPE shm_client DEFAULT sy-mandt
       mode      TYPE shm_attach_mode DEFAULT cl_shm_area=>attach_mode_default
       wait_time TYPE i DEFAULT 0.
- 
+
   METHODS trcx_attach_for_write
     IMPORTING
       area_name TYPE shm_area_name

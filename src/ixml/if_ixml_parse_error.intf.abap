@@ -1,11 +1,11 @@
 INTERFACE if_ixml_parse_error PUBLIC.
   METHODS get_reason
-    RETURNING 
+    RETURNING
       VALUE(reason) TYPE string.
   METHODS get_line
-    RETURNING 
+    RETURNING
       VALUE(line) TYPE i.
   METHODS get_column
-    RETURNING 
+    RETURNING
       VALUE(column) TYPE i.
 ENDINTERFACE.

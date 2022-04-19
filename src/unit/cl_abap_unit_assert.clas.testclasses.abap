@@ -117,7 +117,7 @@ CLASS ltcl_test IMPLEMENTATION.
     lv_char = 'hello'.
     lv_string = 'hello'.
     cl_abap_unit_assert=>assert_equals(
-      act = lv_char 
+      act = lv_char
       exp = lv_string ).
   ENDMETHOD.
 
@@ -127,7 +127,7 @@ CLASS ltcl_test IMPLEMENTATION.
     d1 = 1.
     d2 = 1.
     cl_abap_unit_assert=>assert_equals(
-      act = d1 
+      act = d1
       exp = d2 ).
   ENDMETHOD.
 
@@ -137,7 +137,7 @@ CLASS ltcl_test IMPLEMENTATION.
     d1 = 1.
     d2 = 2.
     cl_abap_unit_assert=>assert_differs(
-      act = d1 
+      act = d1
       exp = d2 ).
   ENDMETHOD.
 

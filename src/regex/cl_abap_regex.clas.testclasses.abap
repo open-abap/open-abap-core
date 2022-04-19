@@ -45,12 +45,12 @@ CLASS ltcl_test IMPLEMENTATION.
 
     DATA lo_regex TYPE REF TO cl_abap_regex.
     DATA lo_matcher TYPE REF TO cl_abap_matcher.
-    
+
     CREATE OBJECT lo_regex
       EXPORTING
         pattern     = '1111'
         ignore_case = abap_true.
-    
+
     lo_matcher = lo_regex->create_matcher( text = '2222' ).
     cl_abap_unit_assert=>assert_equals(
       act = lo_matcher->find_next( )

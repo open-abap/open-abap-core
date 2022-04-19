@@ -27,7 +27,7 @@ CLASS cl_http_utility DEFINITION PUBLIC.
     CLASS-METHODS encode_x_base64
       IMPORTING
         data           TYPE xstring
-      RETURNING 
+      RETURNING
         VALUE(encoded) TYPE string.
 
     CLASS-METHODS fields_to_string

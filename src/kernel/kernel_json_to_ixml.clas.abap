@@ -51,12 +51,12 @@ CLASS kernel_json_to_ixml IMPLEMENTATION.
           li_current->append_child( li_new ).
           li_current = li_new.
 *            WRITE '@KERNEL console.dir(li_element);'.
-          
+
           IF lv_name IS NOT INITIAL.
             li_element = ri_doc->create_element_ns( 'name' ).
             li_new ?= li_element.
             li_new->set_value( lv_name ).
-  
+
             li_map = li_current->get_attributes( ).
             li_map->set_named_item_ns( li_new ).
           ENDIF.

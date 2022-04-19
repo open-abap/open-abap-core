@@ -16,7 +16,7 @@ CLASS lcl_node_iterator IMPLEMENTATION.
   METHOD if_ixml_node_iterator~reset.
     mv_pointer = 1.
   ENDMETHOD.
-  
+
   METHOD if_ixml_node_iterator~get_next.
     READ TABLE mt_list INDEX mv_pointer INTO rval.
 *    WRITE '@KERNEL console.dir(rval);'.
@@ -57,7 +57,7 @@ CLASS lcl_named_node_map IMPLEMENTATION.
   METHOD if_ixml_named_node_map~get_named_item.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-  
+
   METHOD if_ixml_named_node_map~remove_named_item.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
@@ -80,7 +80,7 @@ ENDCLASS.
 
 CLASS lcl_node_list IMPLEMENTATION.
   METHOD append.
-    ASSERT NOT ii_node IS INITIAL.
+    ASSERT ii_node IS NOT INITIAL.
     APPEND ii_node TO mt_list.
   ENDMETHOD.
 
@@ -103,7 +103,7 @@ CLASS lcl_node_list IMPLEMENTATION.
   METHOD if_ixml_node_list~get_item.
     READ TABLE mt_list INDEX index INTO val.
   ENDMETHOD.
-  
+
   METHOD if_ixml_node_list~create_rev_iterator_filtered.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
@@ -144,15 +144,15 @@ CLASS lcl_node IMPLEMENTATION.
   METHOD if_ixml_element~get_attributes.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~get_next.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~get_name.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~append_child.
     DATA lo_node TYPE REF TO lcl_node.
     lo_node ?= new_child.
@@ -160,23 +160,23 @@ CLASS lcl_node IMPLEMENTATION.
 
     mo_children->append( new_child ).
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~clone.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~create_filter_node_type.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~remove_attribute_ns.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~create_iterator.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~find_from_name_ns.
 
 * todo: take importing parameter DEPTH into account
@@ -185,7 +185,7 @@ CLASS lcl_node IMPLEMENTATION.
     DATA li_children TYPE REF TO if_ixml_node_list.
     DATA lt_nodes TYPE STANDARD TABLE OF REF TO if_ixml_node WITH DEFAULT KEY.
     DATA li_top LIKE LINE OF lt_nodes.
-    
+
     APPEND me TO lt_nodes.
 
     LOOP AT lt_nodes INTO li_top.
@@ -208,15 +208,15 @@ CLASS lcl_node IMPLEMENTATION.
     ENDLOOP.
 
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~find_from_name.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~get_attribute_node.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~get_attribute_ns.
     DATA li_node TYPE REF TO if_ixml_node.
     li_node = if_ixml_node~get_attributes( )->get_named_item_ns( name ).
@@ -224,59 +224,59 @@ CLASS lcl_node IMPLEMENTATION.
       val = li_node->get_value( ).
     ENDIF.
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~get_attribute.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~get_children.
     val = if_ixml_node~get_children( ).
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~get_elements_by_tag_name.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~get_elements_by_tag_name_ns.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~get_first_child.
     val = if_ixml_node~get_first_child( ).
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~get_value.
     val = if_ixml_node~get_value( ).
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~remove_attribute.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~remove_node.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~render.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~set_attribute_node_ns.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~set_attribute.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~set_attribute_ns.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
-  
+
   METHOD if_ixml_element~set_value.
     if_ixml_node~set_value( value ).
   ENDMETHOD.
-  
+
   METHOD if_ixml_node~set_namespace_prefix.
     mv_namespace = val.
   ENDMETHOD.
@@ -325,7 +325,7 @@ CLASS lcl_node IMPLEMENTATION.
     DATA li_iterator TYPE REF TO if_ixml_node_iterator.
     DATA li_node TYPE REF TO if_ixml_node.
     DATA lv_max TYPE i.
-    
+
     IF mo_children->if_ixml_node_list~get_length( ) = 0.
       val = 0.
     ELSE.
@@ -356,7 +356,7 @@ CLASS lcl_node IMPLEMENTATION.
     DATA li_iterator TYPE REF TO if_ixml_node_iterator.
     DATA li_node TYPE REF TO if_ixml_node.
     DATA lv_max TYPE i.
-    
+
     IF mo_children->if_ixml_node_list~get_length( ) = 0.
       val = mv_value.
     ELSE.
@@ -366,11 +366,11 @@ CLASS lcl_node IMPLEMENTATION.
         IF li_node IS INITIAL.
           EXIT. " current loop
         ENDIF.
-        
+
         val = val && li_node->get_value( ).
       ENDDO.
     ENDIF.
-    
+
   ENDMETHOD.
 
   METHOD if_ixml_node~get_type.
@@ -453,7 +453,7 @@ CLASS lcl_document IMPLEMENTATION.
 
   METHOD if_ixml_node~replace_child.
     mi_node->if_ixml_node~replace_child(
-      new_child = new_child 
+      new_child = new_child
       old_child = old_child ).
   ENDMETHOD.
 
@@ -627,7 +627,7 @@ CLASS lcl_istream IMPLEMENTATION.
   METHOD constructor.
     mv_xml = iv_xml.
   ENDMETHOD.
-  
+
   METHOD if_ixml_istream~close.
     RETURN.
   ENDMETHOD.
@@ -648,7 +648,7 @@ CLASS lcl_stream_factory IMPLEMENTATION.
 
   METHOD if_ixml_stream_factory~create_istream_string.
     CREATE OBJECT stream TYPE lcl_istream
-      EXPORTING 
+      EXPORTING
         iv_xml = xml.
   ENDMETHOD.
 ENDCLASS.
@@ -669,7 +669,7 @@ CLASS lcl_parser DEFINITION.
     DATA mi_istream  TYPE REF TO if_ixml_istream.
     DATA mi_document TYPE REF TO if_ixml_document.
     METHODS parse_attributes
-      IMPORTING 
+      IMPORTING
         ii_node TYPE REF TO if_ixml_node
         iv_xml TYPE string
         is_match TYPE match_result.
@@ -703,7 +703,7 @@ CLASS lcl_parser IMPLEMENTATION.
 
     WHILE lv_xml IS NOT INITIAL.
       CLEAR lo_node.
-      
+
       IF lv_xml CP '<?xml *'.
 * for now just skip the xml tag
         FIND FIRST OCCURRENCE OF '?>' IN lv_xml MATCH OFFSET lv_offset.
@@ -713,11 +713,11 @@ CLASS lcl_parser IMPLEMENTATION.
 * start or close tag
         FIND FIRST OCCURRENCE OF REGEX lc_regex_tag IN lv_xml RESULTS ls_match.
         ASSERT ls_match-offset = 0.
-  
+
         READ TABLE ls_match-submatches INDEX 1 INTO ls_submatch.
         ASSERT sy-subrc = 0.
         lv_name = lv_xml+ls_submatch-offset(ls_submatch-length).
-  
+
         IF lv_xml CP '</*'.
 * todo: check its the right name
           lo_parent ?= lo_parent->if_ixml_node~get_parent( ).
@@ -733,7 +733,7 @@ CLASS lcl_parser IMPLEMENTATION.
         ENDIF.
 
         parse_attributes(
-          ii_node  = lo_node 
+          ii_node  = lo_node
           iv_xml   = lv_xml
           is_match = ls_match ).
 
@@ -764,7 +764,7 @@ CLASS lcl_parser IMPLEMENTATION.
     DATA li_node TYPE REF TO if_ixml_node.
     DATA lv_offset TYPE i.
     DATA lv_length TYPE i.
-    
+
     IF lines( is_match-submatches ) = 1.
       RETURN.
     ENDIF.
@@ -788,7 +788,7 @@ CLASS lcl_parser IMPLEMENTATION.
       lv_offset = lv_offset + lv_length.
       lv_xml = lv_xml+lv_offset.
     ENDDO.
-    
+
   ENDMETHOD.
 
   METHOD if_ixml_parser~set_normalizing.
