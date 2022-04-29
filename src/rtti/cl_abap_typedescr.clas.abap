@@ -132,6 +132,11 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->type_kind = typekind_date.
         type->kind = kind_elem.
         type->length = 16.
+      WHEN 'Packed'.
+        CREATE OBJECT type.
+        type->type_kind = typekind_packed.
+        type->kind = kind_elem.
+        type->length = lv_length.
       WHEN 'Time'.
         CREATE OBJECT type.
         type->type_kind = typekind_time.

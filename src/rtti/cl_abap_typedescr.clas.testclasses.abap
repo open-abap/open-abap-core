@@ -15,6 +15,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS kind_elem FOR TESTING.
     METHODS kind_table FOR TESTING.
     METHODS field_symbol FOR TESTING.
+    METHODS typekind_packed FOR TESTING.
     METHODS abap_bool_absolute FOR TESTING.
     METHODS abap_true_absolute FOR TESTING.
     METHODS xsdboolean_absolute FOR TESTING.
@@ -182,6 +183,18 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = type->type_kind
       exp = cl_abap_typedescr=>typekind_hex ).
+    cl_abap_unit_assert=>assert_equals(
+      act = type->length
+      exp = 4 ).
+  ENDMETHOD.
+
+  METHOD typekind_packed.
+    DATA data TYPE p LENGTH 4 DECIMALS 2.
+    DATA type TYPE REF TO cl_abap_typedescr.
+    type = cl_abap_typedescr=>describe_by_data( data ).
+    cl_abap_unit_assert=>assert_equals(
+      act = type->type_kind
+      exp = cl_abap_typedescr=>typekind_packed ).
     cl_abap_unit_assert=>assert_equals(
       act = type->length
       exp = 4 ).
