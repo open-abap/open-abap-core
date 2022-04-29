@@ -18,10 +18,19 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS abap_true_absolute FOR TESTING.
     METHODS xsdboolean_absolute FOR TESTING.
     METHODS describe_by_name_t000 FOR TESTING.
+    METHODS get_relative_name FOR TESTING.
 
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
+
+  METHOD get_relative_name.
+    DATA lv_name TYPE string.
+    lv_name = cl_abap_typedescr=>describe_by_name( 'DEVCLASS' )->get_relative_name( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_name
+      exp = 'DEVCLASS' ).
+  ENDMETHOD.
 
   METHOD kind_elem.
     DATA lv_int TYPE i.
