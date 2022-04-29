@@ -32,6 +32,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     DATA length TYPE i.
     DATA decimals TYPE i.
     DATA absolute_name TYPE string.
+    DATA relative_name TYPE string.
 
     CONSTANTS typekind_any TYPE abap_typekind VALUE '~'.
     CONSTANTS typekind_char TYPE abap_typekind VALUE 'C'.
@@ -81,7 +82,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_relative_name.
-    ASSERT 1 = 'todo'.
+    name = relative_name.
   ENDMETHOD.
 
   METHOD is_ddic_type.
@@ -98,6 +99,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     CREATE OBJECT type TYPE cl_abap_classdescr.
     type->type_kind = typekind_class.
     type->kind = kind_class.
+    type->relative_name = 'CLASS_NAME_TODO'.
     type->absolute_name = 'CLASS_NAME_TODO'.
   ENDMETHOD.
 
@@ -180,6 +182,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     ENDCASE.
 
     WRITE '@KERNEL if(p_data.getQualifiedName && p_data.getQualifiedName() !== undefined) type.get().absolute_name.set(p_data.getQualifiedName());'.
+    type->relative_name = type->absolute_name.
     IF type->absolute_name = 'ABAP_BOOL'.
       type->absolute_name = '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL'.
     ELSEIF type->absolute_name IS INITIAL.
