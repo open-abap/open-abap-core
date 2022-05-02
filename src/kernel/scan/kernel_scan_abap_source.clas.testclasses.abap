@@ -23,6 +23,10 @@ CLASS ltcl_scan IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lines( statements )
       exp = 1 ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( tokens )
+      exp = 2 ).
   ENDMETHOD.
 
 ENDCLASS.
