@@ -7,7 +7,7 @@ ENDCLASS.
 CLASS kernel_scan_abap_source IMPLEMENTATION.
 
   METHOD call.
-* todo
+    WRITE '@KERNEL console.dir(INPUT);'.
   ENDMETHOD.
 
 ENDCLASS.
