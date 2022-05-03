@@ -17,6 +17,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
           bin_filesize TYPE i
           filename     TYPE string
           filetype     TYPE string
+          write_lf     TYPE abap_bool OPTIONAL
         CHANGING
           data_tab TYPE any.
 
@@ -33,7 +34,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
     CLASS-METHODS
       file_open_dialog
         IMPORTING
-          window_title     TYPE string
+          window_title     TYPE string OPTIONAL
           default_filename TYPE string
           file_filter      TYPE string
         CHANGING
