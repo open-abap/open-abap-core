@@ -36,7 +36,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
         IMPORTING
           window_title     TYPE string OPTIONAL
           default_filename TYPE string
-          file_filter      TYPE string
+          file_filter      TYPE string OPTIONAL
         CHANGING
           file_table  TYPE filetable
           rc          TYPE i
@@ -53,7 +53,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
           window_title         TYPE string OPTIONAL
           default_extension    TYPE string
           default_file_name    TYPE string
-          file_filter          TYPE string
+          file_filter          TYPE string OPTIONAL
         CHANGING
           filename    TYPE string
           path        TYPE string
