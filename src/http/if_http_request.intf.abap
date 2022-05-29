@@ -20,6 +20,9 @@ INTERFACE if_http_request PUBLIC.
 
   METHODS get_header_fields CHANGING fields TYPE tihttpnvp.
   METHODS get_form_fields CHANGING fields TYPE tihttpnvp.
+  METHODS get_form_field
+    IMPORTING name TYPE string
+    RETURNING VALUE(value) TYPE string.
   METHODS set_form_fields IMPORTING fields TYPE tihttpnvp.
 
   METHODS set_method IMPORTING method TYPE string.

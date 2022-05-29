@@ -91,6 +91,14 @@ CLASS cl_http_entity IMPLEMENTATION.
     fields = mt_form_fields.
   ENDMETHOD.
 
+  METHOD if_http_request~get_form_field.
+    DATA ls_field LIKE LINE OF mt_form_fields.
+    READ TABLE mt_form_fields INTO ls_field WITH KEY name = to_lower( name ).
+    IF sy-subrc = 0.
+      value = ls_field-value.
+    ENDIF.
+  ENDMETHOD.
+
   METHOD if_http_request~set_header_field.
     DATA ls_header LIKE LINE OF mt_headers.
     FIELD-SYMBOLS <ls_header> LIKE LINE OF mt_headers.
