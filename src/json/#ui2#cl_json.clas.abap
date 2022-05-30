@@ -22,7 +22,35 @@ ENDCLASS.
 CLASS /ui2/cl_json IMPLEMENTATION.
 
   METHOD serialize.
-    r_json = 'todo, /ui2/cl_json'.
+    DATA lo_type       TYPE REF TO cl_abap_typedescr.
+    DATA lo_struct     TYPE REF TO cl_abap_structdescr.
+    DATA lt_components TYPE cl_abap_structdescr=>component_table.
+    DATA ls_component  LIKE LINE OF lt_components.
+    DATA lt_members    TYPE string_table.
+    DATA ref TYPE REF TO data.
+    DATA lv_member     LIKE LINE OF lt_members.
+
+    FIELD-SYMBOLS <any> TYPE any.
+
+    lo_type = cl_abap_typedescr=>describe_by_data( data ).
+    CASE lo_type->kind.
+      WHEN cl_abap_typedescr=>kind_elem.
+        r_json = data.
+      WHEN cl_abap_typedescr=>kind_table.
+        RETURN. " todo
+      WHEN cl_abap_typedescr=>kind_struct.
+        lo_struct ?= lo_type.
+        lt_components = lo_struct->get_components( ).
+        r_json = '{'.
+        LOOP AT lt_components INTO ls_component.
+          ASSIGN COMPONENT ls_component-name OF STRUCTURE data TO <any>.
+          ASSERT sy-subrc = 0.
+          r_json = r_json && |"{ ls_component-name }":| && serialize( <any> ).
+        ENDLOOP.
+        r_json = r_json && '}'.
+      WHEN OTHERS.
+        ASSERT 1 = 'cl_json, unknown kind'.
+    ENDCASE.
   ENDMETHOD.
 
   METHOD deserialize.
