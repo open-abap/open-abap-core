@@ -8,8 +8,8 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
     CLASS-METHODS serialize
       IMPORTING
         data TYPE data
-      CHANGING
-        r_json TYPE string.
+      RETURNING
+        VALUE(r_json) TYPE string.
   PRIVATE SECTION.
     CLASS-DATA mo_parsed TYPE REF TO lcl_parser.
     CLASS-METHODS _deserialize
