@@ -1,4 +1,4 @@
-CLASS ltcl_serialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+CLASS ltcl_deserialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
     METHODS structure_integer FOR TESTING RAISING cx_static_check.
@@ -8,7 +8,7 @@ CLASS ltcl_serialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT F
 
 ENDCLASS.
 
-CLASS ltcl_serialize IMPLEMENTATION.
+CLASS ltcl_deserialize IMPLEMENTATION.
 
   METHOD structure_integer.
     DATA: BEGIN OF stru,
@@ -80,6 +80,29 @@ CLASS ltcl_serialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_int
       exp = 7 ).
+  ENDMETHOD.
+
+ENDCLASS.
+
+CLASS ltcl_serialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+
+  PRIVATE SECTION.
+    METHODS structure_integer FOR TESTING RAISING cx_static_check.
+
+ENDCLASS.
+
+CLASS ltcl_serialize IMPLEMENTATION.
+
+  METHOD structure_integer.
+    DATA: BEGIN OF stru,
+            foo TYPE i,
+          END OF stru.
+    DATA lv_json TYPE string.
+    stru-foo = 2.
+    lv_json = /ui2/cl_json=>serialize( stru ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = '{"FOO":2}' ).
   ENDMETHOD.
 
 ENDCLASS.
