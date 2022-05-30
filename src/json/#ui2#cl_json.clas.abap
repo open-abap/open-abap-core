@@ -26,9 +26,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     DATA lo_struct     TYPE REF TO cl_abap_structdescr.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
     DATA ls_component  LIKE LINE OF lt_components.
-    DATA lt_members    TYPE string_table.
-    DATA ref TYPE REF TO data.
-    DATA lv_member     LIKE LINE OF lt_members.
+    DATA lv_index      TYPE i.
 
     FIELD-SYMBOLS <any> TYPE any.
 
@@ -49,9 +47,13 @@ CLASS /ui2/cl_json IMPLEMENTATION.
         lt_components = lo_struct->get_components( ).
         r_json = '{'.
         LOOP AT lt_components INTO ls_component.
+          lv_index = sy-tabix.
           ASSIGN COMPONENT ls_component-name OF STRUCTURE data TO <any>.
           ASSERT sy-subrc = 0.
           r_json = r_json && |"{ ls_component-name }":| && serialize( <any> ).
+          IF lines( lt_components ) <> lv_index.
+            r_json = r_json && ','.
+          ENDIF.
         ENDLOOP.
         r_json = r_json && '}'.
       WHEN OTHERS.
