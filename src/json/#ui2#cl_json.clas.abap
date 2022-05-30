@@ -22,7 +22,54 @@ ENDCLASS.
 CLASS /ui2/cl_json IMPLEMENTATION.
 
   METHOD serialize.
-    r_json = 'todo, /ui2/cl_json'.
+    DATA lo_type       TYPE REF TO cl_abap_typedescr.
+    DATA lo_struct     TYPE REF TO cl_abap_structdescr.
+    DATA lt_components TYPE cl_abap_structdescr=>component_table.
+    DATA ls_component  LIKE LINE OF lt_components.
+    DATA ref           TYPE REF TO data.
+    DATA lv_index      TYPE i.
+
+    FIELD-SYMBOLS <any> TYPE any.
+    FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+
+    lo_type = cl_abap_typedescr=>describe_by_data( data ).
+    CASE lo_type->kind.
+      WHEN cl_abap_typedescr=>kind_elem.
+        CASE lo_type->type_kind.
+          WHEN cl_abap_typedescr=>typekind_char
+              OR cl_abap_typedescr=>typekind_string.
+            r_json = '"' && data && '"'.
+          WHEN OTHERS.
+            r_json = data.
+        ENDCASE.
+      WHEN cl_abap_typedescr=>kind_table.
+        r_json = '['.
+        ASSIGN data TO <tab>.
+        LOOP AT <tab> ASSIGNING <any>.
+          lv_index = sy-tabix.
+          r_json = r_json && serialize( <any> ).
+          IF lines( data ) <> lv_index.
+            r_json = r_json && ','.
+          ENDIF.
+        ENDLOOP.
+        r_json = r_json && ']'.
+      WHEN cl_abap_typedescr=>kind_struct.
+        lo_struct ?= lo_type.
+        lt_components = lo_struct->get_components( ).
+        r_json = '{'.
+        LOOP AT lt_components INTO ls_component.
+          lv_index = sy-tabix.
+          ASSIGN COMPONENT ls_component-name OF STRUCTURE data TO <any>.
+          ASSERT sy-subrc = 0.
+          r_json = r_json && |"{ ls_component-name }":| && serialize( <any> ).
+          IF lines( lt_components ) <> lv_index.
+            r_json = r_json && ','.
+          ENDIF.
+        ENDLOOP.
+        r_json = r_json && '}'.
+      WHEN OTHERS.
+        ASSERT 1 = 'cl_json, unknown kind'.
+    ENDCASE.
   ENDMETHOD.
 
   METHOD deserialize.
@@ -44,7 +91,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
     DATA ls_component  LIKE LINE OF lt_components.
     DATA lt_members    TYPE string_table.
-    DATA ref TYPE REF TO data.
+    DATA ref           TYPE REF TO data.
     DATA lv_member     LIKE LINE OF lt_members.
 
     FIELD-SYMBOLS <any> TYPE any.
