@@ -90,10 +90,22 @@ CLASS ltcl_serialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT F
     METHODS structure_integer FOR TESTING RAISING cx_static_check.
     METHODS structure_string FOR TESTING RAISING cx_static_check.
     METHODS structure_two_fields FOR TESTING RAISING cx_static_check.
+    METHODS basic_array FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_serialize IMPLEMENTATION.
+
+  METHOD basic_array.
+    DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    DATA lv_json TYPE string.
+    APPEND 1 TO tab.
+    APPEND 2 TO tab.
+    lv_json = /ui2/cl_json=>serialize( tab ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = '[1,2]' ).
+  ENDMETHOD.
 
   METHOD structure_integer.
     DATA: BEGIN OF stru,

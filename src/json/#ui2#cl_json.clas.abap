@@ -26,9 +26,11 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     DATA lo_struct     TYPE REF TO cl_abap_structdescr.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
     DATA ls_component  LIKE LINE OF lt_components.
+    DATA ref           TYPE REF TO data.
     DATA lv_index      TYPE i.
 
     FIELD-SYMBOLS <any> TYPE any.
+    FIELD-SYMBOLS <tab> TYPE ANY TABLE.
 
     lo_type = cl_abap_typedescr=>describe_by_data( data ).
     CASE lo_type->kind.
@@ -41,7 +43,16 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             r_json = data.
         ENDCASE.
       WHEN cl_abap_typedescr=>kind_table.
-        RETURN. " todo
+        r_json = '['.
+        ASSIGN data TO <tab>.
+        LOOP AT <tab> ASSIGNING <any>.
+          lv_index = sy-tabix.
+          r_json = r_json && serialize( <any> ).
+          IF lines( data ) <> lv_index.
+            r_json = r_json && ','.
+          ENDIF.
+        ENDLOOP.
+        r_json = r_json && ']'.
       WHEN cl_abap_typedescr=>kind_struct.
         lo_struct ?= lo_type.
         lt_components = lo_struct->get_components( ).
@@ -80,7 +91,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
     DATA ls_component  LIKE LINE OF lt_components.
     DATA lt_members    TYPE string_table.
-    DATA ref TYPE REF TO data.
+    DATA ref           TYPE REF TO data.
     DATA lv_member     LIKE LINE OF lt_members.
 
     FIELD-SYMBOLS <any> TYPE any.
