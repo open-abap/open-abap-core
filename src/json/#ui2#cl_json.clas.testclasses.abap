@@ -4,6 +4,7 @@ CLASS ltcl_ui2json DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FIN
     METHODS structure_integer FOR TESTING RAISING cx_static_check.
     METHODS structure_string FOR TESTING RAISING cx_static_check.
     METHODS structure_nested FOR TESTING RAISING cx_static_check.
+    METHODS basic_array FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -56,6 +57,22 @@ CLASS ltcl_ui2json IMPLEMENTATION.
         data = stru ).
     cl_abap_unit_assert=>assert_equals(
       act = stru-sub-bar
+      exp = 2 ).
+  ENDMETHOD.
+
+  METHOD basic_array.
+    DATA: BEGIN OF stru,
+            foo TYPE STANDARD TABLE OF i WITH DEFAULT KEY,
+          END OF stru.
+    DATA lv_json TYPE string.
+    lv_json = '{"foo": [1, 2]}'.
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = lv_json
+      CHANGING
+        data = stru ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( stru-foo )
       exp = 2 ).
   ENDMETHOD.
 
