@@ -33,6 +33,9 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     DATA lo_struct     TYPE REF TO cl_abap_structdescr.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
     DATA ls_component  LIKE LINE OF lt_components.
+    DATA lt_members    TYPE string_table.
+    DATA ref TYPE REF TO data.
+    DATA lv_member     LIKE LINE OF lt_members.
 
     FIELD-SYMBOLS <any> TYPE any.
 
@@ -41,6 +44,20 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     CASE lo_type->kind.
       WHEN cl_abap_typedescr=>kind_elem.
         data = mo_parsed->value_string( prefix ).
+      WHEN cl_abap_typedescr=>kind_table.
+        lt_members = mo_parsed->members( prefix && '/' ).
+        LOOP AT lt_members INTO lv_member.
+*          WRITE '@KERNEL console.dir(lv_member.get());'.
+          CREATE DATA ref LIKE LINE OF data.
+          ASSIGN ref->* TO <any>.
+          _deserialize(
+            EXPORTING
+              prefix = prefix && '/' && lv_member
+            CHANGING
+              data   = <any> ).
+*          WRITE '@KERNEL console.dir(fs_row_);'.
+          INSERT <any> INTO TABLE data.
+        ENDLOOP.
       WHEN cl_abap_typedescr=>kind_struct.
         lo_struct ?= lo_type.
         lt_components = lo_struct->get_components( ).

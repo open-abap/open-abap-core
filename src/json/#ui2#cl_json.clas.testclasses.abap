@@ -64,8 +64,9 @@ CLASS ltcl_ui2json IMPLEMENTATION.
     DATA: BEGIN OF stru,
             foo TYPE STANDARD TABLE OF i WITH DEFAULT KEY,
           END OF stru.
+    DATA lv_int TYPE i.
     DATA lv_json TYPE string.
-    lv_json = '{"foo": [1, 2]}'.
+    lv_json = '{"foo": [5, 7]}'.
     /ui2/cl_json=>deserialize(
       EXPORTING
         json = lv_json
@@ -74,6 +75,11 @@ CLASS ltcl_ui2json IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lines( stru-foo )
       exp = 2 ).
+    READ TABLE stru-foo INDEX 2 INTO lv_int.
+    ASSERT sy-subrc = 0.
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_int
+      exp = 7 ).
   ENDMETHOD.
 
 ENDCLASS.
