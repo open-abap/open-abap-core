@@ -16,8 +16,12 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
     DATA ls_component LIKE LINE OF lt_components.
 
+    FIELD-SYMBOLS <any> TYPE any.
+
     CREATE OBJECT lo_parsed.
     lo_parsed->parse( json ).
+
+    CLEAR data.
 
     lo_type = cl_abap_typedescr=>describe_by_data( data ).
 *    WRITE '@KERNEL console.dir(lo_type);'.
@@ -26,9 +30,10 @@ CLASS /ui2/cl_json IMPLEMENTATION.
         lo_struct ?= lo_type.
         lt_components = lo_struct->get_components( ).
         LOOP AT lt_components INTO ls_component.
-          WRITE '@KERNEL console.dir(ls_component.get().name.get());'.
+          ASSIGN COMPONENT ls_component-name OF STRUCTURE data TO <any>.
+          ASSERT sy-subrc = 0.
+          <any> = lo_parsed->value_string( '/' && to_lower( ls_component-name ) ).
         ENDLOOP.
-        CLEAR data.
       WHEN OTHERS.
         ASSERT 1 = 'cl_json, unknown kind'.
     ENDCASE.
