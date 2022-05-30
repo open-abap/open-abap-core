@@ -5,6 +5,11 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
         json TYPE string OPTIONAL
       CHANGING
         data TYPE data.
+    CLASS-METHODS serialize
+      IMPORTING
+        data TYPE data
+      CHANGING
+        r_json TYPE string.
   PRIVATE SECTION.
     CLASS-DATA mo_parsed TYPE REF TO lcl_parser.
     CLASS-METHODS _deserialize
@@ -15,6 +20,11 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS /ui2/cl_json IMPLEMENTATION.
+
+  METHOD serialize.
+    r_json = 'todo, /ui2/cl_json'.
+  ENDMETHOD.
+
   METHOD deserialize.
     CREATE OBJECT mo_parsed.
     mo_parsed->parse( json ).
@@ -74,4 +84,5 @@ CLASS /ui2/cl_json IMPLEMENTATION.
         ASSERT 1 = 'cl_json, unknown kind'.
     ENDCASE.
   ENDMETHOD.
+
 ENDCLASS.
