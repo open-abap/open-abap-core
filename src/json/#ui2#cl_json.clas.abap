@@ -35,7 +35,13 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     lo_type = cl_abap_typedescr=>describe_by_data( data ).
     CASE lo_type->kind.
       WHEN cl_abap_typedescr=>kind_elem.
-        r_json = data.
+        CASE lo_type->type_kind.
+          WHEN cl_abap_typedescr=>typekind_char
+              OR cl_abap_typedescr=>typekind_string.
+            r_json = '"' && data && '"'.
+          WHEN OTHERS.
+            r_json = data.
+        ENDCASE.
       WHEN cl_abap_typedescr=>kind_table.
         RETURN. " todo
       WHEN cl_abap_typedescr=>kind_struct.
