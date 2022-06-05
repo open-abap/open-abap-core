@@ -207,7 +207,7 @@ CLASS lcl_open_node DEFINITION.
     INTERFACES if_sxml_open_element.
     METHODS constructor
       IMPORTING
-        name TYPE string
+        name       TYPE string
         attributes TYPE if_sxml_attribute=>attributes.
   PRIVATE SECTION.
     DATA mt_attributes TYPE if_sxml_attribute=>attributes.
@@ -332,12 +332,28 @@ CLASS lcl_reader IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_sxml_reader~next_node.
+    DATA node LIKE LINE OF mt_nodes.
+    DATA open TYPE REF TO if_sxml_open_element.
+    DATA close TYPE REF TO if_sxml_close_element.
+    DATA value TYPE REF TO if_sxml_value_node.
     initialize( ).
-    ASSERT 1 = 'todo'.
+    READ TABLE mt_nodes INDEX mv_pointer INTO node.
+    mv_pointer = mv_pointer + 1.
+    if_sxml_reader~node_type = node->type.
+
+    CLEAR if_sxml_reader~name.
+    CASE if_sxml_reader~node_type.
+      WHEN if_sxml_node=>co_nt_element_open.
+        open ?= node.
+        if_sxml_reader~name = open->qname-name.
+      WHEN if_sxml_node=>co_nt_element_close.
+        close ?= node.
+        if_sxml_reader~name = close->qname-name.
+    ENDCASE.
   ENDMETHOD.
 
   METHOD if_sxml_reader~skip_node.
-    ASSERT 1 = 'todo'.
+* huh, what should this method do?
   ENDMETHOD.
 
   METHOD if_sxml_reader~read_next_node.

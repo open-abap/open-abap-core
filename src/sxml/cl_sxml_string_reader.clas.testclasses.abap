@@ -37,6 +37,8 @@ CLASS ltcl_json DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS object_with_object FOR TESTING.
     METHODS bad_json_read_next_node FOR TESTING.
     METHODS bad_json_next_node FOR TESTING.
+    METHODS next_node FOR TESTING.
+    METHODS skip_node FOR TESTING.
 
 ENDCLASS.
 
@@ -378,7 +380,6 @@ CLASS ltcl_json IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD bad_json_read_next_node.
-
     DATA lo_reader TYPE REF TO if_sxml_reader.
     lo_reader = cl_sxml_string_reader=>create( cl_abap_codepage=>convert_to( 'moo, hello world' ) ).
     TRY.
@@ -388,7 +389,6 @@ CLASS ltcl_json IMPLEMENTATION.
 * ok, expected
         RETURN.
     ENDTRY.
-
   ENDMETHOD.
 
   METHOD bad_json_next_node.
@@ -401,6 +401,42 @@ CLASS ltcl_json IMPLEMENTATION.
 * ok, expected
         RETURN.
     ENDTRY.
+  ENDMETHOD.
+
+  METHOD next_node.
+    DATA lo_reader TYPE REF TO if_sxml_reader.
+    lo_reader = cl_sxml_string_reader=>create( cl_abap_codepage=>convert_to( '{"hello": 2}' ) ).
+
+    lo_reader->next_node( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_reader->node_type
+      exp = if_sxml_node=>co_nt_element_open ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_reader->name
+      exp = 'object' ).
+
+    lo_reader->next_node( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_reader->node_type
+      exp = if_sxml_node=>co_nt_element_open ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_reader->name
+      exp = 'num' ).
+  ENDMETHOD.
+
+  METHOD skip_node.
+    DATA lo_reader TYPE REF TO if_sxml_reader.
+    lo_reader = cl_sxml_string_reader=>create( cl_abap_codepage=>convert_to( '{"hello": 2}' ) ).
+
+    lo_reader->skip_node( ).
+
+    lo_reader->next_node( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_reader->node_type
+      exp = if_sxml_node=>co_nt_element_open ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_reader->name
+      exp = 'object' ).
   ENDMETHOD.
 
 ENDCLASS.
