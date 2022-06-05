@@ -64,10 +64,18 @@ CLASS lcl_json_parser IMPLEMENTATION.
 
   METHOD traverse.
 
-    DATA lv_type TYPE string.
+    DATA lv_type  TYPE string.
+    DATA lv_error TYPE abap_bool.
 
-* todo, catch parser errors
-    WRITE '@KERNEL let parsed = JSON.parse(iv_json.get());'.
+    WRITE '@KERNEL let parsed;'.
+    WRITE '@KERNEL try {'.
+    WRITE '@KERNEL   parsed = JSON.parse(iv_json.get());'.
+    WRITE '@KERNEL } catch {'.
+    WRITE '@KERNEL   lv_error.set("X")'.
+    WRITE '@KERNEL }'.
+    IF lv_error = abap_true.
+      RAISE EXCEPTION TYPE cx_sxml_parse_error.
+    ENDIF.
     WRITE '@KERNEL lv_type.set(Array.isArray(parsed) ? "array" : typeof parsed);'.
     WRITE '@KERNEL if (parsed === null) lv_type.set("null");'.
 

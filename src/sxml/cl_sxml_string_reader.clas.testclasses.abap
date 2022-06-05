@@ -380,13 +380,13 @@ CLASS ltcl_json IMPLEMENTATION.
 
     DATA lo_reader TYPE REF TO if_sxml_reader.
     lo_reader = cl_sxml_string_reader=>create( cl_abap_codepage=>convert_to( 'moo, hello world' ) ).
-*    TRY.
-*        lo_reader->read_next_node( ).
-*        cl_abap_unit_assert=>fail( ).
-* CATCH cx_sxml_parse_error.
+    TRY.
+        lo_reader->read_next_node( ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_sxml_parse_error.
 * ok, expected
-*   RETURN.
-*    ENDTRY.
+        RETURN.
+    ENDTRY.
 
   ENDMETHOD.
 
