@@ -35,6 +35,7 @@ CLASS ltcl_json DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS two_array FOR TESTING.
     METHODS array_with_object FOR TESTING.
     METHODS object_with_object FOR TESTING.
+    METHODS bad_json FOR TESTING.
 
 ENDCLASS.
 
@@ -372,6 +373,20 @@ CLASS ltcl_json IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lt_actual
       exp = mt_expected ).
+
+  ENDMETHOD.
+
+  METHOD bad_json.
+
+    DATA lo_reader TYPE REF TO if_sxml_reader.
+    lo_reader = cl_sxml_string_reader=>create( cl_abap_codepage=>convert_to( 'moo, hello world' ) ).
+*    TRY.
+*        lo_reader->read_next_node( ).
+*        cl_abap_unit_assert=>fail( ).
+* CATCH cx_sxml_parse_error.
+* ok, expected
+*   RETURN.
+*    ENDTRY.
 
   ENDMETHOD.
 

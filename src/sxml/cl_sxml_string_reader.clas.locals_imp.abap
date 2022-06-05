@@ -257,16 +257,69 @@ CLASS lcl_reader DEFINITION.
     TYPES ty_nodes TYPE STANDARD TABLE OF REF TO if_sxml_node WITH DEFAULT KEY.
     METHODS constructor
       IMPORTING
-        it_nodes TYPE ty_nodes.
+        iv_json TYPE string.
     INTERFACES if_sxml_reader.
   PRIVATE SECTION.
-    DATA mt_nodes TYPE ty_nodes.
+    METHODS initialize.
+    DATA mv_json    TYPE string.
+    DATA mt_nodes   TYPE ty_nodes.
     DATA mv_pointer TYPE i.
 ENDCLASS.
 
 CLASS lcl_reader IMPLEMENTATION.
   METHOD constructor.
-    mt_nodes = it_nodes.
+    mv_json = iv_json.
+  ENDMETHOD.
+
+  METHOD initialize.
+
+    DATA lo_json       TYPE REF TO lcl_json_parser.
+    DATA lt_parsed     TYPE lcl_json_parser=>ty_nodes.
+    DATA ls_parsed     LIKE LINE OF lt_parsed.
+    DATA li_node       TYPE REF TO if_sxml_node.
+    DATA lt_attributes TYPE if_sxml_attribute=>attributes.
+    DATA li_attribute  TYPE REF TO if_sxml_attribute.
+
+    IF mv_json IS INITIAL.
+      RETURN.
+    ENDIF.
+
+* todo, for now this only hanles json, but the class is really meant for XML
+    CREATE OBJECT lo_json.
+    lt_parsed = lo_json->parse( mv_json ).
+
+    LOOP AT lt_parsed INTO ls_parsed.
+      CASE ls_parsed-type.
+        WHEN if_sxml_node=>co_nt_element_open.
+          CLEAR lt_attributes.
+          IF ls_parsed-key IS NOT INITIAL.
+            CREATE OBJECT li_attribute TYPE lcl_attribute
+              EXPORTING
+                name       = 'name'
+                value      = ls_parsed-key
+                value_type = if_sxml_value=>co_vt_text.
+            APPEND li_attribute TO lt_attributes.
+          ENDIF.
+
+          CREATE OBJECT li_node TYPE lcl_open_node
+            EXPORTING
+              name = ls_parsed-name
+              attributes = lt_attributes.
+        WHEN if_sxml_node=>co_nt_element_close.
+          CREATE OBJECT li_node TYPE lcl_close_node
+            EXPORTING
+              name = ls_parsed-name.
+        WHEN if_sxml_node=>co_nt_value.
+          CREATE OBJECT li_node TYPE lcl_value_node
+            EXPORTING
+              value = ls_parsed-value.
+        WHEN OTHERS.
+          ASSERT 1 = 2.
+      ENDCASE.
+      APPEND li_node TO mt_nodes.
+    ENDLOOP.
+
+    CLEAR mv_json.
     mv_pointer = 1.
   ENDMETHOD.
 
@@ -279,6 +332,7 @@ CLASS lcl_reader IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_sxml_reader~read_next_node.
+    initialize( ).
     READ TABLE mt_nodes INDEX mv_pointer INTO node.
     mv_pointer = mv_pointer + 1.
   ENDMETHOD.
