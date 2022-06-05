@@ -21,7 +21,7 @@ CLASS lcx_error IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.
 
-******************************'
+******************************
 
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
@@ -34,8 +34,8 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD test1.
 
-    DATA lx_error TYPE REF TO cx_root.
-    DATA lv_act TYPE string.
+    DATA lx_error    TYPE REF TO cx_root.
+    DATA lv_act      TYPE string.
     DATA ls_t100_key TYPE scx_t100key.
 
     ls_t100_key-msgid = '00'.
