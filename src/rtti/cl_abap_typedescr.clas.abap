@@ -142,6 +142,10 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->type_kind = typekind_time.
         type->kind = kind_elem.
         type->length = 12.
+      WHEN 'Float'.
+        CREATE OBJECT type.
+        type->type_kind = typekind_float.
+        type->kind = kind_elem.
       WHEN 'Structure'.
         CREATE OBJECT type TYPE cl_abap_structdescr
           EXPORTING
