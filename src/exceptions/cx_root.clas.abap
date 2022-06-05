@@ -45,7 +45,7 @@ CLASS cx_root IMPLEMENTATION.
     DATA lv_msgv4 LIKE sy-msgv4.
 
 * when the transpiler can do more, the below can be implemented in ABAP instead of using KERNEL,
-    WRITE '@KERNEL if (this.if_t100_message$t100key === undefined) { result = "CX_ROOT,NO_T100"; return; };'.
+    WRITE '@KERNEL if (this.if_t100_message$t100key === undefined) { result.set("An exception was raised."); return result; };'.
     WRITE '@KERNEL lv_msgid.set(this.if_t100_message$t100key.get().msgid);'.
     WRITE '@KERNEL lv_msgno.set(this.if_t100_message$t100key.get().msgno);'.
     WRITE '@KERNEL lv_msgv1.set(this[this.if_t100_message$t100key.get().attr1.get().toLowerCase()] ? this[this.if_t100_message$t100key.get().attr1.get().toLowerCase()].get() : "");'.
