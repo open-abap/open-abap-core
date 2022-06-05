@@ -332,6 +332,7 @@ CLASS lcl_reader IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_sxml_reader~next_node.
+    initialize( ).
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
