@@ -3,6 +3,11 @@ CLASS ltcl_scan DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
   PRIVATE SECTION.
     METHODS simple_write FOR TESTING RAISING cx_static_check.
     METHODS class_impl_def FOR TESTING RAISING cx_static_check.
+    METHODS simple_indentation FOR TESTING RAISING cx_static_check.
+
+    DATA tokens TYPE STANDARD TABLE OF stokesx WITH DEFAULT KEY.
+    DATA statements TYPE STANDARD TABLE OF sstmnt WITH DEFAULT KEY.
+    METHODS scan IMPORTING source TYPE string.
     METHODS dump_tokens
       IMPORTING tokens TYPE kernel_scan_abap_source=>ty_stokesx
       RETURNING VALUE(dump) TYPE string.
@@ -20,19 +25,22 @@ CLASS ltcl_scan IMPLEMENTATION.
     ENDLOOP.
   ENDMETHOD.
 
-  METHOD simple_write.
-    DATA tokens TYPE STANDARD TABLE OF stokesx WITH DEFAULT KEY.
-    DATA statements TYPE STANDARD TABLE OF sstmnt WITH DEFAULT KEY.
-    DATA source TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+  METHOD scan.
+    DATA lv TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 
-    APPEND 'WRITE 2.' TO source.
+    SPLIT source AT |\n| INTO TABLE lv.
 
-    SCAN ABAP-SOURCE source
+    SCAN ABAP-SOURCE lv
       TOKENS INTO tokens
       STATEMENTS INTO statements
       WITH ANALYSIS
       WITH COMMENTS
       WITH PRAGMAS '*'.
+  ENDMETHOD.
+
+  METHOD simple_write.
+
+    scan( 'WRITE 2.' ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lines( statements )
@@ -45,10 +53,7 @@ CLASS ltcl_scan IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD class_impl_def.
-    DATA tokens TYPE STANDARD TABLE OF stokesx WITH DEFAULT KEY.
-    DATA statements TYPE STANDARD TABLE OF sstmnt WITH DEFAULT KEY.
     DATA lv_source TYPE string.
-    DATA source TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 
     lv_source =
       |class lcl definition.\n| &&
@@ -56,14 +61,7 @@ CLASS ltcl_scan IMPLEMENTATION.
       |CLASS lcl IMPLEMENTATION.\n| &&
       |ENDCLASS.|.
 
-    SPLIT lv_source AT |\n| INTO TABLE source.
-
-    SCAN ABAP-SOURCE source
-      TOKENS INTO tokens
-      STATEMENTS INTO statements
-      WITH ANALYSIS
-      WITH COMMENTS
-      WITH PRAGMAS '*'.
+    scan( lv_source ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lines( statements )
@@ -79,6 +77,9 @@ CLASS ltcl_scan IMPLEMENTATION.
             |str:LCL,row:3,col:6\n| &&
             |str:IMPLEMENTATION,row:3,col:10\n| &&
             |str:ENDCLASS,row:4,col:0| ).
+  ENDMETHOD.
+
+  METHOD simple_indentation.
   ENDMETHOD.
 
 ENDCLASS.
