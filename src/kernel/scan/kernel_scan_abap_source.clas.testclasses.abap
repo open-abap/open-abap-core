@@ -96,8 +96,10 @@ CLASS ltcl_scan IMPLEMENTATION.
       |ENDIF.| ).
 
     cl_abap_unit_assert=>assert_equals(
-      act = lines( statements )
-      exp = 3 ).
+      act = dump_statements( statements )
+      exp = |from:1,to:4\n| &&
+            |from:5,to:6\n| &&
+            |from:7,to:7| ).
 
     cl_abap_unit_assert=>assert_equals(
       act = dump_tokens( tokens )

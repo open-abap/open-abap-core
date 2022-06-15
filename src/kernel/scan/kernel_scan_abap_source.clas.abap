@@ -38,6 +38,8 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
     DATA character TYPE c LENGTH 1.
     DATA row       TYPE i VALUE 1.
     DATA column    TYPE i.
+    DATA index     TYPE i.
+    DATA sfrom     TYPE i VALUE 1.
     DATA mode      TYPE i.
 
     FIELD-SYMBOLS <tokens>     TYPE ty_stokesx.
@@ -67,8 +69,9 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
           OR source = ''.
         APPEND INITIAL LINE TO <statements> ASSIGNING <srow>.
         <srow>-terminator = character.
-        <srow>-from = 1.
+        <srow>-from = sfrom.
         <srow>-to = lines( <tokens> ).
+        sfrom = <srow>-to + 1.
         IF mode = c_mode-comment.
           <srow>-type = gc_statement-comment.
         ELSE.
