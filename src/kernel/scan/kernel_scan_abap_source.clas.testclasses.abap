@@ -57,20 +57,20 @@ CLASS ltcl_scan IMPLEMENTATION.
       |CLASS lcl IMPLEMENTATION.\n| &&
       |ENDCLASS.|.
 
-    " SCAN ABAP-SOURCE lv_source
-    "   TOKENS INTO tokens
-    "   STATEMENTS INTO statements
-    "   WITH ANALYSIS
-    "   WITH COMMENTS
-    "   WITH PRAGMAS '*'.
+    SCAN ABAP-SOURCE lv_source
+      TOKENS INTO tokens
+      STATEMENTS INTO statements
+      WITH ANALYSIS
+      WITH COMMENTS
+      WITH PRAGMAS '*'.
 
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = lines( statements )
-    "   exp = 4 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( statements )
+      exp = 4 ).
 
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = lines( tokens )
-    "   exp = 8 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( tokens )
+      exp = 8 ).
 
   ENDMETHOD.
 

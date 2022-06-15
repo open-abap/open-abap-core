@@ -43,13 +43,8 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
     WRITE '@KERNEL fs_tokens_.assign(INPUT.tokens_into);'.
     WRITE '@KERNEL fs_statements_.assign(INPUT.statements_into);'.
 
-    APPEND INITIAL LINE TO <statements> ASSIGNING <srow>.
-    <srow>-terminator = '.'.
-    <srow>-type = 'K'.
-
     WHILE source IS NOT INITIAL.
       character = source(1).
-      WRITE '@KERNEL console.dir(character.get());'.
 
       IF <trow> IS NOT ASSIGNED AND character IS NOT INITIAL.
         APPEND INITIAL LINE TO <tokens> ASSIGNING <trow>.
@@ -57,6 +52,12 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
         <trow>-col = column.
       ELSEIF character = '' OR character = |.|.
         UNASSIGN <trow>.
+      ENDIF.
+
+      IF character = |.|.
+        APPEND INITIAL LINE TO <statements> ASSIGNING <srow>.
+        <srow>-terminator = '.'.
+        <srow>-type = 'K'.
       ENDIF.
 
       IF <trow> IS ASSIGNED.
