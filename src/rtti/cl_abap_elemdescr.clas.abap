@@ -25,11 +25,33 @@ CLASS cl_abap_elemdescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
       EXCEPTIONS
         not_found
         no_ddic_type.
+
+    CLASS-METHODS get_i RETURNING VALUE(r_result) TYPE REF TO cl_abap_elemdescr.
+    CLASS-METHODS get_f RETURNING VALUE(r_result) TYPE REF TO cl_abap_elemdescr.
+    CLASS-METHODS get_d RETURNING VALUE(r_result) TYPE REF TO cl_abap_elemdescr.
+    CLASS-METHODS get_t RETURNING VALUE(r_result) TYPE REF TO cl_abap_elemdescr.
+
 ENDCLASS.
 
 CLASS cl_abap_elemdescr IMPLEMENTATION.
 
   METHOD get_ddic_field.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get_i.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get_f.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get_d.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get_t.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 

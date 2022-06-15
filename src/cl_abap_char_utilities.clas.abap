@@ -6,6 +6,7 @@ CLASS cl_abap_char_utilities DEFINITION PUBLIC.
       byte_order_mark_big TYPE x LENGTH 2 VALUE 'FEFF',
       byte_order_mark_little TYPE x LENGTH 2 VALUE 'FFFE',
       cr_lf TYPE c LENGTH 2 VALUE '__',
+      charsize TYPE i VALUE 2,
       horizontal_tab TYPE c LENGTH 1 VALUE '_',
       vertical_tab TYPE c LENGTH 1 VALUE '_',
       form_feed TYPE c LENGTH 1 VALUE '_',
