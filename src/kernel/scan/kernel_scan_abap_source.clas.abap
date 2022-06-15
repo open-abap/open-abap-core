@@ -30,10 +30,16 @@ ENDCLASS.
 CLASS kernel_scan_abap_source IMPLEMENTATION.
 
   METHOD call.
+    CONSTANTS: BEGIN OF c_mode,
+                 normal  TYPE i VALUE 1,
+                 comment TYPE i VALUE 2,
+               END OF c_mode.
     DATA source    TYPE string.
     DATA character TYPE c LENGTH 1.
     DATA row       TYPE i VALUE 1.
     DATA column    TYPE i.
+    DATA mode      TYPE i.
+
     FIELD-SYMBOLS <tokens>     TYPE ty_stokesx.
     FIELD-SYMBOLS <statements> TYPE ty_sstmnt.
     FIELD-SYMBOLS <trow>       LIKE LINE OF <tokens>.
@@ -43,35 +49,46 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
     WRITE '@KERNEL fs_tokens_.assign(INPUT.tokens_into);'.
     WRITE '@KERNEL fs_statements_.assign(INPUT.statements_into);'.
 
+    mode = c_mode-normal.
     WHILE source IS NOT INITIAL.
       character = source(1).
+      source = source+1.
 
       IF <trow> IS NOT ASSIGNED AND character <> '' AND character <> |\n|.
         APPEND INITIAL LINE TO <tokens> ASSIGNING <trow>.
         <trow>-row = row.
         <trow>-col = column.
-      ELSEIF character = '' OR character CA |.,|.
+      ELSEIF mode = c_mode-normal AND ( character = '' OR character CA |.,| ).
         UNASSIGN <trow>.
       ENDIF.
 
-      IF character CA |.,|.
+      IF ( mode = c_mode-normal AND character CA |.,| )
+          OR ( mode = c_mode-comment AND character = |\n| )
+          OR source = ''.
         APPEND INITIAL LINE TO <statements> ASSIGNING <srow>.
         <srow>-terminator = character.
         <srow>-type = 'K'.
       ENDIF.
 
       IF character = |\n|.
+        mode = c_mode-normal.
         UNASSIGN <trow>.
         row = row + 1.
         column = 0.
       ELSE.
         IF <trow> IS ASSIGNED.
-          <trow>-str = <trow>-str && to_upper( character ).
+          IF ( character = '*' AND column = 0 ) OR character = '"'.
+            mode = c_mode-comment.
+          ENDIF.
+          IF mode = c_mode-comment.
+            <trow>-str = <trow>-str && |{ character }|.
+          ELSE.
+            <trow>-str = <trow>-str && to_upper( |{ character }| ).
+          ENDIF.
         ENDIF.
         column = column + 1.
       ENDIF.
 
-      source = source+1.
     ENDWHILE.
 
   ENDMETHOD.
