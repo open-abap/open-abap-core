@@ -50,6 +50,7 @@ CLASS ltcl_scan IMPLEMENTATION.
     DATA tokens TYPE STANDARD TABLE OF stokesx WITH DEFAULT KEY.
     DATA statements TYPE STANDARD TABLE OF sstmnt WITH DEFAULT KEY.
     DATA lv_source TYPE string.
+    DATA source TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 
     lv_source =
       |class lcl definition.\n| &&
@@ -57,7 +58,9 @@ CLASS ltcl_scan IMPLEMENTATION.
       |CLASS lcl IMPLEMENTATION.\n| &&
       |ENDCLASS.|.
 
-    SCAN ABAP-SOURCE lv_source
+    SPLIT lv_source AT |\n| INTO TABLE source.
+
+    SCAN ABAP-SOURCE source
       TOKENS INTO tokens
       STATEMENTS INTO statements
       WITH ANALYSIS
@@ -71,6 +74,17 @@ CLASS ltcl_scan IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lines( tokens )
       exp = 8 ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = dump_tokens( tokens )
+      exp = |str:CLASS,row:1,col:0\n| &&
+            |str:LCL,row:1,col:6\n| &&
+            |str:DEFINITION,row:1,col:10\n| &&
+            |str:ENDCLASS,row:2,col:0\n| &&
+            |str:CLASS,row:3,col:0\n| &&
+            |str:LCL,row:3,col:6\n| &&
+            |str:IMPLEMENTATION,row:3,col:10\n| &&
+            |str:ENDCLASS,row:4,col:0\n| ).
 
   ENDMETHOD.
 

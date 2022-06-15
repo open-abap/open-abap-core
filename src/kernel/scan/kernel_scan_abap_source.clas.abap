@@ -60,14 +60,14 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
         <srow>-type = 'K'.
       ENDIF.
 
-      IF <trow> IS ASSIGNED.
-        <trow>-str = <trow>-str && character.
-      ENDIF.
-
       IF character = |\n|.
+        UNASSIGN <trow>.
         row = row + 1.
         column = 0.
       ELSE.
+        IF <trow> IS ASSIGNED.
+          <trow>-str = <trow>-str && to_upper( character ).
+        ENDIF.
         column = column + 1.
       ENDIF.
 
