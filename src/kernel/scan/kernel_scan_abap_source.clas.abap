@@ -67,7 +67,8 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
           OR source = ''.
         APPEND INITIAL LINE TO <statements> ASSIGNING <srow>.
         <srow>-terminator = character.
-        <srow>-to = lines( <statements> ).
+        <srow>-from = 1.
+        <srow>-to = lines( <tokens> ).
         IF mode = c_mode-comment.
           <srow>-type = gc_statement-comment.
         ELSE.

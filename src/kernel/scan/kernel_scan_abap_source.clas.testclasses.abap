@@ -33,7 +33,7 @@ CLASS ltcl_scan IMPLEMENTATION.
   METHOD dump_statements.
     DATA statement LIKE LINE OF statements.
     LOOP AT statements INTO statement.
-      dump = dump && |from:{ statement-from },row:{ statement-to }|.
+      dump = dump && |from:{ statement-from },to:{ statement-to }|.
       IF sy-tabix < lines( statements ).
         dump = dump && |\n|.
       ENDIF.
@@ -56,9 +56,9 @@ CLASS ltcl_scan IMPLEMENTATION.
   METHOD simple_write.
     scan( 'WRITE 2.' ).
 
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = dump_statements( statements )
-    "   exp = 'from:1,row:2' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = dump_statements( statements )
+      exp = 'from:1,to:2' ).
 
     cl_abap_unit_assert=>assert_equals(
       act = dump_tokens( tokens )
