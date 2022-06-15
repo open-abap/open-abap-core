@@ -86,9 +86,9 @@ INTERFACE if_ixml_document PUBLIC.
       RETURNING VALUE(val) TYPE any,
     get_elements_by_tag_name
       IMPORTING
-        depth TYPE i OPTIONAL
-        name TYPE string
-        namespace TYPE string
+        depth     TYPE i OPTIONAL
+        name      TYPE string
+        namespace TYPE string OPTIONAL
       RETURNING VALUE(val) TYPE any,
     get_root RETURNING VALUE(node) TYPE REF TO if_ixml_node,
     get_root_element RETURNING VALUE(root) TYPE REF TO if_ixml_element.
