@@ -70,12 +70,10 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
       ELSE.
         column = column + 1.
       ENDIF.
+
       source = source+1.
     ENDWHILE.
 
-*    WRITE '@KERNEL console.dir(INPUT.with_analysis);'.
-*    WRITE '@KERNEL console.dir(INPUT.with_comments);'.
-*    WRITE '@KERNEL console.dir(INPUT.with_pragmas);'.
   ENDMETHOD.
 
 ENDCLASS.
