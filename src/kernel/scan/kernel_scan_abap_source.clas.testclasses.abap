@@ -13,6 +13,9 @@ CLASS ltcl_scan DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS dump_tokens
       IMPORTING tokens TYPE kernel_scan_abap_source=>ty_stokesx
       RETURNING VALUE(dump) TYPE string.
+    METHODS dump_statements
+      IMPORTING statements TYPE kernel_scan_abap_source=>ty_sstmnt
+      RETURNING VALUE(dump) TYPE string.
 ENDCLASS.
 
 CLASS ltcl_scan IMPLEMENTATION.
@@ -22,6 +25,16 @@ CLASS ltcl_scan IMPLEMENTATION.
     LOOP AT tokens INTO token.
       dump = dump && |str:{ token-str },row:{ token-row },col:{ token-col }|.
       IF sy-tabix < lines( tokens ).
+        dump = dump && |\n|.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD dump_statements.
+    DATA statement LIKE LINE OF statements.
+    LOOP AT statements INTO statement.
+      dump = dump && |from:{ statement-from },row:{ statement-to }|.
+      IF sy-tabix < lines( statements ).
         dump = dump && |\n|.
       ENDIF.
     ENDLOOP.
@@ -43,9 +56,9 @@ CLASS ltcl_scan IMPLEMENTATION.
   METHOD simple_write.
     scan( 'WRITE 2.' ).
 
-    cl_abap_unit_assert=>assert_equals(
-      act = lines( statements )
-      exp = 1 ).
+    " cl_abap_unit_assert=>assert_equals(
+    "   act = dump_statements( statements )
+    "   exp = 'from:1,row:2' ).
 
     cl_abap_unit_assert=>assert_equals(
       act = dump_tokens( tokens )
