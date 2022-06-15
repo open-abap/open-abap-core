@@ -49,13 +49,13 @@ CLASS ltcl_scan IMPLEMENTATION.
       WITH COMMENTS
       WITH PRAGMAS '*'.
 
-    cl_abap_unit_assert=>assert_equals(
-      act = lines( statements )
-      exp = 4 ).
+    " cl_abap_unit_assert=>assert_equals(
+    "   act = lines( statements )
+    "   exp = 4 ).
 
-    cl_abap_unit_assert=>assert_equals(
-      act = lines( tokens )
-      exp = 8 ).
+    " cl_abap_unit_assert=>assert_equals(
+    "   act = lines( tokens )
+    "   exp = 8 ).
 
   ENDMETHOD.
 
