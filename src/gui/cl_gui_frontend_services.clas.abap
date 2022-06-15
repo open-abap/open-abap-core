@@ -2,6 +2,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
   PUBLIC SECTION.
     CONSTANTS filetype_all TYPE string VALUE 'abc'.
     CONSTANTS action_cancel TYPE i VALUE 1.
+    CONSTANTS action_ok TYPE i VALUE 1.
 
     CONSTANTS platform_nt351 TYPE i VALUE 1.
     CONSTANTS platform_nt40 TYPE i VALUE 2.
@@ -36,6 +37,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
         IMPORTING
           window_title     TYPE string OPTIONAL
           default_filename TYPE string
+          multiselection   TYPE abap_bool OPTIONAL
           file_filter      TYPE string OPTIONAL
         CHANGING
           file_table  TYPE filetable
