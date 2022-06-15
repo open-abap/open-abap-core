@@ -116,8 +116,8 @@ CLASS ltcl_scan IMPLEMENTATION.
     scan( |* full line comment| ).
 
     cl_abap_unit_assert=>assert_equals(
-      act = lines( statements )
-      exp = 1 ).
+      act = dump_statements( statements )
+      exp = |from:1,to:1| ).
 
     cl_abap_unit_assert=>assert_equals(
       act = dump_tokens( tokens )
@@ -128,8 +128,8 @@ CLASS ltcl_scan IMPLEMENTATION.
     scan( |  " partial| ).
 
     cl_abap_unit_assert=>assert_equals(
-      act = lines( statements )
-      exp = 1 ).
+      act = dump_statements( statements )
+      exp = |from:1,to:1| ).
 
     cl_abap_unit_assert=>assert_equals(
       act = dump_tokens( tokens )
