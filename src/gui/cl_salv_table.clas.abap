@@ -14,6 +14,7 @@ CLASS cl_salv_table DEFINITION PUBLIC.
     METHODS close_screen.
     METHODS refresh.
     METHODS display.
+    METHODS is_offline RETURNING VALUE(value) TYPE abap_bool.
     METHODS get_metadata.
     METHODS set_screen_status
       IMPORTING
@@ -69,6 +70,10 @@ CLASS cl_salv_table IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD factory.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD is_offline.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
