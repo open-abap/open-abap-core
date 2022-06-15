@@ -646,6 +646,10 @@ CLASS lcl_stream_factory IMPLEMENTATION.
     WRITE '@KERNEL INPUT.string.set(`<?xml version="1.0" encoding="utf-16"?>`);'.
   ENDMETHOD.
 
+  METHOD if_ixml_stream_factory~create_ostream_xstring.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_stream_factory~create_istream_string.
     CREATE OBJECT stream TYPE lcl_istream
       EXPORTING
