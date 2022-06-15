@@ -50,13 +50,13 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
         APPEND INITIAL LINE TO <tokens> ASSIGNING <trow>.
         <trow>-row = row.
         <trow>-col = column.
-      ELSEIF character = '' OR character = |.|.
+      ELSEIF character = '' OR character CA |.,|.
         UNASSIGN <trow>.
       ENDIF.
 
-      IF character = |.|.
+      IF character CA |.,|.
         APPEND INITIAL LINE TO <statements> ASSIGNING <srow>.
-        <srow>-terminator = '.'.
+        <srow>-terminator = character.
         <srow>-type = 'K'.
       ENDIF.
 

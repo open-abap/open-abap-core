@@ -1,8 +1,8 @@
 CLASS ltcl_scan DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
-    METHODS test1 FOR TESTING RAISING cx_static_check.
-    METHODS test2 FOR TESTING RAISING cx_static_check.
+    METHODS simple_write FOR TESTING RAISING cx_static_check.
+    METHODS class_impl_def FOR TESTING RAISING cx_static_check.
     METHODS dump_tokens
       IMPORTING tokens TYPE kernel_scan_abap_source=>ty_stokesx
       RETURNING VALUE(dump) TYPE string.
@@ -20,7 +20,7 @@ CLASS ltcl_scan IMPLEMENTATION.
     ENDLOOP.
   ENDMETHOD.
 
-  METHOD test1.
+  METHOD simple_write.
     DATA tokens TYPE STANDARD TABLE OF stokesx WITH DEFAULT KEY.
     DATA statements TYPE STANDARD TABLE OF sstmnt WITH DEFAULT KEY.
     DATA source TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
@@ -42,11 +42,9 @@ CLASS ltcl_scan IMPLEMENTATION.
       act = dump_tokens( tokens )
       exp = |str:WRITE,row:1,col:0\n| &&
             |str:2,row:1,col:6| ).
-
   ENDMETHOD.
 
-  METHOD test2.
-
+  METHOD class_impl_def.
     DATA tokens TYPE STANDARD TABLE OF stokesx WITH DEFAULT KEY.
     DATA statements TYPE STANDARD TABLE OF sstmnt WITH DEFAULT KEY.
     DATA lv_source TYPE string.
@@ -81,7 +79,6 @@ CLASS ltcl_scan IMPLEMENTATION.
             |str:LCL,row:3,col:6\n| &&
             |str:IMPLEMENTATION,row:3,col:10\n| &&
             |str:ENDCLASS,row:4,col:0| ).
-
   ENDMETHOD.
 
 ENDCLASS.
