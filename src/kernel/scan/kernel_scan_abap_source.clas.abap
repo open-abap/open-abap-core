@@ -46,7 +46,7 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
     WHILE source IS NOT INITIAL.
       character = source(1).
 
-      IF <trow> IS NOT ASSIGNED AND character IS NOT INITIAL.
+      IF <trow> IS NOT ASSIGNED AND character IS NOT INITIAL AND character <> |\n|.
         APPEND INITIAL LINE TO <tokens> ASSIGNING <trow>.
         <trow>-row = row.
         <trow>-col = column.

@@ -72,10 +72,6 @@ CLASS ltcl_scan IMPLEMENTATION.
       exp = 4 ).
 
     cl_abap_unit_assert=>assert_equals(
-      act = lines( tokens )
-      exp = 8 ).
-
-    cl_abap_unit_assert=>assert_equals(
       act = dump_tokens( tokens )
       exp = |str:CLASS,row:1,col:0\n| &&
             |str:LCL,row:1,col:6\n| &&
@@ -84,7 +80,7 @@ CLASS ltcl_scan IMPLEMENTATION.
             |str:CLASS,row:3,col:0\n| &&
             |str:LCL,row:3,col:6\n| &&
             |str:IMPLEMENTATION,row:3,col:10\n| &&
-            |str:ENDCLASS,row:4,col:0\n| ).
+            |str:ENDCLASS,row:4,col:0| ).
 
   ENDMETHOD.
 
