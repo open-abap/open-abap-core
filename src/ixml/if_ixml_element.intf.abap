@@ -24,9 +24,10 @@ INTERFACE if_ixml_element PUBLIC.
       RETURNING VALUE(val) TYPE REF TO if_ixml_node_iterator,
     find_from_name_ns
       IMPORTING
-        name TYPE string
+        name      TYPE string
         namespace TYPE string
-        depth TYPE i
+        uri       TYPE string OPTIONAL
+        depth     TYPE i
       RETURNING VALUE(val) TYPE REF TO if_ixml_element,
     find_from_name
       IMPORTING
