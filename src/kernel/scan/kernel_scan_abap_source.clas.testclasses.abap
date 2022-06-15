@@ -53,15 +53,12 @@ CLASS ltcl_scan IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD class_impl_def.
-    DATA lv_source TYPE string.
 
-    lv_source =
+    scan(
       |class lcl definition.\n| &&
       |ENDCLASS.\n| &&
       |CLASS lcl IMPLEMENTATION.\n| &&
-      |ENDCLASS.|.
-
-    scan( lv_source ).
+      |ENDCLASS.| ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lines( statements )
