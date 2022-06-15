@@ -69,7 +69,7 @@
     "sicf_consistency": true,
     "method_implemented_twice": true,
     "local_class_naming": true,
-    "no_yoda_conditions": true,
+    "no_yoda_conditions": false,
     "preferred_compare_operator": true,
     "prefix_is_current_class": true,
     "sequential_blank": true,

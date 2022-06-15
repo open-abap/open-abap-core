@@ -2,6 +2,8 @@ CLASS kernel_scan_abap_source DEFINITION PUBLIC.
 * handling of ABAP statement SCAN ABAP-SOURCE
   PUBLIC SECTION.
     CLASS-METHODS call IMPORTING input TYPE any.
+    TYPES ty_stokesx TYPE STANDARD TABLE OF stokesx WITH DEFAULT KEY.
+    TYPES ty_sstmnt TYPE STANDARD TABLE OF sstmnt WITH DEFAULT KEY.
   PRIVATE SECTION.
     CONSTANTS: BEGIN OF gc_token,
                  comment    TYPE c LENGTH 1 VALUE 'C',
@@ -28,12 +30,10 @@ ENDCLASS.
 CLASS kernel_scan_abap_source IMPLEMENTATION.
 
   METHOD call.
-    TYPES ty_stokesx TYPE STANDARD TABLE OF stokesx WITH DEFAULT KEY.
-    TYPES ty_sstmnt TYPE STANDARD TABLE OF sstmnt WITH DEFAULT KEY.
     DATA source    TYPE string.
     DATA character TYPE c LENGTH 1.
-    DATA row        TYPE i.
-    DATA column     TYPE i.
+    DATA row       TYPE i VALUE 1.
+    DATA column    TYPE i.
     FIELD-SYMBOLS <tokens>     TYPE ty_stokesx.
     FIELD-SYMBOLS <statements> TYPE ty_sstmnt.
     FIELD-SYMBOLS <trow>       LIKE LINE OF <tokens>.
@@ -49,12 +49,28 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
 
     WHILE source IS NOT INITIAL.
       character = source(1).
+      WRITE '@KERNEL console.dir(character.get());'.
+
+      IF <trow> IS NOT ASSIGNED AND character IS NOT INITIAL.
+        APPEND INITIAL LINE TO <tokens> ASSIGNING <trow>.
+        <trow>-row = row.
+        <trow>-col = column.
+      ELSEIF character = '' OR character = |.|.
+        UNASSIGN <trow>.
+      ENDIF.
+
+      IF <trow> IS ASSIGNED.
+        <trow>-str = <trow>-str && character.
+      ENDIF.
+
+      IF character = |\n|.
+        row = row + 1.
+        column = 0.
+      ELSE.
+        column = column + 1.
+      ENDIF.
       source = source+1.
     ENDWHILE.
-
-    DO 2 TIMES.
-      APPEND INITIAL LINE TO <tokens>.
-    ENDDO.
 
 *    WRITE '@KERNEL console.dir(INPUT.with_analysis);'.
 *    WRITE '@KERNEL console.dir(INPUT.with_comments);'.
