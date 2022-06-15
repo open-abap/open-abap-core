@@ -39,7 +39,6 @@ CLASS ltcl_scan IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD simple_write.
-
     scan( 'WRITE 2.' ).
 
     cl_abap_unit_assert=>assert_equals(
@@ -53,7 +52,6 @@ CLASS ltcl_scan IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD class_impl_def.
-
     scan(
       |class lcl definition.\n| &&
       |ENDCLASS.\n| &&
@@ -77,6 +75,24 @@ CLASS ltcl_scan IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD simple_indentation.
+    scan(
+      |IF foo = bar.\n| &&
+      |  WRITE foo.\n| &&
+      |ENDIF.| ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( statements )
+      exp = 3 ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = dump_tokens( tokens )
+      exp = |str:IF,row:1,col:0\n| &&
+            |str:FOO,row:1,col:3\n| &&
+            |str:=,row:1,col:7\n| &&
+            |str:BAR,row:1,col:9\n| &&
+            |str:WRITE,row:2,col:2\n| &&
+            |str:FOO,row:2,col:8\n| &&
+            |str:ENDIF,row:3,col:0| ).
   ENDMETHOD.
 
 ENDCLASS.
