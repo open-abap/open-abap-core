@@ -1,4 +1,6 @@
 INTERFACE if_ixml_parser PUBLIC.
+  CONSTANTS co_no_validation TYPE i VALUE 0.
+
   METHODS parse RETURNING VALUE(subrc) TYPE i.
   METHODS set_normalizing IMPORTING normal TYPE abap_bool.
   METHODS num_errors RETURNING VALUE(errors) TYPE i.
