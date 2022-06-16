@@ -25,7 +25,7 @@ INTERFACE if_ixml_element PUBLIC.
     find_from_name_ns
       IMPORTING
         name      TYPE string
-        namespace TYPE string
+        namespace TYPE string OPTIONAL
         uri       TYPE string OPTIONAL
         depth     TYPE i
       RETURNING VALUE(val) TYPE REF TO if_ixml_element,
