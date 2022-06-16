@@ -27,7 +27,7 @@ INTERFACE if_ixml_element PUBLIC.
         name      TYPE string
         namespace TYPE string OPTIONAL
         uri       TYPE string OPTIONAL
-        depth     TYPE i
+        depth     TYPE i OPTIONAL
       RETURNING VALUE(val) TYPE REF TO if_ixml_element,
     find_from_name
       IMPORTING
