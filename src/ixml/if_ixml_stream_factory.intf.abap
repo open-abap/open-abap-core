@@ -16,4 +16,11 @@ INTERFACE if_ixml_stream_factory PUBLIC.
       xml TYPE string
     RETURNING
       VALUE(stream) TYPE REF TO if_ixml_istream.
+
+  METHODS create_istream_xstring
+    IMPORTING
+      xml TYPE xstring
+    RETURNING
+      VALUE(stream) TYPE REF TO if_ixml_istream.
+
 ENDINTERFACE.

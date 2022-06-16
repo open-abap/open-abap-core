@@ -8,4 +8,9 @@ INTERFACE if_ixml_parser PUBLIC.
       index TYPE i
     RETURNING
       VALUE(error) TYPE REF TO if_ixml_parse_error.
+  METHODS set_validating
+    IMPORTING
+      mode TYPE i OPTIONAL
+    RETURNING
+      VALUE(rval) TYPE abap_bool.
 ENDINTERFACE.
