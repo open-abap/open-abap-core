@@ -133,6 +133,10 @@ CLASS lcl_node IMPLEMENTATION.
     mi_parent = ii_parent.
   ENDMETHOD.
 
+  METHOD if_ixml_element~get_attribute_node_ns.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_node~get_namespace_prefix.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
