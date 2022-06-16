@@ -18,7 +18,9 @@ CLASS cl_message_helper IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD set_msg_vars_for_clike.
-    ASSERT 1 = 'todo'.
+    sy-msgid = '00'.
+    sy-msgno = '001'.
+    sy-msgv1 = text.
   ENDMETHOD.
 
 ENDCLASS.
