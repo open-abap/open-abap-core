@@ -41,7 +41,9 @@ INTERFACE if_ixml_element PUBLIC.
     get_attribute_ns
       IMPORTING
         name TYPE string
-      RETURNING VALUE(val) TYPE string,
+        uri TYPE string OPTIONAL
+      RETURNING
+        VALUE(val) TYPE string,
     get_attribute
       IMPORTING
         name TYPE string
