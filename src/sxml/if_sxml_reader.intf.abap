@@ -1,6 +1,7 @@
 INTERFACE if_sxml_reader PUBLIC.
   DATA node_type TYPE if_sxml_node=>node_type READ-ONLY.
   DATA name TYPE string READ-ONLY.
+  DATA value TYPE string READ-ONLY.
 
   METHODS
     read_next_node
@@ -12,6 +13,10 @@ INTERFACE if_sxml_reader PUBLIC.
         value_type TYPE if_sxml_value=>value_type DEFAULT if_sxml_value=>co_vt_text
       RAISING
         cx_sxml_parse_error.
+
+  METHODS next_attribute
+    IMPORTING
+      value_type TYPE if_sxml_value=>value_type OPTIONAL.
 
   METHODS
     skip_node

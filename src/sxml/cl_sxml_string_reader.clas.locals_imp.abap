@@ -331,6 +331,10 @@ CLASS lcl_reader IMPLEMENTATION.
     mv_pointer = 1.
   ENDMETHOD.
 
+  METHOD if_sxml_reader~next_attribute.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_sxml_reader~next_node.
     DATA node LIKE LINE OF mt_nodes.
     DATA open TYPE REF TO if_sxml_open_element.
