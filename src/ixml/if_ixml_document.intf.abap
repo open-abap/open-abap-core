@@ -83,7 +83,8 @@ INTERFACE if_ixml_document PUBLIC.
     get_elements_by_tag_name_ns
       IMPORTING
         name TYPE string
-        namespace TYPE string
+        namespace TYPE string OPTIONAL
+        uri TYPE string OPTIONAL
       RETURNING VALUE(val) TYPE any,
     get_elements_by_tag_name
       IMPORTING
