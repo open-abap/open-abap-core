@@ -21,6 +21,15 @@ CLASS cl_message_helper IMPLEMENTATION.
     sy-msgid = '00'.
     sy-msgno = '001'.
     sy-msgv1 = text.
+    IF strlen( text ) > 50.
+      sy-msgv2 = text+50.
+    ENDIF.
+    IF strlen( text ) > 100.
+      sy-msgv3 = text+100.
+    ENDIF.
+    IF strlen( text ) > 150.
+      sy-msgv4 = text+150.
+    ENDIF.
   ENDMETHOD.
 
 ENDCLASS.
