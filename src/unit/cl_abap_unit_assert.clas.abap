@@ -66,7 +66,8 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
           exp TYPE i DEFAULT 0
           msg TYPE string OPTIONAL
           quit TYPE i OPTIONAL
-          level TYPE i OPTIONAL.
+          level TYPE i OPTIONAL
+        PREFERRED PARAMETER act.
 
     CLASS-METHODS
       assert_true

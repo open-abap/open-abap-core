@@ -650,6 +650,10 @@ CLASS lcl_stream_factory IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
+  METHOD if_ixml_stream_factory~create_istream_xstring.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_stream_factory~create_istream_string.
     CREATE OBJECT stream TYPE lcl_istream
       EXPORTING
@@ -682,6 +686,10 @@ CLASS lcl_parser IMPLEMENTATION.
   METHOD constructor.
     mi_istream = istream.
     mi_document = document.
+  ENDMETHOD.
+
+  METHOD if_ixml_parser~set_validating.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_ixml_parser~parse.
