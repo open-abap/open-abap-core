@@ -37,6 +37,7 @@ CLASS cl_abap_matcher DEFINITION PUBLIC.
     DATA mt_matches TYPE match_result_tab.
     DATA mv_index TYPE i.
     DATA mv_text TYPE string.
+    DATA mv_pattern TYPE string.
 
 ENDCLASS.
 
@@ -48,11 +49,13 @@ CLASS cl_abap_matcher IMPLEMENTATION.
     ELSE.
       FIND ALL OCCURRENCES OF REGEX pattern IN text RESULTS mt_matches.
     ENDIF.
+    mv_pattern = pattern.
     mv_text = text.
   ENDMETHOD.
 
   METHOD match.
-    ASSERT 1 = 'todo'.
+    FIND ALL OCCURRENCES OF REGEX |^{ mv_pattern }$| IN mv_text.
+    success = boolc( sy-subrc = 0 ).
   ENDMETHOD.
 
   METHOD find_all.

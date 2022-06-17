@@ -1,8 +1,10 @@
 CLASS ltcl_test DEFINITION FOR TESTING DURATION SHORT RISK LEVEL HARMLESS FINAL.
 
   PRIVATE SECTION.
-    METHODS test01 FOR TESTING RAISING cx_static_check.
-    METHODS no_next FOR TESTING RAISING cx_static_check.
+    METHODS test01      FOR TESTING RAISING cx_static_check.
+    METHODS match_true  FOR TESTING RAISING cx_static_check.
+    METHODS match_false FOR TESTING RAISING cx_static_check.
+    METHODS no_next     FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -11,10 +13,10 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD test01.
 
-    DATA lo_regex TYPE REF TO cl_abap_regex.
+    DATA lo_regex   TYPE REF TO cl_abap_regex.
     DATA lo_matcher TYPE REF TO cl_abap_matcher.
     DATA lt_results TYPE match_result_tab.
-    DATA ls_result LIKE LINE OF lt_results.
+    DATA ls_result  LIKE LINE OF lt_results.
 
     CREATE OBJECT lo_regex
       EXPORTING
@@ -55,6 +57,42 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_matcher->find_next( )
       exp = abap_false ).
+
+  ENDMETHOD.
+
+  METHOD match_false.
+
+    DATA lo_regex TYPE REF TO cl_abap_regex.
+    DATA lo_matcher TYPE REF TO cl_abap_matcher.
+
+    CREATE OBJECT lo_regex
+      EXPORTING
+        pattern     = 'aa'
+        ignore_case = abap_true.
+
+    lo_matcher = lo_regex->create_matcher( text = 'fooaabar' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_matcher->match( )
+      exp = abap_false ).
+
+  ENDMETHOD.
+
+  METHOD match_true.
+
+    DATA lo_regex TYPE REF TO cl_abap_regex.
+    DATA lo_matcher TYPE REF TO cl_abap_matcher.
+
+    CREATE OBJECT lo_regex
+      EXPORTING
+        pattern     = 'aa'
+        ignore_case = abap_true.
+
+    lo_matcher = lo_regex->create_matcher( text = 'aa' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_matcher->match( )
+      exp = abap_true ).
 
   ENDMETHOD.
 
