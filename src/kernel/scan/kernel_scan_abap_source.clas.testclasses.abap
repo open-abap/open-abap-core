@@ -143,20 +143,20 @@ CLASS ltcl_scan IMPLEMENTATION.
       |  field TYPE i,\n| &&
       |END OF foo.| ).
 
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = dump_tokens( tokens )
-    "   exp = |str:DATA,row:1,col:0\n| &&
-    "         |str:BEGIN,row:1,col:6\n| &&
-    "         |str:OF,row:1,col:12\n| &&
-    "         |str:FOO,row:1,col:15\n| &&
-    "         |str:DATA,row:1,col:0\n| &&
-    "         |str:FIELD,row:2,col:2\n| &&
-    "         |str:TYPE,row:2,col:8\n| &&
-    "         |str:I,row:2,col:13\n| &&
-    "         |str:DATA,row:1,col:0\n| &&
-    "         |str:END,row:3,col:0\n| &&
-    "         |str:OF,row:3,col:4\n| &&
-    "         |str:FOO,row:3,col:7| ).
+    cl_abap_unit_assert=>assert_equals(
+      act = dump_tokens( tokens )
+      exp = |str:DATA,row:1,col:0\n| &&
+            |str:BEGIN,row:1,col:6\n| &&
+            |str:OF,row:1,col:12\n| &&
+            |str:FOO,row:1,col:15\n| &&
+            |str:DATA,row:1,col:0\n| &&
+            |str:FIELD,row:2,col:2\n| &&
+            |str:TYPE,row:2,col:8\n| &&
+            |str:I,row:2,col:13\n| &&
+            |str:DATA,row:1,col:0\n| &&
+            |str:END,row:3,col:0\n| &&
+            |str:OF,row:3,col:4\n| &&
+            |str:FOO,row:3,col:7| ).
   ENDMETHOD.
 
 ENDCLASS.

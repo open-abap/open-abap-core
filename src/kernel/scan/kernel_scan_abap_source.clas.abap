@@ -34,13 +34,15 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
                  normal  TYPE i VALUE 1,
                  comment TYPE i VALUE 2,
                END OF c_mode.
-    DATA source    TYPE string.
-    DATA character TYPE c LENGTH 1.
-    DATA row       TYPE i VALUE 1.
-    DATA column    TYPE i.
-    DATA index     TYPE i.
-    DATA sfrom     TYPE i VALUE 1.
-    DATA mode      TYPE i.
+
+    DATA source       TYPE string.
+    DATA character    TYPE c LENGTH 1.
+    DATA row          TYPE i VALUE 1.
+    DATA column       TYPE i.
+    DATA index        TYPE i.
+    DATA sfrom        TYPE i VALUE 1.
+    DATA mode         TYPE i.
+    DATA chain_tokens TYPE ty_stokesx.
 
     FIELD-SYMBOLS <tokens>     TYPE ty_stokesx.
     FIELD-SYMBOLS <statements> TYPE ty_sstmnt.
@@ -62,6 +64,16 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
         <trow>-col = column.
       ELSEIF mode = c_mode-normal AND ( character = '' OR character CA |.,| ).
         UNASSIGN <trow>.
+        IF character = ','.
+*          WRITE '@KERNEL console.dir("before");'.
+          APPEND LINES OF chain_tokens TO <tokens>.
+*          WRITE '@KERNEL console.dir("after");'.
+*          WRITE lines( <tokens> ).
+        ENDIF.
+      ELSEIF mode = c_mode-normal AND character = ':'.
+        CLEAR chain_tokens.
+        APPEND LINES OF <tokens> FROM sfrom TO chain_tokens.
+*        WRITE '@KERNEL console.dir(chain_tokens);'.
       ENDIF.
 
       IF ( mode = c_mode-normal AND character CA |.,| )
@@ -91,7 +103,7 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
           ENDIF.
           IF mode = c_mode-comment.
             <trow>-str = <trow>-str && |{ character }|.
-          ELSE.
+          ELSEIF character <> ':'.
             <trow>-str = <trow>-str && to_upper( |{ character }| ).
           ENDIF.
         ENDIF.
