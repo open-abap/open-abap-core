@@ -78,7 +78,7 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD is_ddic_type.
-    ASSERT 1 = 'todo'.
+    bool = ddic.
   ENDMETHOD.
 
   METHOD constructor.
