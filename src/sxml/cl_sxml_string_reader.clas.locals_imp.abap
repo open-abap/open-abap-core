@@ -66,15 +66,21 @@ CLASS lcl_json_parser IMPLEMENTATION.
 
     DATA lv_type  TYPE string.
     DATA lv_error TYPE abap_bool.
+    DATA lv_error_message TYPE string.
+    DATA lv_xml_offset TYPE i.
 
     WRITE '@KERNEL let parsed;'.
     WRITE '@KERNEL try {'.
     WRITE '@KERNEL   parsed = JSON.parse(iv_json.get());'.
-    WRITE '@KERNEL } catch {'.
+    WRITE '@KERNEL } catch(e) {'.
+    WRITE '@KERNEL   lv_error_message.set(e.message);'.
     WRITE '@KERNEL   lv_error.set("X")'.
     WRITE '@KERNEL }'.
     IF lv_error = abap_true.
-      RAISE EXCEPTION TYPE cx_sxml_parse_error.
+      FIND REGEX ' position (\d+)' IN lv_error_message SUBMATCHES lv_xml_offset.
+      RAISE EXCEPTION TYPE cx_sxml_parse_error
+        EXPORTING
+          xml_offset = lv_xml_offset.
     ENDIF.
     WRITE '@KERNEL lv_type.set(Array.isArray(parsed) ? "array" : typeof parsed);'.
     WRITE '@KERNEL if (parsed === null) lv_type.set("null");'.
