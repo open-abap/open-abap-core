@@ -114,37 +114,37 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 * These are the constructor names from the js runtime
     CASE lv_name.
       WHEN 'Integer'.
-        CREATE OBJECT type.
+        CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_int.
         type->kind = kind_elem.
         type->length = 4.
       WHEN 'Numc'.
-        CREATE OBJECT type.
+        CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_num.
         type->kind = kind_elem.
         type->length = lv_length * 2.
       WHEN 'Hex'.
-        CREATE OBJECT type.
+        CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_hex.
         type->kind = kind_elem.
         type->length = lv_length.
       WHEN 'Date'.
-        CREATE OBJECT type.
+        CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_date.
         type->kind = kind_elem.
         type->length = 16.
       WHEN 'Packed'.
-        CREATE OBJECT type.
+        CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_packed.
         type->kind = kind_elem.
         type->length = lv_length.
       WHEN 'Time'.
-        CREATE OBJECT type.
+        CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_time.
         type->kind = kind_elem.
         type->length = 12.
       WHEN 'Float'.
-        CREATE OBJECT type.
+        CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_float.
         type->kind = kind_elem.
       WHEN 'Structure'.
@@ -160,12 +160,12 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->type_kind = typekind_table.
         type->kind = kind_table.
       WHEN 'XString'.
-        CREATE OBJECT type.
+        CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_xstring.
         type->kind = kind_elem.
         type->length = 8.
       WHEN 'String'.
-        CREATE OBJECT type.
+        CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_string.
         type->kind = kind_elem.
         type->length = 8.
