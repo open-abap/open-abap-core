@@ -23,9 +23,33 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS describe_by_name_t000 FOR TESTING.
     METHODS get_relative_name FOR TESTING.
 
+    METHODS is_ddic_type_true1 FOR TESTING.
+    METHODS is_ddic_type_true2 FOR TESTING.
+    METHODS is_ddic_type_false FOR TESTING.
+
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
+
+  METHOD is_ddic_type_true1.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_typedescr=>describe_by_name( 'CHAR1' )->is_ddic_type( )
+      exp = abap_true ).
+  ENDMETHOD.
+
+  METHOD is_ddic_type_true2.
+    DATA foo TYPE char1.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_typedescr=>describe_by_data( foo )->is_ddic_type( )
+      exp = abap_true ).
+  ENDMETHOD.
+
+  METHOD is_ddic_type_false.
+    DATA foo TYPE c LENGTH 1.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_typedescr=>describe_by_data( foo )->is_ddic_type( )
+      exp = abap_false ).
+  ENDMETHOD.
 
   METHOD get_relative_name.
     DATA lv_name TYPE string.

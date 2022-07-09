@@ -29,6 +29,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
 
     DATA type_kind TYPE abap_typekind.
     DATA kind TYPE c LENGTH 1.
+    DATA ddic TYPE abap_bool.
     DATA length TYPE i.
     DATA decimals TYPE i.
     DATA absolute_name TYPE string.
@@ -86,7 +87,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD is_ddic_type.
-    ASSERT 1 = 'todo'.
+    p_abap_bool = ddic.
   ENDMETHOD.
 
   METHOD describe_by_data_ref.
@@ -195,6 +196,10 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     ENDCASE.
 
     WRITE '@KERNEL if(p_data.getQualifiedName && p_data.getQualifiedName() !== undefined) type.get().absolute_name.set(p_data.getQualifiedName());'.
+
+* this is not completely correct, local type names and ddic names might overlap, but will work for now,
+    WRITE '@KERNEL if(abap.DDIC[type.get().absolute_name.get().toUpperCase()]) { type.get().ddic.set("X"); }'.
+
     type->relative_name = type->absolute_name.
     IF type->absolute_name = 'ABAP_BOOL'.
       type->absolute_name = '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL'.
