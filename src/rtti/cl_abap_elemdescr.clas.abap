@@ -36,7 +36,13 @@ ENDCLASS.
 CLASS cl_abap_elemdescr IMPLEMENTATION.
 
   METHOD get_ddic_field.
-    ASSERT 1 = 'todo'.
+    p_flddescr-tabname  = absolute_name.
+    p_flddescr-inttype  = type_kind.
+    p_flddescr-langu    = sy-langu.
+    p_flddescr-position = 1.
+    p_flddescr-leng     = length.
+    p_flddescr-decimals = decimals.
+* todo, dfies-convexit
   ENDMETHOD.
 
   METHOD get_i.
