@@ -46,19 +46,23 @@ CLASS cl_abap_elemdescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_i.
-    ASSERT 1 = 'todo'.
+    DATA foo TYPE i.
+    r_result ?= cl_abap_typedescr=>describe_by_data( foo ).
   ENDMETHOD.
 
   METHOD get_f.
-    ASSERT 1 = 'todo'.
+    DATA foo TYPE f.
+    r_result ?= cl_abap_typedescr=>describe_by_data( foo ).
   ENDMETHOD.
 
   METHOD get_d.
-    ASSERT 1 = 'todo'.
+    DATA foo TYPE d.
+    r_result ?= cl_abap_typedescr=>describe_by_data( foo ).
   ENDMETHOD.
 
   METHOD get_t.
-    ASSERT 1 = 'todo'.
+    DATA foo TYPE t.
+    r_result ?= cl_abap_typedescr=>describe_by_data( foo ).
   ENDMETHOD.
 
   METHOD get_ddic_fixed_values.
