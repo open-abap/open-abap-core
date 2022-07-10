@@ -37,6 +37,7 @@ CLASS ltcl_json DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS object_with_object FOR TESTING.
     METHODS bad_json_read_next_node FOR TESTING.
     METHODS bad_json_next_node FOR TESTING.
+    METHODS bad_json_xml_offset FOR TESTING.
     METHODS next_node FOR TESTING.
     METHODS skip_node FOR TESTING.
 
@@ -377,6 +378,32 @@ CLASS ltcl_json IMPLEMENTATION.
       act = lt_actual
       exp = mt_expected ).
 
+  ENDMETHOD.
+
+  METHOD bad_json_xml_offset.
+    DATA lv_json TYPE string.
+    DATA lo_node TYPE REF TO if_sxml_node.
+    DATA lo_reader TYPE REF TO if_sxml_reader.
+    DATA cx TYPE REF TO cx_sxml_parse_error.
+
+    lv_json = '{' && cl_abap_char_utilities=>newline
+      && '"ok": "abc",' && cl_abap_char_utilities=>newline
+      && '"error"' && cl_abap_char_utilities=>newline
+      && '}'.
+    lo_reader = cl_sxml_string_reader=>create( cl_abap_codepage=>convert_to( lv_json ) ).
+    TRY.
+        DO.
+          lo_node = lo_reader->read_next_node( ).
+          IF lo_node IS NOT BOUND.
+            EXIT.
+          ENDIF.
+        ENDDO.
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_sxml_parse_error INTO cx.
+        cl_abap_unit_assert=>assert_equals(
+          act = cx->xml_offset
+          exp = 23 ).
+    ENDTRY.
   ENDMETHOD.
 
   METHOD bad_json_read_next_node.
