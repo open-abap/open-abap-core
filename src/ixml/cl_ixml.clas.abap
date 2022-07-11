@@ -13,7 +13,7 @@ CLASS cl_ixml IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml~create_encoding.
-    ASSERT 1 = 'todo'.
+    CREATE OBJECT rval TYPE lcl_encoding.
   ENDMETHOD.
 
   METHOD if_ixml~create_document.

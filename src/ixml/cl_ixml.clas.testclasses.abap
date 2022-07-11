@@ -10,6 +10,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_attributes2 FOR TESTING RAISING cx_static_check.
     METHODS parse_attributes3 FOR TESTING RAISING cx_static_check.
     METHODS create FOR TESTING RAISING cx_static_check.
+    METHODS create_set_attributes FOR TESTING RAISING cx_static_check.
 
     METHODS parse
       IMPORTING
@@ -25,6 +26,19 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 ENDCLASS.
 
 CLASS ltcl_xml IMPLEMENTATION.
+
+  METHOD create_set_attributes.
+    DATA ixml TYPE REF TO if_ixml.
+    DATA ro_document TYPE REF TO if_ixml_document.
+    DATA lo_encoding TYPE REF TO if_ixml_encoding.
+    ixml = cl_ixml=>create( ).
+    lo_encoding = ixml->create_encoding(
+      byte_order    = if_ixml_encoding=>co_platform_endian
+      character_set = 'utf-8' ).
+    ro_document = ixml->create_document( ).
+    ro_document->set_encoding( lo_encoding ).
+    ro_document->set_standalone( abap_true ).
+  ENDMETHOD.
 
   METHOD create.
     DATA li_current TYPE REF TO if_ixml_node.

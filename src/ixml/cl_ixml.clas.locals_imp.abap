@@ -7,6 +7,7 @@ CLASS lcl_node_iterator DEFINITION.
     DATA mv_pointer TYPE i.
     DATA mt_list TYPE ty_list.
 ENDCLASS.
+
 CLASS lcl_node_iterator IMPLEMENTATION.
   METHOD constructor.
     mt_list = it_list.
@@ -22,6 +23,17 @@ CLASS lcl_node_iterator IMPLEMENTATION.
 *    WRITE '@KERNEL console.dir(rval);'.
     mv_pointer = mv_pointer + 1.
   ENDMETHOD.
+ENDCLASS.
+
+****************************************************************
+
+CLASS lcl_encoding DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_ixml_encoding.
+  PRIVATE SECTION.
+ENDCLASS.
+
+CLASS lcl_encoding IMPLEMENTATION.
 ENDCLASS.
 
 ****************************************************************
@@ -498,11 +510,13 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~set_encoding.
-    ASSERT 1 = 'todo'.
+* todo, something here?
+    RETURN.
   ENDMETHOD.
 
   METHOD if_ixml_document~set_standalone.
-    ASSERT 1 = 'todo'.
+* todo, something here?
+    RETURN.
   ENDMETHOD.
 
   METHOD if_ixml_document~set_namespace_prefix.
