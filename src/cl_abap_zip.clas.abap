@@ -66,10 +66,15 @@ CLASS cl_abap_zip IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD save.
+* https://en.wikipedia.org/wiki/ZIP_(file_format)
+
     DATA lo_stream TYPE REF TO lcl_stream.
     DATA ls_contents LIKE LINE OF mt_contents.
+    DATA lv_buffer TYPE xstring.
+    DATA lo_conv TYPE REF TO cl_abap_conv_out_ce.
 
     CREATE OBJECT lo_stream.
+    lo_conv = cl_abap_conv_out_ce=>create( ).
 
     LOOP AT mt_contents INTO ls_contents.
 * 0, 4, Local file header signature
@@ -95,9 +100,13 @@ CLASS cl_abap_zip IMPLEMENTATION.
 * 28, 2, Extra field length (m)
       lo_stream->append( '0000' ).
 * 30, n, File name
-* TODO
+      lo_conv->convert( EXPORTING data = ls_contents-name
+                        IMPORTING buffer = lv_buffer ).
+      lo_stream->append( lv_buffer ).
 * 30+n, m, Extra field
-* TODO
+* empty, no extra field
+* compressed data,
+      lo_stream->append( ls_contents-compressed ).
     ENDLOOP.
 
     val = lo_stream->get( ).
