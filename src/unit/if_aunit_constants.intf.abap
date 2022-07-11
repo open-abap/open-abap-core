@@ -3,4 +3,5 @@ INTERFACE if_aunit_constants PUBLIC.
   CONSTANTS critical TYPE i VALUE 1.
   CONSTANTS fatal TYPE i VALUE 1.
   CONSTANTS tolerable TYPE i VALUE 1.
+  CONSTANTS method TYPE i VALUE 1.
 ENDINTERFACE.
