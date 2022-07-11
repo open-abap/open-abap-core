@@ -88,7 +88,7 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     CLEAR ls_component.
     ls_component-name = lv_name.
     ASSIGN COMPONENT lv_name OF STRUCTURE data TO <fs>.
-    ls_component-type = cl_abap_typedescr=>describe_by_data( <fs> ).
+    ls_component-type ?= cl_abap_typedescr=>describe_by_data( <fs> ).
     ls_component-type_kind = ls_component-type->type_kind.
     APPEND ls_component TO components.
     WRITE '@KERNEL }'.
