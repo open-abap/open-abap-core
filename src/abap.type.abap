@@ -18,8 +18,10 @@ TYPES abap_abstypename TYPE c LENGTH 200.
 CONSTANTS abap_max_comp_name_ln TYPE i VALUE 30.
 
 TYPES: BEGIN OF abap_componentdescr,
-         name TYPE string,
-         type TYPE REF TO cl_abap_datadescr,
+         name       TYPE string,
+         type       TYPE REF TO cl_abap_datadescr,
+         as_include TYPE abap_bool,
+         type_kind  TYPE c LENGTH 1,
        END OF abap_componentdescr.
 
 TYPES abap_component_tab TYPE STANDARD TABLE OF abap_componentdescr WITH DEFAULT KEY.

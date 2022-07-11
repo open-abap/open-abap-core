@@ -5,13 +5,8 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
       constructor
         IMPORTING data TYPE any.
 
-    TYPES: BEGIN OF component,
-             name       TYPE string,
-             type       TYPE REF TO cl_abap_typedescr,
-             as_include TYPE abap_bool,
-             type_kind  TYPE c LENGTH 1,
-           END OF component.
-    TYPES component_table TYPE STANDARD TABLE OF component WITH DEFAULT KEY.
+    TYPES component TYPE abap_componentdescr.
+    TYPES component_table TYPE abap_component_tab.
 
     METHODS:
       get_components RETURNING VALUE(rt_components) TYPE component_table,
