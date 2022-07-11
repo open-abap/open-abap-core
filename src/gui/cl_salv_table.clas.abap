@@ -35,12 +35,17 @@ CLASS cl_salv_table DEFINITION PUBLIC.
     METHODS set_top_of_list IMPORTING val TYPE any.
     METHODS set_technical.
     METHODS get_columns RETURNING VALUE(val) TYPE REF TO cl_salv_table.
+    METHODS get_functions RETURNING VALUE(val) TYPE REF TO cl_salv_functions_list.
     METHODS get_column
       IMPORTING name TYPE string
       RETURNING VALUE(val) TYPE REF TO cl_salv_table.
 ENDCLASS.
 
 CLASS cl_salv_table IMPLEMENTATION.
+  METHOD get_functions.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD set_technical.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
