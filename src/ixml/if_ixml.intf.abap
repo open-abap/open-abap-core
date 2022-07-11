@@ -20,8 +20,8 @@ INTERFACE if_ixml PUBLIC.
       VALUE(parser) TYPE REF TO if_ixml_parser.
   METHODS create_encoding
     IMPORTING
-      byte_order TYPE string
+      byte_order    TYPE string
       character_set TYPE string
     RETURNING
-    VALUE(parser) TYPE REF TO if_ixml_encoding.
+      VALUE(rval) TYPE REF TO if_ixml_encoding.
 ENDINTERFACE.
