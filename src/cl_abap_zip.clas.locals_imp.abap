@@ -4,6 +4,8 @@ CLASS lcl_stream DEFINITION.
     METHODS get RETURNING VALUE(rv_xstr) TYPE xstring.
     METHODS append_date IMPORTING iv_date TYPE d.
     METHODS append_time IMPORTING iv_time TYPE t.
+    METHODS append_int4 IMPORTING iv_int TYPE i.
+    METHODS append_int2 IMPORTING iv_int TYPE i.
     METHODS append_crc
       IMPORTING iv_xstring TYPE xstring
       RETURNING VALUE(rv_crc) TYPE xstring.
@@ -27,6 +29,18 @@ CLASS lcl_stream IMPLEMENTATION.
 
   METHOD append_time.
 * todo
+  ENDMETHOD.
+
+  METHOD append_int2.
+    DATA lv_hex TYPE x LENGTH 1.
+    lv_hex = iv_int.
+    append( lv_hex ).
+  ENDMETHOD.
+
+  METHOD append_int4.
+    DATA lv_hex TYPE x LENGTH 2.
+    lv_hex = iv_int.
+    append( lv_hex ).
   ENDMETHOD.
 
   METHOD append_crc.
