@@ -82,8 +82,9 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD constructor.
-    DATA lv_name TYPE string.
+    DATA lv_name      TYPE string.
     DATA ls_component LIKE LINE OF components.
+
     FIELD-SYMBOLS <fs> TYPE any.
 
 * todo, fail if input is not a structure?
@@ -93,6 +94,7 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     ls_component-name = lv_name.
     ASSIGN COMPONENT lv_name OF STRUCTURE data TO <fs>.
     ls_component-type = cl_abap_typedescr=>describe_by_data( <fs> ).
+    ls_component-type_kind = ls_component-type->type_kind.
     APPEND ls_component TO components.
     WRITE '@KERNEL }'.
   ENDMETHOD.
