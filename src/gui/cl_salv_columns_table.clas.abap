@@ -1,9 +1,11 @@
 CLASS cl_salv_columns_table DEFINITION PUBLIC.
   PUBLIC SECTION.
-    METHODS set_optimize.
+    METHODS set_optimize IMPORTING value TYPE abap_bool DEFAULT abap_true.
+    METHODS set_color_column IMPORTING value TYPE string.
     METHODS get_column
       IMPORTING name TYPE string
       RETURNING VALUE(val) TYPE REF TO cl_salv_column.
+    METHODS get RETURNING VALUE(value) TYPE any.
 ENDCLASS.
 
 CLASS cl_salv_columns_table IMPLEMENTATION.
@@ -12,6 +14,14 @@ CLASS cl_salv_columns_table IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD set_optimize.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD set_color_column.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 ENDCLASS.
