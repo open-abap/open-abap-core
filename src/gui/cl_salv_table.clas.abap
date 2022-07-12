@@ -34,7 +34,7 @@ CLASS cl_salv_table DEFINITION PUBLIC.
     METHODS set_list_header IMPORTING val TYPE any.
     METHODS set_top_of_list IMPORTING val TYPE any.
     METHODS set_technical.
-    METHODS get_columns RETURNING VALUE(val) TYPE REF TO cl_salv_table.
+    METHODS get_columns RETURNING VALUE(val) TYPE REF TO cl_salv_columns_table.
     METHODS get_functions RETURNING VALUE(val) TYPE REF TO cl_salv_functions_list.
     METHODS get_column
       IMPORTING name TYPE string
