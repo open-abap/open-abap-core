@@ -3,7 +3,7 @@ CLASS cl_salv_columns_table DEFINITION PUBLIC.
     METHODS set_optimize.
     METHODS get_column
       IMPORTING name TYPE string
-      RETURNING VALUE(val) TYPE REF TO cl_salv_table.
+      RETURNING VALUE(val) TYPE REF TO cl_salv_column.
 ENDCLASS.
 
 CLASS cl_salv_columns_table IMPLEMENTATION.
