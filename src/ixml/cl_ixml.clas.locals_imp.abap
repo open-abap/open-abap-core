@@ -143,6 +143,10 @@ CLASS lcl_node IMPLEMENTATION.
     CREATE OBJECT mo_children TYPE lcl_node_list.
     CREATE OBJECT mi_attributes TYPE lcl_named_node_map.
     mi_parent = ii_parent.
+
+    IF mi_parent IS NOT INITIAL.
+      ii_parent->append_child( me ).
+    ENDIF.
   ENDMETHOD.
 
   METHOD if_ixml_element~get_attribute_node_ns.
