@@ -143,10 +143,10 @@ CLASS lcl_node IMPLEMENTATION.
     CREATE OBJECT mo_children TYPE lcl_node_list.
     CREATE OBJECT mi_attributes TYPE lcl_named_node_map.
     mi_parent = ii_parent.
-
-    IF mi_parent IS NOT INITIAL.
-      ii_parent->append_child( me ).
-    ENDIF.
+* TODO
+    " IF mi_parent IS NOT INITIAL.
+    "   ii_parent->append_child( me ).
+    " ENDIF.
   ENDMETHOD.
 
   METHOD if_ixml_element~get_attribute_node_ns.
@@ -669,9 +669,12 @@ CLASS lcl_stream_factory DEFINITION.
 ENDCLASS.
 CLASS lcl_stream_factory IMPLEMENTATION.
   METHOD if_ixml_stream_factory~create_ostream_cstring.
+    DATA lv_xml TYPE string.
     CREATE OBJECT stream TYPE lcl_ostream.
+    lv_xml = '<?xml version="1.0" encoding="utf-16"?>'.
+
 * hack, this method doesnt really follow normal ABAP semantics
-    WRITE '@KERNEL INPUT.string.set(`<?xml version="1.0" encoding="utf-16"?>`);'.
+    WRITE '@KERNEL INPUT.string.set(lv_xml.get());'.
   ENDMETHOD.
 
   METHOD if_ixml_stream_factory~create_ostream_xstring.
