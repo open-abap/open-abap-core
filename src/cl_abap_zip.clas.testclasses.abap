@@ -2,6 +2,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
     METHODS test1 FOR TESTING RAISING cx_static_check.
+    METHODS get FOR TESTING RAISING cx_static_check.
     METHODS crc FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
@@ -32,6 +33,23 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_sub
       exp = '504B0304' ).
+  ENDMETHOD.
+
+  METHOD get.
+    DATA lo_zip     TYPE REF TO cl_abap_zip.
+    DATA lv_content TYPE xstring.
+    DATA lv_act     TYPE xstring.
+
+    lv_content = '1122334455667788AABBCCDDEEFF'.
+    CREATE OBJECT lo_zip.
+    lo_zip->add( name    = 'foobar'
+                 content = lv_content ).
+    lo_zip->get( EXPORTING name    = 'foobar'
+                 IMPORTING content = lv_act ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_act
+      exp = lv_content ).
   ENDMETHOD.
 
 ENDCLASS.

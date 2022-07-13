@@ -45,7 +45,14 @@ CLASS cl_abap_zip IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get.
-    ASSERT 1 = 'todo'.
+    DATA:
+      ls_length TYPE i,
+      ls_contents LIKE LINE OF mt_contents.
+    READ TABLE mt_contents WITH KEY name = name INTO ls_contents.
+    cl_abap_gzip=>decompress_binary(
+        EXPORTING gzip_in = ls_contents-compressed
+        IMPORTING raw_out = content
+                  raw_out_len = ls_length ).
   ENDMETHOD.
 
   METHOD add.
