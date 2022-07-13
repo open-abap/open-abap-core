@@ -1,0 +1,7 @@
+CLASS cx_salv_msg DEFINITION PUBLIC INHERITING FROM cx_static_check.
+
+ENDCLASS.
+
+CLASS cx_salv_msg IMPLEMENTATION.
+
+ENDCLASS.
