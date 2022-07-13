@@ -26,7 +26,9 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
         ii_list        TYPE REF TO if_ixml_node_list
       RETURNING
         VALUE(rv_dump) TYPE string.
-
+    METHODS render
+      RETURNING
+        VALUE(rv_xml) TYPE string.
 ENDCLASS.
 
 CLASS ltcl_xml IMPLEMENTATION.
@@ -82,20 +84,22 @@ CLASS ltcl_xml IMPLEMENTATION.
     ENDDO.
   ENDMETHOD.
 
-  METHOD render_empty_output.
-
+  METHOD render.
     DATA li_ostream  TYPE REF TO if_ixml_ostream.
     DATA li_renderer TYPE REF TO if_ixml_renderer.
-    DATA lv_xml      TYPE string.
     DATA li_factory  TYPE REF TO if_ixml_stream_factory.
 
     li_factory = mi_ixml->create_stream_factory( ).
-    li_ostream = li_factory->create_ostream_cstring( lv_xml ).
+    li_ostream = li_factory->create_ostream_cstring( rv_xml ).
     li_renderer = mi_ixml->create_renderer(
       ostream  = li_ostream
       document = mi_document ).
     li_renderer->render( ).
+  ENDMETHOD.
 
+  METHOD render_empty_output.
+    DATA lv_xml TYPE string.
+    lv_xml = render( ).
     cl_abap_unit_assert=>assert_equals(
       act = lv_xml
       exp = '<?xml version="1.0" encoding="utf-16"?>' ).
