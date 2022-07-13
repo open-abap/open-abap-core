@@ -3,22 +3,23 @@ CLASS cl_abap_gzip DEFINITION PUBLIC.
     CLASS-METHODS
       decompress_binary
         IMPORTING
-          gzip_in TYPE xstring
+          gzip_in     TYPE xstring
         EXPORTING
-          raw_out TYPE xstring
+          raw_out     TYPE xstring
           raw_out_len TYPE i.
+
     CLASS-METHODS
       compress_binary
         IMPORTING
-          raw_in TYPE xstring
+          compress_level TYPE i OPTIONAL
+          raw_in         TYPE xstring
         EXPORTING
-          gzip_out TYPE xstring
-          gzip_out_len TYPE i.
+          gzip_out       TYPE xstring
+          gzip_out_len   TYPE i.
 ENDCLASS.
 
 CLASS cl_abap_gzip IMPLEMENTATION.
   METHOD decompress_binary.
-* todo, this doesnt work in browser?
     WRITE '@KERNEL const zlib = await import("zlib");'.
     WRITE '@KERNEL const buf = Buffer.from(gzip_in.get(), "hex");'.
     WRITE '@KERNEL const decompress = zlib.inflateRawSync(buf).toString("hex").toUpperCase();'.
@@ -28,7 +29,7 @@ CLASS cl_abap_gzip IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD compress_binary.
-* todo, this doesnt work in browser?
+* todo, input parameter COMPRESS_LEVEL corresponds to "level" in "options" for Node?
     WRITE '@KERNEL const zlib = await import("zlib");'.
     WRITE '@KERNEL const buf = Buffer.from(raw_in.get(), "hex");'.
     WRITE '@KERNEL const gzi = zlib.deflateRawSync(buf).toString("hex").toUpperCase();'.
