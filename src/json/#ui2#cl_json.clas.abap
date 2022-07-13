@@ -1,15 +1,26 @@
 CLASS /ui2/cl_json DEFINITION PUBLIC.
   PUBLIC SECTION.
+    CONSTANTS: BEGIN OF pretty_mode,
+                 low_case TYPE string VALUE 'low_case',
+               END OF pretty_mode.
+
     CLASS-METHODS deserialize
       IMPORTING
-        json TYPE string OPTIONAL
+        json             TYPE string OPTIONAL
+        assoc_arrays     TYPE abap_bool OPTIONAL
+        assoc_arrays_opt TYPE abap_bool OPTIONAL
       CHANGING
-        data TYPE data.
+        data             TYPE data.
+
     CLASS-METHODS serialize
       IMPORTING
-        data TYPE data
+        data          TYPE data
+        compress      TYPE abap_bool OPTIONAL
+        pretty_name   TYPE string OPTIONAL
+        assoc_arrays  TYPE abap_bool OPTIONAL
       RETURNING
         VALUE(r_json) TYPE string.
+
   PRIVATE SECTION.
     CLASS-DATA mo_parsed TYPE REF TO lcl_parser.
     CLASS-METHODS _deserialize

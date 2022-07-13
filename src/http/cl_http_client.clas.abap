@@ -10,6 +10,14 @@ CLASS cl_http_client DEFINITION PUBLIC CREATE PRIVATE.
         proxy_service TYPE string OPTIONAL
       EXPORTING
         VALUE(client) TYPE REF TO if_http_client.
+* todo, add classic exceptions
+
+    CLASS-METHODS create_by_destination
+      IMPORTING
+        destination   TYPE string
+      EXPORTING
+        VALUE(client) TYPE REF TO if_http_client.
+* todo, add classic exceptions
 
     METHODS constructor
       IMPORTING
@@ -68,6 +76,10 @@ CLASS cl_http_client IMPLEMENTATION.
   METHOD if_http_client~close.
 * todo
     RETURN.
+  ENDMETHOD.
+
+  METHOD create_by_destination.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_http_client~send.

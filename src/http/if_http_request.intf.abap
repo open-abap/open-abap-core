@@ -2,6 +2,7 @@ INTERFACE if_http_request PUBLIC.
 
   CONSTANTS:
     co_protocol_version_1_1 TYPE string VALUE 'VER11',
+    co_protocol_version_1_0 TYPE string VALUE 'VER10',
     co_request_method_get TYPE string VALUE 'GET',
     co_request_method_post TYPE string VALUE 'POST'.
 
