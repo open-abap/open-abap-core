@@ -286,7 +286,11 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~set_attribute_ns.
-    ASSERT 1 = 'todo'.
+    DATA lo_node TYPE REF TO lcl_node.
+    CREATE OBJECT lo_node TYPE lcl_node.
+    lo_node->if_ixml_node~set_name( name ).
+    lo_node->if_ixml_element~set_value( value ).
+    mi_attributes->set_named_item_ns( lo_node ).
   ENDMETHOD.
 
   METHOD if_ixml_element~set_value.
@@ -571,7 +575,9 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~create_simple_element.
-    ASSERT 1 = 'todo'.
+    CREATE OBJECT val TYPE lcl_node
+      EXPORTING ii_parent = parent.
+    val->if_ixml_node~set_name( name ).
   ENDMETHOD.
 
   METHOD if_ixml_document~find_from_name.
