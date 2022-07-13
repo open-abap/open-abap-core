@@ -37,8 +37,6 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD get.
     DATA lo_zip     TYPE REF TO cl_abap_zip.
-    DATA lv_res     TYPE xstring.
-    DATA lv_sub     TYPE xstring.
     DATA lv_content TYPE xstring.
     DATA lv_act     TYPE xstring.
 
