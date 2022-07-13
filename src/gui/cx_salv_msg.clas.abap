@@ -1,4 +1,4 @@
-CLASS cx_salv_msg DEFINITION PUBLIC INHERITING FROM cx_static_check.
+CLASS cx_salv_msg DEFINITION PUBLIC INHERITING FROM cx_salv_error.
 
 ENDCLASS.
 
