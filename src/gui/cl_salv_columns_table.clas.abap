@@ -1,12 +1,16 @@
 CLASS cl_salv_columns_table DEFINITION PUBLIC.
   PUBLIC SECTION.
-    METHODS set_cell_type_column IMPORTING value TYPE string.
-    METHODS set_optimize IMPORTING value TYPE abap_bool DEFAULT abap_true.
-    METHODS set_color_column IMPORTING value TYPE string.
+    METHODS set_cell_type_column
+      IMPORTING value TYPE string.
+    METHODS set_optimize
+      IMPORTING value TYPE abap_bool DEFAULT abap_true.
+    METHODS set_color_column
+      IMPORTING value TYPE string.
     METHODS get_column
-      IMPORTING name TYPE string
-      RETURNING VALUE(val) TYPE REF TO cl_salv_column.
-    METHODS get RETURNING VALUE(value) TYPE any.
+      IMPORTING columnname TYPE string
+      RETURNING VALUE(value) TYPE REF TO cl_salv_column.
+    METHODS get
+      RETURNING VALUE(value) TYPE any.
 ENDCLASS.
 
 CLASS cl_salv_columns_table IMPLEMENTATION.
