@@ -11,7 +11,6 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
     CONSTANTS platform_windows98 TYPE i VALUE 5.
     CONSTANTS platform_windowsxp TYPE i VALUE 6.
 
-
     CLASS-METHODS
       gui_download
         IMPORTING
@@ -42,7 +41,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
         CHANGING
           file_table  TYPE filetable
           rc          TYPE i
-          user_action TYPE i.
+          user_action TYPE i OPTIONAL.
 
     CLASS-METHODS
       get_platform
@@ -60,7 +59,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
           filename    TYPE string
           path        TYPE string
           fullpath    TYPE string
-          user_action TYPE i.
+          user_action TYPE i OPTIONAL.
 
     CLASS-METHODS
       directory_browse

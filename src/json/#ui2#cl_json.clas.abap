@@ -8,6 +8,7 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
     CLASS-METHODS deserialize
       IMPORTING
         json             TYPE string OPTIONAL
+        pretty_name      TYPE string OPTIONAL
         assoc_arrays     TYPE abap_bool OPTIONAL
         assoc_arrays_opt TYPE abap_bool OPTIONAL
       CHANGING
