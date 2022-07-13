@@ -26,7 +26,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
       gui_upload
         IMPORTING
           filename TYPE string
-          filetype TYPE string
+          filetype TYPE string OPTIONAL
         EXPORTING
           filelength TYPE i
         CHANGING
@@ -36,7 +36,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
       file_open_dialog
         IMPORTING
           window_title     TYPE string OPTIONAL
-          default_filename TYPE string
+          default_filename TYPE string OPTIONAL
           multiselection   TYPE abap_bool OPTIONAL
           file_filter      TYPE string OPTIONAL
         CHANGING

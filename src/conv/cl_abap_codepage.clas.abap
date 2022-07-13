@@ -1,11 +1,16 @@
 CLASS cl_abap_codepage DEFINITION PUBLIC.
   PUBLIC SECTION.
     CLASS-METHODS convert_to
-      IMPORTING source TYPE string
-      RETURNING VALUE(output) TYPE xstring.
+      IMPORTING
+        codepage      TYPE string OPTIONAL
+        source        TYPE string
+      RETURNING
+        VALUE(output) TYPE xstring.
+
     CLASS-METHODS convert_from
       IMPORTING input TYPE xstring
       RETURNING VALUE(output) TYPE string.
+
     CLASS-METHODS sap_codepage
       IMPORTING encoding TYPE string
       RETURNING VALUE(codepage) TYPE abap_encoding.
