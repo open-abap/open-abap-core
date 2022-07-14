@@ -61,10 +61,9 @@ CLASS ltcl_xml IMPLEMENTATION.
       value = 'bar' ).
     lv_xml = render( ).
 
-* TODO
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = lv_xml
-    "   exp = '<?xml version="1.0" encoding="utf-16"?><moo xmlns="bar"/>' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_xml
+      exp = '<?xml version="1.0" encoding="utf-16"?><moo xmlns="bar"/>' ).
   ENDMETHOD.
 
   METHOD create.
