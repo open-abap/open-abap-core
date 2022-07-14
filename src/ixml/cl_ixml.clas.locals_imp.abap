@@ -127,14 +127,16 @@ CLASS lcl_node DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_element.
     METHODS constructor
-      IMPORTING ii_parent TYPE REF TO if_ixml_node OPTIONAL.
+      IMPORTING
+        ii_parent TYPE REF TO if_ixml_node OPTIONAL.
 
   PRIVATE SECTION.
-    DATA mo_children TYPE REF TO lcl_node_list.
-    DATA mv_name TYPE string.
-    DATA mv_namespace TYPE string.
-    DATA mv_value TYPE string.
-    DATA mi_parent TYPE REF TO if_ixml_node.
+    DATA mv_name       TYPE string.
+    DATA mv_namespace  TYPE string.
+    DATA mv_value      TYPE string.
+
+    DATA mo_children   TYPE REF TO lcl_node_list.
+    DATA mi_parent     TYPE REF TO if_ixml_node.
     DATA mi_attributes TYPE REF TO if_ixml_named_node_map.
 ENDCLASS.
 
@@ -143,10 +145,10 @@ CLASS lcl_node IMPLEMENTATION.
     CREATE OBJECT mo_children TYPE lcl_node_list.
     CREATE OBJECT mi_attributes TYPE lcl_named_node_map.
     mi_parent = ii_parent.
-* TODO
-    " IF mi_parent IS NOT INITIAL.
-    "   ii_parent->append_child( me ).
-    " ENDIF.
+
+    IF mi_parent IS NOT INITIAL.
+      ii_parent->append_child( me ).
+    ENDIF.
   ENDMETHOD.
 
   METHOD if_ixml_element~get_attribute_node_ns.
@@ -278,7 +280,39 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~render.
-    ASSERT 1 = 'todo'.
+    DATA li_iterator   TYPE REF TO if_ixml_node_iterator.
+    DATA li_node       TYPE REF TO if_ixml_node.
+    DATA li_element    TYPE REF TO if_ixml_element.
+    DATA lv_attributes TYPE string.
+
+    li_iterator = mi_attributes->create_iterator( ).
+    DO.
+      li_node = li_iterator->get_next( ).
+      IF li_node IS INITIAL.
+        EXIT. " current loop
+      ENDIF.
+      lv_attributes = lv_attributes && | | && li_node->get_name( ) && '="' && li_node->get_value( ) && '"'.
+    ENDDO.
+
+    ostream->write_string( '<' && mv_name && lv_attributes ).
+    IF if_ixml_node~get_children( )->get_length( ) > 0 OR mv_value IS NOT INITIAL.
+      ostream->write_string( '>' ).
+    ENDIF.
+
+    li_iterator = if_ixml_node~get_children( )->create_iterator( ).
+    DO.
+      li_element ?= li_iterator->get_next( ).
+      IF li_element IS INITIAL.
+        EXIT. " current loop
+      ENDIF.
+      li_element->render( ostream ).
+    ENDDO.
+
+    IF if_ixml_node~get_children( )->get_length( ) > 0 OR mv_value IS NOT INITIAL.
+      ostream->write_string( mv_value && '</' && mv_name && '>' ).
+    ELSE.
+      ostream->write_string( '/>' ).
+    ENDIF.
   ENDMETHOD.
 
   METHOD if_ixml_element~set_attribute_node_ns.
@@ -290,10 +324,10 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~set_attribute_ns.
-    DATA lo_node TYPE REF TO lcl_node.
+    DATA lo_node TYPE REF TO if_ixml_node.
     CREATE OBJECT lo_node TYPE lcl_node.
-    lo_node->if_ixml_node~set_name( name ).
-    lo_node->if_ixml_element~set_value( value ).
+    lo_node->set_name( name ).
+    lo_node->set_value( value ).
     mi_attributes->set_named_item_ns( lo_node ).
   ENDMETHOD.
 
@@ -612,7 +646,7 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~get_root_element.
-    ASSERT 1 = 'todo'.
+    root = mi_node.
   ENDMETHOD.
 
 ENDCLASS.
@@ -622,10 +656,38 @@ ENDCLASS.
 CLASS lcl_renderer DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_renderer.
+    METHODS constructor
+      IMPORTING
+        ostream  TYPE REF TO if_ixml_ostream
+        document TYPE REF TO if_ixml_document.
+  PRIVATE SECTION.
+    DATA mi_ostream TYPE REF TO if_ixml_ostream.
+    DATA mi_document TYPE REF TO if_ixml_document.
 ENDCLASS.
+
 CLASS lcl_renderer IMPLEMENTATION.
+  METHOD constructor.
+    mi_ostream = ostream.
+    mi_document = document.
+  ENDMETHOD.
+
   METHOD if_ixml_renderer~render.
-    RETURN.
+    DATA li_root     TYPE REF TO if_ixml_element.
+    DATA li_element  TYPE REF TO if_ixml_element.
+    DATA li_children TYPE REF TO if_ixml_node_list.
+    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+
+    li_root = mi_document->get_root_element( ).
+
+    li_children = li_root->get_children( ).
+    li_iterator = li_children->create_iterator( ).
+    DO.
+      li_element ?= li_iterator->get_next( ).
+      IF li_element IS INITIAL.
+        EXIT. " current loop
+      ENDIF.
+      li_element->render( mi_ostream ).
+    ENDDO.
   ENDMETHOD.
 
   METHOD if_ixml_renderer~set_normalizing.
@@ -638,8 +700,13 @@ ENDCLASS.
 CLASS lcl_ostream DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_ostream.
+    DATA mv_string TYPE string.
 ENDCLASS.
+
 CLASS lcl_ostream IMPLEMENTATION.
+  METHOD if_ixml_ostream~write_string.
+    mv_string = mv_string && string.
+  ENDMETHOD.
 ENDCLASS.
 
 ****************************************************************
@@ -667,14 +734,13 @@ CLASS lcl_stream_factory DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_stream_factory.
 ENDCLASS.
+
 CLASS lcl_stream_factory IMPLEMENTATION.
   METHOD if_ixml_stream_factory~create_ostream_cstring.
-    DATA lv_xml TYPE string.
     CREATE OBJECT stream TYPE lcl_ostream.
-    lv_xml = '<?xml version="1.0" encoding="utf-16"?>'.
-
 * hack, this method doesnt really follow normal ABAP semantics
-    WRITE '@KERNEL INPUT.string.set(lv_xml.get());'.
+    WRITE '@KERNEL stream.get().mv_string = INPUT.string;'.
+    stream->write_string( '<?xml version="1.0" encoding="utf-16"?>' ).
   ENDMETHOD.
 
   METHOD if_ixml_stream_factory~create_ostream_xstring.
@@ -771,7 +837,6 @@ CLASS lcl_parser IMPLEMENTATION.
             lo_node->if_ixml_node~set_namespace_prefix( lv_namespace ).
           ENDIF.
           lo_node->if_ixml_node~set_name( lv_name ).
-          lo_parent->if_ixml_node~append_child( lo_node ).
           lo_parent = lo_node.
         ENDIF.
 
@@ -789,7 +854,6 @@ CLASS lcl_parser IMPLEMENTATION.
         CREATE OBJECT lo_node EXPORTING ii_parent = lo_parent.
         lo_node->if_ixml_node~set_name( '#text' ).
         lo_node->if_ixml_node~set_value( lv_value ).
-        lo_parent->if_ixml_node~append_child( lo_node ).
       ENDIF.
 
       lv_xml = lv_xml+lv_offset.

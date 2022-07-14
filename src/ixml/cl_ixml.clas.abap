@@ -25,7 +25,10 @@ CLASS cl_ixml IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml~create_renderer.
-    CREATE OBJECT renderer TYPE lcl_renderer.
+    CREATE OBJECT renderer TYPE lcl_renderer
+      EXPORTING
+        ostream  = ostream
+        document = document.
   ENDMETHOD.
 
   METHOD if_ixml~create_parser.
