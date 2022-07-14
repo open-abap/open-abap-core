@@ -10,7 +10,7 @@ CLASS cl_abap_codepage DEFINITION PUBLIC.
     CLASS-METHODS convert_from
       IMPORTING
         codepage      TYPE string OPTIONAL
-        input TYPE xstring
+        source        TYPE xstring
       RETURNING
         VALUE(output) TYPE string.
 
@@ -34,7 +34,7 @@ CLASS cl_abap_codepage IMPLEMENTATION.
     DATA data TYPE string.
     conv = cl_abap_conv_in_ce=>create( encoding = 'UTF-8' ).
     conv->convert(
-      EXPORTING input = input
+      EXPORTING input = source
       IMPORTING data = output ).
   ENDMETHOD.
 

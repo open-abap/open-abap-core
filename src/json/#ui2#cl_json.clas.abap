@@ -5,6 +5,8 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
                  camel_case TYPE string VALUE 'camel_case',
                END OF pretty_mode.
 
+    TYPES tribool TYPE c LENGTH 1.
+
     CLASS-METHODS deserialize
       IMPORTING
         json             TYPE string OPTIONAL

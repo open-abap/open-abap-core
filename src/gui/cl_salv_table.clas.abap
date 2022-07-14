@@ -20,8 +20,9 @@ CLASS cl_salv_table DEFINITION PUBLIC.
     METHODS get_metadata.
     METHODS set_screen_status
       IMPORTING
-        pfstatus TYPE any
-        report TYPE any.
+        pfstatus      TYPE any
+        set_functions TYPE any OPTIONAL
+        report        TYPE any.
     METHODS set_screen_popup
       IMPORTING
         start_column TYPE i
