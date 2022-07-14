@@ -127,14 +127,16 @@ CLASS lcl_node DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_element.
     METHODS constructor
-      IMPORTING ii_parent TYPE REF TO if_ixml_node OPTIONAL.
+      IMPORTING
+        ii_parent TYPE REF TO if_ixml_node OPTIONAL.
 
   PRIVATE SECTION.
-    DATA mo_children TYPE REF TO lcl_node_list.
-    DATA mv_name TYPE string.
-    DATA mv_namespace TYPE string.
-    DATA mv_value TYPE string.
-    DATA mi_parent TYPE REF TO if_ixml_node.
+    DATA mv_name       TYPE string.
+    DATA mv_namespace  TYPE string.
+    DATA mv_value      TYPE string.
+
+    DATA mo_children   TYPE REF TO lcl_node_list.
+    DATA mi_parent     TYPE REF TO if_ixml_node.
     DATA mi_attributes TYPE REF TO if_ixml_named_node_map.
 ENDCLASS.
 
@@ -143,10 +145,10 @@ CLASS lcl_node IMPLEMENTATION.
     CREATE OBJECT mo_children TYPE lcl_node_list.
     CREATE OBJECT mi_attributes TYPE lcl_named_node_map.
     mi_parent = ii_parent.
-* TODO
-    " IF mi_parent IS NOT INITIAL.
-    "   ii_parent->append_child( me ).
-    " ENDIF.
+
+    IF mi_parent IS NOT INITIAL.
+      ii_parent->append_child( me ).
+    ENDIF.
   ENDMETHOD.
 
   METHOD if_ixml_element~get_attribute_node_ns.
@@ -771,7 +773,6 @@ CLASS lcl_parser IMPLEMENTATION.
             lo_node->if_ixml_node~set_namespace_prefix( lv_namespace ).
           ENDIF.
           lo_node->if_ixml_node~set_name( lv_name ).
-          lo_parent->if_ixml_node~append_child( lo_node ).
           lo_parent = lo_node.
         ENDIF.
 
@@ -789,7 +790,6 @@ CLASS lcl_parser IMPLEMENTATION.
         CREATE OBJECT lo_node EXPORTING ii_parent = lo_parent.
         lo_node->if_ixml_node~set_name( '#text' ).
         lo_node->if_ixml_node~set_value( lv_value ).
-        lo_parent->if_ixml_node~append_child( lo_node ).
       ENDIF.
 
       lv_xml = lv_xml+lv_offset.
