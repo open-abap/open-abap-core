@@ -143,6 +143,10 @@ CLASS lcl_node IMPLEMENTATION.
     CREATE OBJECT mo_children TYPE lcl_node_list.
     CREATE OBJECT mi_attributes TYPE lcl_named_node_map.
     mi_parent = ii_parent.
+* TODO
+    " IF mi_parent IS NOT INITIAL.
+    "   ii_parent->append_child( me ).
+    " ENDIF.
   ENDMETHOD.
 
   METHOD if_ixml_element~get_attribute_node_ns.
@@ -286,7 +290,11 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~set_attribute_ns.
-    ASSERT 1 = 'todo'.
+    DATA lo_node TYPE REF TO lcl_node.
+    CREATE OBJECT lo_node TYPE lcl_node.
+    lo_node->if_ixml_node~set_name( name ).
+    lo_node->if_ixml_element~set_value( value ).
+    mi_attributes->set_named_item_ns( lo_node ).
   ENDMETHOD.
 
   METHOD if_ixml_element~set_value.
@@ -571,7 +579,9 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~create_simple_element.
-    ASSERT 1 = 'todo'.
+    CREATE OBJECT val TYPE lcl_node
+      EXPORTING ii_parent = parent.
+    val->if_ixml_node~set_name( name ).
   ENDMETHOD.
 
   METHOD if_ixml_document~find_from_name.
@@ -659,9 +669,12 @@ CLASS lcl_stream_factory DEFINITION.
 ENDCLASS.
 CLASS lcl_stream_factory IMPLEMENTATION.
   METHOD if_ixml_stream_factory~create_ostream_cstring.
+    DATA lv_xml TYPE string.
     CREATE OBJECT stream TYPE lcl_ostream.
+    lv_xml = '<?xml version="1.0" encoding="utf-16"?>'.
+
 * hack, this method doesnt really follow normal ABAP semantics
-    WRITE '@KERNEL INPUT.string.set(`<?xml version="1.0" encoding="utf-16"?>`);'.
+    WRITE '@KERNEL INPUT.string.set(lv_xml.get());'.
   ENDMETHOD.
 
   METHOD if_ixml_stream_factory~create_ostream_xstring.

@@ -1,5 +1,8 @@
 CLASS cl_salv_table DEFINITION PUBLIC.
   PUBLIC SECTION.
+    CONSTANTS c_functions_all TYPE i VALUE 1.
+    TYPES ty_rows TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+
     CLASS-METHODS factory
       IMPORTING
         r_container TYPE any OPTIONAL
@@ -9,7 +12,6 @@ CLASS cl_salv_table DEFINITION PUBLIC.
         t_table TYPE any.
     METHODS get_selections RETURNING VALUE(val) TYPE REF TO cl_salv_table.
     METHODS set_selection_mode IMPORTING val TYPE i.
-    TYPES ty_rows TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
     METHODS get_selected_rows RETURNING VALUE(rows) TYPE ty_rows.
     METHODS close_screen.
     METHODS refresh.

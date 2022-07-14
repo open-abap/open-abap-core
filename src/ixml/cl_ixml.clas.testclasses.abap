@@ -2,6 +2,8 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
     METHODS render_empty_output FOR TESTING RAISING cx_static_check.
+    METHODS render_element FOR TESTING RAISING cx_static_check.
+
     METHODS parse_basic FOR TESTING RAISING cx_static_check.
     METHODS parse_namespace FOR TESTING RAISING cx_static_check.
     METHODS parse_negative FOR TESTING RAISING cx_static_check.
@@ -11,6 +13,10 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_attributes3 FOR TESTING RAISING cx_static_check.
     METHODS create FOR TESTING RAISING cx_static_check.
     METHODS create_set_attributes FOR TESTING RAISING cx_static_check.
+
+    DATA mi_ixml TYPE REF TO if_ixml.
+    DATA mi_document TYPE REF TO if_ixml_document.
+    METHODS setup.
 
     METHODS parse
       IMPORTING
@@ -22,29 +28,48 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
         ii_list        TYPE REF TO if_ixml_node_list
       RETURNING
         VALUE(rv_dump) TYPE string.
-
+    METHODS render
+      RETURNING
+        VALUE(rv_xml) TYPE string.
 ENDCLASS.
 
 CLASS ltcl_xml IMPLEMENTATION.
 
+  METHOD setup.
+    mi_ixml = cl_ixml=>create( ).
+    mi_document = mi_ixml->create_document( ).
+  ENDMETHOD.
+
   METHOD create_set_attributes.
-    DATA ixml TYPE REF TO if_ixml.
-    DATA ro_document TYPE REF TO if_ixml_document.
     DATA lo_encoding TYPE REF TO if_ixml_encoding.
-    ixml = cl_ixml=>create( ).
-    lo_encoding = ixml->create_encoding(
+    lo_encoding = mi_ixml->create_encoding(
       byte_order    = if_ixml_encoding=>co_platform_endian
       character_set = 'utf-8' ).
-    ro_document = ixml->create_document( ).
-    ro_document->set_encoding( lo_encoding ).
-    ro_document->set_standalone( abap_true ).
+    mi_document->set_encoding( lo_encoding ).
+    mi_document->set_standalone( abap_true ).
+  ENDMETHOD.
+
+  METHOD render_element.
+    DATA lo_element TYPE REF TO if_ixml_element.
+    DATA lv_xml     TYPE string.
+
+    lo_element = mi_document->create_simple_element(
+      name   = 'moo'
+      parent = mi_document ).
+    lo_element->set_attribute_ns(
+      name  = 'xmlns'
+      value = 'bar' ).
+    lv_xml = render( ).
+
+* TODO
+    " cl_abap_unit_assert=>assert_equals(
+    "   act = lv_xml
+    "   exp = '<?xml version="1.0" encoding="utf-16"?><moo xmlns="bar"/>' ).
   ENDMETHOD.
 
   METHOD create.
     DATA li_current TYPE REF TO if_ixml_node.
-    DATA li_doc TYPE REF TO if_ixml_document.
-    li_doc = cl_ixml=>create( )->create_document( ).
-    li_current = li_doc->get_root( ).
+    li_current = mi_document->get_root( ).
     ASSERT li_current IS NOT INITIAL.
     ASSERT li_current->get_name( ) = '#document'.
     ASSERT li_current->get_namespace( ) IS INITIAL.
@@ -52,7 +77,6 @@ CLASS ltcl_xml IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD dump.
-
     DATA li_iterator TYPE REF TO if_ixml_node_iterator.
     DATA li_node TYPE REF TO if_ixml_node.
 
@@ -78,31 +102,27 @@ CLASS ltcl_xml IMPLEMENTATION.
 
       rv_dump = rv_dump && dump( li_node->get_children( ) ).
     ENDDO.
+  ENDMETHOD.
 
+  METHOD render.
+    DATA li_ostream  TYPE REF TO if_ixml_ostream.
+    DATA li_renderer TYPE REF TO if_ixml_renderer.
+    DATA li_factory  TYPE REF TO if_ixml_stream_factory.
+
+    li_factory = mi_ixml->create_stream_factory( ).
+    li_ostream = li_factory->create_ostream_cstring( rv_xml ).
+    li_renderer = mi_ixml->create_renderer(
+      ostream  = li_ostream
+      document = mi_document ).
+    li_renderer->render( ).
   ENDMETHOD.
 
   METHOD render_empty_output.
-
-    DATA li_doc      TYPE REF TO if_ixml_document.
-    DATA li_ostream  TYPE REF TO if_ixml_ostream.
-    DATA li_renderer TYPE REF TO if_ixml_renderer.
-    DATA lv_xml      TYPE string.
-    DATA li_factory  TYPE REF TO if_ixml_stream_factory.
-    DATA li_ixml     TYPE REF TO if_ixml.
-
-    li_ixml = cl_ixml=>create( ).
-    li_doc = li_ixml->create_document( ).
-    li_factory = li_ixml->create_stream_factory( ).
-    li_ostream = li_factory->create_ostream_cstring( lv_xml ).
-    li_renderer = li_ixml->create_renderer(
-      ostream  = li_ostream
-      document = li_doc ).
-    li_renderer->render( ).
-
+    DATA lv_xml TYPE string.
+    lv_xml = render( ).
     cl_abap_unit_assert=>assert_equals(
       act = lv_xml
       exp = '<?xml version="1.0" encoding="utf-16"?>' ).
-
   ENDMETHOD.
 
   METHOD parse.
@@ -110,16 +130,13 @@ CLASS ltcl_xml IMPLEMENTATION.
     DATA li_factory TYPE REF TO if_ixml_stream_factory.
     DATA li_istream TYPE REF TO if_ixml_istream.
     DATA li_parser  TYPE REF TO if_ixml_parser.
-    DATA li_ixml    TYPE REF TO if_ixml.
     DATA lv_subrc   TYPE i.
 
+    ri_doc = mi_document.
 
-    li_ixml = cl_ixml=>create( ).
-    ri_doc  = li_ixml->create_document( ).
-
-    li_factory = li_ixml->create_stream_factory( ).
+    li_factory = mi_ixml->create_stream_factory( ).
     li_istream = li_factory->create_istream_string( iv_xml ).
-    li_parser = li_ixml->create_parser( stream_factory = li_factory
+    li_parser = mi_ixml->create_parser( stream_factory = li_factory
                                         istream        = li_istream
                                         document       = ri_doc ).
     li_parser->add_strip_space_element( ).
@@ -129,7 +146,6 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_subrc
       exp = 0 ).
-
   ENDMETHOD.
 
   METHOD parse_basic.
