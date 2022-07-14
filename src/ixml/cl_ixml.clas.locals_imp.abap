@@ -315,7 +315,7 @@ CLASS lcl_node IMPLEMENTATION.
     ENDDO.
 
     IF if_ixml_node~get_children( )->get_length( ) > 0 OR mv_value IS NOT INITIAL.
-      ostream->write_string( mv_value && '</' && mv_name && '>' ).
+      ostream->write_string( mv_value && '</' && lv_ns && mv_name && '>' ).
     ELSE.
       ostream->write_string( '/>' ).
     ENDIF.
