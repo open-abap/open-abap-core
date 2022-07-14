@@ -282,6 +282,7 @@ CLASS lcl_node IMPLEMENTATION.
   METHOD if_ixml_element~render.
     DATA li_iterator   TYPE REF TO if_ixml_node_iterator.
     DATA li_node       TYPE REF TO if_ixml_node.
+    DATA li_element    TYPE REF TO if_ixml_element.
     DATA lv_attributes TYPE string.
 
     li_iterator = mi_attributes->create_iterator( ).
@@ -290,10 +291,28 @@ CLASS lcl_node IMPLEMENTATION.
       IF li_node IS INITIAL.
         EXIT. " current loop
       ENDIF.
-      lv_attributes = lv_attributes && li_node->get_name( ) && '="' && li_node->get_value( ) && '"'.
+      lv_attributes = lv_attributes && | | && li_node->get_name( ) && '="' && li_node->get_value( ) && '"'.
     ENDDO.
 
-    ostream->write_string( '<' && mv_name && mv_value && | | && lv_attributes && '/>' ).
+    ostream->write_string( '<' && mv_name && lv_attributes ).
+    IF if_ixml_node~get_children( )->get_length( ) > 0 OR mv_value IS NOT INITIAL.
+      ostream->write_string( '>' ).
+    ENDIF.
+
+    li_iterator = if_ixml_node~get_children( )->create_iterator( ).
+    DO.
+      li_element ?= li_iterator->get_next( ).
+      IF li_element IS INITIAL.
+        EXIT. " current loop
+      ENDIF.
+      li_element->render( ostream ).
+    ENDDO.
+
+    IF if_ixml_node~get_children( )->get_length( ) > 0 OR mv_value IS NOT INITIAL.
+      ostream->write_string( mv_value && '</' && mv_name && '>' ).
+    ELSE.
+      ostream->write_string( '/>' ).
+    ENDIF.
   ENDMETHOD.
 
   METHOD if_ixml_element~set_attribute_node_ns.
