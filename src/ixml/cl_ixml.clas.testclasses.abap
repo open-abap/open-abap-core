@@ -3,6 +3,10 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
   PRIVATE SECTION.
     METHODS render_empty_output FOR TESTING RAISING cx_static_check.
     METHODS render_element FOR TESTING RAISING cx_static_check.
+    METHODS render_element_and_attribute FOR TESTING RAISING cx_static_check.
+    METHODS render_element_and_two_attribute FOR TESTING RAISING cx_static_check.
+    METHODS render_value FOR TESTING RAISING cx_static_check.
+    METHODS render_nested FOR TESTING RAISING cx_static_check.
 
     METHODS parse_basic FOR TESTING RAISING cx_static_check.
     METHODS parse_namespace FOR TESTING RAISING cx_static_check.
@@ -56,6 +60,20 @@ CLASS ltcl_xml IMPLEMENTATION.
     lo_element = mi_document->create_simple_element(
       name   = 'moo'
       parent = mi_document ).
+    lv_xml = render( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_xml
+      exp = '<?xml version="1.0" encoding="utf-16"?><moo/>' ).
+  ENDMETHOD.
+
+  METHOD render_element_and_attribute.
+    DATA lo_element TYPE REF TO if_ixml_element.
+    DATA lv_xml     TYPE string.
+
+    lo_element = mi_document->create_simple_element(
+      name   = 'moo'
+      parent = mi_document ).
     lo_element->set_attribute_ns(
       name  = 'xmlns'
       value = 'bar' ).
@@ -64,6 +82,60 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_xml
       exp = '<?xml version="1.0" encoding="utf-16"?><moo xmlns="bar"/>' ).
+  ENDMETHOD.
+
+  METHOD render_element_and_two_attribute.
+    DATA lo_element TYPE REF TO if_ixml_element.
+    DATA lv_xml     TYPE string.
+
+    lo_element = mi_document->create_simple_element(
+      name   = 'moo'
+      parent = mi_document ).
+    lo_element->set_attribute_ns(
+      name  = 'xmlns'
+      value = 'bar' ).
+    lo_element->set_attribute_ns(
+      name  = 'anoth'
+      value = 'bar2' ).
+    lv_xml = render( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_xml
+      exp = '<?xml version="1.0" encoding="utf-16"?><moo xmlns="bar" anoth="bar2"/>' ).
+  ENDMETHOD.
+
+  METHOD render_value.
+    DATA lv_xml  TYPE string.
+    DATA li_node TYPE REF TO if_ixml_node.
+
+    li_node ?= mi_document->create_simple_element(
+      name   = 'moo'
+      parent = mi_document ).
+    li_node->set_value( '2' ).
+
+    lv_xml = render( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_xml
+      exp = '<?xml version="1.0" encoding="utf-16"?><moo>2</moo>' ).
+  ENDMETHOD.
+
+  METHOD render_nested.
+    DATA lv_xml  TYPE string.
+    DATA li_node TYPE REF TO if_ixml_node.
+
+    li_node ?= mi_document->create_simple_element(
+      name   = 'top'
+      parent = mi_document ).
+    mi_document->create_simple_element(
+      name   = 'sub'
+      parent = li_node ).
+
+    lv_xml = render( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_xml
+      exp = '<?xml version="1.0" encoding="utf-16"?><top><sub/></top>' ).
   ENDMETHOD.
 
   METHOD create.
