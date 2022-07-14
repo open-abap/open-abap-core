@@ -605,7 +605,9 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~create_simple_element_ns.
-    ASSERT 1 = 'todo'.
+    val = if_ixml_document~create_simple_element(
+      name   = name
+      parent = parent ).
   ENDMETHOD.
 
   METHOD if_ixml_document~create_filter_attribute.

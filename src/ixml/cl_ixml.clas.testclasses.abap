@@ -3,6 +3,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
   PRIVATE SECTION.
     METHODS render_empty_output FOR TESTING RAISING cx_static_check.
     METHODS render_element FOR TESTING RAISING cx_static_check.
+    METHODS render_element_ns FOR TESTING RAISING cx_static_check.
     METHODS render_element_and_attribute FOR TESTING RAISING cx_static_check.
     METHODS render_element_and_two_attribute FOR TESTING RAISING cx_static_check.
     METHODS render_value FOR TESTING RAISING cx_static_check.
@@ -58,6 +59,20 @@ CLASS ltcl_xml IMPLEMENTATION.
     DATA lv_xml     TYPE string.
 
     lo_element = mi_document->create_simple_element(
+      name   = 'moo'
+      parent = mi_document ).
+    lv_xml = render( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_xml
+      exp = '<?xml version="1.0" encoding="utf-16"?><moo/>' ).
+  ENDMETHOD.
+
+  METHOD render_element_ns.
+    DATA lo_element TYPE REF TO if_ixml_element.
+    DATA lv_xml     TYPE string.
+
+    lo_element = mi_document->create_simple_element_ns(
       name   = 'moo'
       parent = mi_document ).
     lv_xml = render( ).
