@@ -75,7 +75,7 @@ INTERFACE if_ixml_element PUBLIC.
     remove_node,
     render
       IMPORTING
-        ostream TYPE any,
+        ostream TYPE REF TO if_ixml_ostream,
     set_attribute_node_ns
       IMPORTING
         attr TYPE any,
