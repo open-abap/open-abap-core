@@ -81,14 +81,14 @@ INTERFACE if_ixml_element PUBLIC.
         attr TYPE any,
     set_attribute
       IMPORTING
-        name TYPE string
+        name      TYPE string
         namespace TYPE string OPTIONAL
-        value TYPE string,
+        value     TYPE string OPTIONAL,
     set_attribute_ns
       IMPORTING
-        name TYPE string
+        name   TYPE string
         prefix TYPE string OPTIONAL
-        value TYPE string,
+        value  TYPE string OPTIONAL,
     set_value
       IMPORTING
         value TYPE string

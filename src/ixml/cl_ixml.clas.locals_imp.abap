@@ -326,7 +326,9 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~set_attribute.
-    ASSERT 1 = 'todo'.
+    if_ixml_element~set_attribute_ns(
+      name  = name
+      value = value ).
   ENDMETHOD.
 
   METHOD if_ixml_element~set_attribute_ns.
