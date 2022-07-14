@@ -284,6 +284,7 @@ CLASS lcl_node IMPLEMENTATION.
     DATA li_node       TYPE REF TO if_ixml_node.
     DATA li_element    TYPE REF TO if_ixml_element.
     DATA lv_attributes TYPE string.
+    DATA lv_ns         TYPE string.
 
     li_iterator = mi_attributes->create_iterator( ).
     DO.
@@ -294,7 +295,12 @@ CLASS lcl_node IMPLEMENTATION.
       lv_attributes = lv_attributes && | | && li_node->get_name( ) && '="' && li_node->get_value( ) && '"'.
     ENDDO.
 
-    ostream->write_string( '<' && mv_name && lv_attributes ).
+*    WRITE '@KERNEL console.dir(mv_namespace);'.
+    IF mv_namespace IS NOT INITIAL.
+      lv_ns = mv_namespace && ':'.
+    ENDIF.
+
+    ostream->write_string( '<' && lv_ns && mv_name && lv_attributes ).
     IF if_ixml_node~get_children( )->get_length( ) > 0 OR mv_value IS NOT INITIAL.
       ostream->write_string( '>' ).
     ENDIF.
@@ -309,7 +315,7 @@ CLASS lcl_node IMPLEMENTATION.
     ENDDO.
 
     IF if_ixml_node~get_children( )->get_length( ) > 0 OR mv_value IS NOT INITIAL.
-      ostream->write_string( mv_value && '</' && mv_name && '>' ).
+      ostream->write_string( mv_value && '</' && lv_ns && mv_name && '>' ).
     ELSE.
       ostream->write_string( '/>' ).
     ENDIF.
@@ -320,7 +326,9 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~set_attribute.
-    ASSERT 1 = 'todo'.
+    if_ixml_element~set_attribute_ns(
+      name  = name
+      value = value ).
   ENDMETHOD.
 
   METHOD if_ixml_element~set_attribute_ns.
@@ -605,7 +613,12 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~create_simple_element_ns.
-    ASSERT 1 = 'todo'.
+    DATA li_node TYPE REF TO if_ixml_node.
+    val = if_ixml_document~create_simple_element(
+      name   = name
+      parent = parent ).
+    li_node ?= val.
+    li_node->set_namespace_prefix( prefix ).
   ENDMETHOD.
 
   METHOD if_ixml_document~create_filter_attribute.

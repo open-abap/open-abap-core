@@ -3,8 +3,12 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
   PRIVATE SECTION.
     METHODS render_empty_output FOR TESTING RAISING cx_static_check.
     METHODS render_element FOR TESTING RAISING cx_static_check.
+    METHODS render_element_ns FOR TESTING RAISING cx_static_check.
+    METHODS render_element_ns_prefix FOR TESTING RAISING cx_static_check.
+    METHODS render_element_ns_prefix_value FOR TESTING RAISING cx_static_check.
     METHODS render_element_and_attribute FOR TESTING RAISING cx_static_check.
     METHODS render_element_and_two_attribute FOR TESTING RAISING cx_static_check.
+    METHODS render_attribute FOR TESTING RAISING cx_static_check.
     METHODS render_value FOR TESTING RAISING cx_static_check.
     METHODS render_nested FOR TESTING RAISING cx_static_check.
 
@@ -65,6 +69,69 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_xml
       exp = '<?xml version="1.0" encoding="utf-16"?><moo/>' ).
+  ENDMETHOD.
+
+  METHOD render_element_ns.
+    DATA lo_element TYPE REF TO if_ixml_element.
+    DATA lv_xml     TYPE string.
+
+    lo_element = mi_document->create_simple_element_ns(
+      name   = 'moo'
+      parent = mi_document ).
+    lv_xml = render( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_xml
+      exp = '<?xml version="1.0" encoding="utf-16"?><moo/>' ).
+  ENDMETHOD.
+
+  METHOD render_element_ns_prefix.
+    DATA lo_element TYPE REF TO if_ixml_element.
+    DATA lv_xml     TYPE string.
+
+    lo_element = mi_document->create_simple_element_ns(
+      prefix = 'hello'
+      name   = 'moo'
+      parent = mi_document ).
+    lv_xml = render( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_xml
+      exp = '<?xml version="1.0" encoding="utf-16"?><hello:moo/>' ).
+  ENDMETHOD.
+
+  METHOD render_element_ns_prefix_value.
+    DATA lo_element TYPE REF TO if_ixml_element.
+    DATA lv_xml     TYPE string.
+
+    lo_element = mi_document->create_simple_element_ns(
+      prefix = 'hello'
+      name   = 'moo'
+      parent = mi_document ).
+    lo_element->set_value( 'asdf' ).
+    lv_xml = render( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_xml
+      exp = '<?xml version="1.0" encoding="utf-16"?><hello:moo>asdf</hello:moo>' ).
+  ENDMETHOD.
+
+  METHOD render_attribute.
+    DATA lo_element TYPE REF TO if_ixml_element.
+    DATA lv_xml     TYPE string.
+
+    lo_element = mi_document->create_simple_element_ns(
+      prefix = 'hello'
+      name   = 'moo'
+      parent = mi_document ).
+    lo_element->set_attribute(
+      name  = 'name'
+      value = 'value' ).
+    lv_xml = render( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_xml
+      exp = '<?xml version="1.0" encoding="utf-16"?><hello:moo name="value"/>' ).
   ENDMETHOD.
 
   METHOD render_element_and_attribute.
