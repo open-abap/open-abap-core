@@ -570,7 +570,8 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~set_namespace_prefix.
-    ASSERT 1 = 'todo'.
+* todo, should this do something?
+    RETURN.
   ENDMETHOD.
 
   METHOD if_ixml_document~append_child.
