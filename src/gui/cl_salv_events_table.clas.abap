@@ -8,6 +8,12 @@ CLASS cl_salv_events_table DEFINITION PUBLIC.
     EVENTS added_function
       EXPORTING
         VALUE(e_salv_function) TYPE string OPTIONAL.
+
+    EVENTS link_click
+      EXPORTING
+        VALUE(row) TYPE i
+        VALUE(column) TYPE string.
+
 ENDCLASS.
 
 CLASS cl_salv_events_table IMPLEMENTATION.
