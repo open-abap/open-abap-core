@@ -26,11 +26,11 @@ CLASS cl_salv_table DEFINITION PUBLIC.
     METHODS set_screen_popup
       IMPORTING
         start_column TYPE i
-        end_column TYPE i
-        start_line TYPE i
-        end_line TYPE i.
+        end_column   TYPE i
+        start_line   TYPE i
+        end_line     TYPE i.
     METHODS get_event
-      RETURNING VALUE(val) TYPE REF TO any.
+      RETURNING VALUE(val) TYPE REF TO cl_salv_events_table.
     METHODS get_display_settings
       RETURNING VALUE(val) TYPE REF TO cl_salv_table.
     METHODS set_striped_pattern IMPORTING val TYPE any.
