@@ -19,7 +19,7 @@ CLASS cl_document_bcs DEFINITION PUBLIC.
         i_attachment_size    TYPE i OPTIONAL
         i_att_content_text   TYPE any OPTIONAL
         i_att_content_hex    TYPE any OPTIONAL
-        i_attachment_header  TYPE any OPTIONAL
+        i_attachment_header  TYPE soli_tab OPTIONAL
       RAISING
         cx_bcs.
 
