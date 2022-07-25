@@ -1,5 +1,6 @@
 CLASS cl_cam_address_bcs DEFINITION PUBLIC.
   PUBLIC SECTION.
+    INTERFACES if_recipient_bcs.
 
     CLASS-METHODS create_internet_address
       IMPORTING
