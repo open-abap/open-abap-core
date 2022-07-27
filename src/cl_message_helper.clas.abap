@@ -14,6 +14,9 @@ ENDCLASS.
 CLASS cl_message_helper IMPLEMENTATION.
 
   METHOD set_msg_vars_for_if_msg.
+    IF text IS INITIAL.
+      RAISE EXCEPTION TYPE cx_sy_message_illegal_text.
+    ENDIF.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
