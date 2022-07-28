@@ -5,10 +5,28 @@ CLASS ltcl_deserialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
     METHODS structure_string FOR TESTING RAISING cx_static_check.
     METHODS structure_nested FOR TESTING RAISING cx_static_check.
     METHODS basic_array FOR TESTING RAISING cx_static_check.
+    METHODS camel_case FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_deserialize IMPLEMENTATION.
+
+  METHOD camel_case.
+    DATA: BEGIN OF stru,
+           foo_bar TYPE i,
+          END OF stru.
+    DATA lv_json TYPE string.
+    lv_json = '{"fooBar": 2}'.
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json        = lv_json
+        pretty_name = /ui2/cl_json=>pretty_mode-camel_case
+      CHANGING
+        data        = stru ).
+    cl_abap_unit_assert=>assert_equals(
+      act = stru-foo_bar
+      exp = 2 ).
+  ENDMETHOD.
 
   METHOD structure_integer.
     DATA: BEGIN OF stru,

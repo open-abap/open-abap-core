@@ -29,9 +29,10 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
     CLASS-DATA mo_parsed TYPE REF TO lcl_parser.
     CLASS-METHODS _deserialize
       IMPORTING
-        prefix TYPE string
+        prefix      TYPE string
+        pretty_name TYPE string OPTIONAL
       CHANGING
-        data TYPE data.
+        data        TYPE data.
 ENDCLASS.
 
 CLASS /ui2/cl_json IMPLEMENTATION.
@@ -95,9 +96,10 @@ CLASS /ui2/cl_json IMPLEMENTATION.
 
     _deserialize(
       EXPORTING
-        prefix = ''
+        prefix      = ''
+        pretty_name = pretty_name
       CHANGING
-        data   = data ).
+        data        = data ).
   ENDMETHOD.
 
   METHOD _deserialize.
@@ -107,6 +109,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     DATA ls_component  LIKE LINE OF lt_components.
     DATA lt_members    TYPE string_table.
     DATA ref           TYPE REF TO data.
+    DATA lv_name       TYPE string.
     DATA lv_member     LIKE LINE OF lt_members.
 
     FIELD-SYMBOLS <any> TYPE any.
@@ -124,9 +127,10 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           ASSIGN ref->* TO <any>.
           _deserialize(
             EXPORTING
-              prefix = prefix && '/' && lv_member
+              prefix      = prefix && '/' && lv_member
+              pretty_name = pretty_name
             CHANGING
-              data   = <any> ).
+              data        = <any> ).
 *          WRITE '@KERNEL console.dir(fs_row_);'.
           INSERT <any> INTO TABLE data.
         ENDLOOP.
@@ -136,11 +140,19 @@ CLASS /ui2/cl_json IMPLEMENTATION.
         LOOP AT lt_components INTO ls_component.
           ASSIGN COMPONENT ls_component-name OF STRUCTURE data TO <any>.
           ASSERT sy-subrc = 0.
+          CASE pretty_name.
+            WHEN pretty_mode-camel_case.
+              lv_name = to_mixed( to_lower( ls_component-name ) ).
+            WHEN OTHERS.
+              lv_name = to_lower( ls_component-name ).
+          ENDCASE.
+*          WRITE '@KERNEL console.dir(lv_name.get());'.
           _deserialize(
             EXPORTING
-              prefix = prefix && '/' && to_lower( ls_component-name )
+              prefix      = prefix && '/' && lv_name
+              pretty_name = pretty_name
             CHANGING
-              data   = <any> ).
+              data        = <any> ).
         ENDLOOP.
       WHEN OTHERS.
         ASSERT 1 = 'cl_json, unknown kind'.
