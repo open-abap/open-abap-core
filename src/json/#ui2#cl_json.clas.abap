@@ -115,10 +115,14 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     FIELD-SYMBOLS <any> TYPE any.
 
     lo_type = cl_abap_typedescr=>describe_by_data( data ).
-*    WRITE '@KERNEL console.dir(lo_type.get().kind);'.
+*    WRITE '@KERNEL console.dir(lo_type.get());'.
     CASE lo_type->kind.
       WHEN cl_abap_typedescr=>kind_elem.
-        data = mo_parsed->value_string( prefix ).
+        IF lo_type->absolute_name = '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL'.
+          data = boolc( mo_parsed->value_string( prefix ) = 'true' ).
+        ELSE.
+          data = mo_parsed->value_string( prefix ).
+        ENDIF.
       WHEN cl_abap_typedescr=>kind_table.
         lt_members = mo_parsed->members( prefix && '/' ).
         LOOP AT lt_members INTO lv_member.

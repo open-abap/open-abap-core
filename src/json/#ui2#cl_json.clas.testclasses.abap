@@ -5,15 +5,49 @@ CLASS ltcl_deserialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
     METHODS structure_string FOR TESTING RAISING cx_static_check.
     METHODS structure_nested FOR TESTING RAISING cx_static_check.
     METHODS basic_array FOR TESTING RAISING cx_static_check.
+    METHODS abap_true FOR TESTING RAISING cx_static_check.
+    METHODS abap_false FOR TESTING RAISING cx_static_check.
     METHODS camel_case FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_deserialize IMPLEMENTATION.
 
+  METHOD abap_true.
+    DATA: BEGIN OF stru,
+            foo TYPE abap_bool,
+          END OF stru.
+    DATA lv_json TYPE string.
+    lv_json = '{"foo": true}'.
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json        = lv_json
+      CHANGING
+        data        = stru ).
+    cl_abap_unit_assert=>assert_equals(
+      act = stru-foo
+      exp = abap_true ).
+  ENDMETHOD.
+
+  METHOD abap_false.
+    DATA: BEGIN OF stru,
+            foo TYPE abap_bool,
+          END OF stru.
+    DATA lv_json TYPE string.
+    lv_json = '{"foo": false}'.
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json        = lv_json
+      CHANGING
+        data        = stru ).
+    cl_abap_unit_assert=>assert_equals(
+      act = stru-foo
+      exp = abap_false ).
+  ENDMETHOD.
+
   METHOD camel_case.
     DATA: BEGIN OF stru,
-           foo_bar TYPE i,
+            foo_bar TYPE i,
           END OF stru.
     DATA lv_json TYPE string.
     lv_json = '{"fooBar": 2}'.
@@ -30,7 +64,7 @@ CLASS ltcl_deserialize IMPLEMENTATION.
 
   METHOD structure_integer.
     DATA: BEGIN OF stru,
-           foo TYPE i,
+            foo TYPE i,
           END OF stru.
     DATA lv_json TYPE string.
     lv_json = '{"foo": 2}'.
@@ -46,7 +80,7 @@ CLASS ltcl_deserialize IMPLEMENTATION.
 
   METHOD structure_string.
     DATA: BEGIN OF stru,
-           foo TYPE string,
+            foo TYPE string,
           END OF stru.
     DATA lv_json TYPE string.
     lv_json = '{"foo": "hello world"}'.
@@ -62,9 +96,9 @@ CLASS ltcl_deserialize IMPLEMENTATION.
 
   METHOD structure_nested.
     DATA: BEGIN OF stru,
-           BEGIN OF sub,
-             bar TYPE i,
-           END OF sub,
+            BEGIN OF sub,
+              bar TYPE i,
+            END OF sub,
           END OF stru.
     DATA lv_json TYPE string.
     lv_json = '{"sub": {"bar": 2}}'.
