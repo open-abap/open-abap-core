@@ -106,8 +106,9 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 
   METHOD describe_by_data.
 
-    DATA lv_name TYPE string.
+    DATA lv_name   TYPE string.
     DATA lv_length TYPE i.
+    DATA lo_elem   TYPE REF TO cl_abap_elemdescr.
     WRITE '@KERNEL lv_name.set(p_data.constructor.name);'.
     WRITE '@KERNEL lv_length.set(p_data.getLength ? p_data.getLength() : 0);'.
 
@@ -174,6 +175,8 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->type_kind = typekind_char.
         type->kind = kind_elem.
         type->length = lv_length * 2.
+        lo_elem ?= type.
+        lo_elem->output_length = lv_length.
       WHEN 'FieldSymbol'.
         WRITE '@KERNEL lv_name = p_data.getPointer();'.
         type = describe_by_data( lv_name ).
