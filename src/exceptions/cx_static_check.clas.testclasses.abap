@@ -9,13 +9,13 @@ ENDCLASS.
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
-    METHODS test2 FOR TESTING.
+    METHODS get_text_basic FOR TESTING RAISING cx_root.
 
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
 
-  METHOD test2.
+  METHOD get_text_basic.
 
     DATA lx_error TYPE REF TO cx_root.
     DATA lv_act   TYPE string.
@@ -24,7 +24,6 @@ CLASS ltcl_test IMPLEMENTATION.
         RAISE EXCEPTION TYPE lcx_error2.
       CATCH cx_root INTO lx_error.
         lv_act = lx_error->get_text( ).
-        ASSERT lv_act IS NOT INITIAL.
         cl_abap_unit_assert=>assert_equals(
           act = lv_act
           exp = 'An exception was raised.' ).
