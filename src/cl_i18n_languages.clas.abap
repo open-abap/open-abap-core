@@ -20,7 +20,7 @@ ENDCLASS.
 
 CLASS cl_i18n_languages IMPLEMENTATION.
   METHOD sap1_to_sap2.
-    ASSERT 1 = 'todo'.
+    re_lang_sap2 = 'EN'.
   ENDMETHOD.
 
   METHOD sap2_to_iso639_1.
