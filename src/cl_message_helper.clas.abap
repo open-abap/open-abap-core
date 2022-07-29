@@ -17,7 +17,13 @@ CLASS cl_message_helper IMPLEMENTATION.
     IF text IS INITIAL.
       RAISE EXCEPTION TYPE cx_sy_message_illegal_text.
     ENDIF.
-    ASSERT 1 = 'todo'.
+
+    string = text->get_text( ).
+    IF string IS INITIAL.
+      ASSERT 1 = 'todo'.
+    ENDIF.
+
+    set_msg_vars_for_clike( string ).
   ENDMETHOD.
 
   METHOD set_msg_vars_for_clike.
