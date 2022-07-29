@@ -22,6 +22,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS xsdboolean_absolute FOR TESTING.
     METHODS describe_by_name_t000 FOR TESTING.
     METHODS get_relative_name FOR TESTING.
+    METHODS get_relative_name_timestamp FOR TESTING.
 
     METHODS is_ddic_type_true1 FOR TESTING.
     METHODS is_ddic_type_true2 FOR TESTING.
@@ -57,6 +58,15 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_name
       exp = 'DEVCLASS' ).
+  ENDMETHOD.
+
+  METHOD get_relative_name_timestamp.
+    DATA t TYPE timestamp.
+    DATA lv_name TYPE string.
+    lv_name = cl_abap_typedescr=>describe_by_data( t )->get_relative_name( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_name
+      exp = 'TIMESTAMP' ).
   ENDMETHOD.
 
   METHOD kind_elem.
