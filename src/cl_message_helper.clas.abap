@@ -15,6 +15,8 @@ CLASS cl_message_helper DEFINITION PUBLIC.
         text TYPE REF TO if_message
       RETURNING
         VALUE(result) TYPE string.
+  PRIVATE SECTION.
+    CONSTANTS gc_fallback TYPE string VALUE 'An exception was raised.'.
 ENDCLASS.
 
 CLASS cl_message_helper IMPLEMENTATION.
@@ -29,7 +31,7 @@ CLASS cl_message_helper IMPLEMENTATION.
     DATA lv_msgv4 LIKE sy-msgv4.
 
 * when the transpiler can do more, the below can be implemented in ABAP instead of using KERNEL,
-    WRITE '@KERNEL if (text.get().if_t100_message$t100key === undefined) { result.set("An exception was raised."); return result; };'.
+    WRITE '@KERNEL if (text.get().if_t100_message$t100key === undefined) { result.set(this.gc_fallback); return result; };'.
 
     WRITE '@KERNEL lv_msgid.set(text.get().if_t100_message$t100key.get().msgid);'.
     WRITE '@KERNEL lv_msgno.set(text.get().if_t100_message$t100key.get().msgno);'.
@@ -45,6 +47,13 @@ CLASS cl_message_helper IMPLEMENTATION.
   METHOD set_msg_vars_for_if_msg.
     IF text IS INITIAL.
       RAISE EXCEPTION TYPE cx_sy_message_illegal_text.
+    ENDIF.
+
+* first try if_t100_message
+    string = get_text_for_message( text ).
+    IF string <> gc_fallback.
+      CLEAR sy-msgty.
+      RETURN.
     ENDIF.
 
     string = text->get_text( ).

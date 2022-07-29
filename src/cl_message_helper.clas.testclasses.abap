@@ -96,19 +96,19 @@ CLASS ltcl_message_helper IMPLEMENTATION.
       act = ref->get_text( )
       exp = 'I::000 hello world' ).
 
-    " cl_message_helper=>set_msg_vars_for_if_msg( ref ).
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = sy-msgid
-    "   exp = '' ).
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = sy-msgty
-    "   exp = '' ).
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = sy-msgno
-    "   exp = '000' ).
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = sy-msgv1
-    "   exp = 'hello world' ).
+    cl_message_helper=>set_msg_vars_for_if_msg( ref ).
+    cl_abap_unit_assert=>assert_equals(
+      act = sy-msgid
+      exp = '' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = sy-msgty
+      exp = '' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = sy-msgno
+      exp = '000' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = sy-msgv1
+      exp = 'hello world' ).
   ENDMETHOD.
 
 ENDCLASS.
