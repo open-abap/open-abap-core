@@ -119,21 +119,29 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->type_kind = typekind_int.
         type->kind = kind_elem.
         type->length = 4.
+        lo_elem ?= type.
+        lo_elem->output_length = 11.
       WHEN 'Numc'.
         CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_num.
         type->kind = kind_elem.
         type->length = lv_length * 2.
+        lo_elem ?= type.
+        lo_elem->output_length = lv_length.
       WHEN 'Hex'.
         CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_hex.
         type->kind = kind_elem.
         type->length = lv_length.
+        lo_elem ?= type.
+        lo_elem->output_length = lv_length * 2.
       WHEN 'Date'.
         CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_date.
         type->kind = kind_elem.
         type->length = 16.
+        lo_elem ?= type.
+        lo_elem->output_length = 8.
       WHEN 'Packed'.
         CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_packed.
@@ -144,6 +152,8 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->type_kind = typekind_time.
         type->kind = kind_elem.
         type->length = 12.
+        lo_elem ?= type.
+        lo_elem->output_length = 6.
       WHEN 'Float'.
         CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_float.
