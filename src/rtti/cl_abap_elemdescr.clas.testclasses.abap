@@ -5,19 +5,69 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS get_ddic_field FOR TESTING RAISING cx_static_check.
     METHODS get_ddic_field2 FOR TESTING RAISING cx_static_check.
     METHODS create_data_type_handle FOR TESTING RAISING cx_static_check.
-    METHODS basic_output_length FOR TESTING RAISING cx_static_check.
+    METHODS output_length_basic FOR TESTING RAISING cx_static_check.
+    METHODS output_length_date FOR TESTING RAISING cx_static_check.
+    METHODS output_length_time FOR TESTING RAISING cx_static_check.
+    METHODS output_length_hex FOR TESTING RAISING cx_static_check.
+    METHODS output_length_numc FOR TESTING RAISING cx_static_check.
+    METHODS output_length_int FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
 
-  METHOD basic_output_length.
+  METHOD output_length_basic.
     DATA flag TYPE abap_bool.
     DATA descr TYPE REF TO cl_abap_elemdescr.
     descr ?= cl_abap_typedescr=>describe_by_data( flag ).
     cl_abap_unit_assert=>assert_equals(
       act = descr->output_length
       exp = 1 ).
+  ENDMETHOD.
+
+  METHOD output_length_date.
+    DATA data TYPE d.
+    DATA descr TYPE REF TO cl_abap_elemdescr.
+    descr ?= cl_abap_typedescr=>describe_by_data( data ).
+    cl_abap_unit_assert=>assert_equals(
+      act = descr->output_length
+      exp = 8 ).
+  ENDMETHOD.
+
+  METHOD output_length_time.
+    DATA data TYPE t.
+    DATA descr TYPE REF TO cl_abap_elemdescr.
+    descr ?= cl_abap_typedescr=>describe_by_data( data ).
+    cl_abap_unit_assert=>assert_equals(
+      act = descr->output_length
+      exp = 6 ).
+  ENDMETHOD.
+
+  METHOD output_length_hex.
+    DATA data TYPE x LENGTH 2.
+    DATA descr TYPE REF TO cl_abap_elemdescr.
+    descr ?= cl_abap_typedescr=>describe_by_data( data ).
+    cl_abap_unit_assert=>assert_equals(
+      act = descr->output_length
+      exp = 4 ).
+  ENDMETHOD.
+
+  METHOD output_length_numc.
+    DATA data TYPE n LENGTH 2.
+    DATA descr TYPE REF TO cl_abap_elemdescr.
+    descr ?= cl_abap_typedescr=>describe_by_data( data ).
+    cl_abap_unit_assert=>assert_equals(
+      act = descr->output_length
+      exp = 2 ).
+  ENDMETHOD.
+
+  METHOD output_length_int.
+    DATA data TYPE i.
+    DATA descr TYPE REF TO cl_abap_elemdescr.
+    descr ?= cl_abap_typedescr=>describe_by_data( data ).
+    cl_abap_unit_assert=>assert_equals(
+      act = descr->output_length
+      exp = 11 ).
   ENDMETHOD.
 
   METHOD create_data_type_handle.
