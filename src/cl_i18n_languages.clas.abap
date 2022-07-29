@@ -20,7 +20,19 @@ ENDCLASS.
 
 CLASS cl_i18n_languages IMPLEMENTATION.
   METHOD sap1_to_sap2.
-    re_lang_sap2 = 'EN'.
+* todo, ideally this should look up in a database table first
+* if there is no database attached, fallback to the CASE below
+    CASE im_lang_sap1.
+      WHEN 'E'.
+        re_lang_sap2 = 'EN'.
+      WHEN 'D'.
+        re_lang_sap2 = 'DE'.
+      WHEN 'K'.
+        re_lang_sap2 = 'DA'.
+      WHEN OTHERS.
+* todo, raise classic exception
+        re_lang_sap2 = 'EN'.
+    ENDCASE.
   ENDMETHOD.
 
   METHOD sap2_to_iso639_1.
