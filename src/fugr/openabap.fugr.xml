@@ -177,6 +177,30 @@
       </RSFDO>
      </DOCUMENTATION>
     </item>
+    <item>
+     <FUNCNAME>SYSTEM_INSTALLED_LANGUAGES</FUNCNAME>
+     <EXPORT>
+      <RSEXP>
+       <PARAMETER>LANGUAGES</PARAMETER>
+      </RSEXP>
+     </EXPORT>
+     <EXCEPTION>
+      <RSEXC>
+       <EXCEPTION>SAPGPARAM_ERROR</EXCEPTION>
+      </RSEXC>
+     </EXCEPTION>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>LANGUAGES</PARAMETER>
+       <KIND>P</KIND>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>SAPGPARAM_ERROR</PARAMETER>
+       <KIND>X</KIND>
+       <STEXT>Error</STEXT>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
    </FUNCTIONS>
   </asx:values>
  </asx:abap>
