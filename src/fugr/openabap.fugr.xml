@@ -256,6 +256,36 @@
       </RSFDO>
      </DOCUMENTATION>
     </item>
+    <item>
+     <FUNCNAME>CONVERSION_EXIT_ALPHA_INPUT</FUNCNAME>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>INPUT</PARAMETER>
+       <TYP>CLIKE</TYP>
+      </RSIMP>
+     </IMPORT>
+     <EXPORT>
+      <RSEXP>
+       <PARAMETER>OUTPUT</PARAMETER>
+       <TYP>CLIKE</TYP>
+      </RSEXP>
+     </EXPORT>
+    </item>
+    <item>
+     <FUNCNAME>CONVERSION_EXIT_ALPHA_OUTPUT</FUNCNAME>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>INPUT</PARAMETER>
+       <TYP>CLIKE</TYP>
+      </RSIMP>
+     </IMPORT>
+     <EXPORT>
+      <RSEXP>
+       <PARAMETER>OUTPUT</PARAMETER>
+       <TYP>CLIKE</TYP>
+      </RSEXP>
+     </EXPORT>
+    </item>
    </FUNCTIONS>
   </asx:values>
  </asx:abap>
