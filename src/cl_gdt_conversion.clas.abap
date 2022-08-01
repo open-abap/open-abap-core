@@ -53,7 +53,18 @@ CLASS cl_gdt_conversion IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD date_time_inbound.
-    ASSERT 1 = 'todo'.
+    DATA lv_str TYPE string.
+
+    IF im_value NP '*Z'.
+      ASSERT 1 = 'todo, only handles UTC for now'.
+    ENDIF.
+
+    lv_str = im_value.
+    REPLACE ALL OCCURRENCES OF '-' IN lv_str WITH ''.
+    REPLACE ALL OCCURRENCES OF ':' IN lv_str WITH ''.
+    REPLACE ALL OCCURRENCES OF 'T' IN lv_str WITH ''.
+    REPLACE ALL OCCURRENCES OF 'Z' IN lv_str WITH ''.
+    ex_value_short = lv_str.
   ENDMETHOD.
 
   METHOD unit_code_inbound.
