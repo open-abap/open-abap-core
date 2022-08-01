@@ -118,7 +118,9 @@ CLASS /ui2/cl_json IMPLEMENTATION.
 *    WRITE '@KERNEL console.dir(lo_type.get());'.
     CASE lo_type->kind.
       WHEN cl_abap_typedescr=>kind_elem.
-        IF lo_type->absolute_name = '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL'.
+        WRITE '@KERNEL console.dir(lo_type.get().absolute_name);'.
+        IF lo_type->absolute_name = '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL'
+            OR lo_type->absolute_name = '\TYPE=FLAG'.
           data = boolc( mo_parsed->value_string( prefix ) = 'true' ).
         ELSE.
           data = mo_parsed->value_string( prefix ).

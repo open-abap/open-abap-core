@@ -5,15 +5,16 @@ CLASS ltcl_deserialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
     METHODS structure_string FOR TESTING RAISING cx_static_check.
     METHODS structure_nested FOR TESTING RAISING cx_static_check.
     METHODS basic_array FOR TESTING RAISING cx_static_check.
-    METHODS abap_true FOR TESTING RAISING cx_static_check.
-    METHODS abap_false FOR TESTING RAISING cx_static_check.
+    METHODS parse_abap_true FOR TESTING RAISING cx_static_check.
+    METHODS parse_abap_true_flag FOR TESTING RAISING cx_static_check.
+    METHODS parse_abap_false FOR TESTING RAISING cx_static_check.
     METHODS camel_case FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_deserialize IMPLEMENTATION.
 
-  METHOD abap_true.
+  METHOD parse_abap_true.
     DATA: BEGIN OF stru,
             foo TYPE abap_bool,
           END OF stru.
@@ -29,7 +30,23 @@ CLASS ltcl_deserialize IMPLEMENTATION.
       exp = abap_true ).
   ENDMETHOD.
 
-  METHOD abap_false.
+  METHOD parse_abap_true_flag.
+    DATA: BEGIN OF stru,
+            foo TYPE flag,
+          END OF stru.
+    DATA lv_json TYPE string.
+    lv_json = '{"foo": true}'.
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json        = lv_json
+      CHANGING
+        data        = stru ).
+    cl_abap_unit_assert=>assert_equals(
+      act = stru-foo
+      exp = abap_true ).
+  ENDMETHOD.
+
+  METHOD parse_abap_false.
     DATA: BEGIN OF stru,
             foo TYPE abap_bool,
           END OF stru.
