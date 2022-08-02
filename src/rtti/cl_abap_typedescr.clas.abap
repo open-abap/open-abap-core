@@ -107,6 +107,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
   METHOD describe_by_data.
 
     DATA lv_name   TYPE string.
+    DATA lv_dummy  TYPE string.
     DATA lv_length TYPE i.
     DATA lo_elem   TYPE REF TO cl_abap_elemdescr.
     WRITE '@KERNEL lv_name.set(p_data.constructor.name);'.
@@ -220,6 +221,10 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
       type->absolute_name = 'ABSOLUTE_NAME_TODO'.
     ELSE.
       type->absolute_name = '\TYPE=' && type->absolute_name.
+    ENDIF.
+
+    IF type->relative_name CS '=>'.
+      SPLIT type->relative_name AT '=>' INTO lv_dummy type->relative_name.
     ENDIF.
 
   ENDMETHOD.
