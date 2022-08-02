@@ -23,8 +23,15 @@ TYPES: BEGIN OF abap_componentdescr,
          as_include TYPE abap_bool,
          type_kind  TYPE c LENGTH 1,
        END OF abap_componentdescr.
-
 TYPES abap_component_tab TYPE STANDARD TABLE OF abap_componentdescr WITH DEFAULT KEY.
+
+TYPES: BEGIN OF abap_compdescr,
+         length    TYPE i,
+         decimals  TYPE i,
+         type_kind TYPE abap_typekind,
+         name      TYPE abap_compname,
+       END OF abap_compdescr.
+TYPES abap_compdescr_tab TYPE STANDARD TABLE OF abap_compdescr WITH KEY name.
 
 TYPES: BEGIN OF abap_table_keycompdescr,
          name TYPE string,

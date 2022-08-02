@@ -28,8 +28,15 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
       RETURNING
         VALUE(ref)   TYPE REF TO cl_abap_structdescr.
 
-    DATA components TYPE component_table.
+    DATA components TYPE abap_compdescr_tab.
     DATA struct_kind TYPE abap_structkind READ-ONLY.
+
+  PRIVATE SECTION.
+    TYPES: BEGIN OF ty_refs,
+             name TYPE string,
+             ref  TYPE REF TO cl_abap_datadescr,
+           END OF ty_refs.
+    DATA mt_refs TYPE STANDARD TABLE OF ty_refs.
 ENDCLASS.
 
 CLASS cl_abap_structdescr IMPLEMENTATION.
@@ -41,10 +48,10 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
   METHOD get_ddic_field_list.
 
     DATA lt_components TYPE component_table.
-    DATA ls_component LIKE LINE OF lt_components.
-    DATA ls_return LIKE LINE OF rt_components.
-    DATA lv_name TYPE string.
-    DATA lv_keyfield TYPE string.
+    DATA ls_component  LIKE LINE OF lt_components.
+    DATA ls_return     LIKE LINE OF rt_components.
+    DATA lv_name       TYPE string.
+    DATA lv_keyfield   TYPE string.
     FIELD-SYMBOLS <component> LIKE LINE OF rt_components.
 
     lt_components = get_components( ).
@@ -79,6 +86,8 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
   METHOD constructor.
     DATA lv_name      TYPE string.
     DATA ls_component LIKE LINE OF components.
+    DATA ls_ref       LIKE LINE OF mt_refs.
+    DATA lo_datadescr TYPE REF TO cl_abap_datadescr.
 
     FIELD-SYMBOLS <fs> TYPE any.
 
@@ -88,26 +97,44 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     CLEAR ls_component.
     ls_component-name = lv_name.
     ASSIGN COMPONENT lv_name OF STRUCTURE data TO <fs>.
-    ls_component-type ?= cl_abap_typedescr=>describe_by_data( <fs> ).
-    ls_component-type_kind = ls_component-type->type_kind.
+    lo_datadescr ?= cl_abap_typedescr=>describe_by_data( <fs> ).
+    ls_component-type_kind = lo_datadescr->type_kind.
     APPEND ls_component TO components.
+
+    ls_ref-name = lv_name.
+    ls_ref-ref = lo_datadescr.
+    APPEND ls_ref TO mt_refs.
     WRITE '@KERNEL }'.
   ENDMETHOD.
 
   METHOD get_components.
-    rt_components = components.
+    DATA ls_component LIKE LINE OF components.
+    DATA ret          LIKE LINE OF rt_components.
+    DATA ls_ref       LIKE LINE OF mt_refs.
+
+    LOOP AT components INTO ls_component.
+      CLEAR ret.
+      ret-name = ls_component-name.
+      READ TABLE mt_refs INTO ls_ref WITH KEY name = ls_component-name.
+      IF sy-subrc = 0.
+        ret-type = ls_ref-ref.
+        ret-type_kind = ret-type->type_kind.
+      ENDIF.
+      " as_include type abap_bool,
+      " suffix     type string,
+      APPEND ret TO rt_components.
+    ENDLOOP.
   ENDMETHOD.
 
   METHOD get_component_type.
-    DATA line LIKE LINE OF components.
-    READ TABLE components INTO line WITH KEY name = p_name.
+    DATA line LIKE LINE OF mt_refs.
+    READ TABLE mt_refs INTO line WITH KEY name = p_name.
     IF sy-subrc <> 0.
 * todo, RAISE component_not_found, classic exceptions doesnt work with transpiler as of today
       ASSERT 1 = 'todo'.
     ELSE.
-      p_descr_ref ?= line-type.
+      p_descr_ref = line-ref.
     ENDIF.
-
   ENDMETHOD.
 
 ENDCLASS.
