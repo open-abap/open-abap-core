@@ -1,4 +1,4 @@
-CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
+CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
   PUBLIC SECTION.
     METHODS
       constructor

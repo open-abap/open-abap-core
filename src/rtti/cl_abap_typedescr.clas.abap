@@ -196,7 +196,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->type_kind = typekind_oref.
         type->kind = kind_ref.
       WHEN 'UTCLong'.
-        CREATE OBJECT type TYPE cl_abap_refdescr.
+        CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_utclong.
         type->kind = kind_elem.
       WHEN 'DataReference'.
