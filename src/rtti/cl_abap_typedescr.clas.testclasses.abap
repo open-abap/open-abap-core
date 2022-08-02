@@ -1,3 +1,7 @@
+INTERFACE lif_test_types.
+  TYPES element TYPE string.
+ENDINTERFACE.
+
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
@@ -23,6 +27,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS describe_by_name_t000 FOR TESTING.
     METHODS get_relative_name FOR TESTING.
     METHODS get_relative_name_timestamp FOR TESTING.
+    METHODS get_relative_name_lif FOR TESTING.
 
     METHODS is_ddic_type_true1 FOR TESTING.
     METHODS is_ddic_type_true2 FOR TESTING.
@@ -61,12 +66,22 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_relative_name_timestamp.
-    DATA t TYPE timestamp.
+    DATA t       TYPE timestamp.
     DATA lv_name TYPE string.
     lv_name = cl_abap_typedescr=>describe_by_data( t )->get_relative_name( ).
     cl_abap_unit_assert=>assert_equals(
       act = lv_name
       exp = 'TIMESTAMP' ).
+  ENDMETHOD.
+
+  METHOD get_relative_name_lif.
+    DATA data    TYPE lif_test_types=>element.
+    DATA lv_name TYPE string.
+    WRITE '@KERNEL console.dir(data);'.
+    lv_name = cl_abap_typedescr=>describe_by_data( data )->get_relative_name( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_name
+      exp = 'ELEMENT' ).
   ENDMETHOD.
 
   METHOD kind_elem.
