@@ -191,7 +191,7 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
         IF type2 NA 'CgyIFPDTXN'.
           RAISE EXCEPTION TYPE kernel_cx_assert
             EXPORTING
-              message = |Unexpected types|.
+              msg = |Unexpected types|.
         ENDIF.
       ENDIF.
     ELSEIF type1 IS NOT INITIAL AND type2 IS NOT INITIAL.
@@ -199,7 +199,7 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
       IF type1 <> type2.
         RAISE EXCEPTION TYPE kernel_cx_assert
           EXPORTING
-            message = |Unexpected types|.
+            msg = |Unexpected types|.
       ENDIF.
     ENDIF.
 
@@ -207,7 +207,7 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
       IF lines( act ) <> lines( exp ).
         RAISE EXCEPTION TYPE kernel_cx_assert
           EXPORTING
-            message = |Expected table to contain '{ lines( exp ) }' rows , got '{ lines( act ) }'|.
+            msg = |Expected table to contain '{ lines( exp ) }' rows , got '{ lines( act ) }'|.
       ENDIF.
       ASSIGN act TO <tab1>.
       ASSIGN exp TO <tab2>.
