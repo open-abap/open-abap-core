@@ -159,7 +159,7 @@ CLASS kernel_unit_runner IMPLEMENTATION.
             <ls_result>-status      = gc_status-failed.
             <ls_result>-actual      = lx_assert->actual.
             <ls_result>-expected    = lx_assert->expected.
-            <ls_result>-message     = lx_assert->message.
+            <ls_result>-message     = lx_assert->msg.
             <ls_result>-js_location = get_location( lx_assert ).
           CATCH cx_root INTO lx_root.
             <ls_result>-status  = gc_status-failed.

@@ -118,7 +118,7 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
     IF act IS NOT BOUND.
       RAISE EXCEPTION TYPE kernel_cx_assert
         EXPORTING
-          message = |Expected value to be bound|.
+          msg = |Expected value to be bound|.
     ENDIF.
   ENDMETHOD.
 
@@ -126,7 +126,7 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
     IF act IS BOUND.
       RAISE EXCEPTION TYPE kernel_cx_assert
         EXPORTING
-          message = |Expected value to not be bound|.
+          msg = |Expected value to not be bound|.
     ENDIF.
   ENDMETHOD.
 
@@ -137,7 +137,9 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD fail.
-    RAISE EXCEPTION TYPE kernel_cx_assert.
+    RAISE EXCEPTION TYPE kernel_cx_assert
+      EXPORTING
+        msg = msg.
   ENDMETHOD.
 
   METHOD skip.
@@ -148,7 +150,7 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
     IF act = exp.
       RAISE EXCEPTION TYPE kernel_cx_assert
         EXPORTING
-          message = |Expected different values|
+          msg = |Expected different values|
           act     = act
           exp     = exp.
     ENDIF.
@@ -158,7 +160,7 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
     IF act <> abap_true.
       RAISE EXCEPTION TYPE kernel_cx_assert
         EXPORTING
-          message = |Expected abap_true|.
+          msg = |Expected abap_true|.
     ENDIF.
   ENDMETHOD.
 
@@ -166,7 +168,7 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
     IF act <> abap_false.
       RAISE EXCEPTION TYPE kernel_cx_assert
         EXPORTING
-          message = |Expected abap_false|.
+          msg = |Expected abap_false|.
     ENDIF.
   ENDMETHOD.
 
@@ -228,7 +230,7 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
     ELSEIF act <> exp.
       RAISE EXCEPTION TYPE kernel_cx_assert
         EXPORTING
-          message  = |Expected '{ exp }', got '{ act }'|
+          msg  = |Expected '{ exp }', got '{ act }'|
           actual   = act
           expected = exp.
     ENDIF.
@@ -238,7 +240,7 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
     IF act IS INITIAL.
       RAISE EXCEPTION TYPE kernel_cx_assert
         EXPORTING
-          message = |Expected non initial value|.
+          msg = |Expected non initial value|.
     ENDIF.
   ENDMETHOD.
 
@@ -246,7 +248,7 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
     IF act IS NOT INITIAL.
       RAISE EXCEPTION TYPE kernel_cx_assert
         EXPORTING
-          message = |Expected initial value|.
+          msg = |Expected initial value|.
     ENDIF.
   ENDMETHOD.
 
@@ -254,7 +256,7 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
     IF sy-subrc <> exp.
       RAISE EXCEPTION TYPE kernel_cx_assert
         EXPORTING
-          message = |Expected sy-subrc to equal { exp }, got { sy-subrc }|.
+          msg = |Expected sy-subrc to equal { exp }, got { sy-subrc }|.
     ENDIF.
   ENDMETHOD.
 
