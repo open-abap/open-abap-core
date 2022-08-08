@@ -227,6 +227,11 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
       SPLIT type->relative_name AT '=>' INTO lv_dummy type->relative_name.
     ENDIF.
 
+    IF type->absolute_name = '\TYPE=sy-langu'.
+* todo, this is a hack
+      lo_elem->edit_mask = '==LANGU'.
+    ENDIF.
+
   ENDMETHOD.
 
 ENDCLASS.
