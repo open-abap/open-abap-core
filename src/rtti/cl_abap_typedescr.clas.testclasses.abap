@@ -77,7 +77,7 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD get_relative_name_lif.
     DATA data    TYPE lif_test_types=>element.
     DATA lv_name TYPE string.
-    WRITE '@KERNEL console.dir(data);'.
+*    WRITE '@KERNEL console.dir(data);'.
     lv_name = cl_abap_typedescr=>describe_by_data( data )->get_relative_name( ).
     cl_abap_unit_assert=>assert_equals(
       act = lv_name
