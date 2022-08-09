@@ -24,6 +24,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS abap_bool_absolute FOR TESTING.
     METHODS abap_true_absolute FOR TESTING.
     METHODS xsdboolean_absolute FOR TESTING.
+    METHODS class_type_absolute FOR TESTING.
     METHODS describe_by_name_t000 FOR TESTING.
     METHODS get_relative_name FOR TESTING.
     METHODS get_relative_name_timestamp FOR TESTING.
@@ -297,6 +298,15 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_type->absolute_name
       exp = '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL' ).
+  ENDMETHOD.
+
+  METHOD class_type_absolute.
+    DATA foo TYPE cl_abap_enumdescr=>member.
+    DATA typedescr TYPE REF TO cl_abap_typedescr.
+    typedescr = cl_abap_elemdescr=>describe_by_data( foo ).
+    cl_abap_unit_assert=>assert_equals(
+      act = typedescr->absolute_name
+      exp = '\CLASS=CL_ABAP_ENUMDESCR\TYPE=MEMBER' ).
   ENDMETHOD.
 
   METHOD xsdboolean_absolute.

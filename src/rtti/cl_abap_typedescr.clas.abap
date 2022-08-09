@@ -107,7 +107,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
   METHOD describe_by_data.
 
     DATA lv_name   TYPE string.
-    DATA lv_dummy  TYPE string.
+    DATA lv_prefix TYPE string.
     DATA lv_length TYPE i.
     DATA lo_elem   TYPE REF TO cl_abap_elemdescr.
     WRITE '@KERNEL lv_name.set(p_data.constructor.name);'.
@@ -214,17 +214,17 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 * this is not completely correct, local type names and ddic names might overlap, but will work for now,
     WRITE '@KERNEL if(abap.DDIC[type.get().absolute_name.get().toUpperCase()]) { type.get().ddic.set("X"); }'.
 
-    type->relative_name = type->absolute_name.
     IF type->absolute_name = 'ABAP_BOOL'.
       type->absolute_name = '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL'.
     ELSEIF type->absolute_name IS INITIAL.
       type->absolute_name = 'ABSOLUTE_NAME_TODO'.
+    ELSEIF type->absolute_name CS '=>'.
+      SPLIT type->absolute_name AT '=>' INTO lv_prefix type->absolute_name.
+      type->relative_name = type->absolute_name.
+      type->absolute_name = '\CLASS=' && lv_prefix && '\TYPE=' && type->absolute_name.
     ELSE.
+      type->relative_name = type->absolute_name.
       type->absolute_name = '\TYPE=' && type->absolute_name.
-    ENDIF.
-
-    IF type->relative_name CS '=>'.
-      SPLIT type->relative_name AT '=>' INTO lv_dummy type->relative_name.
     ENDIF.
 
     IF type->absolute_name = '\TYPE=sy-langu'.
