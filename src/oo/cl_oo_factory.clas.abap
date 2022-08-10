@@ -8,9 +8,11 @@ CLASS cl_oo_factory DEFINITION PUBLIC CREATE PRIVATE.
 
     METHODS create_clif_source
       IMPORTING
-        clif_name TYPE csequence
+        clif_name     TYPE csequence
       RETURNING
-        VALUE(result) TYPE REF TO if_oo_clif_source.
+        VALUE(result) TYPE REF TO if_oo_clif_source
+      RAISING
+        cx_oo_clif_not_exists.
 
   PRIVATE SECTION.
     DATA mv_name TYPE string.
@@ -28,6 +30,8 @@ CLASS cl_oo_factory IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_oo_clif_source~get_source.
-    ASSERT 1 = 'todo'.
+    DATA ls_data TYPE reposrc.
+    SELECT SINGLE * FROM reposrc INTO ls_data WHERE progname = mv_name.
+    SPLIT ls_data-data AT |\n| INTO TABLE source.
   ENDMETHOD.
 ENDCLASS.

@@ -90,7 +90,7 @@ CLASS cl_abap_zip IMPLEMENTATION.
       lo_stream->append( '1400' ).
 * 6, 2, General purpose bit flag
       lo_stream->append( '0000' ).
-* 8, 2, Compression method; e.g. none = 0, DEFLATE = 8 (or "\0x08\0x00")
+* 8, 2, Compression method; e.g. none = 0, DEFLATE = 8 (or "0x08 0x00")
       lo_stream->append( '0800' ).
 * 10, 2, File last modification time
       lo_stream->append( '0000' ). "lo_stream->append_time( sy-uzeit ).

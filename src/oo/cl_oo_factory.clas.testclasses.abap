@@ -13,8 +13,8 @@ CLASS ltcl_read_source IMPLEMENTATION.
 
     ref = cl_oo_factory=>create_instance( )->create_clif_source( 'CL_OO_FACTORY' ).
 
-    " todo, ref->get_source( IMPORTING source = lt_source ).
-    " cl_abap_unit_assert=>assert_not_initial( lt_source ).
+    ref->get_source( IMPORTING source = lt_source ).
+    cl_abap_unit_assert=>assert_not_initial( lt_source ).
   ENDMETHOD.
 
 ENDCLASS.
