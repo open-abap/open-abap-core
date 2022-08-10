@@ -11,6 +11,7 @@ CLASS ltcl_scan DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS class_simple FOR TESTING RAISING cx_static_check.
     METHODS comment_sequence_end_of_line FOR TESTING RAISING cx_static_check.
     METHODS comment_sequence_full_line FOR TESTING RAISING cx_static_check.
+    METHODS comment_sequence_multi FOR TESTING RAISING cx_static_check.
 
     DATA tokens TYPE STANDARD TABLE OF stokesx WITH DEFAULT KEY.
     DATA statements TYPE STANDARD TABLE OF sstmnt WITH DEFAULT KEY.
@@ -213,6 +214,37 @@ CLASS ltcl_scan IMPLEMENTATION.
             |str:UNKNOWN_ANNOTATION,row:3,col:4\n| &&
             |str:TYPE,row:3,col:23\n| &&
             |str:STRING,row:3,col:28| ).
+
+  ENDMETHOD.
+
+  METHOD comment_sequence_multi.
+
+    scan(
+      |TYPES:\n| &&
+      |* foo\n| &&
+      |    foo TYPE string,\n| &&
+      |* bar\n| &&
+      |    bar TYPE string.| ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = dump_tokens( tokens )
+      exp = |str:* foo,row:2,col:0\n| &&
+            |str:TYPES,row:1,col:0\n| &&
+            |str:FOO,row:3,col:4\n| &&
+            |str:TYPE,row:3,col:8\n| &&
+            |str:STRING,row:3,col:13\n| &&
+            |str:* bar,row:4,col:0\n| &&
+            |str:TYPES,row:1,col:0\n| &&
+            |str:BAR,row:5,col:4\n| &&
+            |str:TYPE,row:5,col:8\n| &&
+            |str:STRING,row:5,col:13| ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = dump_statements( statements )
+      exp = |from:1,to:1\n| &&
+            |from:2,to:5\n| &&
+            |from:6,to:6\n| &&
+            |from:7,to:10| ).
 
   ENDMETHOD.
 

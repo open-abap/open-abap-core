@@ -99,12 +99,12 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
         <trow>-type = gc_token-identifier.
       ELSEIF mode = c_mode-normal AND ( character = '' OR character CA |.,| ).
         UNASSIGN <trow>.
-        IF character = ','.
-*          WRITE '@KERNEL console.dir("before");'.
-          APPEND LINES OF chain_tokens TO et_tokens.
-*          WRITE '@KERNEL console.dir("after");'.
-*          WRITE lines( <tokens> ).
-        ENDIF.
+"         IF character = ','.
+" *          WRITE '@KERNEL console.dir("before");'.
+"           APPEND LINES OF chain_tokens TO et_tokens.
+" *          WRITE '@KERNEL console.dir("after");'.
+" *          WRITE lines( <tokens> ).
+"         ENDIF.
       ELSEIF mode = c_mode-normal AND character = ':'.
         CLEAR chain_tokens.
         APPEND LINES OF et_tokens FROM sfrom TO chain_tokens.
@@ -118,6 +118,13 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
         <srow>-from = sfrom.
         <srow>-to = lines( et_tokens ).
         sfrom = <srow>-to + 1.
+
+        IF character = ','.
+*          WRITE '@KERNEL console.dir("before");'.
+          APPEND LINES OF chain_tokens TO et_tokens.
+*          WRITE '@KERNEL console.dir("after");'.
+*          WRITE lines( <tokens> ).
+        ENDIF.
       ENDIF.
 
       IF character = |\n|.
@@ -166,17 +173,18 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
         ELSE.
           contains_normal = abap_true.
         ENDIF.
-*        WRITE '@KERNEL console.dir(ls_token.get().type.get());'.
+*        WRITE '@KERNEL console.dir(ls_token.get().str.get());'.
       ENDLOOP.
 
       IF contains_comment = abap_true AND contains_normal = abap_true.
 * its a mix, move comments to the front as separate statement
+*        WRITE '@KERNEL console.dir("from: " + fs_ls_statement_.get().from.get());'.
+*        WRITE '@KERNEL console.dir("to: " + fs_ls_statement_.get().to.get());'.
         lv_count = 0.
         LOOP AT ct_tokens INTO ls_token FROM <ls_statement>-from TO <ls_statement>-to WHERE type = gc_token-comment.
           DELETE ct_tokens INDEX sy-tabix.
           INSERT ls_token INTO TABLE ct_tokens INDEX <ls_statement>-from.
           lv_count = lv_count + 1.
-*          WRITE '@KERNEL console.dir("foo");'.
         ENDLOOP.
         CLEAR ls_statement.
         ls_statement-from = <ls_statement>-from.
