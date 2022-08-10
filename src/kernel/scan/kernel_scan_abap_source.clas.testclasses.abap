@@ -7,6 +7,8 @@ CLASS ltcl_scan DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS comment_line FOR TESTING RAISING cx_static_check.
     METHODS end_of_comment_line FOR TESTING RAISING cx_static_check.
     METHODS chained FOR TESTING RAISING cx_static_check.
+    METHODS class_simple FOR TESTING RAISING cx_static_check.
+    METHODS comment_sequence FOR TESTING RAISING cx_static_check.
 
     DATA tokens TYPE STANDARD TABLE OF stokesx WITH DEFAULT KEY.
     DATA statements TYPE STANDARD TABLE OF sstmnt WITH DEFAULT KEY.
@@ -157,6 +159,53 @@ CLASS ltcl_scan IMPLEMENTATION.
             |str:END,row:3,col:0\n| &&
             |str:OF,row:3,col:4\n| &&
             |str:FOO,row:3,col:7| ).
+  ENDMETHOD.
+
+  METHOD comment_sequence.
+
+    scan(
+      |  TYPES:\n| &&
+      |    "! $hiddenabc\n| &&
+      |    unknown_annotation TYPE string.| ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = dump_tokens( tokens )
+      exp = |str:"! $hiddenabc,row:2,col:4\n| &&
+            |str:TYPES,row:1,col:2\n| &&
+            |str:UNKNOWN_ANNOTATION,row:3,col:4\n| &&
+            |str:TYPE,row:3,col:23\n| &&
+            |str:STRING,row:3,col:28| ).
+
+  ENDMETHOD.
+
+  METHOD class_simple.
+
+    scan(
+      |CLASS zcl_aff_test_types DEFINITION PUBLIC FINAL CREATE PUBLIC.\n| &&
+      |PUBLIC SECTION.\n| &&
+      |  TYPES:\n| &&
+      |    "! $hiddenabc\n| &&
+      |    unknown_annotation TYPE string.\n| &&
+      |ENDCLASS.| ).
+
+    " cl_abap_unit_assert=>assert_equals(
+    "   act = dump_tokens( tokens )
+    "   exp = |str:CLASS,row:1,col:0\n| &&
+    "         |str:ZCL_AFF_TEST_TYPES,row:1,col:6\n| &&
+    "         |str:DEFINITION,row:1,col:25\n| &&
+    "         |str:PUBLIC,row:1,col:36\n| &&
+    "         |str:FINAL,row:1,col:43\n| &&
+    "         |str:CREATE,row:1,col:49\n| &&
+    "         |str:PUBLIC,row:1,col:56\n| &&
+    "         |str:PUBLIC,row:2,col:0\n| &&
+    "         |str:SECTION,row:2,col:7\n| &&
+    "         |str:"! $hiddenabc,row:4,col:4\n| &&
+    "         |str:TYPES,row:3,col:2\n| &&
+    "         |str:UNKNOWN_ANNOTATION,row:5,col:4\n| &&
+    "         |str:TYPE,row:5,col:23\n| &&
+    "         |str:STRING,row:5,col:28\n| &&
+    "         |str:ENDCLASS,row:6,col:0| ).
+
   ENDMETHOD.
 
 ENDCLASS.
