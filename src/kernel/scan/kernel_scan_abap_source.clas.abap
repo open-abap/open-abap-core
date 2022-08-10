@@ -25,17 +25,47 @@ CLASS kernel_scan_abap_source DEFINITION PUBLIC.
                  pragma           TYPE c LENGTH 1 VALUE 'G',
                  standard         TYPE c LENGTH 1 VALUE 'K',
                END OF gc_statement.
+
+    CLASS-METHODS pass1
+      IMPORTING
+        source        TYPE string
+      EXPORTING
+        et_tokens     TYPE ty_stokesx
+        et_statements TYPE ty_sstmnt.
+
+    CLASS-METHODS pass2
+      CHANGING
+        ct_tokens     TYPE ty_stokesx
+        ct_statements TYPE ty_sstmnt.
 ENDCLASS.
 
 CLASS kernel_scan_abap_source IMPLEMENTATION.
 
   METHOD call.
+
+    DATA source TYPE string.
+    FIELD-SYMBOLS <tokens>     TYPE ty_stokesx.
+    FIELD-SYMBOLS <statements> TYPE ty_sstmnt.
+
+    WRITE '@KERNEL source.set(INPUT.scan_abap_source.array ? INPUT.scan_abap_source.array().map(e => e.get()).join("\n") : INPUT.scan_abap_source.get());'.
+    WRITE '@KERNEL fs_tokens_.assign(INPUT.tokens_into);'.
+    WRITE '@KERNEL fs_statements_.assign(INPUT.statements_into);'.
+
+    pass1(
+      EXPORTING
+        source        = source
+      IMPORTING
+        et_tokens     = <tokens>
+        et_statements = <statements> ).
+
+  ENDMETHOD.
+
+  METHOD pass1.
     CONSTANTS: BEGIN OF c_mode,
                  normal  TYPE i VALUE 1,
                  comment TYPE i VALUE 2,
                END OF c_mode.
 
-    DATA source       TYPE string.
     DATA character    TYPE c LENGTH 1.
     DATA row          TYPE i VALUE 1.
     DATA column       TYPE i.
@@ -44,14 +74,8 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
     DATA mode         TYPE i.
     DATA chain_tokens TYPE ty_stokesx.
 
-    FIELD-SYMBOLS <tokens>     TYPE ty_stokesx.
-    FIELD-SYMBOLS <statements> TYPE ty_sstmnt.
-    FIELD-SYMBOLS <trow>       LIKE LINE OF <tokens>.
-    FIELD-SYMBOLS <srow>       LIKE LINE OF <statements>.
-
-    WRITE '@KERNEL source.set(INPUT.scan_abap_source.array ? INPUT.scan_abap_source.array().map(e => e.get()).join("\n") : INPUT.scan_abap_source.get());'.
-    WRITE '@KERNEL fs_tokens_.assign(INPUT.tokens_into);'.
-    WRITE '@KERNEL fs_statements_.assign(INPUT.statements_into);'.
+    FIELD-SYMBOLS <trow> LIKE LINE OF et_tokens.
+    FIELD-SYMBOLS <srow> LIKE LINE OF et_statements.
 
     mode = c_mode-normal.
     WHILE source IS NOT INITIAL.
@@ -59,30 +83,30 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
       source = source+1.
 
       IF <trow> IS NOT ASSIGNED AND character <> '' AND character <> |\n|.
-        APPEND INITIAL LINE TO <tokens> ASSIGNING <trow>.
+        APPEND INITIAL LINE TO et_tokens ASSIGNING <trow>.
         <trow>-row = row.
         <trow>-col = column.
       ELSEIF mode = c_mode-normal AND ( character = '' OR character CA |.,| ).
         UNASSIGN <trow>.
         IF character = ','.
 *          WRITE '@KERNEL console.dir("before");'.
-          APPEND LINES OF chain_tokens TO <tokens>.
+          APPEND LINES OF chain_tokens TO et_tokens.
 *          WRITE '@KERNEL console.dir("after");'.
 *          WRITE lines( <tokens> ).
         ENDIF.
       ELSEIF mode = c_mode-normal AND character = ':'.
         CLEAR chain_tokens.
-        APPEND LINES OF <tokens> FROM sfrom TO chain_tokens.
+        APPEND LINES OF et_tokens FROM sfrom TO chain_tokens.
 *        WRITE '@KERNEL console.dir(chain_tokens);'.
       ENDIF.
 
       IF ( mode = c_mode-normal AND character CA |.,| )
           OR ( mode = c_mode-comment AND character = |\n| )
           OR source = ''.
-        APPEND INITIAL LINE TO <statements> ASSIGNING <srow>.
+        APPEND INITIAL LINE TO et_statements ASSIGNING <srow>.
         <srow>-terminator = character.
         <srow>-from = sfrom.
-        <srow>-to = lines( <tokens> ).
+        <srow>-to = lines( et_tokens ).
         sfrom = <srow>-to + 1.
         IF mode = c_mode-comment.
           <srow>-type = gc_statement-comment.
@@ -112,6 +136,10 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
 
     ENDWHILE.
 
+  ENDMETHOD.
+
+  METHOD pass2.
+    RETURN.
   ENDMETHOD.
 
 ENDCLASS.
