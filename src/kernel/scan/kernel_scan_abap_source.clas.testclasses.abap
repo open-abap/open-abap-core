@@ -317,12 +317,12 @@ CLASS ltcl_scan IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = dump_tokens( tokens )
       exp = |str:* simple structure,row:1,col:0\n| &&
-            |str:"! This isa simple structure,row:3,col:6\n| &&
+            |str:"! This is a simple structure,row:3,col:6\n| &&
             |str:TYPES,row:2,col:4\n| &&
             |str:BEGIN,row:4,col:6\n| &&
             |str:OF,row:4,col:12\n| &&
             |str:MY_STRUCTURE,row:4,col:15\n| &&
-            |str:"! This is the firstelement,row:5,col:8\n| &&
+            |str:"! This is the first element,row:5,col:8\n| &&
             |str:TYPES,row:2,col:4\n| &&
             |str:MY_FIRST_ELEMENT,row:6,col:8\n| &&
             |str:TYPE,row:6,col:26\n| &&
