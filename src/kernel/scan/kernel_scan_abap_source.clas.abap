@@ -157,7 +157,7 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
     LOOP AT ct_statements ASSIGNING <ls_statement>.
       lv_statement_index = sy-tabix.
 
-      WRITE '@KERNEL console.dir("statement");'.
+*      WRITE '@KERNEL console.dir("statement");'.
       contains_comment = abap_false.
       contains_normal = abap_false.
       LOOP AT ct_tokens INTO ls_token FROM <ls_statement>-from TO <ls_statement>-to.
