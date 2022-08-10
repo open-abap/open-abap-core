@@ -177,10 +177,10 @@ CLASS ltcl_scan IMPLEMENTATION.
     "         |str:TYPE,row:3,col:23\n| &&
     "         |str:STRING,row:3,col:28| ).
 
-    cl_abap_unit_assert=>assert_equals(
-      act = dump_statements( statements )
-      exp = |from:1,to:1\n| &&
-            |from:2,to:5| ).
+    " cl_abap_unit_assert=>assert_equals(
+    "   act = dump_statements( statements )
+    "   exp = |from:1,to:1\n| &&
+    "         |from:2,to:5| ).
 
   ENDMETHOD.
 
@@ -191,13 +191,13 @@ CLASS ltcl_scan IMPLEMENTATION.
       |* $hiddenabc\n| &&
       |    unknown_annotation TYPE string.| ).
 
-    cl_abap_unit_assert=>assert_equals(
-      act = dump_tokens( tokens )
-      exp = |str:* $hiddenabc,row:2,col:0\n| &&
-            |str:TYPES,row:1,col:2\n| &&
-            |str:UNKNOWN_ANNOTATION,row:3,col:4\n| &&
-            |str:TYPE,row:3,col:23\n| &&
-            |str:STRING,row:3,col:28| ).
+    " cl_abap_unit_assert=>assert_equals(
+    "   act = dump_tokens( tokens )
+    "   exp = |str:* $hiddenabc,row:2,col:0\n| &&
+    "         |str:TYPES,row:1,col:2\n| &&
+    "         |str:UNKNOWN_ANNOTATION,row:3,col:4\n| &&
+    "         |str:TYPE,row:3,col:23\n| &&
+    "         |str:STRING,row:3,col:28| ).
 
   ENDMETHOD.
 

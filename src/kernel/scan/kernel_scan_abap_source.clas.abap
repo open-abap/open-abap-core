@@ -51,12 +51,20 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
     WRITE '@KERNEL fs_tokens_.assign(INPUT.tokens_into);'.
     WRITE '@KERNEL fs_statements_.assign(INPUT.statements_into);'.
 
+* build tokens in sequence of occurence in the source
+* take care of chained statements
     pass1(
       EXPORTING
         source        = source
       IMPORTING
         et_tokens     = <tokens>
         et_statements = <statements> ).
+
+* move comment tokens and add/change satements to comment type
+    pass2(
+      CHANGING
+        ct_tokens     = <tokens>
+        ct_statements = <statements> ).
 
   ENDMETHOD.
 
@@ -101,18 +109,12 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
       ENDIF.
 
       IF ( mode = c_mode-normal AND character CA |.,| )
-          OR ( mode = c_mode-comment AND character = |\n| )
           OR source = ''.
         APPEND INITIAL LINE TO et_statements ASSIGNING <srow>.
         <srow>-terminator = character.
         <srow>-from = sfrom.
         <srow>-to = lines( et_tokens ).
         sfrom = <srow>-to + 1.
-        IF mode = c_mode-comment.
-          <srow>-type = gc_statement-comment.
-        ELSE.
-          <srow>-type = gc_statement-standard.
-        ENDIF.
       ENDIF.
 
       IF character = |\n|.
