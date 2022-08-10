@@ -12,6 +12,7 @@ CLASS ltcl_scan DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS comment_sequence_end_of_line FOR TESTING RAISING cx_static_check.
     METHODS comment_sequence_full_line FOR TESTING RAISING cx_static_check.
     METHODS comment_sequence_multi FOR TESTING RAISING cx_static_check.
+    METHODS comment_sequence_two FOR TESTING RAISING cx_static_check.
 
     DATA tokens TYPE STANDARD TABLE OF stokesx WITH DEFAULT KEY.
     DATA statements TYPE STANDARD TABLE OF sstmnt WITH DEFAULT KEY.
@@ -245,6 +246,25 @@ CLASS ltcl_scan IMPLEMENTATION.
             |from:2,to:5\n| &&
             |from:6,to:6\n| &&
             |from:7,to:10| ).
+
+  ENDMETHOD.
+
+  METHOD comment_sequence_two.
+
+    scan(
+      |  TYPES:\n| &&
+      |* first\n| &&
+      |* second\n| &&
+      |    unknown_annotation TYPE string.| ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = dump_tokens( tokens )
+      exp = |str:* first,row:2,col:0\n| &&
+            |str:* second,row:3,col:0\n| &&
+            |str:TYPES,row:1,col:2\n| &&
+            |str:UNKNOWN_ANNOTATION,row:4,col:4\n| &&
+            |str:TYPE,row:4,col:23\n| &&
+            |str:STRING,row:4,col:28| ).
 
   ENDMETHOD.
 
