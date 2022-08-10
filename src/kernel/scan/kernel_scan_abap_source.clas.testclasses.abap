@@ -266,6 +266,11 @@ CLASS ltcl_scan IMPLEMENTATION.
             |str:TYPE,row:4,col:23\n| &&
             |str:STRING,row:4,col:28| ).
 
+    cl_abap_unit_assert=>assert_equals(
+      act = dump_statements( statements )
+      exp = |from:1,to:2\n| &&
+            |from:3,to:6| ).
+
   ENDMETHOD.
 
   METHOD class_simple.
