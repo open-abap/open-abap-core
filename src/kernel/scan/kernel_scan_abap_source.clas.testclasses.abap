@@ -5,6 +5,7 @@ CLASS ltcl_scan DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS class_impl_def FOR TESTING RAISING cx_static_check.
     METHODS simple_indentation FOR TESTING RAISING cx_static_check.
     METHODS comment_line FOR TESTING RAISING cx_static_check.
+    METHODS two_comment_line FOR TESTING RAISING cx_static_check.
     METHODS end_of_comment_line FOR TESTING RAISING cx_static_check.
     METHODS chained FOR TESTING RAISING cx_static_check.
     METHODS class_simple FOR TESTING RAISING cx_static_check.
@@ -126,6 +127,20 @@ CLASS ltcl_scan IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = dump_tokens( tokens )
       exp = |str:* full line comment,row:1,col:0| ).
+  ENDMETHOD.
+
+  METHOD two_comment_line.
+    scan(
+      |* full line comment\n| &&
+      |* another| ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = dump_statements( statements )
+      exp = |from:1,to:2| ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( tokens )
+      exp = 2 ).
   ENDMETHOD.
 
   METHOD end_of_comment_line.
