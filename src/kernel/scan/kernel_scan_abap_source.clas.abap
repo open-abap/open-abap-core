@@ -160,6 +160,7 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
     DATA contains_normal    TYPE abap_bool.
     DATA lv_count           TYPE i.
     DATA lv_statement_index TYPE i.
+    DATA lt_insert          LIKE ct_tokens.
 
     LOOP AT ct_statements ASSIGNING <ls_statement>.
       lv_statement_index = sy-tabix.
@@ -181,10 +182,14 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
 *        WRITE '@KERNEL console.dir("from: " + fs_ls_statement_.get().from.get());'.
 *        WRITE '@KERNEL console.dir("to: " + fs_ls_statement_.get().to.get());'.
         lv_count = 0.
+        CLEAR lt_insert.
         LOOP AT ct_tokens INTO ls_token FROM <ls_statement>-from TO <ls_statement>-to WHERE type = gc_token-comment.
           DELETE ct_tokens INDEX sy-tabix.
-          INSERT ls_token INTO TABLE ct_tokens INDEX <ls_statement>-from.
+          INSERT ls_token INTO TABLE lt_insert INDEX 1.
           lv_count = lv_count + 1.
+        ENDLOOP.
+        LOOP AT lt_insert INTO ls_token.
+          INSERT ls_token INTO TABLE ct_tokens INDEX <ls_statement>-from.
         ENDLOOP.
         CLEAR ls_statement.
         ls_statement-from = <ls_statement>-from.
