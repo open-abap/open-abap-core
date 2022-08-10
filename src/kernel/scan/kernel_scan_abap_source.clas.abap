@@ -51,6 +51,8 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
     WRITE '@KERNEL fs_tokens_.assign(INPUT.tokens_into);'.
     WRITE '@KERNEL fs_statements_.assign(INPUT.statements_into);'.
 
+* non-goal: good performance
+
 * build tokens in sequence of occurence in the source
 * take care of chained statements
     pass1(
@@ -60,7 +62,7 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
         et_tokens     = <tokens>
         et_statements = <statements> ).
 
-* move comment tokens and add/change satements to comment type
+* move comment tokens and add/change statements to comment type
     pass2(
       CHANGING
         ct_tokens     = <tokens>
@@ -94,6 +96,7 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
         APPEND INITIAL LINE TO et_tokens ASSIGNING <trow>.
         <trow>-row = row.
         <trow>-col = column.
+        <trow>-type = gc_token-identifier.
       ELSEIF mode = c_mode-normal AND ( character = '' OR character CA |.,| ).
         UNASSIGN <trow>.
         IF character = ','.
@@ -126,8 +129,10 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
         IF <trow> IS ASSIGNED.
           IF ( character = '*' AND column = 0 ) OR character = '"'.
             mode = c_mode-comment.
+            <trow>-type = gc_token-comment.
           ENDIF.
           IF mode = c_mode-comment.
+            <trow>-type = gc_token-comment.
             <trow>-str = <trow>-str && |{ character }|.
           ELSEIF character <> ':'.
             <trow>-str = <trow>-str && to_upper( |{ character }| ).
@@ -141,7 +146,52 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD pass2.
-    RETURN.
+    FIELD-SYMBOLS <ls_statement> LIKE LINE OF ct_statements.
+    DATA ls_statement       LIKE LINE OF ct_statements.
+    DATA ls_token           LIKE LINE OF ct_tokens.
+    DATA contains_comment   TYPE abap_bool.
+    DATA contains_normal    TYPE abap_bool.
+    DATA lv_count           TYPE i.
+    DATA lv_statement_index TYPE i.
+
+    LOOP AT ct_statements ASSIGNING <ls_statement>.
+      lv_statement_index = sy-tabix.
+
+      WRITE '@KERNEL console.dir("statement");'.
+      contains_comment = abap_false.
+      contains_normal = abap_false.
+      LOOP AT ct_tokens INTO ls_token FROM <ls_statement>-from TO <ls_statement>-to.
+        IF ls_token-type = gc_token-comment.
+          contains_comment = abap_true.
+        ELSE.
+          contains_normal = abap_true.
+        ENDIF.
+        WRITE '@KERNEL console.dir(ls_token.get().type.get());'.
+      ENDLOOP.
+
+      IF contains_comment = abap_true AND contains_normal = abap_true.
+* its a mix, move comments to the front as separate statement
+        lv_count = 0.
+        LOOP AT ct_tokens INTO ls_token FROM <ls_statement>-from TO <ls_statement>-to WHERE type = gc_token-comment.
+          DELETE ct_tokens INDEX sy-tabix.
+          INSERT ls_token INTO TABLE ct_tokens INDEX <ls_statement>-from.
+          lv_count = lv_count + 1.
+          WRITE '@KERNEL console.dir("foo");'.
+        ENDLOOP.
+        CLEAR ls_statement.
+        ls_statement-from = <ls_statement>-from.
+        ls_statement-to = <ls_statement>-from + lv_count - 1.
+        ls_statement-type = gc_statement-comment.
+
+        <ls_statement>-from = <ls_statement>-from + lv_count.
+
+        INSERT ls_statement INTO TABLE ct_statements INDEX lv_statement_index.
+      ELSEIF contains_comment = abap_true.
+        <ls_statement>-type = gc_statement-comment.
+      ELSE.
+        <ls_statement>-type = gc_statement-standard.
+      ENDIF.
+    ENDLOOP.
   ENDMETHOD.
 
 ENDCLASS.
