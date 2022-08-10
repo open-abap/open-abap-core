@@ -17,7 +17,7 @@ CLASS cl_sxml_string_writer DEFINITION PUBLIC FINAL CREATE PRIVATE.
         ignore_conversion_errors TYPE abap_bool DEFAULT abap_false
         normalizing              TYPE abap_bool DEFAULT abap_false
         no_empty_elements        TYPE abap_bool DEFAULT abap_false
-        encoding                 TYPE string DEFAULT `UTF-8`
+        encoding                 TYPE string DEFAULT 'UTF-8'
         PREFERRED PARAMETER type
       RETURNING
         VALUE(writer) TYPE REF TO cl_sxml_string_writer
