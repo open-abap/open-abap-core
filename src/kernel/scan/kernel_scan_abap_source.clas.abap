@@ -166,7 +166,7 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
         ELSE.
           contains_normal = abap_true.
         ENDIF.
-        WRITE '@KERNEL console.dir(ls_token.get().type.get());'.
+*        WRITE '@KERNEL console.dir(ls_token.get().type.get());'.
       ENDLOOP.
 
       IF contains_comment = abap_true AND contains_normal = abap_true.
@@ -176,7 +176,7 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
           DELETE ct_tokens INDEX sy-tabix.
           INSERT ls_token INTO TABLE ct_tokens INDEX <ls_statement>-from.
           lv_count = lv_count + 1.
-          WRITE '@KERNEL console.dir("foo");'.
+*          WRITE '@KERNEL console.dir("foo");'.
         ENDLOOP.
         CLEAR ls_statement.
         ls_statement-from = <ls_statement>-from.
