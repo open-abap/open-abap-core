@@ -108,6 +108,7 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
       ELSEIF mode = c_mode-normal AND character = ':'.
         CLEAR chain_tokens.
         APPEND LINES OF et_tokens FROM sfrom TO chain_tokens.
+        DELETE chain_tokens WHERE type = gc_token-comment.
 *        WRITE '@KERNEL console.dir(chain_tokens);'.
       ENDIF.
 

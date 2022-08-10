@@ -13,6 +13,7 @@ CLASS ltcl_scan DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS comment_sequence_full_line FOR TESTING RAISING cx_static_check.
     METHODS comment_sequence_multi FOR TESTING RAISING cx_static_check.
     METHODS comment_sequence_two FOR TESTING RAISING cx_static_check.
+    METHODS some_type FOR TESTING RAISING cx_static_check.
 
     DATA tokens TYPE STANDARD TABLE OF stokesx WITH DEFAULT KEY.
     DATA statements TYPE STANDARD TABLE OF sstmnt WITH DEFAULT KEY.
@@ -300,6 +301,43 @@ CLASS ltcl_scan IMPLEMENTATION.
             |str:TYPE,row:5,col:23\n| &&
             |str:STRING,row:5,col:28\n| &&
             |str:ENDCLASS,row:6,col:0| ).
+
+  ENDMETHOD.
+
+  METHOD some_type.
+    scan(
+      |* simple structure\n| &&
+      |    TYPES:\n| &&
+      |      "! This is a simple structure\n| &&
+      |      BEGIN OF my_structure,\n| &&
+      |        "! This is the first element\n| &&
+      |        my_first_element  TYPE mystring,\n| &&
+      |      END OF my_structure.| ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = dump_tokens( tokens )
+      exp = |str:* simple structure,row:1,col:0\n| &&
+            |str:"! This isa simple structure,row:3,col:6\n| &&
+            |str:TYPES,row:2,col:4\n| &&
+            |str:BEGIN,row:4,col:6\n| &&
+            |str:OF,row:4,col:12\n| &&
+            |str:MY_STRUCTURE,row:4,col:15\n| &&
+            |str:"! This is the firstelement,row:5,col:8\n| &&
+            |str:TYPES,row:2,col:4\n| &&
+            |str:MY_FIRST_ELEMENT,row:6,col:8\n| &&
+            |str:TYPE,row:6,col:26\n| &&
+            |str:MYSTRING,row:6,col:31\n| &&
+            |str:TYPES,row:2,col:4\n| &&
+            |str:END,row:7,col:6\n| &&
+            |str:OF,row:7,col:10\n| &&
+            |str:MY_STRUCTURE,row:7,col:13| ).
+
+* from:1,to:1
+* from:2,to:2
+* from:3,to:6
+* from:7,to:7
+* from:8,to:11
+* from:12,to:15
 
   ENDMETHOD.
 
