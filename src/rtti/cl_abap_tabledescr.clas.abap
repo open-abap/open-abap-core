@@ -50,10 +50,13 @@ CLASS cl_abap_tabledescr IMPLEMENTATION.
 
   METHOD constructor.
     DATA lv_dummy TYPE i.
+    DATA lv_flag TYPE abap_bool.
 *    WRITE '@KERNEL console.dir(data);'.
-    WRITE '@KERNEL lv_dummy = data.getRowType();'.
-*    WRITE '@KERNEL console.dir(lv_dummy);'.
 
+    WRITE '@KERNEL lv_flag.set(data.getOptions().isUnique === true ? "X" : "");'.
+    has_unique_key = lv_flag.
+
+    WRITE '@KERNEL lv_dummy = data.getRowType();'.
     lo_type = cl_abap_typedescr=>describe_by_data( lv_dummy ).
   ENDMETHOD.
 
