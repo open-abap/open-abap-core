@@ -207,7 +207,7 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
       IF lines( act ) <> lines( exp ).
         RAISE EXCEPTION TYPE kernel_cx_assert
           EXPORTING
-            msg = |Expected table to contain '{ lines( exp ) }' rows , got '{ lines( act ) }'|.
+            msg = |Expected table to contain { lines( exp ) } rows, got { lines( act ) }|.
       ENDIF.
       ASSIGN act TO <tab1>.
       ASSIGN exp TO <tab2>.
