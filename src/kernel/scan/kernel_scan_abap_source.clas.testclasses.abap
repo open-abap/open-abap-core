@@ -14,6 +14,7 @@ CLASS ltcl_scan DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS comment_sequence_multi FOR TESTING RAISING cx_static_check.
     METHODS comment_sequence_two FOR TESTING RAISING cx_static_check.
     METHODS some_type FOR TESTING RAISING cx_static_check.
+    METHODS two_types FOR TESTING RAISING cx_static_check.
 
     DATA tokens TYPE STANDARD TABLE OF stokesx WITH DEFAULT KEY.
     DATA statements TYPE STANDARD TABLE OF sstmnt WITH DEFAULT KEY.
@@ -338,6 +339,50 @@ CLASS ltcl_scan IMPLEMENTATION.
 * from:7,to:7
 * from:8,to:11
 * from:12,to:15
+
+  ENDMETHOD.
+
+  METHOD two_types.
+    scan(
+      |    TYPES:\n| &&
+      |      BEGIN OF structure1,\n| &&
+      |        "! text1\n| &&
+      |        same_name TYPE i,\n| &&
+      |      END OF structure1.\n| &&
+      |    TYPES:\n| &&
+      |      BEGIN OF structure2,\n| &&
+      |        "! text2\n| &&
+      |        same_name TYPE i,\n| &&
+      |      END OF structure2.| ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = dump_tokens( tokens )
+      exp = |str:TYPES,row:1,col:4\n| &&
+            |str:BEGIN,row:2,col:6\n| &&
+            |str:OF,row:2,col:12\n| &&
+            |str:STRUCTURE1,row:2,col:15\n| &&
+            |str:"! text1,row:3,col:8\n| &&
+            |str:TYPES,row:1,col:4\n| &&
+            |str:SAME_NAME,row:4,col:8\n| &&
+            |str:TYPE,row:4,col:18\n| &&
+            |str:I,row:4,col:23\n| &&
+            |str:TYPES,row:1,col:4\n| &&
+            |str:END,row:5,col:6\n| &&
+            |str:OF,row:5,col:10\n| &&
+            |str:STRUCTURE1,row:5,col:13\n| &&
+            |str:TYPES,row:6,col:4\n| &&
+            |str:BEGIN,row:7,col:6\n| &&
+            |str:OF,row:7,col:12\n| &&
+            |str:STRUCTURE2,row:7,col:15\n| &&
+            |str:"! text2,row:8,col:8\n| &&
+            |str:TYPES,row:6,col:4\n| &&
+            |str:SAME_NAME,row:9,col:8\n| &&
+            |str:TYPE,row:9,col:18\n| &&
+            |str:I,row:9,col:23\n| &&
+            |str:TYPES,row:6,col:4\n| &&
+            |str:END,row:10,col:6\n| &&
+            |str:OF,row:10,col:10\n| &&
+            |str:STRUCTURE2,row:10,col:13| ).
 
   ENDMETHOD.
 
