@@ -1,5 +1,10 @@
 INTERFACE lif_test_types.
   TYPES element TYPE string.
+  TYPES: BEGIN OF structure,
+           element_1 TYPE i,
+           element_2 TYPE element,
+         END OF structure.
+  TYPES table_structure TYPE STANDARD TABLE OF structure WITH DEFAULT KEY.
 ENDINTERFACE.
 
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
@@ -29,6 +34,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS get_relative_name FOR TESTING.
     METHODS get_relative_name_timestamp FOR TESTING.
     METHODS get_relative_name_lif FOR TESTING.
+    METHODS get_relative_name_table FOR TESTING.
 
     METHODS is_ddic_type_true1 FOR TESTING.
     METHODS is_ddic_type_true2 FOR TESTING.
@@ -83,6 +89,15 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_name
       exp = 'ELEMENT' ).
+  ENDMETHOD.
+
+  METHOD get_relative_name_table.
+    DATA data TYPE lif_test_types=>table_structure.
+    DATA lv_name TYPE string.
+    lv_name = cl_abap_typedescr=>describe_by_data( data )->get_relative_name( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_name
+      exp = 'TABLE_STRUCTURE' ).
   ENDMETHOD.
 
   METHOD kind_elem.
