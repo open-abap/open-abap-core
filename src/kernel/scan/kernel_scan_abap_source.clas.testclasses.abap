@@ -384,6 +384,17 @@ CLASS ltcl_scan IMPLEMENTATION.
             |str:OF,row:10,col:10\n| &&
             |str:STRUCTURE2,row:10,col:13| ).
 
+    cl_abap_unit_assert=>assert_equals(
+      act = dump_statements( statements )
+      exp = |from:1,to:4\n| &&
+            |from:5,to:5\n| &&
+            |from:6,to:9\n| &&
+            |from:10,to:13\n| &&
+            |from:14,to:17\n| &&
+            |from:18,to:18\n| &&
+            |from:19,to:22\n| &&
+            |from:23,to:26| ).
+
   ENDMETHOD.
 
 ENDCLASS.
