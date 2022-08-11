@@ -108,6 +108,7 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
       ELSEIF mode = c_mode-normal AND character = ':'.
         CLEAR chain_tokens.
         APPEND LINES OF et_tokens FROM sfrom TO chain_tokens.
+        DELETE chain_tokens WHERE type = gc_token-comment.
 *        WRITE '@KERNEL console.dir(chain_tokens);'.
       ENDIF.
 
@@ -161,6 +162,8 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
     DATA lv_count           TYPE i.
     DATA lv_statement_index TYPE i.
     DATA lt_insert          LIKE ct_tokens.
+    DATA lt_delete          TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    DATA lv_index           LIKE LINE OF lt_delete.
 
     LOOP AT ct_statements ASSIGNING <ls_statement>.
       lv_statement_index = sy-tabix.
@@ -183,14 +186,22 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
 *        WRITE '@KERNEL console.dir("to: " + fs_ls_statement_.get().to.get());'.
         lv_count = 0.
         CLEAR lt_insert.
-        LOOP AT ct_tokens INTO ls_token FROM <ls_statement>-from TO <ls_statement>-to WHERE type = gc_token-comment.
-          DELETE ct_tokens INDEX sy-tabix.
-          INSERT ls_token INTO TABLE lt_insert INDEX 1.
-          lv_count = lv_count + 1.
+        CLEAR lt_delete.
+        LOOP AT ct_tokens INTO ls_token FROM <ls_statement>-from TO <ls_statement>-to.
+*          WRITE '@KERNEL console.dir("token: " + ls_token.get().str.get() + " " + abap.builtin.sy.get().tabix.get());'.
+          IF ls_token-type = gc_token-comment.
+            INSERT sy-tabix INTO TABLE lt_delete INDEX 1.
+            INSERT ls_token INTO TABLE lt_insert INDEX 1.
+            lv_count = lv_count + 1.
+          ENDIF.
+        ENDLOOP.
+        LOOP AT lt_delete INTO lv_index.
+          DELETE ct_tokens INDEX lv_index.
         ENDLOOP.
         LOOP AT lt_insert INTO ls_token.
           INSERT ls_token INTO TABLE ct_tokens INDEX <ls_statement>-from.
         ENDLOOP.
+
         CLEAR ls_statement.
         ls_statement-from = <ls_statement>-from.
         ls_statement-to = <ls_statement>-from + lv_count - 1.
