@@ -38,6 +38,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_any TYPE abap_typekind VALUE '~'.
     CONSTANTS typekind_char TYPE abap_typekind VALUE 'C'.
     CONSTANTS typekind_class TYPE abap_typekind VALUE '*'.
+    CONSTANTS typekind_intf TYPE abap_typekind VALUE '+'.
     CONSTANTS typekind_clike TYPE abap_typekind VALUE '&'.
     CONSTANTS typekind_csequence TYPE abap_typekind VALUE '?'.
     CONSTANTS typekind_date TYPE abap_typekind VALUE 'D'.
@@ -78,8 +79,23 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 
   METHOD describe_by_name.
     DATA ref TYPE REF TO data.
-    CREATE DATA ref TYPE (p_name).
-    type = describe_by_data_ref( ref ).
+    DATA oo_type TYPE string.
+
+    WRITE '@KERNEL oo_type.set(abap.Classes[p_name.get().toUpperCase()]?.INTERNAL_TYPE || "");'.
+
+    CASE oo_type.
+      WHEN 'INTF'.
+        CREATE OBJECT type TYPE cl_abap_intfdescr.
+        type->type_kind = typekind_intf.
+        type->kind = kind_intf.
+      WHEN 'CLAS'.
+        CREATE OBJECT type TYPE cl_abap_classdescr.
+        type->type_kind = typekind_class.
+        type->kind = kind_class.
+      WHEN OTHERS.
+        CREATE DATA ref TYPE (p_name).
+        type = describe_by_data_ref( ref ).
+    ENDCASE.
   ENDMETHOD.
 
   METHOD get_relative_name.
