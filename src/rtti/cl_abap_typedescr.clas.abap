@@ -27,11 +27,11 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
         RETURNING
           VALUE(p_abap_bool) TYPE abap_bool.
 
-    DATA type_kind TYPE abap_typekind.
-    DATA kind TYPE c LENGTH 1.
-    DATA ddic TYPE abap_bool.
-    DATA length TYPE i.
-    DATA decimals TYPE i.
+    DATA type_kind     TYPE abap_typekind.
+    DATA kind          TYPE c LENGTH 1.
+    DATA ddic          TYPE abap_bool.
+    DATA length        TYPE i.
+    DATA decimals      TYPE i.
     DATA absolute_name TYPE string.
     DATA relative_name TYPE string.
 
@@ -66,19 +66,19 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_w TYPE abap_typekind VALUE 'w'.
     CONSTANTS typekind_xstring TYPE abap_typekind VALUE 'y'.
 
-    CONSTANTS kind_elem TYPE c LENGTH 1 VALUE 'E'.
+    CONSTANTS kind_elem   TYPE c LENGTH 1 VALUE 'E'.
     CONSTANTS kind_struct TYPE c LENGTH 1 VALUE 'S'.
-    CONSTANTS kind_table TYPE c LENGTH 1 VALUE 'T'.
-    CONSTANTS kind_ref TYPE c LENGTH 1 VALUE 'R'.
-    CONSTANTS kind_class TYPE c LENGTH 1 VALUE 'C'.
-    CONSTANTS kind_intf TYPE c LENGTH 1 VALUE 'I'.
-
+    CONSTANTS kind_table  TYPE c LENGTH 1 VALUE 'T'.
+    CONSTANTS kind_ref    TYPE c LENGTH 1 VALUE 'R'.
+    CONSTANTS kind_class  TYPE c LENGTH 1 VALUE 'C'.
+    CONSTANTS kind_intf   TYPE c LENGTH 1 VALUE 'I'.
 ENDCLASS.
 
 CLASS cl_abap_typedescr IMPLEMENTATION.
 
   METHOD describe_by_name.
-    DATA ref TYPE REF TO data.
+    DATA ref     TYPE REF TO data.
+    DATA objectdescr TYPE REF TO cl_abap_objectdescr.
     DATA oo_type TYPE string.
 
     WRITE '@KERNEL oo_type.set(abap.Classes[p_name.get().toUpperCase()]?.INTERNAL_TYPE || "");'.
@@ -88,10 +88,16 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         CREATE OBJECT type TYPE cl_abap_intfdescr.
         type->type_kind = typekind_intf.
         type->kind = kind_intf.
+        objectdescr ?= type.
+        objectdescr->mv_object_name = to_upper( p_name ). " todo, this should give syntax error, as they are not friends
+        objectdescr->mv_object_type = oo_type. " todo, this should give syntax error, as they are not friends
       WHEN 'CLAS'.
         CREATE OBJECT type TYPE cl_abap_classdescr.
         type->type_kind = typekind_class.
         type->kind = kind_class.
+        objectdescr ?= type.
+        objectdescr->mv_object_name = to_upper( p_name ). " todo, this should give syntax error, as they are not friends
+        objectdescr->mv_object_type = oo_type. " todo, this should give syntax error, as they are not friends
       WHEN OTHERS.
         CREATE DATA ref TYPE (p_name).
         type = describe_by_data_ref( ref ).
