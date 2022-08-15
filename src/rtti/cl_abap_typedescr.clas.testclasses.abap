@@ -304,6 +304,9 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_type->absolute_name
       exp = '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_type->get_relative_name( )
+      exp = 'ABAP_BOOL' ).
   ENDMETHOD.
 
   METHOD abap_true_absolute.
