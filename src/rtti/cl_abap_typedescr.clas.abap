@@ -237,6 +237,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     WRITE '@KERNEL if(abap.DDIC[type.get().absolute_name.get().toUpperCase()]) { type.get().ddic.set("X"); }'.
 
     IF type->absolute_name = 'ABAP_BOOL'.
+      type->relative_name = 'ABAP_BOOL'.
       type->absolute_name = '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL'.
     ELSEIF type->absolute_name IS INITIAL.
       type->absolute_name = 'ABSOLUTE_NAME_TODO'.
