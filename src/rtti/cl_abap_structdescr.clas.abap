@@ -8,8 +8,12 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
     TYPES component TYPE abap_componentdescr.
     TYPES component_table TYPE abap_component_tab.
 
+    METHODS
+      get_components
+        RETURNING
+          VALUE(rt_components) TYPE component_table.
+
     METHODS:
-      get_components RETURNING VALUE(rt_components) TYPE component_table,
       get_ddic_field_list RETURNING VALUE(rt_components) TYPE ddfields,
       is_ddic_type RETURNING VALUE(bool) TYPE abap_bool,
       get_component_type
@@ -52,6 +56,7 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     DATA ls_return     LIKE LINE OF rt_components.
     DATA lv_name       TYPE string.
     DATA lv_keyfield   TYPE string.
+    DATA lo_elemdescr  TYPE REF TO cl_abap_elemdescr.
     FIELD-SYMBOLS <component> LIKE LINE OF rt_components.
 
     lt_components = get_components( ).
@@ -63,6 +68,10 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
       CLEAR ls_return.
       ls_return-tabname = lv_name.
       ls_return-fieldname = ls_component-name.
+      IF ls_component-type->kind = cl_abap_typedescr=>kind_elem.
+        lo_elemdescr ?= ls_component-type.
+        ls_return-leng = lo_elemdescr->output_length.
+      ENDIF.
 * todo, fill more fields in ls_return
       APPEND ls_return TO rt_components.
     ENDLOOP.

@@ -64,6 +64,9 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = ls_ddfields-keyflag
       exp = abap_true ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_ddfields-leng
+      exp = 3 ).
 
   ENDMETHOD.
 
