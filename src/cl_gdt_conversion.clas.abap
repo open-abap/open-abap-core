@@ -36,7 +36,15 @@ CLASS cl_gdt_conversion DEFINITION PUBLIC.
       IMPORTING
         im_value TYPE csequence
       EXPORTING
-        ex_value TYPE string
+        ex_value TYPE csequence
+      RAISING
+        cx_gdt_conversion.
+
+    CLASS-METHODS unit_code_outbound
+      IMPORTING
+        im_value TYPE csequence
+      EXPORTING
+        ex_value TYPE csequence
       RAISING
         cx_gdt_conversion.
 
@@ -45,6 +53,10 @@ ENDCLASS.
 CLASS cl_gdt_conversion IMPLEMENTATION.
 
   METHOD amount_outbound.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD unit_code_outbound.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
