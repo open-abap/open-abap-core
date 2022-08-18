@@ -14,6 +14,8 @@ TYPES abap_typekind TYPE c LENGTH 1.
 TYPES abap_structkind TYPE c LENGTH 1.
 TYPES abap_editmask TYPE c LENGTH 7.
 TYPES abap_abstypename TYPE c LENGTH 200.
+TYPES abap_visibility TYPE c LENGTH 1.
+TYPES abap_parmkind TYPE c LENGTH 1.
 
 CONSTANTS abap_max_comp_name_ln TYPE i VALUE 30.
 
