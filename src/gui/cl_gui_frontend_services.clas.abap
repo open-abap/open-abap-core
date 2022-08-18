@@ -23,6 +23,14 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
           data_tab TYPE any.
 
     CLASS-METHODS
+      directory_list_files
+        IMPORTING
+          directory  TYPE string
+        CHANGING
+          file_table TYPE any
+          count      TYPE i.
+
+    CLASS-METHODS
       gui_upload
         IMPORTING
           filename TYPE string
@@ -126,6 +134,10 @@ ENDCLASS.
 CLASS cl_gui_frontend_services IMPLEMENTATION.
   METHOD directory_exist.
     ASSERT 1 = 'directory_exist not supported'.
+  ENDMETHOD.
+
+  METHOD directory_list_files.
+    ASSERT 1 = 'directory_list_files not supported'.
   ENDMETHOD.
 
   METHOD directory_create.
