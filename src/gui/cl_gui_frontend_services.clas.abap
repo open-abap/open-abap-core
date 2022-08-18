@@ -129,11 +129,20 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
           version_table TYPE filetable
           rc            TYPE i.
 
+    CLASS-METHODS clipboard_import
+      EXPORTING
+        data   TYPE STANDARD TABLE
+        length TYPE i.
+
 ENDCLASS.
 
 CLASS cl_gui_frontend_services IMPLEMENTATION.
   METHOD directory_exist.
     ASSERT 1 = 'directory_exist not supported'.
+  ENDMETHOD.
+
+  METHOD clipboard_import.
+    ASSERT 1 = 'clipboard_import not supported'.
   ENDMETHOD.
 
   METHOD directory_list_files.
