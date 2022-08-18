@@ -14,10 +14,11 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
     CLASS-METHODS
       gui_download
         IMPORTING
-          bin_filesize TYPE i
-          filename     TYPE string
-          filetype     TYPE string
-          write_lf     TYPE abap_bool OPTIONAL
+          bin_filesize          TYPE i
+          filename              TYPE string
+          filetype              TYPE string
+          write_lf              TYPE abap_bool OPTIONAL
+          write_field_separator TYPE char1 OPTIONAL
         CHANGING
           data_tab TYPE any.
 
