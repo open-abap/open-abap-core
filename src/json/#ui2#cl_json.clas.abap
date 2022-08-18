@@ -10,6 +10,7 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
     CLASS-METHODS deserialize
       IMPORTING
         json             TYPE string OPTIONAL
+        jsonx            TYPE xstring OPTIONAL
         pretty_name      TYPE string OPTIONAL
         assoc_arrays     TYPE abap_bool OPTIONAL
         assoc_arrays_opt TYPE abap_bool OPTIONAL
@@ -90,6 +91,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
 
   METHOD deserialize.
     CREATE OBJECT mo_parsed.
+    ASSERT jsonx IS INITIAL. " todo
     mo_parsed->parse( json ).
 
     CLEAR data.
