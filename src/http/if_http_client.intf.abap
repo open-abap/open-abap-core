@@ -5,6 +5,7 @@ INTERFACE if_http_client PUBLIC.
   DATA propertytype_accept_cookie TYPE i.
 
   CONSTANTS co_disabled TYPE i VALUE 0.
+  CONSTANTS co_enabled TYPE i VALUE 1.
 
   METHODS authenticate
     IMPORTING

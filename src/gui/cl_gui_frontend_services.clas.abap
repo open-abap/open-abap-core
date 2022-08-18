@@ -14,7 +14,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
     CLASS-METHODS
       gui_download
         IMPORTING
-          bin_filesize          TYPE i
+          bin_filesize          TYPE i OPTIONAL
           filename              TYPE string
           filetype              TYPE string
           write_lf              TYPE abap_bool OPTIONAL
@@ -62,13 +62,13 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
         IMPORTING
           window_title         TYPE string OPTIONAL
           default_extension    TYPE string OPTIONAL
-          default_file_name    TYPE string
+          default_file_name    TYPE string OPTIONAL
           file_filter          TYPE string OPTIONAL
         CHANGING
-          filename    TYPE string
-          path        TYPE string
-          fullpath    TYPE string
-          user_action TYPE i OPTIONAL.
+          filename             TYPE string
+          path                 TYPE string
+          fullpath             TYPE string
+          user_action          TYPE i OPTIONAL.
 
     CLASS-METHODS
       directory_browse
