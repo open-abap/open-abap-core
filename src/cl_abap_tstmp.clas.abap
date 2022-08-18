@@ -21,6 +21,15 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
       RETURNING
         VALUE(time) TYPE timestamp.
 
+    CLASS-METHODS td_add
+      IMPORTING
+        date     TYPE d
+        time     TYPE t
+        secs     TYPE numeric
+      EXPORTING
+        res_date TYPE d
+        res_time TYPE t.
+
     CLASS-METHODS move
       IMPORTING
         tstmp_src   TYPE p
@@ -36,6 +45,10 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS cl_abap_tstmp IMPLEMENTATION.
+
+  METHOD td_add.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD move.
 * todo, this is most likely wrong, but will also work in some cases

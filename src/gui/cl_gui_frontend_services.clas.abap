@@ -14,12 +14,21 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
     CLASS-METHODS
       gui_download
         IMPORTING
-          bin_filesize TYPE i
-          filename     TYPE string
-          filetype     TYPE string
-          write_lf     TYPE abap_bool OPTIONAL
+          bin_filesize          TYPE i
+          filename              TYPE string
+          filetype              TYPE string
+          write_lf              TYPE abap_bool OPTIONAL
+          write_field_separator TYPE char1 OPTIONAL
         CHANGING
           data_tab TYPE any.
+
+    CLASS-METHODS
+      directory_list_files
+        IMPORTING
+          directory  TYPE string
+        CHANGING
+          file_table TYPE any
+          count      TYPE i.
 
     CLASS-METHODS
       gui_upload
@@ -52,7 +61,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
       file_save_dialog
         IMPORTING
           window_title         TYPE string OPTIONAL
-          default_extension    TYPE string
+          default_extension    TYPE string OPTIONAL
           default_file_name    TYPE string
           file_filter          TYPE string OPTIONAL
         CHANGING
@@ -120,11 +129,24 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
           version_table TYPE filetable
           rc            TYPE i.
 
+    CLASS-METHODS clipboard_import
+      EXPORTING
+        data   TYPE STANDARD TABLE
+        length TYPE i.
+
 ENDCLASS.
 
 CLASS cl_gui_frontend_services IMPLEMENTATION.
   METHOD directory_exist.
     ASSERT 1 = 'directory_exist not supported'.
+  ENDMETHOD.
+
+  METHOD clipboard_import.
+    ASSERT 1 = 'clipboard_import not supported'.
+  ENDMETHOD.
+
+  METHOD directory_list_files.
+    ASSERT 1 = 'directory_list_files not supported'.
   ENDMETHOD.
 
   METHOD directory_create.

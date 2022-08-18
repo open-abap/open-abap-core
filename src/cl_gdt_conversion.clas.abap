@@ -7,6 +7,14 @@ CLASS cl_gdt_conversion DEFINITION PUBLIC.
       EXPORTING
         ex_value TYPE laiso.
 
+    CLASS-METHODS language_code_inbound
+      IMPORTING
+        im_value TYPE csequence
+      EXPORTING
+        ex_value TYPE spras
+      RAISING
+        cx_gdt_conversion.
+
     CLASS-METHODS amount_outbound
       IMPORTING
         im_value         TYPE p
@@ -53,6 +61,10 @@ ENDCLASS.
 CLASS cl_gdt_conversion IMPLEMENTATION.
 
   METHOD amount_outbound.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD language_code_inbound.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 

@@ -14,6 +14,10 @@ CLASS cl_abap_char_utilities DEFINITION PUBLIC.
       newline TYPE c LENGTH 1 VALUE '_'.
 
     CLASS-METHODS class_constructor.
+
+    CLASS-METHODS get_simple_spaces_for_cur_cp
+      RETURNING
+        VALUE(s_str) TYPE string.
 ENDCLASS.
 
 CLASS cl_abap_char_utilities IMPLEMENTATION.
@@ -25,6 +29,10 @@ CLASS cl_abap_char_utilities IMPLEMENTATION.
     WRITE '@KERNEL cl_abap_char_utilities.form_feed.set("\f");'.
     WRITE '@KERNEL cl_abap_char_utilities.backspace.set("\b");'.
     WRITE '@KERNEL cl_abap_char_utilities.newline.set("\n");'.
+  ENDMETHOD.
+
+  METHOD get_simple_spaces_for_cur_cp.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
 ENDCLASS.
