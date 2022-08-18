@@ -52,7 +52,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
       file_save_dialog
         IMPORTING
           window_title         TYPE string OPTIONAL
-          default_extension    TYPE string
+          default_extension    TYPE string OPTIONAL
           default_file_name    TYPE string
           file_filter          TYPE string OPTIONAL
         CHANGING
