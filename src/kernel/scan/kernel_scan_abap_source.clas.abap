@@ -190,8 +190,8 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
         LOOP AT ct_tokens INTO ls_token FROM <ls_statement>-from TO <ls_statement>-to.
 *          WRITE '@KERNEL console.dir("token: " + ls_token.get().str.get() + " " + abap.builtin.sy.get().tabix.get());'.
           IF ls_token-type = gc_token-comment.
-            INSERT sy-tabix INTO TABLE lt_delete INDEX 1.
-            INSERT ls_token INTO TABLE lt_insert INDEX 1.
+            INSERT sy-tabix INTO lt_delete INDEX 1.
+            INSERT ls_token INTO lt_insert INDEX 1.
             lv_count = lv_count + 1.
           ENDIF.
         ENDLOOP.
@@ -199,7 +199,7 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
           DELETE ct_tokens INDEX lv_index.
         ENDLOOP.
         LOOP AT lt_insert INTO ls_token.
-          INSERT ls_token INTO TABLE ct_tokens INDEX <ls_statement>-from.
+          INSERT ls_token INTO ct_tokens INDEX <ls_statement>-from.
         ENDLOOP.
 
         CLEAR ls_statement.
@@ -209,7 +209,7 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
 
         <ls_statement>-from = <ls_statement>-from + lv_count.
 
-        INSERT ls_statement INTO TABLE ct_statements INDEX lv_statement_index.
+        INSERT ls_statement INTO ct_statements INDEX lv_statement_index.
       ELSEIF contains_comment = abap_true.
         <ls_statement>-type = gc_statement-comment.
       ELSE.
