@@ -12,6 +12,9 @@
   "rules": {
     "check_include": false, // todo
     "uncaught_exception": false, // todo
+    "cds_legacy_view": true,
+    "no_external_form_calls": true,
+    "superfluous_value": true,
     "cyclic_oo": false,
     "unnecessary_chaining": true,
     "parser_702_chaining": false,
@@ -153,6 +156,7 @@
     "avoid_use": {
       "define": true,
       "describeLines": true,
+      "testSeams": true,
       "break": true,
       "statics": true,
       "defaultKey": false
@@ -169,6 +173,7 @@
       "callTransformation": true,
       "pack": true,
       "selectWithoutInto": true,
+      "clientSpecified": false,
       "occurences": true,
       "regex": false,
       "exitFromSQL": true,
