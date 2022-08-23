@@ -53,7 +53,7 @@ CLASS cl_abap_tabledescr IMPLEMENTATION.
     DATA lv_flag TYPE abap_bool.
 *    WRITE '@KERNEL console.dir(data);'.
 
-    WRITE '@KERNEL lv_flag.set(data.getOptions().isUnique === true ? "X" : "");'.
+    WRITE '@KERNEL lv_flag.set(data.getOptions()?.isUnique === true ? "X" : "");'.
     has_unique_key = lv_flag.
 
     WRITE '@KERNEL lv_dummy = data.getRowType();'.
