@@ -7,6 +7,7 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
 
     TYPES component TYPE abap_componentdescr.
     TYPES component_table TYPE abap_component_tab.
+    TYPES included_view TYPE abap_component_view_tab.
 
     METHODS
       get_components
@@ -24,6 +25,12 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
         EXCEPTIONS
           component_not_found
           unsupported_input_type.
+
+    METHODS get_included_view
+      IMPORTING
+        p_level TYPE i OPTIONAL
+      RETURNING
+        VALUE(p_result) TYPE included_view.
 
     CLASS-METHODS create
       IMPORTING
@@ -46,6 +53,10 @@ ENDCLASS.
 CLASS cl_abap_structdescr IMPLEMENTATION.
 
   METHOD create.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get_included_view.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 

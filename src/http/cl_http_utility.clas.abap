@@ -47,9 +47,18 @@ CLASS cl_http_utility DEFINITION PUBLIC.
         request TYPE REF TO if_http_request
         query   TYPE string.
 
+    CLASS-METHODS set_request_uri
+      IMPORTING
+        request TYPE REF TO if_http_request
+        uri     TYPE string.
+
 ENDCLASS.
 
 CLASS cl_http_utility IMPLEMENTATION.
+
+  METHOD set_request_uri.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD string_to_fields.
     DATA tab TYPE STANDARD TABLE OF string.

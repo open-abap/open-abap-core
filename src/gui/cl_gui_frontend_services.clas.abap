@@ -22,6 +22,12 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
         CHANGING
           data_tab TYPE any.
 
+    CLASS-METHODS file_exist
+      IMPORTING
+        file          TYPE string
+      RETURNING
+        VALUE(result) TYPE abap_bool.
+
     CLASS-METHODS
       directory_list_files
         IMPORTING
@@ -73,7 +79,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
     CLASS-METHODS
       directory_browse
         IMPORTING
-          window_title    TYPE string
+          window_title    TYPE string OPTIONAL
           initial_folder  TYPE string
         CHANGING
           selected_folder TYPE string.
@@ -134,11 +140,33 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
         data   TYPE STANDARD TABLE
         length TYPE i.
 
+    CLASS-METHODS file_delete
+      IMPORTING
+        filename TYPE string
+      CHANGING
+        rc       TYPE i.
+
+    CLASS-METHODS get_sapgui_workdir
+      CHANGING
+        sapworkdir TYPE string.
+
 ENDCLASS.
 
 CLASS cl_gui_frontend_services IMPLEMENTATION.
   METHOD directory_exist.
     ASSERT 1 = 'directory_exist not supported'.
+  ENDMETHOD.
+
+  METHOD get_sapgui_workdir.
+    ASSERT 1 = 'get_sapgui_workdir not supported'.
+  ENDMETHOD.
+
+  METHOD file_exist.
+    ASSERT 1 = 'file_exist not supported'.
+  ENDMETHOD.
+
+  METHOD file_delete.
+    ASSERT 1 = 'file_delete not supported'.
   ENDMETHOD.
 
   METHOD clipboard_import.

@@ -40,12 +40,18 @@ TYPES: BEGIN OF abap_table_keycompdescr,
        END OF abap_table_keycompdescr.
 
 TYPES: BEGIN OF abap_table_keydescr,
-         components      TYPE STANDARD TABLE OF abap_table_keycompdescr WITH DEFAULT KEY,
-         name            TYPE string,
-         is_primary      TYPE abap_bool,
-         access_kind     TYPE string,
-         is_unique       TYPE abap_bool,
-         key_kind        TYPE string,
+         components  TYPE STANDARD TABLE OF abap_table_keycompdescr WITH DEFAULT KEY,
+         name        TYPE string,
+         is_primary  TYPE abap_bool,
+         access_kind TYPE string,
+         is_unique   TYPE abap_bool,
+         key_kind    TYPE string,
        END OF abap_table_keydescr.
 
 TYPES abap_table_keydescr_tab TYPE STANDARD TABLE OF abap_table_keydescr WITH DEFAULT KEY.
+
+TYPES: BEGIN OF abap_simple_componentdescr,
+         name TYPE string,
+         type TYPE REF TO cl_abap_datadescr,
+       END OF abap_simple_componentdescr.
+TYPES abap_component_view_tab TYPE STANDARD TABLE OF abap_simple_componentdescr WITH KEY name.
