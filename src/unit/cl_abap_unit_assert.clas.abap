@@ -63,9 +63,10 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
     CLASS-METHODS
       assert_subrc
         IMPORTING
-          exp TYPE i DEFAULT 0
-          msg TYPE string OPTIONAL
-          quit TYPE i OPTIONAL
+          exp   TYPE i DEFAULT 0
+          act   TYPE i DEFAULT sy-subrc
+          msg   TYPE string OPTIONAL
+          quit  TYPE i OPTIONAL
           level TYPE i OPTIONAL
         PREFERRED PARAMETER act.
 
@@ -253,10 +254,10 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD assert_subrc.
-    IF sy-subrc <> exp.
+    IF act <> exp.
       RAISE EXCEPTION TYPE kernel_cx_assert
         EXPORTING
-          msg = |Expected sy-subrc to equal { exp }, got { sy-subrc }|.
+          msg = |Expected sy-subrc to equal { exp }, got { act }|.
     ENDIF.
   ENDMETHOD.
 
