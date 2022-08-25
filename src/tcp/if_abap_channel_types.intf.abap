@@ -7,4 +7,6 @@ INTERFACE if_abap_channel_types PUBLIC.
            length_field_offset TYPE i,
            length_field_header TYPE i,
          END OF ty_apc_tcp_frame.
+
+  TYPES ty_tihttpnvp TYPE tihttpnvp.
 ENDINTERFACE.
