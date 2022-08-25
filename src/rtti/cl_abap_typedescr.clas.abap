@@ -17,7 +17,9 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
       describe_by_object_ref
         IMPORTING data TYPE REF TO object
         RETURNING VALUE(type) TYPE REF TO cl_abap_typedescr.
-
+    METHODS get_ddic_header
+      RETURNING
+        VALUE(p_header) TYPE abap_bool. " hmm, todo
     METHODS
       get_relative_name
         RETURNING
@@ -106,6 +108,10 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 
   METHOD get_relative_name.
     name = relative_name.
+  ENDMETHOD.
+
+  METHOD get_ddic_header.
+    ASSERT 1 = 2.
   ENDMETHOD.
 
   METHOD is_ddic_type.

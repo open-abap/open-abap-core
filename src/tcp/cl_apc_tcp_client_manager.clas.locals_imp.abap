@@ -12,6 +12,10 @@ CLASS lcl_message IMPLEMENTATION.
     rv_binary = mv_data.
   ENDMETHOD.
 
+  METHOD if_apc_wsp_message~get_text.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_apc_wsp_message~set_binary.
     mv_data = iv_binary.
   ENDMETHOD.

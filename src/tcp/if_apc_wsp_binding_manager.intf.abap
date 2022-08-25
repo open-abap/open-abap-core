@@ -1,0 +1,3 @@
+INTERFACE if_apc_wsp_binding_manager PUBLIC.
+
+ENDINTERFACE.
