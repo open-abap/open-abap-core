@@ -30,7 +30,11 @@ CLASS cl_abap_elemdescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
     CLASS-METHODS get_f RETURNING VALUE(r_result) TYPE REF TO cl_abap_elemdescr.
     CLASS-METHODS get_d RETURNING VALUE(r_result) TYPE REF TO cl_abap_elemdescr.
     CLASS-METHODS get_t RETURNING VALUE(r_result) TYPE REF TO cl_abap_elemdescr.
-
+    CLASS-METHODS get_c
+      IMPORTING
+        p_length TYPE i
+      RETURNING
+        VALUE(p_result) TYPE REF TO cl_abap_elemdescr.
 ENDCLASS.
 
 CLASS cl_abap_elemdescr IMPLEMENTATION.
@@ -63,6 +67,10 @@ CLASS cl_abap_elemdescr IMPLEMENTATION.
   METHOD get_t.
     DATA foo TYPE t.
     r_result ?= cl_abap_typedescr=>describe_by_data( foo ).
+  ENDMETHOD.
+
+  METHOD get_c.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD get_ddic_fixed_values.
