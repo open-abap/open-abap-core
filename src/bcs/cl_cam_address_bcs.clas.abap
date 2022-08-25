@@ -1,6 +1,7 @@
 CLASS cl_cam_address_bcs DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES if_recipient_bcs.
+    INTERFACES if_sender_bcs.
 
     CLASS-METHODS create_internet_address
       IMPORTING
@@ -8,7 +9,7 @@ CLASS cl_cam_address_bcs DEFINITION PUBLIC.
         i_address_name   TYPE clike OPTIONAL
         i_incl_sapuser   TYPE abap_bool OPTIONAL
       RETURNING
-        VALUE(result) TYPE REF TO cl_cam_address_bcs
+        VALUE(result)    TYPE REF TO cl_cam_address_bcs
       RAISING
         cx_bcs.
 
