@@ -1,6 +1,7 @@
 CLASS cl_gui_container DEFINITION PUBLIC.
   PUBLIC SECTION.
-    CONSTANTS screen0 TYPE string VALUE 'screen0'.
+    CLASS-DATA screen0 TYPE REF TO cl_gui_container.
+    CLASS-DATA default_screen TYPE REF TO cl_gui_container.
     CONSTANTS visible_true TYPE c LENGTH 1 VALUE '1'.
     CONSTANTS visible_false TYPE c LENGTH 1 VALUE '0'.
 ENDCLASS.
