@@ -44,13 +44,13 @@ CLASS cl_gdt_conversion DEFINITION PUBLIC.
       IMPORTING
         im_value TYPE csequence
       EXPORTING
-        ex_value TYPE csequence
+        ex_value TYPE msehi
       RAISING
         cx_gdt_conversion.
 
     CLASS-METHODS unit_code_outbound
       IMPORTING
-        im_value TYPE csequence
+        im_value TYPE msehi
       EXPORTING
         ex_value TYPE csequence
       RAISING
