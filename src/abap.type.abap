@@ -9,13 +9,14 @@ TYPES: BEGIN OF abap_trans_srcbind,
 
 TYPES abap_trans_srcbind_tab TYPE STANDARD TABLE OF abap_trans_srcbind WITH DEFAULT KEY.
 TYPES abap_trans_resbind_tab TYPE abap_trans_srcbind_tab.
-TYPES abap_compname TYPE c LENGTH 30.
-TYPES abap_typekind TYPE c LENGTH 1.
-TYPES abap_structkind TYPE c LENGTH 1.
-TYPES abap_editmask TYPE c LENGTH 7.
-TYPES abap_abstypename TYPE c LENGTH 200.
-TYPES abap_visibility TYPE c LENGTH 1.
-TYPES abap_parmkind TYPE c LENGTH 1.
+TYPES abap_compname          TYPE c LENGTH 30.
+TYPES abap_typekind          TYPE c LENGTH 1.
+TYPES abap_structkind        TYPE c LENGTH 1.
+TYPES abap_editmask          TYPE c LENGTH 7.
+TYPES abap_abstypename       TYPE c LENGTH 200.
+TYPES abap_visibility        TYPE c LENGTH 1.
+TYPES abap_parmkind          TYPE c LENGTH 1.
+TYPES abap_parmname          TYPE c LENGTH 30.
 
 CONSTANTS abap_max_comp_name_ln TYPE i VALUE 30.
 
@@ -55,3 +56,10 @@ TYPES: BEGIN OF abap_simple_componentdescr,
          type TYPE REF TO cl_abap_datadescr,
        END OF abap_simple_componentdescr.
 TYPES abap_component_view_tab TYPE STANDARD TABLE OF abap_simple_componentdescr WITH KEY name.
+
+TYPES: BEGIN OF abap_parmbind,
+         name  TYPE abap_parmname,
+         kind  TYPE abap_parmkind,
+         value TYPE REF TO data,
+       END OF abap_parmbind.
+TYPES abap_parmbind_tab TYPE HASHED TABLE OF abap_parmbind WITH UNIQUE KEY name.
