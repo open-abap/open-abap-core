@@ -17,6 +17,11 @@ TYPES abap_abstypename       TYPE c LENGTH 200.
 TYPES abap_visibility        TYPE c LENGTH 1.
 TYPES abap_parmkind          TYPE c LENGTH 1.
 TYPES abap_parmname          TYPE c LENGTH 30.
+TYPES abap_attrname          TYPE c LENGTH 61.
+TYPES abap_excpname          TYPE c LENGTH 30.
+TYPES abap_methname          TYPE c LENGTH 61.
+TYPES abap_evntname          TYPE c LENGTH 61.
+TYPES abap_classname         TYPE c LENGTH 30.
 
 CONSTANTS abap_max_comp_name_ln TYPE i VALUE 30.
 
@@ -63,3 +68,52 @@ TYPES: BEGIN OF abap_parmbind,
          value TYPE REF TO data,
        END OF abap_parmbind.
 TYPES abap_parmbind_tab TYPE HASHED TABLE OF abap_parmbind WITH UNIQUE KEY name.
+
+TYPES: BEGIN OF abap_parmdescr,
+         length      TYPE i,
+         decimals    TYPE i,
+         type_kind   TYPE abap_typekind,
+         name        TYPE abap_parmname,
+         parm_kind   TYPE abap_parmkind,
+         by_value    TYPE abap_bool,
+         is_optional TYPE abap_bool,
+       END OF abap_parmdescr.
+TYPES abap_parmdescr_tab TYPE STANDARD TABLE OF abap_parmdescr WITH KEY name.
+
+TYPES: BEGIN OF abap_func_parmbind,
+         value     TYPE REF TO data,
+         tables_wa TYPE REF TO data,
+         kind      TYPE i,
+         name      TYPE abap_parmname,
+       END OF abap_func_parmbind.
+TYPES abap_func_parmbind_tab TYPE SORTED TABLE OF abap_func_parmbind WITH UNIQUE KEY kind name.
+
+TYPES: BEGIN OF abap_func_excpbind,
+         message TYPE REF TO data,
+         value   TYPE i,
+         name    TYPE abap_excpname,
+       END OF abap_func_excpbind.
+TYPES abap_func_excpbind_tab TYPE HASHED TABLE OF abap_func_excpbind WITH UNIQUE KEY name.
+
+TYPES: BEGIN OF abap_excpdescr,
+         name         TYPE abap_excpname,
+         is_resumable TYPE abap_bool,
+       END OF abap_excpdescr.
+TYPES abap_excpdescr_tab TYPE STANDARD TABLE OF abap_excpdescr WITH KEY name.
+
+TYPES: BEGIN OF abap_methdescr,
+         parameters       TYPE abap_parmdescr_tab,
+         exceptions       TYPE abap_excpdescr_tab,
+         name             TYPE abap_methname,
+         for_event        TYPE abap_evntname,
+         of_class         TYPE abap_classname,
+         visibility       TYPE abap_visibility,
+         is_interface     TYPE abap_bool,
+         is_inherited     TYPE abap_bool,
+         is_redefined     TYPE abap_bool,
+         is_abstract      TYPE abap_bool,
+         is_final         TYPE abap_bool,
+         is_class         TYPE abap_bool,
+         alias_for        TYPE abap_methname,
+         is_raising_excps TYPE abap_bool,
+       END OF abap_methdescr.
