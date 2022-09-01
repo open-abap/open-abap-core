@@ -18,6 +18,7 @@ INTERFACE if_http_response PUBLIC.
   METHODS get_content_type
     RETURNING
       VALUE(val) TYPE string.
+
   METHODS set_content_type
     IMPORTING
       val TYPE string.
@@ -45,5 +46,24 @@ INTERFACE if_http_response PUBLIC.
         reason TYPE string.
 
   METHODS set_cdata IMPORTING data TYPE string.
+
+  METHODS set_cookie
+    IMPORTING
+      name    TYPE string
+      value   TYPE string
+      path    TYPE string OPTIONAL
+      domain  TYPE string OPTIONAL
+      expires TYPE string OPTIONAL
+      secure  TYPE i OPTIONAL.
+
+  METHODS delete_cookie_at_client
+    IMPORTING
+      name   TYPE string
+      path   TYPE string OPTIONAL
+      domain TYPE string OPTIONAL.
+
+  METHODS delete_header_field
+    IMPORTING
+      name TYPE string.
 
 ENDINTERFACE.

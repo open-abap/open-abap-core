@@ -47,4 +47,13 @@ INTERFACE if_http_request PUBLIC.
       name TYPE string
       value TYPE string.
 
+  METHODS get_content_type
+    RETURNING VALUE(type) TYPE string.
+
+  METHODS get_form_fields_cs
+    IMPORTING
+      formfield_encoding TYPE i OPTIONAL
+      search_option TYPE i OPTIONAL
+    CHANGING
+      fields TYPE any.
 ENDINTERFACE.
