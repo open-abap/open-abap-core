@@ -66,4 +66,10 @@ INTERFACE if_http_response PUBLIC.
     IMPORTING
       name TYPE string.
 
+  METHODS redirect
+    IMPORTING
+      url                TYPE string
+      permanently        TYPE i OPTIONAL
+      protocol_dependent TYPE i OPTIONAL.
+
 ENDINTERFACE.

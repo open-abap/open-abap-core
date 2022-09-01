@@ -93,6 +93,10 @@ CLASS cl_http_entity IMPLEMENTATION.
     ASSERT 2 = 'todo'.
   ENDMETHOD.
 
+  METHOD if_http_response~redirect.
+    ASSERT 2 = 'todo'.
+  ENDMETHOD.
+
 *****************************************
 
   METHOD if_http_request~get_content_type.
