@@ -61,7 +61,14 @@ ENDCLASS.
 CLASS cl_gdt_conversion IMPLEMENTATION.
 
   METHOD amount_outbound.
-    ASSERT 1 = 'todo'.
+    CASE im_currency_code.
+      WHEN 'DKK' OR 'EUR' OR 'USD'.
+        ex_value = im_value.
+      WHEN 'VND'.
+        ex_value = im_value * 100.
+      WHEN OTHERS.
+        ASSERT 1 = 'todo'.
+    ENDCASE.
   ENDMETHOD.
 
   METHOD language_code_inbound.

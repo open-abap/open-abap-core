@@ -1,9 +1,39 @@
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
   PUBLIC SECTION.
-    METHODS date_time_inbound FOR TESTING RAISING cx_root.
+    METHODS date_time_inbound FOR TESTING RAISING cx_static_check.
+    METHODS amount_outbound_dkk FOR TESTING RAISING cx_static_check.
+    METHODS amount_outbound_vnd FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
+
+  METHOD amount_outbound_dkk.
+    DATA lv_value TYPE p LENGTH 11 DECIMALS 2.
+    lv_value = 100.
+    cl_gdt_conversion=>amount_outbound(
+      EXPORTING
+        im_value         = lv_value
+        im_currency_code = 'DKK'
+      IMPORTING
+        ex_value         = lv_value ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_value
+      exp = 100 ).
+  ENDMETHOD.
+
+  METHOD amount_outbound_vnd.
+    DATA lv_value TYPE p LENGTH 11 DECIMALS 2.
+    lv_value = 100.
+    cl_gdt_conversion=>amount_outbound(
+      EXPORTING
+        im_value         = lv_value
+        im_currency_code = 'VND'
+      IMPORTING
+        ex_value         = lv_value ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_value
+      exp = 10000 ).
+  ENDMETHOD.
 
   METHOD date_time_inbound.
 
