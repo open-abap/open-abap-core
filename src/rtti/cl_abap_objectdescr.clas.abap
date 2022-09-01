@@ -16,6 +16,10 @@ CLASS cl_abap_objectdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
     CONSTANTS protected TYPE abap_visibility VALUE 'O'.
     CONSTANTS public TYPE abap_visibility VALUE 'U'.
 
+    DATA attributes TYPE abap_attrdescr_tab READ-ONLY.
+    DATA methods TYPE abap_methdescr_tab READ-ONLY.
+    DATA interfaces TYPE abap_intfdescr_tab READ-ONLY.
+
   PROTECTED SECTION.
     DATA mv_object_name TYPE string.
     DATA mv_object_type TYPE string.
