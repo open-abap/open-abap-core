@@ -6,18 +6,18 @@ CLASS cl_abap_objectdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
       RETURNING
         VALUE(p_descr_ref) TYPE REF TO cl_abap_datadescr.
 
-    CONSTANTS changing TYPE abap_parmkind VALUE 'C'.
+    CONSTANTS changing  TYPE abap_parmkind VALUE 'C'.
     CONSTANTS exporting TYPE abap_parmkind VALUE 'E'.
     CONSTANTS importing TYPE abap_parmkind VALUE 'I'.
     CONSTANTS receiving TYPE abap_parmkind VALUE 'R'.
     CONSTANTS returning TYPE abap_parmkind VALUE 'R'.
 
-    CONSTANTS private TYPE abap_visibility VALUE 'I'.
+    CONSTANTS private   TYPE abap_visibility VALUE 'I'.
     CONSTANTS protected TYPE abap_visibility VALUE 'O'.
-    CONSTANTS public TYPE abap_visibility VALUE 'U'.
+    CONSTANTS public    TYPE abap_visibility VALUE 'U'.
 
     DATA attributes TYPE abap_attrdescr_tab READ-ONLY.
-    DATA methods TYPE abap_methdescr_tab READ-ONLY.
+    DATA methods    TYPE abap_methdescr_tab READ-ONLY.
     DATA interfaces TYPE abap_intfdescr_tab READ-ONLY.
 
   PROTECTED SECTION.
