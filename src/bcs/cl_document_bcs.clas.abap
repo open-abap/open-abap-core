@@ -7,6 +7,7 @@ CLASS cl_document_bcs DEFINITION PUBLIC.
         i_type    TYPE string
         i_subject TYPE string
         i_text    TYPE any OPTIONAL
+        i_length  TYPE i OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO cl_document_bcs
       RAISING

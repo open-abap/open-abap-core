@@ -15,7 +15,7 @@ CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
         p_keys TYPE any
       RETURNING VALUE(val) TYPE REF TO cl_abap_tabledescr.
     CLASS-METHODS create
-      IMPORTING type TYPE REF TO cl_abap_typedescr
+      IMPORTING p_line_type TYPE REF TO cl_abap_typedescr
       RETURNING VALUE(ref) TYPE REF TO cl_abap_tabledescr.
 
     DATA table_kind TYPE c LENGTH 1.

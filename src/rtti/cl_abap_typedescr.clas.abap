@@ -11,12 +11,12 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
         RETURNING VALUE(type) TYPE REF TO cl_abap_typedescr.
     CLASS-METHODS
       describe_by_data_ref
-        IMPORTING data TYPE REF TO data
+        IMPORTING p_data_ref TYPE REF TO data
         RETURNING VALUE(type) TYPE REF TO cl_abap_typedescr.
     CLASS-METHODS
       describe_by_object_ref
-        IMPORTING data TYPE REF TO object
-        RETURNING VALUE(type) TYPE REF TO cl_abap_typedescr.
+        IMPORTING p_object_ref TYPE REF TO object
+        RETURNING VALUE(p_descr_ref) TYPE REF TO cl_abap_typedescr.
     METHODS get_ddic_header
       RETURNING
         VALUE(p_header) TYPE abap_bool. " hmm, todo
@@ -120,16 +120,16 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 
   METHOD describe_by_data_ref.
     FIELD-SYMBOLS <ref> TYPE any.
-    ASSIGN data->* TO <ref>.
+    ASSIGN p_data_ref->* TO <ref>.
     type = describe_by_data( <ref> ).
   ENDMETHOD.
 
   METHOD describe_by_object_ref.
-    CREATE OBJECT type TYPE cl_abap_classdescr.
-    type->type_kind = typekind_class.
-    type->kind = kind_class.
-    type->relative_name = 'CLASS_NAME_TODO'.
-    type->absolute_name = 'CLASS_NAME_TODO'.
+    CREATE OBJECT p_descr_ref TYPE cl_abap_classdescr.
+    p_descr_ref->type_kind = typekind_class.
+    p_descr_ref->kind = kind_class.
+    p_descr_ref->relative_name = 'CLASS_NAME_TODO'.
+    p_descr_ref->absolute_name = 'CLASS_NAME_TODO'.
   ENDMETHOD.
 
   METHOD describe_by_data.
