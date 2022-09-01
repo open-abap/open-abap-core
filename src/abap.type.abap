@@ -1,12 +1,11 @@
 TYPE-POOL abap.
 
-TYPES abap_encoding TYPE c LENGTH 20.
-
 TYPES: BEGIN OF abap_trans_srcbind,
          name  TYPE string,
          value TYPE REF TO data,
        END OF abap_trans_srcbind.
 
+TYPES abap_encoding          TYPE c LENGTH 20.
 TYPES abap_trans_srcbind_tab TYPE STANDARD TABLE OF abap_trans_srcbind WITH DEFAULT KEY.
 TYPES abap_trans_resbind_tab TYPE abap_trans_srcbind_tab.
 TYPES abap_compname          TYPE c LENGTH 30.
@@ -22,6 +21,7 @@ TYPES abap_excpname          TYPE c LENGTH 30.
 TYPES abap_methname          TYPE c LENGTH 61.
 TYPES abap_evntname          TYPE c LENGTH 61.
 TYPES abap_classname         TYPE c LENGTH 30.
+TYPES abap_intfname          TYPE c LENGTH 30.
 
 CONSTANTS abap_max_comp_name_ln TYPE i VALUE 30.
 
@@ -117,3 +117,27 @@ TYPES: BEGIN OF abap_methdescr,
          alias_for        TYPE abap_methname,
          is_raising_excps TYPE abap_bool,
        END OF abap_methdescr.
+TYPES abap_methdescr_tab TYPE STANDARD TABLE OF abap_methdescr WITH KEY name.
+
+TYPES: BEGIN OF abap_attrdescr,
+         length         TYPE i,
+         decimals       TYPE i,
+         name           TYPE abap_attrname,
+         type_kind      TYPE abap_typekind,
+         visibility     TYPE abap_visibility,
+         is_interface   TYPE abap_bool,
+         is_inherited   TYPE abap_bool,
+         is_class       TYPE abap_bool,
+         is_constant    TYPE abap_bool,
+         is_virtual     TYPE abap_bool,
+         is_read_only   TYPE abap_bool,
+         alias_for      TYPE abap_attrname,
+       END OF abap_attrdescr.
+TYPES abap_attrdescr_tab TYPE STANDARD TABLE OF abap_attrdescr WITH KEY name.
+
+
+TYPES: BEGIN OF abap_intfdescr,
+         name           TYPE abap_intfname,
+         is_inherited   TYPE abap_bool,
+       END OF abap_intfdescr.
+TYPES abap_intfdescr_tab TYPE STANDARD TABLE OF abap_intfdescr WITH KEY name.
