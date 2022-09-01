@@ -81,7 +81,31 @@ CLASS cl_http_entity IMPLEMENTATION.
     mv_data = val.
   ENDMETHOD.
 
+  METHOD if_http_response~set_cookie.
+    ASSERT 2 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_http_response~delete_cookie_at_client.
+    ASSERT 2 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_http_response~delete_header_field.
+    ASSERT 2 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_http_response~redirect.
+    ASSERT 2 = 'todo'.
+  ENDMETHOD.
+
 *****************************************
+
+  METHOD if_http_request~get_content_type.
+    ASSERT 2 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_http_request~get_form_fields_cs.
+    ASSERT 2 = 'todo'.
+  ENDMETHOD.
 
   METHOD if_http_request~set_form_fields.
     mt_form_fields = fields.

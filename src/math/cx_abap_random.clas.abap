@@ -1,0 +1,7 @@
+CLASS cx_abap_random DEFINITION PUBLIC INHERITING FROM cx_dynamic_check.
+
+ENDCLASS.
+
+CLASS cx_abap_random IMPLEMENTATION.
+
+ENDCLASS.
