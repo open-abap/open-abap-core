@@ -78,7 +78,7 @@ CLASS cl_http_entity IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_response~set_data.
-    mv_data = val.
+    mv_data = data.
   ENDMETHOD.
 
   METHOD if_http_response~set_cookie.

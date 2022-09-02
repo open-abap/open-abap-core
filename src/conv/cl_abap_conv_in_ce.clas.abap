@@ -3,10 +3,14 @@ CLASS cl_abap_conv_in_ce DEFINITION PUBLIC.
     CLASS-METHODS
       create
         IMPORTING
-          encoding TYPE abap_encoding DEFAULT 'UTF-8'
-          input TYPE xstring OPTIONAL
+          encoding    TYPE abap_encoding DEFAULT 'UTF-8'
+          input       TYPE xstring OPTIONAL
+          replacement TYPE char1 DEFAULT '#'
+          ignore_cerr TYPE abap_bool DEFAULT abap_false
+          endian      TYPE char1 OPTIONAL
         RETURNING
-          VALUE(ret) TYPE REF TO cl_abap_conv_in_ce.
+          VALUE(ret)  TYPE REF TO cl_abap_conv_in_ce.
+
     CLASS-METHODS
       uccpi
         IMPORTING
@@ -33,6 +37,10 @@ ENDCLASS.
 
 CLASS cl_abap_conv_in_ce IMPLEMENTATION.
   METHOD create.
+    ASSERT replacement = '#'. " todo
+    ASSERT ignore_cerr IS INITIAL. " todo
+    ASSERT endian IS INITIAL. " todo
+
     CREATE OBJECT ret.
 
     CASE encoding.

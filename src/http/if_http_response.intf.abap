@@ -27,7 +27,7 @@ INTERFACE if_http_response PUBLIC.
     RETURNING VALUE(val) TYPE xstring.
 
   METHODS set_data
-    IMPORTING val TYPE xstring.
+    IMPORTING data TYPE xstring.
 
   METHODS get_header_fields
     CHANGING
