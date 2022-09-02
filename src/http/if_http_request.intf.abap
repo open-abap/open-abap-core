@@ -56,4 +56,14 @@ INTERFACE if_http_request PUBLIC.
       search_option TYPE i OPTIONAL
     CHANGING
       fields TYPE any.
+
+  METHODS num_multiparts
+      RETURNING VALUE(val) TYPE i.
+
+  METHODS get_multipart
+    IMPORTING
+      index TYPE i
+    RETURNING
+      VALUE(entity) TYPE REF TO if_http_entity.
+
 ENDINTERFACE.
