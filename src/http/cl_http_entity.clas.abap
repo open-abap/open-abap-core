@@ -103,6 +103,14 @@ CLASS cl_http_entity IMPLEMENTATION.
     ASSERT 2 = 'todo'.
   ENDMETHOD.
 
+  METHOD if_http_request~num_multiparts.
+    ASSERT 2 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_http_request~get_multipart.
+    ASSERT 2 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_http_request~get_form_fields_cs.
     ASSERT 2 = 'todo'.
   ENDMETHOD.
