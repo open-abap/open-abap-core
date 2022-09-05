@@ -141,7 +141,7 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
           ENDIF.
           IF mode = c_mode-comment.
             <trow>-type = gc_token-comment.
-            <trow>-str = <trow>-str && |{ character }|.
+            CONCATENATE <trow>-str character INTO <trow>-str RESPECTING BLANKS.
           ELSEIF character <> ':'.
             <trow>-str = <trow>-str && to_upper( |{ character }| ).
           ENDIF.
