@@ -29,6 +29,13 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
         RETURNING
           VALUE(p_abap_bool) TYPE abap_bool.
 
+    METHODS get_ddic_object
+      RETURNING
+        VALUE(p_object) TYPE any
+      EXCEPTIONS
+        not_found
+        no_ddic_type.
+
     DATA type_kind     TYPE abap_typekind.
     DATA kind          TYPE c LENGTH 1.
     DATA ddic          TYPE abap_bool.
@@ -77,6 +84,10 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS cl_abap_typedescr IMPLEMENTATION.
+
+  METHOD get_ddic_object.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD describe_by_name.
     DATA ref     TYPE REF TO data.
