@@ -1,22 +1,16 @@
 CLASS cl_http_utility DEFINITION PUBLIC.
   PUBLIC SECTION.
+    INTERFACES if_http_utility.
+
+    ALIASES string_to_fields FOR if_http_utility~string_to_fields.
+    ALIASES unescape_url FOR if_http_utility~unescape_url.
+    ALIASES escape_url FOR if_http_utility~escape_url.
+
     CLASS-METHODS decode_x_base64
       IMPORTING
         encoded TYPE string
       RETURNING
         VALUE(decoded) TYPE xstring.
-
-    CLASS-METHODS unescape_url
-      IMPORTING
-        escaped TYPE string
-      RETURNING
-        VALUE(unescaped) TYPE string.
-
-    CLASS-METHODS escape_url
-      IMPORTING
-        unescaped TYPE string
-      RETURNING
-        VALUE(escaped) TYPE string.
 
     CLASS-METHODS encode_base64
       IMPORTING
@@ -36,12 +30,6 @@ CLASS cl_http_utility DEFINITION PUBLIC.
       RETURNING
         VALUE(string) TYPE string.
 
-    CLASS-METHODS string_to_fields
-      IMPORTING
-        string TYPE string
-      RETURNING
-        VALUE(fields) TYPE tihttpnvp.
-
     CLASS-METHODS set_query
       IMPORTING
         request TYPE REF TO if_http_request
@@ -60,7 +48,7 @@ CLASS cl_http_utility IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
-  METHOD string_to_fields.
+  METHOD if_http_utility~string_to_fields.
     DATA tab TYPE STANDARD TABLE OF string.
     DATA str LIKE LINE OF tab.
     DATA ls_field LIKE LINE OF fields.
@@ -98,12 +86,12 @@ CLASS cl_http_utility IMPLEMENTATION.
     WRITE '@KERNEL decoded.set(buffer.toString("hex").toUpperCase());'.
   ENDMETHOD.
 
-  METHOD unescape_url.
+  METHOD if_http_utility~unescape_url.
     " todo, this can probably be done in ABAP with a few regex'es
     WRITE '@KERNEL unescaped.set(decodeURI(escaped.get()));'.
   ENDMETHOD.
 
-  METHOD escape_url.
+  METHOD if_http_utility~escape_url.
     WRITE '@KERNEL escaped.set(encodeURIComponent(unescaped.get()));'.
   ENDMETHOD.
 
