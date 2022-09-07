@@ -141,3 +141,9 @@ TYPES: BEGIN OF abap_intfdescr,
          is_inherited   TYPE abap_bool,
        END OF abap_intfdescr.
 TYPES abap_intfdescr_tab TYPE STANDARD TABLE OF abap_intfdescr WITH KEY name.
+
+TYPES: BEGIN OF abap_excpbind,
+         name  TYPE abap_excpname,
+         value TYPE i,
+       END OF abap_excpbind.
+TYPES abap_excpbind_tab TYPE HASHED TABLE OF abap_excpbind WITH UNIQUE KEY name.
