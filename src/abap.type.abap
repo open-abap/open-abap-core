@@ -8,20 +8,21 @@ TYPES: BEGIN OF abap_trans_srcbind,
 TYPES abap_encoding          TYPE c LENGTH 20.
 TYPES abap_trans_srcbind_tab TYPE STANDARD TABLE OF abap_trans_srcbind WITH DEFAULT KEY.
 TYPES abap_trans_resbind_tab TYPE abap_trans_srcbind_tab.
-TYPES abap_compname          TYPE c LENGTH 30.
-TYPES abap_typekind          TYPE c LENGTH 1.
-TYPES abap_structkind        TYPE c LENGTH 1.
-TYPES abap_editmask          TYPE c LENGTH 7.
 TYPES abap_abstypename       TYPE c LENGTH 200.
-TYPES abap_visibility        TYPE c LENGTH 1.
+TYPES abap_attrname          TYPE c LENGTH 61.
+TYPES abap_classname         TYPE c LENGTH 30.
+TYPES abap_compname          TYPE c LENGTH 30.
+TYPES abap_editmask          TYPE c LENGTH 7.
+TYPES abap_evntname          TYPE c LENGTH 61.
+TYPES abap_excpname          TYPE c LENGTH 30.
+TYPES abap_intfname          TYPE c LENGTH 30.
+TYPES abap_keyname           TYPE c LENGTH 255.
+TYPES abap_methname          TYPE c LENGTH 61.
 TYPES abap_parmkind          TYPE c LENGTH 1.
 TYPES abap_parmname          TYPE c LENGTH 30.
-TYPES abap_attrname          TYPE c LENGTH 61.
-TYPES abap_excpname          TYPE c LENGTH 30.
-TYPES abap_methname          TYPE c LENGTH 61.
-TYPES abap_evntname          TYPE c LENGTH 61.
-TYPES abap_classname         TYPE c LENGTH 30.
-TYPES abap_intfname          TYPE c LENGTH 30.
+TYPES abap_structkind        TYPE c LENGTH 1.
+TYPES abap_typekind          TYPE c LENGTH 1.
+TYPES abap_visibility        TYPE c LENGTH 1.
 
 CONSTANTS abap_max_comp_name_ln TYPE i VALUE 30.
 
@@ -147,3 +148,8 @@ TYPES: BEGIN OF abap_excpbind,
          value TYPE i,
        END OF abap_excpbind.
 TYPES abap_excpbind_tab TYPE HASHED TABLE OF abap_excpbind WITH UNIQUE KEY name.
+
+TYPES: BEGIN OF abap_keydescr,
+         name TYPE abap_keyname,
+       END OF abap_keydescr.
+TYPES abap_keydescr_tab TYPE STANDARD TABLE OF abap_keydescr WITH KEY name.

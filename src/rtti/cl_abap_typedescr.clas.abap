@@ -47,9 +47,9 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_any TYPE abap_typekind VALUE '~'.
     CONSTANTS typekind_char TYPE abap_typekind VALUE 'C'.
     CONSTANTS typekind_class TYPE abap_typekind VALUE '*'.
-    CONSTANTS typekind_intf TYPE abap_typekind VALUE '+'.
     CONSTANTS typekind_clike TYPE abap_typekind VALUE '&'.
     CONSTANTS typekind_csequence TYPE abap_typekind VALUE '?'.
+    CONSTANTS typekind_data TYPE abap_typekind VALUE '#'.
     CONSTANTS typekind_date TYPE abap_typekind VALUE 'D'.
     CONSTANTS typekind_decfloat TYPE abap_typekind VALUE '/'.
     CONSTANTS typekind_decfloat16 TYPE abap_typekind VALUE 'a'.
@@ -62,6 +62,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_int1 TYPE abap_typekind VALUE 'b'.
     CONSTANTS typekind_int2 TYPE abap_typekind VALUE 's'.
     CONSTANTS typekind_int8 TYPE abap_typekind VALUE '8'.
+    CONSTANTS typekind_intf TYPE abap_typekind VALUE '+'.
     CONSTANTS typekind_num TYPE abap_typekind VALUE 'N'.
     CONSTANTS typekind_numeric TYPE abap_typekind VALUE '%'.
     CONSTANTS typekind_oref TYPE abap_typekind VALUE 'r'.
