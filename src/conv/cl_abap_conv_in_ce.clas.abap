@@ -17,6 +17,14 @@ CLASS cl_abap_conv_in_ce DEFINITION PUBLIC.
           value TYPE i
         RETURNING
           VALUE(ret) TYPE string.
+
+    TYPES ty_char2 TYPE c LENGTH 2.
+    CLASS-METHODS uccp
+      IMPORTING
+        uccp TYPE simple
+      RETURNING
+        VALUE(char) TYPE ty_char2.
+
     METHODS
       convert
         IMPORTING
@@ -53,6 +61,10 @@ CLASS cl_abap_conv_in_ce IMPLEMENTATION.
     ENDCASE.
 
     ret->mv_input = input.
+  ENDMETHOD.
+
+  METHOD uccp.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD uccpi.

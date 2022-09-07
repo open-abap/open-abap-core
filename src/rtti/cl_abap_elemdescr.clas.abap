@@ -12,6 +12,7 @@ CLASS cl_abap_elemdescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
 
     DATA output_length TYPE i READ-ONLY.
     DATA edit_mask TYPE abap_editmask READ-ONLY.
+    DATA help_id TYPE abap_helpid READ-ONLY.
 
     METHODS get_ddic_fixed_values
       RETURNING

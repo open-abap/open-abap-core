@@ -18,9 +18,10 @@ CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
       IMPORTING p_line_type TYPE REF TO cl_abap_typedescr
       RETURNING VALUE(ref) TYPE REF TO cl_abap_tabledescr.
 
-    DATA table_kind TYPE c LENGTH 1.
     DATA has_unique_key TYPE abap_bool READ-ONLY.
-    DATA key TYPE abap_keydescr_tab READ-ONLY.
+    DATA key            TYPE abap_keydescr_tab READ-ONLY.
+    DATA key_defkind    TYPE abap_keydefkind READ-ONLY.
+    DATA table_kind     TYPE c LENGTH 1.
 
     CONSTANTS tablekind_any TYPE c LENGTH 1 VALUE 'A'.
     CONSTANTS tablekind_std TYPE c LENGTH 1 VALUE 'S'.

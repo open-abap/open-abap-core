@@ -15,7 +15,9 @@ TYPES abap_compname          TYPE c LENGTH 30.
 TYPES abap_editmask          TYPE c LENGTH 7.
 TYPES abap_evntname          TYPE c LENGTH 61.
 TYPES abap_excpname          TYPE c LENGTH 30.
+TYPES abap_helpid            TYPE c LENGTH 62.
 TYPES abap_intfname          TYPE c LENGTH 30.
+TYPES abap_keydefkind        TYPE c LENGTH 1.
 TYPES abap_keyname           TYPE c LENGTH 255.
 TYPES abap_methname          TYPE c LENGTH 61.
 TYPES abap_parmkind          TYPE c LENGTH 1.
