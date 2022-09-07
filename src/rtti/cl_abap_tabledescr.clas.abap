@@ -20,6 +20,7 @@ CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
 
     DATA table_kind TYPE c LENGTH 1.
     DATA has_unique_key TYPE abap_bool READ-ONLY.
+    DATA key TYPE abap_keydescr_tab READ-ONLY.
 
     CONSTANTS tablekind_any TYPE c LENGTH 1 VALUE 'A'.
     CONSTANTS tablekind_std TYPE c LENGTH 1 VALUE 'S'.
