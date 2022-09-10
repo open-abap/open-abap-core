@@ -12,8 +12,8 @@
   "license": "MIT",
   "dependencies": {
     "@abaplint/cli": "^2.93.11",
-    "@abaplint/runtime": "^2.1.55",
+    "@abaplint/runtime": "^2.1.57",
     "@abaplint/database-sqlite": "^2.1.52",
-    "@abaplint/transpiler-cli": "^2.1.55"
+    "@abaplint/transpiler-cli": "^2.1.57"
   }
 }
