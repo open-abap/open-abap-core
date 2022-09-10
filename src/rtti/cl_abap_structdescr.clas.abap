@@ -150,8 +150,7 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     DATA line LIKE LINE OF mt_refs.
     READ TABLE mt_refs INTO line WITH KEY name = p_name.
     IF sy-subrc <> 0.
-* todo, RAISE component_not_found, classic exceptions doesnt work with transpiler as of today
-      ASSERT 1 = 'todo'.
+      RAISE component_not_found.
     ELSE.
       p_descr_ref = line-ref.
     ENDIF.
