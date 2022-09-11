@@ -7,6 +7,8 @@ CLASS ltcl_conv_in DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FIN
     METHODS empty FOR TESTING RAISING cx_static_check.
     METHODS utf16le FOR TESTING RAISING cx_static_check.
     METHODS uccpi_50 FOR TESTING RAISING cx_static_check.
+    METHODS invalid_utf8 FOR TESTING RAISING cx_static_check.
+    METHODS invalid_utf8_ignore FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -18,6 +20,36 @@ CLASS ltcl_conv_in IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = str
       exp = '2' ).
+  ENDMETHOD.
+
+  METHOD invalid_utf8.
+    DATA lv_data TYPE xstring.
+    DATA rv_string TYPE string.
+    lv_data = 'F8FF00'.
+    TRY.
+        cl_abap_conv_in_ce=>create( encoding = 'UTF-8' )->convert(
+          EXPORTING
+            input = lv_data
+            n     = xstrlen( lv_data )
+          IMPORTING
+            data  = rv_string ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_sy_conversion_codepage.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD invalid_utf8_ignore.
+    DATA lv_data TYPE xstring.
+    DATA rv_string TYPE string.
+    lv_data = 'F8FF00'.
+    cl_abap_conv_in_ce=>create(
+      encoding    = 'UTF-8'
+      ignore_cerr = abap_true )->convert(
+          EXPORTING
+            input = lv_data
+            n     = xstrlen( lv_data )
+          IMPORTING
+            data  = rv_string ).
   ENDMETHOD.
 
   METHOD test1.

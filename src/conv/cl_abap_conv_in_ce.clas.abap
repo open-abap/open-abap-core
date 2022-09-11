@@ -41,12 +41,12 @@ CLASS cl_abap_conv_in_ce DEFINITION PUBLIC.
   PRIVATE SECTION.
     DATA mv_input TYPE xstring.
     DATA mv_js_encoding TYPE string.
+    DATA mv_ignore_cerr TYPE abap_bool.
 ENDCLASS.
 
 CLASS cl_abap_conv_in_ce IMPLEMENTATION.
   METHOD create.
     ASSERT replacement = '#'. " todo
-    ASSERT ignore_cerr IS INITIAL. " todo
     ASSERT endian IS INITIAL. " todo
 
     CREATE OBJECT ret.
@@ -55,12 +55,13 @@ CLASS cl_abap_conv_in_ce IMPLEMENTATION.
       WHEN 'UTF-8'.
         ret->mv_js_encoding = 'utf8'.
       WHEN '4103'.
-        ret->mv_js_encoding = 'utf16le'.
+        ret->mv_js_encoding = 'utf-16le'.
       WHEN OTHERS.
         ASSERT 1 = 'not supported'.
     ENDCASE.
 
     ret->mv_input = input.
+    ret->mv_ignore_cerr = ignore_cerr.
   ENDMETHOD.
 
   METHOD uccp.
@@ -84,12 +85,28 @@ CLASS cl_abap_conv_in_ce IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD convert.
+    DATA lv_error TYPE abap_bool.
+
     IF input IS INITIAL.
       RETURN.
     ENDIF.
     ASSERT mv_js_encoding IS NOT INITIAL.
-    WRITE '@KERNEL let result = Buffer.from(input.get(), "hex").toString(this.mv_js_encoding.get());'.
-    WRITE '@KERNEL data.set(result);'.
+    WRITE '@KERNEL let buf = Buffer.from(input.get(), "hex");'.
+
+    WRITE '@KERNEL const util= await import("util");'.
+    WRITE '@KERNEL const td = new util.TextDecoder(this.mv_js_encoding.get(), {fatal: this.mv_ignore_cerr.get() !== "X"});'.
+    WRITE '@KERNEL try {'.
+    WRITE '@KERNEL   data.set(td.decode(buf));'.
+    WRITE '@KERNEL } catch {'.
+    lv_error = abap_true.
+    WRITE '@KERNEL }'.
+
+    IF lv_error = abap_true.
+      RAISE EXCEPTION TYPE cx_sy_conversion_codepage.
+    ENDIF.
+
+* old    WRITE '@KERNEL let result = buf.toString(this.mv_js_encoding.get());'.
+* old    WRITE '@KERNEL data.set(result);'.
   ENDMETHOD.
 
   METHOD read.
