@@ -16,6 +16,8 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
     CASE handle->type_kind.
       WHEN cl_abap_typedescr=>typekind_float.
         CREATE DATA dref TYPE f.
+      WHEN cl_abap_typedescr=>typekind_string.
+        CREATE DATA dref TYPE string.
       WHEN cl_abap_typedescr=>typekind_int.
         CREATE DATA dref TYPE i.
       WHEN cl_abap_typedescr=>typekind_date.
