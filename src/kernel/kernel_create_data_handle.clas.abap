@@ -6,6 +6,11 @@ CLASS kernel_create_data_handle DEFINITION PUBLIC.
       CHANGING
         dref   TYPE REF TO any.
   PRIVATE SECTION.
+    CLASS-METHODS elem
+      IMPORTING
+        handle TYPE REF TO cl_abap_datadescr
+      CHANGING
+        dref   TYPE REF TO any.
 ENDCLASS.
 
 CLASS kernel_create_data_handle IMPLEMENTATION.
@@ -13,6 +18,18 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
   METHOD call.
     ASSERT handle IS BOUND.
 
+    CASE handle->kind.
+      WHEN cl_abap_typedescr=>kind_elem.
+        elem( EXPORTING handle = handle
+              CHANGING dref = dref ).
+      WHEN OTHERS.
+        WRITE '@KERNEL console.dir(handle);'.
+        ASSERT 1 = 'todo'.
+    ENDCASE.
+
+  ENDMETHOD.
+
+  METHOD elem.
     CASE handle->type_kind.
       WHEN cl_abap_typedescr=>typekind_float.
         CREATE DATA dref TYPE f.
