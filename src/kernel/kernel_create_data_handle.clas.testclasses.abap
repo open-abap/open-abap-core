@@ -41,14 +41,18 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD structure.
     DATA: BEGIN OF foo,
-            field1 TYPE string,
-            field2 TYPE string,
-          END OF foo.
+        field1 TYPE string,
+        field2 TYPE string,
+      END OF foo.
     DATA handle TYPE REF TO cl_abap_datadescr.
+    FIELD-SYMBOLS <fs> TYPE any.
     DATA lo_value_new TYPE REF TO data.
     handle ?= cl_abap_typedescr=>describe_by_data( foo ).
     CREATE DATA lo_value_new TYPE HANDLE handle.
     cl_abap_unit_assert=>assert_bound( lo_value_new ).
+    ASSIGN lo_value_new->* TO <fs>.
+    ASSIGN COMPONENT 'FIELD1' OF STRUCTURE <fs> TO <fs>.
+    cl_abap_unit_assert=>assert_subrc( ).
   ENDMETHOD.
 
   METHOD table.
