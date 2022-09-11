@@ -87,8 +87,8 @@ CLASS cl_http_utility IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_utility~unescape_url.
-    " todo, this can probably be done in ABAP with a few regex'es
-    WRITE '@KERNEL unescaped.set(decodeURI(escaped.get()));'.
+    WRITE '@KERNEL let foo = escaped.get();'.
+    WRITE '@KERNEL unescaped.set(decodeURIComponent(foo));'.
   ENDMETHOD.
 
   METHOD if_http_utility~escape_url.
