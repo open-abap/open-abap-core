@@ -25,6 +25,7 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
       WHEN cl_abap_typedescr=>typekind_time.
         CREATE DATA dref TYPE t.
       WHEN OTHERS.
+        WRITE '@KERNEL console.dir(handle);'.
         ASSERT 1 = 'todo'.
     ENDCASE.
   ENDMETHOD.
