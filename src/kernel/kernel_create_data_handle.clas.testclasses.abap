@@ -27,6 +27,7 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lo_value_new TYPE REF TO data.
     lo_element = cl_abap_elemdescr=>get_string( ).
     CREATE DATA lo_value_new TYPE HANDLE lo_element.
+    cl_abap_unit_assert=>assert_bound( lo_value_new ).
   ENDMETHOD.
 
   METHOD abap_bool.
@@ -45,7 +46,8 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA handle TYPE REF TO cl_abap_typedescr.
     DATA lo_value_new TYPE REF TO data.
     handle = cl_abap_typedescr=>describe_by_data( foo ).
-*    CREATE DATA lo_value_new TYPE HANDLE handle.
+    CREATE DATA lo_value_new TYPE HANDLE handle.
+    cl_abap_unit_assert=>assert_bound( lo_value_new ).
   ENDMETHOD.
 
 ENDCLASS.

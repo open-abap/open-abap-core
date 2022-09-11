@@ -11,6 +11,11 @@ CLASS kernel_create_data_handle DEFINITION PUBLIC.
         handle TYPE REF TO cl_abap_datadescr
       CHANGING
         dref   TYPE REF TO any.
+    CLASS-METHODS struct
+      IMPORTING
+        handle TYPE REF TO cl_abap_datadescr
+      CHANGING
+        dref   TYPE REF TO any.
 ENDCLASS.
 
 CLASS kernel_create_data_handle IMPLEMENTATION.
@@ -22,11 +27,25 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
       WHEN cl_abap_typedescr=>kind_elem.
         elem( EXPORTING handle = handle
               CHANGING dref = dref ).
+      WHEN cl_abap_typedescr=>kind_struct.
+        struct( EXPORTING handle = handle
+                CHANGING dref = dref ).
       WHEN OTHERS.
         WRITE '@KERNEL console.dir(handle);'.
         ASSERT 1 = 'todo'.
     ENDCASE.
+  ENDMETHOD.
 
+  METHOD struct.
+    DATA lo_struct     TYPE REF TO cl_abap_structdescr.
+    DATA lt_components TYPE cl_abap_structdescr=>component_table.
+    DATA ls_component  LIKE LINE OF lt_components.
+
+    lo_struct ?= handle.
+    lt_components = lo_struct->get_components( ).
+    LOOP AT lt_components INTO ls_component.
+      WRITE '@KERNEL console.dir(ls_component.get().name);'.
+    ENDLOOP.
   ENDMETHOD.
 
   METHOD elem.
