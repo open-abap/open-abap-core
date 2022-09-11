@@ -20,6 +20,8 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
         CREATE DATA dref TYPE i.
       WHEN cl_abap_typedescr=>typekind_date.
         CREATE DATA dref TYPE d.
+      WHEN cl_abap_typedescr=>typekind_char.
+        CREATE DATA dref TYPE c LENGTH handle->length.
       WHEN cl_abap_typedescr=>typekind_time.
         CREATE DATA dref TYPE t.
       WHEN OTHERS.

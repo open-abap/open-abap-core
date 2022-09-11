@@ -4,7 +4,6 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS get_ddic_fixed_values FOR TESTING RAISING cx_static_check.
     METHODS get_ddic_field FOR TESTING RAISING cx_static_check.
     METHODS get_ddic_field2 FOR TESTING RAISING cx_static_check.
-    METHODS create_data_type_handle FOR TESTING RAISING cx_static_check.
     METHODS output_length_basic FOR TESTING RAISING cx_static_check.
     METHODS output_length_date FOR TESTING RAISING cx_static_check.
     METHODS output_length_time FOR TESTING RAISING cx_static_check.
@@ -80,18 +79,6 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = descr->output_length
       exp = 11 ).
-  ENDMETHOD.
-
-  METHOD create_data_type_handle.
-    DATA lo_element TYPE REF TO cl_abap_elemdescr.
-    DATA lo_value_new TYPE REF TO data.
-    FIELD-SYMBOLS <fs_value> TYPE simple.
-
-    lo_element = cl_abap_elemdescr=>get_i( ).
-    CREATE DATA lo_value_new TYPE HANDLE lo_element.
-    ASSIGN lo_value_new->* TO <fs_value>.
-    CLEAR <fs_value>.
-    <fs_value> = 2.
   ENDMETHOD.
 
   METHOD get_ddic_fixed_values.
