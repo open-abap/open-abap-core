@@ -5,6 +5,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS decode_x_base64_2 FOR TESTING RAISING cx_static_check.
     METHODS encode_x_base64 FOR TESTING RAISING cx_static_check.
     METHODS unescape_url FOR TESTING RAISING cx_static_check.
+    METHODS unescape_url_eqs1 FOR TESTING RAISING cx_static_check.
+    METHODS unescape_url_eqs2 FOR TESTING RAISING cx_static_check.
     METHODS escape_url FOR TESTING RAISING cx_static_check.
     METHODS encode_base64 FOR TESTING RAISING cx_static_check.
     METHODS fields_identity01 FOR TESTING RAISING cx_static_check.
@@ -78,6 +80,24 @@ CLASS ltcl_test IMPLEMENTATION.
       act = decoded
       exp = |'| ).
 
+  ENDMETHOD.
+
+  METHOD unescape_url_eqs1.
+    DATA lv_name TYPE string.
+    lv_name = '%3D%3D'.
+    lv_name = cl_http_utility=>unescape_url( lv_name ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_name
+      exp  = '==' ).
+  ENDMETHOD.
+
+  METHOD unescape_url_eqs2.
+    DATA lv_name TYPE string.
+    lv_name = 'ello%3D%3D'.
+    lv_name = cl_http_utility=>unescape_url( lv_name ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_name
+      exp  = 'ello==' ).
   ENDMETHOD.
 
   METHOD escape_url.
