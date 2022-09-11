@@ -43,9 +43,9 @@ CLASS ltcl_test IMPLEMENTATION.
             field1 TYPE string,
             field2 TYPE string,
           END OF foo.
-    DATA handle TYPE REF TO cl_abap_typedescr.
+    DATA handle TYPE REF TO cl_abap_datadescr.
     DATA lo_value_new TYPE REF TO data.
-    handle = cl_abap_typedescr=>describe_by_data( foo ).
+    handle ?= cl_abap_typedescr=>describe_by_data( foo ).
     CREATE DATA lo_value_new TYPE HANDLE handle.
     cl_abap_unit_assert=>assert_bound( lo_value_new ).
   ENDMETHOD.
