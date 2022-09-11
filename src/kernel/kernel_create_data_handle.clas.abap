@@ -16,6 +16,11 @@ CLASS kernel_create_data_handle DEFINITION PUBLIC.
         handle TYPE REF TO cl_abap_datadescr
       CHANGING
         dref   TYPE REF TO any.
+    CLASS-METHODS table
+      IMPORTING
+        handle TYPE REF TO cl_abap_datadescr
+      CHANGING
+        dref   TYPE REF TO any.
 ENDCLASS.
 
 CLASS kernel_create_data_handle IMPLEMENTATION.
@@ -30,6 +35,9 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
       WHEN cl_abap_typedescr=>kind_struct.
         struct( EXPORTING handle = handle
                 CHANGING dref = dref ).
+      WHEN cl_abap_typedescr=>kind_table.
+        table( EXPORTING handle = handle
+               CHANGING dref = dref ).
       WHEN OTHERS.
         WRITE '@KERNEL console.dir(handle);'.
         ASSERT 1 = 'todo'.
@@ -55,6 +63,21 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
       WRITE '@KERNEL obj[ls_component.get().name.get().toLowerCase()] = field.get();'.
     ENDLOOP.
     WRITE '@KERNEL dref.assign(new abap.types.Structure(obj));'.
+  ENDMETHOD.
+
+  METHOD table.
+    DATA lo_table TYPE REF TO cl_abap_tabledescr.
+    DATA field    TYPE REF TO data.
+
+    lo_table ?= handle.
+
+    call(
+      EXPORTING
+        handle = lo_table->get_table_line_type( )
+      CHANGING
+        dref   = field ).
+
+    WRITE '@KERNEL dref.assign(new abap.types.Table(field.get()));'.
   ENDMETHOD.
 
   METHOD elem.
