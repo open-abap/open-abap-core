@@ -7,10 +7,45 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS get_component_type FOR TESTING RAISING cx_static_check.
     METHODS get_component_type_not_found FOR TESTING RAISING cx_static_check.
     METHODS component_type_kind FOR TESTING RAISING cx_static_check.
+    METHODS create_empty FOR TESTING RAISING cx_static_check.
+    METHODS create_basic FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
+
+  METHOD create_empty.
+    DATA lt_components TYPE cl_abap_structdescr=>component_table.
+    TRY.
+        cl_abap_structdescr=>create( lt_components ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_sy_struct_attributes.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD create_basic.
+    DATA lt_components TYPE cl_abap_structdescr=>component_table.
+    DATA ls_component  LIKE LINE OF lt_components.
+    DATA lo_struct     TYPE REF TO cl_abap_structdescr.
+    DATA lr_ref        TYPE REF TO data.
+    FIELD-SYMBOLS <fs>    TYPE any.
+    FIELD-SYMBOLS <field> TYPE any.
+
+    ls_component-name = 'FIELD'.
+    ls_component-type = cl_abap_elemdescr=>get_i( ).
+    APPEND ls_component TO lt_components.
+
+    lo_struct = cl_abap_structdescr=>create( lt_components ).
+    cl_abap_unit_assert=>assert_not_initial( lo_struct ).
+    cl_abap_unit_assert=>assert_not_initial( lo_struct->kind ).
+    cl_abap_unit_assert=>assert_not_initial( lo_struct->type_kind ).
+
+    CREATE DATA lr_ref TYPE HANDLE lo_struct.
+    ASSIGN lr_ref->* TO <fs>.
+    ASSIGN COMPONENT 'FIELD' OF STRUCTURE <fs> TO <field>.
+    cl_abap_unit_assert=>assert_subrc( ).
+    <field> = 2.
+  ENDMETHOD.
 
   METHOD component_type_kind.
     DATA struct TYPE REF TO cl_abap_structdescr.
@@ -21,7 +56,7 @@ CLASS ltcl_test IMPLEMENTATION.
     components = struct->get_components( ).
     READ TABLE components INDEX 1 INTO component.
     cl_abap_unit_assert=>assert_subrc( ).
-    cl_abap_unit_assert=>assert_not_initial( component-type_kind ).
+    cl_abap_unit_assert=>assert_not_initial( component-name ).
   ENDMETHOD.
 
   METHOD is_ddic_type.

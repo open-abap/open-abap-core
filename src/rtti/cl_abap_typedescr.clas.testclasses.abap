@@ -31,6 +31,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS xsdboolean_absolute FOR TESTING.
     METHODS class_type_absolute FOR TESTING.
     METHODS describe_by_name_t000 FOR TESTING.
+    METHODS describe_by_name_not_found FOR TESTING.
     METHODS get_relative_name FOR TESTING.
     METHODS get_relative_name_timestamp FOR TESTING.
     METHODS get_relative_name_lif FOR TESTING.
@@ -343,6 +344,15 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_type->kind
       exp = cl_abap_typedescr=>kind_struct ).
+  ENDMETHOD.
+
+  METHOD describe_by_name_not_found.
+    cl_abap_typedescr=>describe_by_name(
+      EXPORTING p_name = 'SDFSDFSDF'
+      EXCEPTIONS type_not_found = 16 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = sy-subrc
+      exp = 16 ).
   ENDMETHOD.
 
 ENDCLASS.

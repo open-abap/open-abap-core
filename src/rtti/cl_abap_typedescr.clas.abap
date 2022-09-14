@@ -113,7 +113,11 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         objectdescr->mv_object_name = to_upper( p_name ). " todo, this should give syntax error, as they are not friends
         objectdescr->mv_object_type = oo_type. " todo, this should give syntax error, as they are not friends
       WHEN OTHERS.
-        CREATE DATA ref TYPE (p_name).
+        TRY.
+            CREATE DATA ref TYPE (p_name).
+          CATCH cx_sy_create_data_error.
+            RAISE type_not_found.
+        ENDTRY.
         type = describe_by_data_ref( ref ).
     ENDCASE.
   ENDMETHOD.
@@ -200,15 +204,11 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->type_kind = typekind_float.
         type->kind = kind_elem.
       WHEN 'Structure'.
-        CREATE OBJECT type TYPE cl_abap_structdescr
-          EXPORTING
-            data = p_data.
+        type ?= cl_abap_structdescr=>construct_from_data( p_data ).
         type->type_kind = typekind_struct2.
         type->kind = kind_struct.
       WHEN 'Table'.
-        CREATE OBJECT type TYPE cl_abap_tabledescr
-          EXPORTING
-            data = p_data.
+        type ?= cl_abap_tabledescr=>construct_from_data( p_data ).
         type->type_kind = typekind_table.
         type->kind = kind_table.
       WHEN 'XString'.

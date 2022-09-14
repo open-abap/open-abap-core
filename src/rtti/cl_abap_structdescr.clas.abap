@@ -1,13 +1,14 @@
 CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr.
 
   PUBLIC SECTION.
-    METHODS
-      constructor
-        IMPORTING data TYPE any.
+    CLASS-METHODS
+      construct_from_data
+        IMPORTING data TYPE any
+        RETURNING VALUE(descr) TYPE REF TO cl_abap_structdescr.
 
-    TYPES component TYPE abap_componentdescr.
+    TYPES component       TYPE abap_componentdescr.
     TYPES component_table TYPE abap_component_tab.
-    TYPES included_view TYPE abap_component_view_tab.
+    TYPES included_view   TYPE abap_component_view_tab.
 
     METHODS
       get_components
@@ -43,9 +44,11 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
     DATA struct_kind TYPE abap_structkind READ-ONLY.
 
   PRIVATE SECTION.
+    METHODS update_components.
+
     TYPES: BEGIN OF ty_refs,
-             name TYPE string,
-             ref  TYPE REF TO cl_abap_datadescr,
+             name      TYPE string,
+             ref       TYPE REF TO cl_abap_datadescr,
            END OF ty_refs.
     DATA mt_refs TYPE STANDARD TABLE OF ty_refs.
 ENDCLASS.
@@ -53,7 +56,32 @@ ENDCLASS.
 CLASS cl_abap_structdescr IMPLEMENTATION.
 
   METHOD create.
-    ASSERT 1 = 'todo'.
+    DATA ls_component LIKE LINE OF p_components.
+    DATA ls_ref LIKE LINE OF mt_refs.
+
+    IF lines( p_components ) = 0.
+      RAISE EXCEPTION TYPE cx_sy_struct_attributes.
+    ENDIF.
+
+    LOOP AT p_components INTO ls_component.
+      IF ls_component-name IS INITIAL.
+        RAISE EXCEPTION TYPE cx_sy_struct_comp_name.
+      ELSEIF ls_component-type IS INITIAL.
+        RAISE EXCEPTION TYPE cx_sy_struct_comp_type.
+      ENDIF.
+    ENDLOOP.
+
+    CREATE OBJECT ref.
+    LOOP AT p_components INTO ls_component.
+      CLEAR ls_ref.
+      ls_ref-name = ls_component-name.
+      ls_ref-ref  = ls_component-type.
+      APPEND ls_ref TO ref->mt_refs.
+    ENDLOOP.
+    ref->update_components( ).
+
+    ref->type_kind = typekind_struct2.
+    ref->kind = kind_struct.
   ENDMETHOD.
 
   METHOD get_included_view.
@@ -95,7 +123,6 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     ASSERT sy-subrc = 0.
     <component>-keyflag = abap_true.
     WRITE '@KERNEL }'.
-*    ASSERT 1 = 'todo'.
 
   ENDMETHOD.
 
@@ -103,30 +130,40 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     bool = ddic.
   ENDMETHOD.
 
-  METHOD constructor.
+  METHOD construct_from_data.
+* todo, this method should be private
     DATA lv_name      TYPE string.
-    DATA ls_component LIKE LINE OF components.
     DATA ls_ref       LIKE LINE OF mt_refs.
     DATA lo_datadescr TYPE REF TO cl_abap_datadescr.
 
     FIELD-SYMBOLS <fs> TYPE any.
 
-    super->constructor( ).
+    CREATE OBJECT descr.
 
 * todo, fail if input is not a structure?
     WRITE '@KERNEL for (const name of Object.keys(INPUT.data.value)) {'.
     WRITE '@KERNEL   lv_name.set(name.toUpperCase());'.
-    CLEAR ls_component.
-    ls_component-name = lv_name.
     ASSIGN COMPONENT lv_name OF STRUCTURE data TO <fs>.
     lo_datadescr ?= cl_abap_typedescr=>describe_by_data( <fs> ).
-    ls_component-type_kind = lo_datadescr->type_kind.
-    APPEND ls_component TO components.
-
     ls_ref-name = lv_name.
-    ls_ref-ref = lo_datadescr.
-    APPEND ls_ref TO mt_refs.
+    ls_ref-ref  = lo_datadescr.
+    APPEND ls_ref TO descr->mt_refs.
     WRITE '@KERNEL }'.
+
+    descr->update_components( ).
+  ENDMETHOD.
+
+  METHOD update_components.
+    DATA ls_component LIKE LINE OF components.
+    DATA ls_ref       LIKE LINE OF mt_refs.
+
+    CLEAR components.
+    LOOP AT mt_refs INTO ls_ref.
+      CLEAR ls_component.
+      ls_component-name = ls_ref-name.
+      ls_component-type_kind = ls_ref-ref->type_kind.
+      APPEND ls_component TO components.
+    ENDLOOP.
   ENDMETHOD.
 
   METHOD get_components.
@@ -140,7 +177,6 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
       READ TABLE mt_refs INTO ls_ref WITH KEY name = ls_component-name.
       IF sy-subrc = 0.
         ret-type = ls_ref-ref.
-        ret-type_kind = ret-type->type_kind.
       ENDIF.
       " as_include type abap_bool,
       " suffix     type string,

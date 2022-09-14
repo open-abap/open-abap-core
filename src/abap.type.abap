@@ -25,6 +25,7 @@ TYPES abap_parmname          TYPE c LENGTH 30.
 TYPES abap_structkind        TYPE c LENGTH 1.
 TYPES abap_typekind          TYPE c LENGTH 1.
 TYPES abap_visibility        TYPE c LENGTH 1.
+TYPES abap_tablekind         TYPE c LENGTH 1.
 
 CONSTANTS abap_max_comp_name_ln TYPE i VALUE 30.
 
@@ -32,7 +33,6 @@ TYPES: BEGIN OF abap_componentdescr,
          name       TYPE string,
          type       TYPE REF TO cl_abap_datadescr,
          as_include TYPE abap_bool,
-         type_kind  TYPE c LENGTH 1,
        END OF abap_componentdescr.
 TYPES abap_component_tab TYPE STANDARD TABLE OF abap_componentdescr WITH DEFAULT KEY.
 

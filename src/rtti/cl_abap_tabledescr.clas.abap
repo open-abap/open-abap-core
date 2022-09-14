@@ -1,19 +1,24 @@
 CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
   PUBLIC SECTION.
-    METHODS
-      constructor
-        IMPORTING data TYPE any.
+    CLASS-METHODS
+      construct_from_data
+        IMPORTING data TYPE any
+        RETURNING VALUE(descr) TYPE REF TO cl_abap_tabledescr.
+
     METHODS get_table_line_type
       RETURNING
         VALUE(type) TYPE REF TO cl_abap_datadescr.
+
     CLASS-METHODS get
       IMPORTING type TYPE REF TO cl_abap_typedescr
       RETURNING VALUE(val) TYPE REF TO cl_abap_tabledescr.
+
     CLASS-METHODS get_with_keys
       IMPORTING
         p_line_type TYPE REF TO cl_abap_datadescr
-        p_keys TYPE any
-      RETURNING VALUE(val) TYPE REF TO cl_abap_tabledescr.
+        p_keys      TYPE abap_table_keydescr_tab
+      RETURNING VALUE(p_result) TYPE REF TO cl_abap_tabledescr.
+
     CLASS-METHODS create
       IMPORTING p_line_type TYPE REF TO cl_abap_typedescr
       RETURNING VALUE(ref) TYPE REF TO cl_abap_tabledescr.
@@ -21,7 +26,7 @@ CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
     DATA has_unique_key TYPE abap_bool READ-ONLY.
     DATA key            TYPE abap_keydescr_tab READ-ONLY.
     DATA key_defkind    TYPE abap_keydefkind READ-ONLY.
-    DATA table_kind     TYPE c LENGTH 1.
+    DATA table_kind     TYPE abap_tablekind.
 
     CONSTANTS tablekind_any TYPE c LENGTH 1 VALUE 'A'.
     CONSTANTS tablekind_std TYPE c LENGTH 1 VALUE 'S'.
@@ -34,7 +39,7 @@ CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
     CONSTANTS keydefkind_empty TYPE c LENGTH 1 VALUE 'E'.
 
   PRIVATE SECTION.
-    DATA lo_type TYPE REF TO cl_abap_typedescr.
+    DATA mo_line_type TYPE REF TO cl_abap_typedescr.
 ENDCLASS.
 
 CLASS cl_abap_tabledescr IMPLEMENTATION.
@@ -43,28 +48,42 @@ CLASS cl_abap_tabledescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_with_keys.
-    ASSERT 1 = 'todo'.
+    DATA ls_key LIKE LINE OF p_keys.
+
+    IF lines( p_keys ) <> 1.
+      ASSERT 1 = 'todo'.
+    ENDIF.
+    READ TABLE p_keys INDEX 1 INTO ls_key.
+    ASSERT sy-subrc = 0.
+
+    CREATE OBJECT p_result.
+    p_result->has_unique_key = ls_key-is_unique.
+    p_result->mo_line_type   = p_line_type.
+    p_result->key_defkind    = ls_key-key_kind.
+    p_result->table_kind     = ls_key-access_kind.
+    p_result->type_kind      = typekind_table.
+    p_result->kind           = kind_table.
   ENDMETHOD.
 
   METHOD get.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
-  METHOD constructor.
+  METHOD construct_from_data.
+* todo, this method should be private
     DATA lv_dummy TYPE i.
-    DATA lv_flag TYPE abap_bool.
-*    WRITE '@KERNEL console.dir(data);'.
+    DATA lv_flag  TYPE abap_bool.
 
-    super->constructor( ).
+    CREATE OBJECT descr.
 
     WRITE '@KERNEL lv_flag.set(data.getOptions()?.isUnique === true ? "X" : "");'.
-    has_unique_key = lv_flag.
+    descr->has_unique_key = lv_flag.
 
     WRITE '@KERNEL lv_dummy = data.getRowType();'.
-    lo_type = cl_abap_typedescr=>describe_by_data( lv_dummy ).
+    descr->mo_line_type = cl_abap_typedescr=>describe_by_data( lv_dummy ).
   ENDMETHOD.
 
   METHOD get_table_line_type.
-    type ?= lo_type.
+    type ?= mo_line_type.
   ENDMETHOD.
 ENDCLASS.
