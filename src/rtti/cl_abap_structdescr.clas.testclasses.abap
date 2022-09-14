@@ -24,15 +24,15 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD create_basic.
-    " DATA lt_components TYPE cl_abap_structdescr=>component_table.
-    " DATA ls_component  LIKE LINE OF lt_components.
-    " DATA lo_struct     TYPE REF TO cl_abap_structdescr.
+    DATA lt_components TYPE cl_abap_structdescr=>component_table.
+    DATA ls_component  LIKE LINE OF lt_components.
+    DATA lo_struct     TYPE REF TO cl_abap_structdescr.
 
-    " ls_component-name = 'FIELD'.
-    " ls_component-type = cl_abap_elemdescr=>get_i( ).
-    " APPEND ls_component TO lt_components.
+    ls_component-name = 'FIELD'.
+    ls_component-type = cl_abap_elemdescr=>get_i( ).
+    APPEND ls_component TO lt_components.
 
-    " lo_struct = cl_abap_structdescr=>create( lt_components ).
+    lo_struct = cl_abap_structdescr=>create( lt_components ).
     " cl_abap_unit_assert=>assert_not_initial( lo_struct ).
   ENDMETHOD.
 

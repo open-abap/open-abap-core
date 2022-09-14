@@ -44,6 +44,8 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
     DATA struct_kind TYPE abap_structkind READ-ONLY.
 
   PRIVATE SECTION.
+    METHODS update_components.
+
     TYPES: BEGIN OF ty_refs,
              name      TYPE string,
              ref       TYPE REF TO cl_abap_datadescr,
@@ -55,6 +57,7 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
 
   METHOD create.
     DATA ls_component LIKE LINE OF p_components.
+    DATA ls_ref LIKE LINE OF mt_refs.
 
     IF lines( p_components ) = 0.
       RAISE EXCEPTION TYPE cx_sy_struct_attributes.
@@ -68,7 +71,15 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
       ENDIF.
     ENDLOOP.
 
-    ASSERT 1 = 'todo'.
+    CREATE OBJECT ref.
+    LOOP AT p_components INTO ls_component.
+      CLEAR ls_ref.
+      ls_ref-name = ls_component-name.
+      ls_ref-ref  = ls_component-type.
+      APPEND ls_ref TO ref->mt_refs.
+    ENDLOOP.
+    ref->update_components( ).
+
   ENDMETHOD.
 
   METHOD get_included_view.
@@ -110,7 +121,6 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     ASSERT sy-subrc = 0.
     <component>-keyflag = abap_true.
     WRITE '@KERNEL }'.
-*    ASSERT 1 = 'todo'.
 
   ENDMETHOD.
 
@@ -119,8 +129,8 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD construct_from_data.
+* todo, this method should be private
     DATA lv_name      TYPE string.
-    DATA ls_component LIKE LINE OF components.
     DATA ls_ref       LIKE LINE OF mt_refs.
     DATA lo_datadescr TYPE REF TO cl_abap_datadescr.
 
@@ -131,17 +141,27 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
 * todo, fail if input is not a structure?
     WRITE '@KERNEL for (const name of Object.keys(INPUT.data.value)) {'.
     WRITE '@KERNEL   lv_name.set(name.toUpperCase());'.
-    CLEAR ls_component.
-    ls_component-name = lv_name.
     ASSIGN COMPONENT lv_name OF STRUCTURE data TO <fs>.
     lo_datadescr ?= cl_abap_typedescr=>describe_by_data( <fs> ).
-    ls_component-type_kind = lo_datadescr->type_kind.
-    APPEND ls_component TO descr->components.
-
     ls_ref-name = lv_name.
     ls_ref-ref  = lo_datadescr.
     APPEND ls_ref TO descr->mt_refs.
     WRITE '@KERNEL }'.
+
+    descr->update_components( ).
+  ENDMETHOD.
+
+  METHOD update_components.
+    DATA ls_component LIKE LINE OF components.
+    DATA ls_ref       LIKE LINE OF mt_refs.
+
+    CLEAR components.
+    LOOP AT mt_refs INTO ls_ref.
+      CLEAR ls_component.
+      ls_component-name = ls_ref-name.
+      ls_component-type_kind = ls_ref-ref->type_kind.
+      APPEND ls_component TO components.
+    ENDLOOP.
   ENDMETHOD.
 
   METHOD get_components.
