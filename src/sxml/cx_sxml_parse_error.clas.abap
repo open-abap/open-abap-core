@@ -6,6 +6,7 @@ ENDCLASS.
 
 CLASS cx_sxml_parse_error IMPLEMENTATION.
   METHOD constructor.
+    super->constructor( ).
     me->xml_offset = xml_offset.
   ENDMETHOD.
 ENDCLASS.
