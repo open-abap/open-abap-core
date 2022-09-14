@@ -113,7 +113,11 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         objectdescr->mv_object_name = to_upper( p_name ). " todo, this should give syntax error, as they are not friends
         objectdescr->mv_object_type = oo_type. " todo, this should give syntax error, as they are not friends
       WHEN OTHERS.
-        CREATE DATA ref TYPE (p_name).
+        TRY.
+            CREATE DATA ref TYPE (p_name).
+          CATCH cx_sy_create_data_error.
+            RAISE type_not_found.
+        ENDTRY.
         type = describe_by_data_ref( ref ).
     ENDCASE.
   ENDMETHOD.
