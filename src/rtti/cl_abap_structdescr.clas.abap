@@ -111,6 +111,8 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
 
     FIELD-SYMBOLS <fs> TYPE any.
 
+    super->constructor( ).
+
 * todo, fail if input is not a structure?
     WRITE '@KERNEL for (const name of Object.keys(INPUT.data.value)) {'.
     WRITE '@KERNEL   lv_name.set(name.toUpperCase());'.
