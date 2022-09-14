@@ -3,17 +3,21 @@ CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
     METHODS
       constructor
         IMPORTING data TYPE any.
+
     METHODS get_table_line_type
       RETURNING
         VALUE(type) TYPE REF TO cl_abap_datadescr.
+
     CLASS-METHODS get
       IMPORTING type TYPE REF TO cl_abap_typedescr
       RETURNING VALUE(val) TYPE REF TO cl_abap_tabledescr.
+
     CLASS-METHODS get_with_keys
       IMPORTING
         p_line_type TYPE REF TO cl_abap_datadescr
-        p_keys TYPE any
+        p_keys      TYPE abap_table_keydescr_tab
       RETURNING VALUE(val) TYPE REF TO cl_abap_tabledescr.
+
     CLASS-METHODS create
       IMPORTING p_line_type TYPE REF TO cl_abap_typedescr
       RETURNING VALUE(ref) TYPE REF TO cl_abap_tabledescr.
@@ -34,7 +38,7 @@ CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
     CONSTANTS keydefkind_empty TYPE c LENGTH 1 VALUE 'E'.
 
   PRIVATE SECTION.
-    DATA lo_type TYPE REF TO cl_abap_typedescr.
+    DATA lo_line_type TYPE REF TO cl_abap_typedescr.
 ENDCLASS.
 
 CLASS cl_abap_tabledescr IMPLEMENTATION.
@@ -52,8 +56,7 @@ CLASS cl_abap_tabledescr IMPLEMENTATION.
 
   METHOD constructor.
     DATA lv_dummy TYPE i.
-    DATA lv_flag TYPE abap_bool.
-*    WRITE '@KERNEL console.dir(data);'.
+    DATA lv_flag  TYPE abap_bool.
 
     super->constructor( ).
 
@@ -61,10 +64,10 @@ CLASS cl_abap_tabledescr IMPLEMENTATION.
     has_unique_key = lv_flag.
 
     WRITE '@KERNEL lv_dummy = data.getRowType();'.
-    lo_type = cl_abap_typedescr=>describe_by_data( lv_dummy ).
+    lo_line_type = cl_abap_typedescr=>describe_by_data( lv_dummy ).
   ENDMETHOD.
 
   METHOD get_table_line_type.
-    type ?= lo_type.
+    type ?= lo_line_type.
   ENDMETHOD.
 ENDCLASS.
