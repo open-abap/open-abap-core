@@ -27,8 +27,8 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
     DATA ls_component  LIKE LINE OF lt_components.
     DATA lo_struct     TYPE REF TO cl_abap_structdescr.
-    DATA ref TYPE REF TO data.
-    FIELD-SYMBOLS <fs> TYPE any.
+    DATA lr_ref        TYPE REF TO data.
+    FIELD-SYMBOLS <fs>    TYPE any.
     FIELD-SYMBOLS <field> TYPE any.
 
     ls_component-name = 'FIELD'.
@@ -40,8 +40,8 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_not_initial( lo_struct->kind ).
     cl_abap_unit_assert=>assert_not_initial( lo_struct->type_kind ).
 
-    CREATE DATA ref TYPE HANDLE lo_struct.
-    ASSIGN ref->* TO <fs>.
+    CREATE DATA lr_ref TYPE HANDLE lo_struct.
+    ASSIGN lr_ref->* TO <fs>.
     ASSIGN COMPONENT 'FIELD' OF STRUCTURE <fs> TO <field>.
     cl_abap_unit_assert=>assert_subrc( ).
     <field> = 2.
