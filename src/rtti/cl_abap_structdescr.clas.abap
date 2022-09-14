@@ -80,6 +80,8 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     ENDLOOP.
     ref->update_components( ).
 
+    ref->type_kind = typekind_struct2.
+    ref->kind = kind_struct.
   ENDMETHOD.
 
   METHOD get_included_view.
