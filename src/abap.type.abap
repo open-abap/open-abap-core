@@ -32,7 +32,7 @@ TYPES: BEGIN OF abap_componentdescr,
          name       TYPE string,
          type       TYPE REF TO cl_abap_datadescr,
          as_include TYPE abap_bool,
-         type_kind  TYPE c LENGTH 1,
+*         type_kind  TYPE c LENGTH 1,
        END OF abap_componentdescr.
 TYPES abap_component_tab TYPE STANDARD TABLE OF abap_componentdescr WITH DEFAULT KEY.
 

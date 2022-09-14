@@ -31,7 +31,7 @@ CLASS ltcl_test IMPLEMENTATION.
     components = struct->get_components( ).
     READ TABLE components INDEX 1 INTO component.
     cl_abap_unit_assert=>assert_subrc( ).
-    cl_abap_unit_assert=>assert_not_initial( component-type_kind ).
+    cl_abap_unit_assert=>assert_not_initial( component-name ).
   ENDMETHOD.
 
   METHOD is_ddic_type.

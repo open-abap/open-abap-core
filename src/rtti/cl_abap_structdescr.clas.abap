@@ -44,8 +44,8 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
 
   PRIVATE SECTION.
     TYPES: BEGIN OF ty_refs,
-             name TYPE string,
-             ref  TYPE REF TO cl_abap_datadescr,
+             name      TYPE string,
+             ref       TYPE REF TO cl_abap_datadescr,
            END OF ty_refs.
     DATA mt_refs TYPE STANDARD TABLE OF ty_refs.
 ENDCLASS.
@@ -144,7 +144,6 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
       READ TABLE mt_refs INTO ls_ref WITH KEY name = ls_component-name.
       IF sy-subrc = 0.
         ret-type = ls_ref-ref.
-        ret-type_kind = ret-type->type_kind.
       ENDIF.
       " as_include type abap_bool,
       " suffix     type string,
