@@ -8,6 +8,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS get_component_type_not_found FOR TESTING RAISING cx_static_check.
     METHODS component_type_kind FOR TESTING RAISING cx_static_check.
     METHODS create_empty FOR TESTING RAISING cx_static_check.
+    METHODS create_basic FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -20,6 +21,19 @@ CLASS ltcl_test IMPLEMENTATION.
         cl_abap_unit_assert=>fail( ).
       CATCH cx_sy_struct_attributes.
     ENDTRY.
+  ENDMETHOD.
+
+  METHOD create_basic.
+    " DATA lt_components TYPE cl_abap_structdescr=>component_table.
+    " DATA ls_component  LIKE LINE OF lt_components.
+    " DATA lo_struct     TYPE REF TO cl_abap_structdescr.
+
+    " ls_component-name = 'FIELD'.
+    " ls_component-type = cl_abap_elemdescr=>get_i( ).
+    " APPEND ls_component TO lt_components.
+
+    " lo_struct = cl_abap_structdescr=>create( lt_components ).
+    " cl_abap_unit_assert=>assert_not_initial( lo_struct ).
   ENDMETHOD.
 
   METHOD component_type_kind.

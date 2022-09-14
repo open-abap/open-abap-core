@@ -200,9 +200,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->type_kind = typekind_float.
         type->kind = kind_elem.
       WHEN 'Structure'.
-        CREATE OBJECT type TYPE cl_abap_structdescr
-          EXPORTING
-            data = p_data.
+        type ?= cl_abap_structdescr=>construct_from_data( p_data ).
         type->type_kind = typekind_struct2.
         type->kind = kind_struct.
       WHEN 'Table'.

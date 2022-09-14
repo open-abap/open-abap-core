@@ -1,9 +1,10 @@
 CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr.
 
   PUBLIC SECTION.
-    METHODS
-      constructor
-        IMPORTING data TYPE any.
+    CLASS-METHODS
+      construct_from_data
+        IMPORTING data TYPE any
+        RETURNING VALUE(descr) TYPE REF TO cl_abap_structdescr.
 
     TYPES component       TYPE abap_componentdescr.
     TYPES component_table TYPE abap_component_tab.
@@ -117,7 +118,7 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     bool = ddic.
   ENDMETHOD.
 
-  METHOD constructor.
+  METHOD construct_from_data.
     DATA lv_name      TYPE string.
     DATA ls_component LIKE LINE OF components.
     DATA ls_ref       LIKE LINE OF mt_refs.
@@ -125,7 +126,7 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
 
     FIELD-SYMBOLS <fs> TYPE any.
 
-    super->constructor( ).
+    CREATE OBJECT descr.
 
 * todo, fail if input is not a structure?
     WRITE '@KERNEL for (const name of Object.keys(INPUT.data.value)) {'.
@@ -135,11 +136,11 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     ASSIGN COMPONENT lv_name OF STRUCTURE data TO <fs>.
     lo_datadescr ?= cl_abap_typedescr=>describe_by_data( <fs> ).
     ls_component-type_kind = lo_datadescr->type_kind.
-    APPEND ls_component TO components.
+    APPEND ls_component TO descr->components.
 
     ls_ref-name = lv_name.
-    ls_ref-ref = lo_datadescr.
-    APPEND ls_ref TO mt_refs.
+    ls_ref-ref  = lo_datadescr.
+    APPEND ls_ref TO descr->mt_refs.
     WRITE '@KERNEL }'.
   ENDMETHOD.
 
