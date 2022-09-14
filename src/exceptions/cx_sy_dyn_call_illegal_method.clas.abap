@@ -15,7 +15,7 @@ ENDCLASS.
 CLASS cx_sy_dyn_call_illegal_method IMPLEMENTATION.
 
   METHOD constructor.
-    RETURN.
+    super->constructor( previous = previous ).
   ENDMETHOD.
 
 ENDCLASS.
