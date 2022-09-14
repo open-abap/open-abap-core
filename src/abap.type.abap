@@ -25,6 +25,7 @@ TYPES abap_parmname          TYPE c LENGTH 30.
 TYPES abap_structkind        TYPE c LENGTH 1.
 TYPES abap_typekind          TYPE c LENGTH 1.
 TYPES abap_visibility        TYPE c LENGTH 1.
+TYPES abap_tablekind         TYPE c LENGTH 1.
 
 CONSTANTS abap_max_comp_name_ln TYPE i VALUE 30.
 
