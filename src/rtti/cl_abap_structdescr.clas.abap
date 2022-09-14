@@ -5,9 +5,9 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
       constructor
         IMPORTING data TYPE any.
 
-    TYPES component TYPE abap_componentdescr.
+    TYPES component       TYPE abap_componentdescr.
     TYPES component_table TYPE abap_component_tab.
-    TYPES included_view TYPE abap_component_view_tab.
+    TYPES included_view   TYPE abap_component_view_tab.
 
     METHODS
       get_components
@@ -53,6 +53,10 @@ ENDCLASS.
 CLASS cl_abap_structdescr IMPLEMENTATION.
 
   METHOD create.
+    IF lines( p_components ) = 0.
+      RAISE EXCEPTION TYPE cx_sy_struct_attributes.
+    ENDIF.
+
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
