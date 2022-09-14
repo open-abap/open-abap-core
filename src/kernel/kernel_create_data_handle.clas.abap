@@ -60,7 +60,7 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
           handle = lo_struct->get_component_type( ls_component-name )
         CHANGING
           dref   = field ).
-      WRITE '@KERNEL obj[ls_component.get().name.get().toLowerCase()] = field.get();'.
+      WRITE '@KERNEL obj[ls_component.get().name.get().toLowerCase()] = field;'.
     ENDLOOP.
     WRITE '@KERNEL dref.assign(new abap.types.Structure(obj));'.
   ENDMETHOD.
