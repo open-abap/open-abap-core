@@ -53,9 +53,19 @@ ENDCLASS.
 CLASS cl_abap_structdescr IMPLEMENTATION.
 
   METHOD create.
+    DATA ls_component LIKE LINE OF p_components.
+
     IF lines( p_components ) = 0.
       RAISE EXCEPTION TYPE cx_sy_struct_attributes.
     ENDIF.
+
+    LOOP AT p_components INTO ls_component.
+      IF ls_component-name IS INITIAL.
+        RAISE EXCEPTION TYPE cx_sy_struct_comp_name.
+      ELSEIF ls_component-type IS INITIAL.
+        RAISE EXCEPTION TYPE cx_sy_struct_comp_type.
+      ENDIF.
+    ENDLOOP.
 
     ASSERT 1 = 'todo'.
   ENDMETHOD.
