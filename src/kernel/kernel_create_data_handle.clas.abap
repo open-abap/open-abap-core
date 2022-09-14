@@ -77,7 +77,7 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
       CHANGING
         dref   = field ).
 
-    WRITE '@KERNEL dref.assign(new abap.types.Table(field.get()));'.
+    WRITE '@KERNEL dref.assign(new abap.types.Table(field));'.
   ENDMETHOD.
 
   METHOD elem.

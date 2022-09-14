@@ -14,6 +14,9 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lo_table TYPE REF TO cl_abap_tabledescr.
     DATA lt_keys  TYPE abap_table_keydescr_tab.
     DATA ls_key   LIKE LINE OF lt_keys.
+    DATA lr_ref   TYPE REF TO data.
+
+    FIELD-SYMBOLS <tab> TYPE ANY TABLE.
 
     ls_key-access_kind = cl_abap_tabledescr=>tablekind_std.
     ls_key-key_kind    = cl_abap_tabledescr=>keydefkind_default.
@@ -27,6 +30,10 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_not_initial( lo_table ).
     cl_abap_unit_assert=>assert_not_initial( lo_table->kind ).
     cl_abap_unit_assert=>assert_not_initial( lo_table->type_kind ).
+
+    CREATE DATA lr_ref TYPE HANDLE lo_table.
+    ASSIGN lr_ref->* TO <tab>.
+    INSERT 2 INTO TABLE <tab>.
   ENDMETHOD.
 
   METHOD test1.
