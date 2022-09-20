@@ -91,6 +91,10 @@ CLASS kernel_unit_runner IMPLEMENTATION.
       lv_message = ls_list-message.
       REPLACE ALL OCCURRENCES OF |"| IN lv_message WITH |\"|.
       REPLACE ALL OCCURRENCES OF |\n| IN lv_message WITH |\\n|.
+      REPLACE ALL OCCURRENCES OF |"| IN ls_list-expected WITH |\"|.
+      REPLACE ALL OCCURRENCES OF |\n| IN ls_list-expected WITH |\\n|.
+      REPLACE ALL OCCURRENCES OF |"| IN ls_list-actual WITH |\"|.
+      REPLACE ALL OCCURRENCES OF |\n| IN ls_list-actual WITH |\\n|.
       lv_string = |\{"class_name": "{ ls_list-class_name
         }","testclass_name": "{ ls_list-testclass_name
         }","method_name": "{ ls_list-method_name
