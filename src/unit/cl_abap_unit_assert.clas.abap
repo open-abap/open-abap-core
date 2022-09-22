@@ -96,6 +96,15 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
           level TYPE i OPTIONAL.
 
     CLASS-METHODS
+      assert_char_np
+        IMPORTING
+          act   TYPE clike
+          exp   TYPE clike
+          msg   TYPE string OPTIONAL
+          quit  TYPE i OPTIONAL
+          level TYPE i OPTIONAL.
+
+    CLASS-METHODS
       assert_bound
         IMPORTING
           act TYPE any
@@ -133,6 +142,12 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
 
   METHOD assert_char_cp.
     IF act NP exp.
+      RAISE EXCEPTION TYPE kernel_cx_assert.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD assert_char_np.
+    IF act CP exp.
       RAISE EXCEPTION TYPE kernel_cx_assert.
     ENDIF.
   ENDMETHOD.
