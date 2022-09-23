@@ -110,10 +110,14 @@ CLASS ltcl_test IMPLEMENTATION.
       act = lines( ls_result-list )
       exp = 1 ).
     READ TABLE ls_result-list INDEX 1 INTO ls_list.
-*    WRITE / ls_list-message.
+    cl_abap_unit_assert=>assert_subrc( ).
+
     cl_abap_unit_assert=>assert_char_np(
       act = ls_list-message
       exp = '*object Object*' ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = ls_list-message
+      exp = '*field*' ).
   ENDMETHOD.
 
   METHOD single_method_fail.
