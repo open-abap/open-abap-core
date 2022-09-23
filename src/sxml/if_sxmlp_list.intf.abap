@@ -1,0 +1,3 @@
+INTERFACE if_sxmlp_list PUBLIC.
+
+ENDINTERFACE.
