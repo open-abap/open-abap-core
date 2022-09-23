@@ -12,17 +12,17 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
 
     CLASS-METHODS abort
       IMPORTING
-        msg                    TYPE csequence OPTIONAL
-        detail                 TYPE csequence OPTIONAL
-        quit                   TYPE int1 DEFAULT 2 PREFERRED PARAMETER msg.
+        msg    TYPE csequence OPTIONAL
+        detail TYPE csequence OPTIONAL
+        quit   TYPE int1 DEFAULT 2 PREFERRED PARAMETER msg.
 
     CLASS-METHODS
       assert_differs
         IMPORTING
-          act TYPE string
-          exp TYPE string
-          msg TYPE string OPTIONAL
-          quit TYPE i OPTIONAL
+          act   TYPE string
+          exp   TYPE string
+          msg   TYPE string OPTIONAL
+          quit  TYPE i OPTIONAL
           level TYPE i OPTIONAL.
 
     CLASS-METHODS
