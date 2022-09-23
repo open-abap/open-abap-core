@@ -40,11 +40,43 @@ CLASS cl_http_utility DEFINITION PUBLIC.
         request TYPE REF TO if_http_request
         uri     TYPE string.
 
+    CLASS-METHODS escape_xml_attr_value
+      IMPORTING
+        unescaped      TYPE csequence
+      RETURNING
+        VALUE(escaped) TYPE string.
+
+    CLASS-METHODS escape_html
+      IMPORTING
+        unescaped         TYPE string
+        keep_num_char_ref TYPE abap_bool DEFAULT abap_undefined
+      RETURNING
+        VALUE(escaped)    TYPE string.
+
+    CLASS-METHODS escape_javascript
+      IMPORTING
+        unescaped      TYPE string
+        inside_html    TYPE abap_bool DEFAULT abap_false
+      RETURNING
+        VALUE(escaped) TYPE string.
+
 ENDCLASS.
 
 CLASS cl_http_utility IMPLEMENTATION.
 
   METHOD set_request_uri.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD escape_html.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD escape_javascript.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD escape_xml_attr_value.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
