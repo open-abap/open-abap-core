@@ -148,7 +148,9 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
 
   METHOD assert_char_np.
     IF act CP exp.
-      RAISE EXCEPTION TYPE kernel_cx_assert.
+      RAISE EXCEPTION TYPE kernel_cx_assert
+        EXPORTING
+          msg = |Actual: { act }|.
     ENDIF.
   ENDMETHOD.
 
