@@ -181,6 +181,8 @@
       "requested": true,
       "communication": true,
       "parameter": true,
+      "formDefinition": true,
+      "formImplementation": true,
       "ranges": true,
       "setExtended": true,
       "withHeaderLine": true,
