@@ -1,4 +1,4 @@
-CLASS cx_xslt_format_error DEFINITION PUBLIC INHERITING FROM cx_transformation_error.
+CLASS cx_xslt_format_error DEFINITION PUBLIC INHERITING FROM cx_xslt_system_error.
 
 ENDCLASS.
 
