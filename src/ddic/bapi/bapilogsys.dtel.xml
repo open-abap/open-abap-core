@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>BAPILOGSYS</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DATATYPE>CHAR</DATATYPE>
+    <HEADLEN>55</HEADLEN>
+    <SCRLEN1>09</SCRLEN1>
+    <SCRLEN2>16</SCRLEN2>
+    <SCRLEN3>38</SCRLEN3>
+    <DDTEXT>BAPILOGSYS</DDTEXT>
+    <REPTEXT>BAPILOGSYS</REPTEXT>
+    <SCRTEXT_S>BAPILOGSYS</SCRTEXT_S>
+    <SCRTEXT_M>BAPILOGSYS</SCRTEXT_M>
+    <SCRTEXT_L>BAPILOGSYS</SCRTEXT_L>
+    <DTELMASTER>E</DTELMASTER>
+    <LENG>000010</LENG>
+    <DECIMALS>000000</DECIMALS>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>
