@@ -83,6 +83,8 @@ TYPES: BEGIN OF abap_parmdescr,
        END OF abap_parmdescr.
 TYPES abap_parmdescr_tab TYPE STANDARD TABLE OF abap_parmdescr WITH KEY name.
 
+TYPES abap_component_symbol_tab TYPE HASHED TABLE OF abap_simple_componentdescr WITH UNIQUE KEY name.
+
 TYPES: BEGIN OF abap_func_parmbind,
          value     TYPE REF TO data,
          tables_wa TYPE REF TO data,

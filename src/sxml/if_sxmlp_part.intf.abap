@@ -1,0 +1,3 @@
+INTERFACE if_sxmlp_part PUBLIC.
+
+ENDINTERFACE.
