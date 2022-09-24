@@ -83,6 +83,8 @@ TYPES: BEGIN OF abap_parmdescr,
        END OF abap_parmdescr.
 TYPES abap_parmdescr_tab TYPE STANDARD TABLE OF abap_parmdescr WITH KEY name.
 
+TYPES abap_component_symbol_tab TYPE HASHED TABLE OF abap_simple_componentdescr WITH UNIQUE KEY name.
+
 TYPES: BEGIN OF abap_func_parmbind,
          value     TYPE REF TO data,
          tables_wa TYPE REF TO data,
@@ -90,6 +92,11 @@ TYPES: BEGIN OF abap_func_parmbind,
          name      TYPE abap_parmname,
        END OF abap_func_parmbind.
 TYPES abap_func_parmbind_tab TYPE SORTED TABLE OF abap_func_parmbind WITH UNIQUE KEY kind name.
+
+CONSTANTS abap_func_exporting TYPE abap_func_parmbind-kind VALUE 10.
+CONSTANTS abap_func_importing TYPE abap_func_parmbind-kind VALUE 20.
+CONSTANTS abap_func_tables    TYPE abap_func_parmbind-kind VALUE 30.
+CONSTANTS abap_func_changing  TYPE abap_func_parmbind-kind VALUE 40.
 
 TYPES: BEGIN OF abap_func_excpbind,
          message TYPE REF TO data,

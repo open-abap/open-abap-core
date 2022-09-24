@@ -1,5 +1,4 @@
 CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr.
-
   PUBLIC SECTION.
     CLASS-METHODS
       construct_from_data
@@ -9,6 +8,7 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
     TYPES component       TYPE abap_componentdescr.
     TYPES component_table TYPE abap_component_tab.
     TYPES included_view   TYPE abap_component_view_tab.
+    TYPES symbol_table    TYPE abap_component_symbol_tab.
 
     METHODS
       get_components
