@@ -91,6 +91,11 @@ TYPES: BEGIN OF abap_func_parmbind,
        END OF abap_func_parmbind.
 TYPES abap_func_parmbind_tab TYPE SORTED TABLE OF abap_func_parmbind WITH UNIQUE KEY kind name.
 
+CONSTANTS abap_func_exporting TYPE abap_func_parmbind-kind VALUE 10.
+CONSTANTS abap_func_importing TYPE abap_func_parmbind-kind VALUE 20.
+CONSTANTS abap_func_tables    TYPE abap_func_parmbind-kind VALUE 30.
+CONSTANTS abap_func_changing  TYPE abap_func_parmbind-kind VALUE 40.
+
 TYPES: BEGIN OF abap_func_excpbind,
          message TYPE REF TO data,
          value   TYPE i,
