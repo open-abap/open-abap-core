@@ -40,6 +40,10 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
       RETURNING
         VALUE(ref)   TYPE REF TO cl_abap_structdescr.
 
+    METHODS get_symbols
+      RETURNING
+        VALUE(p_result) TYPE symbol_table.
+
     DATA components TYPE abap_compdescr_tab.
     DATA struct_kind TYPE abap_structkind READ-ONLY.
 
@@ -54,6 +58,10 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
 ENDCLASS.
 
 CLASS cl_abap_structdescr IMPLEMENTATION.
+
+  METHOD get_symbols.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD create.
     DATA ls_component LIKE LINE OF p_components.
