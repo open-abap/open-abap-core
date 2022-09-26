@@ -6,6 +6,16 @@ CLASS cl_abap_objectdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
       RETURNING
         VALUE(p_descr_ref) TYPE REF TO cl_abap_datadescr.
 
+    METHODS get_method_parameter_type
+      IMPORTING
+        p_method_name      TYPE any
+        p_parameter_name   TYPE any
+      RETURNING
+        VALUE(p_descr_ref) TYPE REF TO cl_abap_datadescr
+      EXCEPTIONS
+        parameter_not_found
+        method_not_found.
+
     CONSTANTS changing  TYPE abap_parmkind VALUE 'C'.
     CONSTANTS exporting TYPE abap_parmkind VALUE 'E'.
     CONSTANTS importing TYPE abap_parmkind VALUE 'I'.
@@ -26,6 +36,10 @@ CLASS cl_abap_objectdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
 ENDCLASS.
 
 CLASS cl_abap_objectdescr IMPLEMENTATION.
+  METHOD get_method_parameter_type.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD get_attribute_type.
     DATA lv_name TYPE string.
     DATA l_sub   TYPE string.
