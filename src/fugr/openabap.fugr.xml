@@ -104,6 +104,35 @@
      </DOCUMENTATION>
     </item>
     <item>
+     <FUNCNAME>GENERATE_SEC_RANDOM</FUNCNAME>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>LENGTH</PARAMETER>
+       <DEFAULT>16</DEFAULT>
+       <REFERENCE>X</REFERENCE>
+       <TYP>I</TYP>
+      </RSIMP>
+     </IMPORT>
+     <EXPORT>
+      <RSEXP>
+       <PARAMETER>RANDOM</PARAMETER>
+       <REFERENCE>X</REFERENCE>
+       <TYP>XSTRING</TYP>
+      </RSEXP>
+     </EXPORT>
+     <EXCEPTION>
+      <RSEXC>
+       <EXCEPTION>INVALID_LENGTH</EXCEPTION>
+      </RSEXC>
+      <RSEXC>
+       <EXCEPTION>NO_MEMORY</EXCEPTION>
+      </RSEXC>
+      <RSEXC>
+       <EXCEPTION>INTERNAL_ERROR</EXCEPTION>
+      </RSEXC>
+     </EXCEPTION>
+    </item>
+    <item>
      <FUNCNAME>SYSTEM_CALLSTACK</FUNCNAME>
      <SHORT_TEXT>SYSTEM_CALLSTACK</SHORT_TEXT>
      <EXPORT>

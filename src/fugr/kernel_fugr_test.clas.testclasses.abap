@@ -5,10 +5,31 @@ CLASS ltcl_fugr DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS conversion_exit_isola_input FOR TESTING RAISING cx_root.
     METHODS conversion_exit_alpha_output_string FOR TESTING RAISING cx_root.
     METHODS conversion_exit_alpha_output_char FOR TESTING RAISING cx_root.
+    METHODS generate_sec_random FOR TESTING RAISING cx_root.
 
 ENDCLASS.
 
 CLASS ltcl_fugr IMPLEMENTATION.
+
+  METHOD generate_sec_random.
+
+    DATA lv_xstring TYPE xstring.
+
+    CALL FUNCTION 'GENERATE_SEC_RANDOM'
+      EXPORTING
+        length         = 8
+      IMPORTING
+        random         = lv_xstring
+      EXCEPTIONS
+        invalid_length = 1
+        no_memory      = 2
+        internal_error = 3
+        OTHERS         = 4.
+    ASSERT sy-subrc = 0.
+
+    cl_abap_unit_assert=>assert_not_initial( lv_xstring ).
+
+  ENDMETHOD.
 
   METHOD conversion_exit_alpha_output_char.
 
