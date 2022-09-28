@@ -20,6 +20,8 @@ CLASS lcl_dump IMPLEMENTATION.
 * avoid using RTTI,
       WHEN 'u' OR 'v'.
         rv_str = dump_structure( iv_val ).
+      WHEN 'h'.
+        rv_str = |[itab]|.
       WHEN OTHERS.
         rv_str = |{ iv_val }|.
     ENDCASE.
@@ -27,7 +29,8 @@ CLASS lcl_dump IMPLEMENTATION.
 
   METHOD dump_structure.
     DATA lt_components TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
-    DATA lv_name LIKE LINE OF lt_components.
+    DATA lv_name       LIKE LINE OF lt_components.
+    DATA lv_str        TYPE string.
     FIELD-SYMBOLS <fs> TYPE any.
 
 * avoid using RTTI,
@@ -38,7 +41,8 @@ CLASS lcl_dump IMPLEMENTATION.
       ENDIF.
       ASSIGN COMPONENT lv_name OF STRUCTURE iv_val TO <fs>.
       ASSERT sy-subrc = 0.
-      rv_str = rv_str && lv_name && |: | && |{ <fs> }|.
+      lv_str = to_string( <fs> ).
+      rv_str = rv_str && lv_name && |: | && |{ lv_str }|.
     ENDLOOP.
   ENDMETHOD.
 ENDCLASS.

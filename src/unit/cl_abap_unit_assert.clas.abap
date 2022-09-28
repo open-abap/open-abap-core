@@ -19,8 +19,8 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
     CLASS-METHODS
       assert_differs
         IMPORTING
-          act   TYPE string
-          exp   TYPE string
+          act   TYPE any
+          exp   TYPE any
           msg   TYPE string OPTIONAL
           quit  TYPE i OPTIONAL
           level TYPE i OPTIONAL.
@@ -175,13 +175,18 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD assert_differs.
-    IF act = exp.
-      RAISE EXCEPTION TYPE kernel_cx_assert
-        EXPORTING
-          msg = |Expected different values|
+    TRY.
+        assert_equals(
           act = act
-          exp = exp.
-    ENDIF.
+          exp = exp ).
+        RAISE EXCEPTION TYPE kernel_cx_assert
+          EXPORTING
+            msg = |Expected different values|
+            act = act
+            exp = exp.
+      CATCH kernel_cx_assert.
+        RETURN.
+    ENDTRY.
   ENDMETHOD.
 
   METHOD assert_true.
