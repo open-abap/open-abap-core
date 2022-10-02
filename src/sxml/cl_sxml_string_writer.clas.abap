@@ -20,7 +20,7 @@ CLASS cl_sxml_string_writer DEFINITION PUBLIC FINAL CREATE PRIVATE.
         encoding                 TYPE string DEFAULT 'UTF-8'
         PREFERRED PARAMETER type
       RETURNING
-        VALUE(writer) TYPE REF TO cl_sxml_string_writer
+        VALUE(writer)            TYPE REF TO cl_sxml_string_writer
       RAISING
         cx_sxml_illegal_argument_error.
 

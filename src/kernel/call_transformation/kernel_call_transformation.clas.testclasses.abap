@@ -15,6 +15,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
       IMPORTING iv_json TYPE string
       RETURNING VALUE(rv_xml) TYPE string
       RAISING cx_static_check.
+
     METHODS json_to_sxml1 FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
@@ -152,9 +153,7 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
       | </asx:values>\n| &&
       |</asx:abap>|.
 
-    CALL TRANSFORMATION id
-      SOURCE XML lv_xml
-      RESULT data = ls_foo.
+    CALL TRANSFORMATION id SOURCE XML lv_xml RESULT data = ls_foo.
 
     cl_abap_unit_assert=>assert_equals(
       act = ls_foo-foo
