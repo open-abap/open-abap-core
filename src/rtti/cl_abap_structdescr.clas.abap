@@ -15,10 +15,20 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
         RETURNING
           VALUE(rt_components) TYPE component_table.
 
-    METHODS:
-      get_ddic_field_list RETURNING VALUE(rt_components) TYPE ddfields,
-      is_ddic_type RETURNING VALUE(bool) TYPE abap_bool,
-      get_component_type
+    METHODS
+      get_ddic_field_list
+        IMPORTING
+          p_langu                  TYPE syst-langu DEFAULT sy-langu
+          p_including_substructres TYPE abap_bool DEFAULT abap_false
+        RETURNING
+          VALUE(rt_components)     TYPE ddfields
+        EXCEPTIONS
+          not_found
+          no_ddic_type.
+
+    METHODS is_ddic_type RETURNING VALUE(bool) TYPE abap_bool.
+
+    METHODS get_component_type
         IMPORTING
           p_name TYPE any
         RETURNING
