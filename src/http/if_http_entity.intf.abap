@@ -9,39 +9,62 @@ INTERFACE if_http_entity PUBLIC.
       offset TYPE i DEFAULT 0
       length TYPE i DEFAULT -1.
 
-  METHODS: set_data IMPORTING data TYPE xstring,
-    get_header_field
-      IMPORTING name TYPE string
-      RETURNING VALUE(value) TYPE string,
-    set_header_field
-      IMPORTING
-        name  TYPE string
-        value TYPE string,
-    get_form_fields
-      CHANGING
-        fields TYPE any,
-    set_compression,
-    add_multipart,
-    append_cdata IMPORTING data TYPE clike,
-    get_form_field IMPORTING name TYPE string RETURNING VALUE(value) TYPE string,
-    get_cdata RETURNING VALUE(data) TYPE string,
-    get_content_type
-      RETURNING VALUE(val) TYPE string,
-    get_serialized_message_length
-      EXPORTING
-        VALUE(body_length) TYPE i
-        VALUE(header_length) TYPE i,
-    set_content_type
-      IMPORTING
-        content_type TYPE string,
-    get_data
-      RETURNING
-        VALUE(data) TYPE xstring,
-    get_header_fields CHANGING fields TYPE any,
-    to_xstring
-      RETURNING
-        VALUE(data) TYPE xstring,
-    get_cookies CHANGING cookies TYPE any.
+  METHODS set_data
+    IMPORTING
+      data TYPE xstring.
+
+  METHODS get_header_field
+    IMPORTING
+      name TYPE string
+    RETURNING
+      VALUE(value) TYPE string.
+
+  METHODS set_header_field
+    IMPORTING
+      name  TYPE string
+      value TYPE string.
+
+  METHODS get_form_fields
+    CHANGING
+      fields TYPE tihttpnvp.
+
+  METHODS set_compression.
+
+  METHODS add_multipart
+    IMPORTING
+      suppress_content_length TYPE abap_bool DEFAULT abap_false
+    RETURNING
+      VALUE(entity) TYPE REF TO if_http_entity.
+
+  METHODS append_cdata IMPORTING data TYPE clike.
+
+  METHODS get_form_field IMPORTING name TYPE string RETURNING VALUE(value) TYPE string.
+
+  METHODS get_cdata RETURNING VALUE(data) TYPE string.
+
+  METHODS get_content_type
+    RETURNING VALUE(val) TYPE string.
+
+  METHODS get_serialized_message_length
+    EXPORTING
+      VALUE(body_length) TYPE i
+      VALUE(header_length) TYPE i.
+
+  METHODS set_content_type
+    IMPORTING
+      content_type TYPE string.
+
+  METHODS get_data
+    RETURNING
+      VALUE(data) TYPE xstring.
+
+  METHODS get_header_fields CHANGING fields TYPE any.
+
+  METHODS to_xstring
+    RETURNING
+      VALUE(data) TYPE xstring.
+
+  METHODS get_cookies CHANGING cookies TYPE any.
 
   METHODS add_cookie_field
     IMPORTING
@@ -95,8 +118,8 @@ INTERFACE if_http_entity PUBLIC.
     IMPORTING
       cookie_name TYPE string
       cookie_path TYPE string OPTIONAL
-      field_name TYPE string
-      base64 TYPE i DEFAULT 1
+      field_name  TYPE string
+      base64       TYPE i DEFAULT 1
     RETURNING
       VALUE(field_value) TYPE string.
 
