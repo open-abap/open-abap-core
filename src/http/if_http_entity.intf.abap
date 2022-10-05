@@ -194,7 +194,7 @@ INTERFACE if_http_entity PUBLIC.
   METHODS delete_cookie
     IMPORTING
       name TYPE string
-      path TYPE string DEFAULT ``.
+      path TYPE string OPTIONAL.
 
   METHODS delete_header_field
     IMPORTING
@@ -203,4 +203,5 @@ INTERFACE if_http_entity PUBLIC.
   METHODS delete_header_field_secure
     IMPORTING
       name TYPE string.
+
 ENDINTERFACE.
