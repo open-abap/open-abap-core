@@ -29,7 +29,7 @@
     "max_one_method_parameter_per_line": false,
     "method_length": false,
     "method_parameter_names": false,
-    "mix_returning": true,
+    "mix_returning": false,
     "use_new": true,
     "use_class_based_exceptions": false,
     "use_bool_expression": true,
