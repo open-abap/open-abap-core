@@ -1,72 +1,35 @@
 INTERFACE if_http_response PUBLIC.
 
-  METHODS get_header_field
-    IMPORTING
-      name TYPE string
-    RETURNING
-      VALUE(value) TYPE string.
+  INTERFACES if_http_entity.
+
+  ALIASES get_header_field FOR if_http_entity~get_header_field.
+  ALIASES get_cdata FOR if_http_entity~get_cdata.
+  ALIASES get_content_type FOR if_http_entity~get_content_type.
+  ALIASES set_content_type FOR if_http_entity~set_content_type.
+  ALIASES get_data FOR if_http_entity~get_data.
+  ALIASES set_data FOR if_http_entity~set_data.
+  ALIASES get_header_fields FOR if_http_entity~get_header_fields.
+  ALIASES set_header_field FOR if_http_entity~set_header_field.
+  ALIASES set_cdata FOR if_http_entity~set_cdata.
+  ALIASES append_cdata FOR if_http_entity~append_cdata.
+  ALIASES set_cookie FOR if_http_entity~set_cookie.
+  ALIASES delete_header_field FOR if_http_entity~delete_header_field.
 
   METHODS get_status
     EXPORTING
       code   TYPE i
       reason TYPE string.
 
-  METHODS get_cdata
-    RETURNING
-      VALUE(data) TYPE string.
-
-  METHODS get_content_type
-    RETURNING
-      VALUE(val) TYPE string.
-
-  METHODS set_content_type
+  METHODS set_status
     IMPORTING
-      val TYPE string.
-
-  METHODS get_data
-    RETURNING VALUE(val) TYPE xstring.
-
-  METHODS set_data
-    IMPORTING data TYPE xstring.
-
-  METHODS get_header_fields
-    CHANGING
-      fields TYPE tihttpnvp.
-
-  METHODS
-    set_header_field
-      IMPORTING
-        name TYPE string
-        value TYPE string.
-
-  METHODS
-    set_status
-      IMPORTING
-        code   TYPE i
-        reason TYPE string.
-
-  METHODS set_cdata IMPORTING data TYPE string.
-
-  METHODS append_cdata IMPORTING data TYPE string.
-
-  METHODS set_cookie
-    IMPORTING
-      name    TYPE string
-      value   TYPE string
-      path    TYPE string OPTIONAL
-      domain  TYPE string OPTIONAL
-      expires TYPE string OPTIONAL
-      secure  TYPE i OPTIONAL.
+      code   TYPE i
+      reason TYPE string.
 
   METHODS delete_cookie_at_client
     IMPORTING
       name   TYPE string
       path   TYPE string OPTIONAL
       domain TYPE string OPTIONAL.
-
-  METHODS delete_header_field
-    IMPORTING
-      name TYPE string.
 
   METHODS redirect
     IMPORTING
