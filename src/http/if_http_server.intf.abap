@@ -9,6 +9,8 @@ INTERFACE if_http_server PUBLIC.
   CLASS-DATA session_id TYPE string READ-ONLY.
   CLASS-DATA authentication_method TYPE i READ-ONLY.
 
+  CONSTANTS authmethod_service TYPE i VALUE 4.
+
   METHODS logoff IMPORTING redirect_url TYPE string OPTIONAL.
   METHODS set_session_stateful.
 
