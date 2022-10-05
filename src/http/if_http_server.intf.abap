@@ -7,9 +7,9 @@ INTERFACE if_http_server PUBLIC.
   CONSTANTS co_enabled TYPE i VALUE 1.
 
   CLASS-DATA session_id TYPE string READ-ONLY.
+  CLASS-DATA authentication_method TYPE i READ-ONLY.
 
-  METHODS:
-    logoff IMPORTING redirect_url TYPE string OPTIONAL,
-    set_session_stateful.
+  METHODS logoff IMPORTING redirect_url TYPE string OPTIONAL.
+  METHODS set_session_stateful.
 
 ENDINTERFACE.

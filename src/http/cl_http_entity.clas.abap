@@ -14,6 +14,10 @@ ENDCLASS.
 
 CLASS cl_http_entity IMPLEMENTATION.
 
+  METHOD if_http_response~append_cdata.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_http_response~set_header_field.
     DATA ls_header LIKE LINE OF mt_headers.
     FIELD-SYMBOLS <ls_header> LIKE LINE OF mt_headers.
