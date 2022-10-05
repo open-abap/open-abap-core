@@ -46,4 +46,35 @@ INTERFACE if_http_request PUBLIC.
       username  TYPE string
       password  TYPE string.
 
+  METHODS copy
+    RETURNING
+      VALUE(request) TYPE REF TO if_http_request.
+
+  METHODS get_authorization
+    EXPORTING
+      auth_type TYPE i
+      username  TYPE string
+      password  TYPE string.
+
+  METHODS get_form_data
+    IMPORTING
+      name TYPE string
+    CHANGING
+      data TYPE data.
+
+  METHODS get_raw_message
+    RETURNING
+      VALUE(data) TYPE xstring.
+
+  METHODS get_uri_parameter
+    IMPORTING
+      name         TYPE string
+    RETURNING
+      VALUE(value) TYPE string.
+
+  METHODS get_user_agent
+    EXPORTING
+      user_agent_type    TYPE i
+      user_agent_version TYPE i.
+
 ENDINTERFACE.
