@@ -6,8 +6,8 @@ INTERFACE if_http_entity PUBLIC.
   METHODS set_cdata
     IMPORTING
       data   TYPE string
-      offset TYPE i DEFAULT 0
-      length TYPE i DEFAULT -1.
+      offset TYPE i OPTIONAL
+      length TYPE i OPTIONAL.
 
   METHODS set_data
     IMPORTING
@@ -78,14 +78,14 @@ INTERFACE if_http_entity PUBLIC.
     IMPORTING
       data     TYPE string
       encoding TYPE i OPTIONAL
-      offset   TYPE i DEFAULT 0
-      length   TYPE i DEFAULT -1.
+      offset   TYPE i OPTIONAL
+      length   TYPE i OPTIONAL.
 
   METHODS append_data
     IMPORTING
-      data TYPE xstring
-      offset TYPE i DEFAULT 0
-      length TYPE i DEFAULT -1.
+      data   TYPE xstring
+      offset TYPE i OPTIONAL
+      length TYPE i OPTIONAL.
 
   METHODS delete_cookie_secure
     IMPORTING

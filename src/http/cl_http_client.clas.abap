@@ -165,7 +165,7 @@ CLASS cl_http_client IMPLEMENTATION.
     WRITE '@KERNEL }'.
 
 
-    WRITE '@KERNEL this.if_http_client$response.get().content_type.set(response.headers["content-type"] || "");'.
+    WRITE '@KERNEL this.if_http_client$response.get().mv_content_type.set(response.headers["content-type"] || "");'.
     WRITE '@KERNEL this.if_http_client$response.get().mv_status.set(response.statusCode);'.
     WRITE '@KERNEL this.if_http_client$response.get().mv_data.set(response.body.toString("hex").toUpperCase());'.
 
