@@ -47,6 +47,8 @@ INTERFACE if_http_response PUBLIC.
 
   METHODS set_cdata IMPORTING data TYPE string.
 
+  METHODS append_cdata IMPORTING data TYPE string.
+
   METHODS set_cookie
     IMPORTING
       name    TYPE string

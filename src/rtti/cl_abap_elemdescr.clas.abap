@@ -37,10 +37,45 @@ CLASS cl_abap_elemdescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
         p_length TYPE i
       RETURNING
         VALUE(p_result) TYPE REF TO cl_abap_elemdescr.
+    CLASS-METHODS get_p
+      IMPORTING
+        p_length TYPE i
+        p_decimals TYPE i
+      RETURNING
+        VALUE(p_result) TYPE REF TO cl_abap_elemdescr.
+    CLASS-METHODS get_n
+      IMPORTING
+        p_length TYPE i
+      RETURNING
+        VALUE(p_result) TYPE REF TO cl_abap_elemdescr.
+    CLASS-METHODS get_x
+      IMPORTING
+        p_length TYPE i
+      RETURNING
+        VALUE(p_result) TYPE REF TO cl_abap_elemdescr.
+    CLASS-METHODS get_xstring
+      RETURNING
+        VALUE(p_result) TYPE REF TO cl_abap_elemdescr.
 
 ENDCLASS.
 
 CLASS cl_abap_elemdescr IMPLEMENTATION.
+
+  METHOD get_p.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get_n.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get_x.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get_xstring.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD get_ddic_field.
     p_flddescr-tabname  = absolute_name.
