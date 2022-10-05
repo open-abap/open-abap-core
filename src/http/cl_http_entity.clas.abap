@@ -13,9 +13,31 @@ CLASS cl_http_entity DEFINITION PUBLIC CREATE PRIVATE.
 ENDCLASS.
 
 CLASS cl_http_entity IMPLEMENTATION.
+  METHOD if_http_request~get_user_agent.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_http_request~get_uri_parameter.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_http_request~get_raw_message.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_http_request~get_form_data.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_http_request~get_authorization.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_http_request~copy.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD if_http_request~set_authorization.
-* ok, not entity
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
