@@ -9,7 +9,7 @@ INTERFACE if_http_request PUBLIC.
   METHODS
     set_header_field
       IMPORTING
-        name TYPE string
+        name  TYPE string
         value TYPE string.
 
   METHODS
@@ -65,5 +65,26 @@ INTERFACE if_http_request PUBLIC.
       index TYPE i
     RETURNING
       VALUE(entity) TYPE REF TO if_http_entity.
+
+  METHODS set_authorization
+    IMPORTING
+      auth_type TYPE i DEFAULT 1
+      username  TYPE string
+      password  TYPE string.
+
+  METHODS add_multipart
+    IMPORTING
+      suppress_content_length TYPE abap_bool DEFAULT abap_false
+    RETURNING
+      VALUE(entity) TYPE REF TO if_http_entity.
+
+  METHODS get_cookie_field
+    IMPORTING
+      cookie_name TYPE string
+      cookie_path TYPE string OPTIONAL
+      field_name  TYPE string
+      base64      TYPE i DEFAULT 1
+    RETURNING
+      VALUE(field_value) TYPE string.
 
 ENDINTERFACE.

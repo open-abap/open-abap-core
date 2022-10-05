@@ -3,16 +3,28 @@ CLASS cl_http_entity DEFINITION PUBLIC CREATE PRIVATE.
     INTERFACES if_http_response.
     INTERFACES if_http_request.
   PRIVATE SECTION.
-    DATA mv_status TYPE i.
-    DATA mv_reason TYPE string.
-    DATA content_type TYPE string.
-    DATA mv_method TYPE string.
-    DATA mv_data TYPE xstring.
-    DATA mt_headers TYPE tihttpnvp.
+    DATA mv_status      TYPE i.
+    DATA mv_reason      TYPE string.
+    DATA content_type   TYPE string.
+    DATA mv_method      TYPE string.
+    DATA mv_data        TYPE xstring.
+    DATA mt_headers     TYPE tihttpnvp.
     DATA mt_form_fields TYPE tihttpnvp.
 ENDCLASS.
 
 CLASS cl_http_entity IMPLEMENTATION.
+
+  METHOD if_http_request~set_authorization.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_http_request~add_multipart.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_http_request~get_cookie_field.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD if_http_response~append_cdata.
     ASSERT 1 = 'todo'.

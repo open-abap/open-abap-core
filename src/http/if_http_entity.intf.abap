@@ -19,7 +19,7 @@ INTERFACE if_http_entity PUBLIC.
         value TYPE string,
     get_form_fields
       CHANGING
-        fields TYPE string,
+        fields TYPE any,
     set_compression,
     add_multipart,
     append_cdata IMPORTING data TYPE clike,
