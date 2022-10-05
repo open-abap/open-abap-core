@@ -37,4 +37,36 @@ INTERFACE if_http_response PUBLIC.
       permanently        TYPE i OPTIONAL
       protocol_dependent TYPE i OPTIONAL.
 
+  METHODS copy
+    RETURNING
+      VALUE(response) TYPE REF TO if_http_response.
+
+  METHODS get_raw_message
+    RETURNING
+      VALUE(data) TYPE xstring.
+
+  METHODS server_cache_browser_dependent
+    IMPORTING
+      dependent TYPE boolean DEFAULT 'X'.
+
+  METHODS server_cache_expire_abs
+    IMPORTING
+      expires_abs_date  TYPE d OPTIONAL
+      expires_abs_time  TYPE t OPTIONAL
+      etag              TYPE char32 OPTIONAL
+      browser_dependent TYPE boolean DEFAULT ' '
+      no_ufo_cache      TYPE boolean DEFAULT ' '.
+
+  METHODS server_cache_expire_default
+    IMPORTING
+      etag TYPE char32 OPTIONAL
+      browser_dependent TYPE boolean DEFAULT ' '
+      no_ufo_cache TYPE boolean DEFAULT ' '.
+
+  METHODS server_cache_expire_rel
+    IMPORTING
+      !expires_rel TYPE i
+      !etag TYPE char32 OPTIONAL
+      !browser_dependent TYPE boolean DEFAULT ' '
+      !no_ufo_cache TYPE boolean DEFAULT ' '.
 ENDINTERFACE.

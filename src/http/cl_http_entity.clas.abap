@@ -13,6 +13,31 @@ CLASS cl_http_entity DEFINITION PUBLIC CREATE PRIVATE.
 ENDCLASS.
 
 CLASS cl_http_entity IMPLEMENTATION.
+
+  METHOD if_http_response~server_cache_expire_rel.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_http_response~server_cache_expire_default.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_http_response~server_cache_expire_abs.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_http_response~server_cache_browser_dependent.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_http_response~get_raw_message.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_http_response~copy.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_http_request~get_user_agent.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
