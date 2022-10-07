@@ -65,7 +65,11 @@ CLASS cl_abap_conv_in_ce IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD uccp.
-    ASSERT 1 = 'todo'.
+    DATA int TYPE i.
+    DATA hex TYPE x LENGTH 2.
+    hex = uccp.
+    int = hex.
+    char = uccpi( int ).
   ENDMETHOD.
 
   METHOD uccpi.
