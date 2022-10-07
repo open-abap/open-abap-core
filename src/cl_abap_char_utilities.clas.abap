@@ -36,7 +36,7 @@ CLASS cl_abap_char_utilities IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_simple_spaces_for_cur_cp.
-    ASSERT 1 = 'todo'.
+    CONCATENATE ` ` horizontal_tab vertical_tab newline cr_lf(1) form_feed INTO s_str.
   ENDMETHOD.
 
 ENDCLASS.
