@@ -55,6 +55,9 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
 
     DATA source TYPE string.
     DATA lt_stokesx TYPE ty_stokesx.
+    DATA ls_stokesx LIKE LINE OF lt_stokesx.
+    DATA lt_stokes TYPE stokes_tab.
+    DATA ls_stokes LIKE LINE OF lt_stokes.
     DATA lt_sstmnt  TYPE ty_sstmnt.
 
     FIELD-SYMBOLS <tokens>     TYPE ty_stokesx.
@@ -69,7 +72,15 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
         et_stokesx = lt_stokesx
         et_sstmnt  = lt_sstmnt ).
 
-    WRITE '@KERNEL INPUT.tokens_into.set(lt_stokesx);'.
+    LOOP AT lt_stokesx INTO ls_stokesx.
+      CLEAR ls_stokes.
+      MOVE-CORRESPONDING ls_stokesx TO ls_stokes.
+      APPEND ls_stokes TO lt_stokes.
+    ENDLOOP.
+
+    WRITE '@KERNEL const len = Object.keys(INPUT.tokens_into.getRowType().get()).length;'.
+    WRITE '@KERNEL INPUT.tokens_into.set(len == 4 ? lt_stokes : lt_stokesx);'.
+
     WRITE '@KERNEL INPUT.statements_into.set(lt_sstmnt);'.
 
   ENDMETHOD.

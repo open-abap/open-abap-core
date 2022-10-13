@@ -37,9 +37,9 @@ CLASS ltcl_scan IMPLEMENTATION.
 
     APPEND 'WRITE hello.' TO it_source.
 
-    " SCAN ABAP-SOURCE it_source
-    "   STATEMENTS INTO lt_statements
-    "   TOKENS INTO lt_tokens.
+    SCAN ABAP-SOURCE it_source
+      STATEMENTS INTO lt_statements
+      TOKENS INTO lt_tokens.
 
     " ASSERT lines( lt_statements ) = 1.
     " ASSERT lines( lt_tokens ) = 2.
