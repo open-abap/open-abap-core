@@ -41,8 +41,8 @@ CLASS ltcl_scan IMPLEMENTATION.
       STATEMENTS INTO lt_statements
       TOKENS INTO lt_tokens.
 
-    " ASSERT lines( lt_statements ) = 1.
-    " ASSERT lines( lt_tokens ) = 2.
+    ASSERT lines( lt_statements ) = 1.
+    ASSERT lines( lt_tokens ) = 2.
   ENDMETHOD.
 
   METHOD dump_tokens.

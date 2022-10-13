@@ -53,21 +53,18 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
 
 * non-goal: good performance
 
-    DATA source TYPE string.
+    DATA lt_sstmnt  TYPE ty_sstmnt.
+    DATA lt_stokes  TYPE stokes_tab.
+    DATA ls_stokes  LIKE LINE OF lt_stokes.
     DATA lt_stokesx TYPE ty_stokesx.
     DATA ls_stokesx LIKE LINE OF lt_stokesx.
-    DATA lt_stokes TYPE stokes_tab.
-    DATA ls_stokes LIKE LINE OF lt_stokes.
-    DATA lt_sstmnt  TYPE ty_sstmnt.
+    DATA lv_source  TYPE string.
 
-    FIELD-SYMBOLS <tokens>     TYPE ty_stokesx.
-    FIELD-SYMBOLS <statements> TYPE ty_sstmnt.
-
-    WRITE '@KERNEL source.set(INPUT.scan_abap_source.array ? INPUT.scan_abap_source.array().map(e => e.get()).join("\n") : INPUT.scan_abap_source.get());'.
+    WRITE '@KERNEL lv_source.set(INPUT.scan_abap_source.array ? INPUT.scan_abap_source.array().map(e => e.get()).join("\n") : INPUT.scan_abap_source.get());'.
 
     call_internal(
       EXPORTING
-        source     = source
+        source     = lv_source
       IMPORTING
         et_stokesx = lt_stokesx
         et_sstmnt  = lt_sstmnt ).
