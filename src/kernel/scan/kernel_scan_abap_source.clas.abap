@@ -5,6 +5,13 @@ CLASS kernel_scan_abap_source DEFINITION PUBLIC.
     TYPES ty_stokesx TYPE STANDARD TABLE OF stokesx WITH DEFAULT KEY.
     TYPES ty_sstmnt TYPE STANDARD TABLE OF sstmnt WITH DEFAULT KEY.
   PRIVATE SECTION.
+    CLASS-METHODS call_internal
+      IMPORTING
+        source     TYPE string
+      EXPORTING
+        et_stokesx TYPE ty_stokesx
+        et_sstmnt  TYPE ty_sstmnt.
+
     CONSTANTS: BEGIN OF gc_token,
                  comment    TYPE c LENGTH 1 VALUE 'C',
                  identifier TYPE c LENGTH 1 VALUE 'I',
@@ -43,6 +50,8 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
 
   METHOD call.
 
+* non-goal: good performance
+
     DATA source TYPE string.
     FIELD-SYMBOLS <tokens>     TYPE ty_stokesx.
     FIELD-SYMBOLS <statements> TYPE ty_sstmnt.
@@ -51,7 +60,16 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
     WRITE '@KERNEL fs_tokens_.assign(INPUT.tokens_into);'.
     WRITE '@KERNEL fs_statements_.assign(INPUT.statements_into);'.
 
-* non-goal: good performance
+    call_internal(
+      EXPORTING
+        source     = source
+      IMPORTING
+        et_stokesx = <tokens>
+        et_sstmnt  = <statements> ).
+
+  ENDMETHOD.
+
+  METHOD call_internal.
 
 * build tokens in sequence of occurence in the source
 * take care of chained statements
@@ -59,14 +77,14 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
       EXPORTING
         source        = source
       IMPORTING
-        et_tokens     = <tokens>
-        et_statements = <statements> ).
+        et_tokens     = et_stokesx
+        et_statements = et_sstmnt ).
 
 * move comment tokens and add/change statements to comment type
     pass2(
       CHANGING
-        ct_tokens     = <tokens>
-        ct_statements = <statements> ).
+        ct_tokens     = et_stokesx
+        ct_statements = et_sstmnt ).
 
   ENDMETHOD.
 

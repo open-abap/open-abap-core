@@ -15,6 +15,7 @@ CLASS ltcl_scan DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS comment_sequence_two FOR TESTING RAISING cx_static_check.
     METHODS some_type FOR TESTING RAISING cx_static_check.
     METHODS two_types FOR TESTING RAISING cx_static_check.
+    METHODS stokes FOR TESTING RAISING cx_static_check.
 
     DATA tokens TYPE STANDARD TABLE OF stokesx WITH DEFAULT KEY.
     DATA statements TYPE STANDARD TABLE OF sstmnt WITH DEFAULT KEY.
@@ -28,6 +29,21 @@ CLASS ltcl_scan DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 ENDCLASS.
 
 CLASS ltcl_scan IMPLEMENTATION.
+
+  METHOD stokes.
+    DATA it_source     TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA lt_statements TYPE sstmnt_tab.
+    DATA lt_tokens     TYPE stokes_tab.
+
+    APPEND 'WRITE hello.' TO it_source.
+
+    " SCAN ABAP-SOURCE it_source
+    "   STATEMENTS INTO lt_statements
+    "   TOKENS INTO lt_tokens.
+
+    " ASSERT lines( lt_statements ) = 1.
+    " ASSERT lines( lt_tokens ) = 2.
+  ENDMETHOD.
 
   METHOD dump_tokens.
     DATA token LIKE LINE OF tokens.
