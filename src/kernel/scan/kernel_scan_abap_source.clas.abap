@@ -2,9 +2,10 @@ CLASS kernel_scan_abap_source DEFINITION PUBLIC.
 * handling of ABAP statement SCAN ABAP-SOURCE
   PUBLIC SECTION.
     CLASS-METHODS call IMPORTING input TYPE any.
+  PRIVATE SECTION.
     TYPES ty_stokesx TYPE STANDARD TABLE OF stokesx WITH DEFAULT KEY.
     TYPES ty_sstmnt TYPE STANDARD TABLE OF sstmnt WITH DEFAULT KEY.
-  PRIVATE SECTION.
+
     CLASS-METHODS call_internal
       IMPORTING
         source     TYPE string
@@ -53,19 +54,23 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
 * non-goal: good performance
 
     DATA source TYPE string.
+    DATA lt_stokesx TYPE ty_stokesx.
+    DATA lt_sstmnt  TYPE ty_sstmnt.
+
     FIELD-SYMBOLS <tokens>     TYPE ty_stokesx.
     FIELD-SYMBOLS <statements> TYPE ty_sstmnt.
 
     WRITE '@KERNEL source.set(INPUT.scan_abap_source.array ? INPUT.scan_abap_source.array().map(e => e.get()).join("\n") : INPUT.scan_abap_source.get());'.
-    WRITE '@KERNEL fs_tokens_.assign(INPUT.tokens_into);'.
-    WRITE '@KERNEL fs_statements_.assign(INPUT.statements_into);'.
 
     call_internal(
       EXPORTING
         source     = source
       IMPORTING
-        et_stokesx = <tokens>
-        et_sstmnt  = <statements> ).
+        et_stokesx = lt_stokesx
+        et_sstmnt  = lt_sstmnt ).
+
+    WRITE '@KERNEL INPUT.tokens_into.set(lt_stokesx);'.
+    WRITE '@KERNEL INPUT.statements_into.set(lt_sstmnt);'.
 
   ENDMETHOD.
 
