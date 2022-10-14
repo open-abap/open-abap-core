@@ -17,10 +17,20 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS decfloat34_eq FOR TESTING RAISING cx_static_check.
     METHODS decfloat34_ne FOR TESTING RAISING cx_static_check.
     METHODS numc_eq FOR TESTING RAISING cx_static_check.
+    METHODS char_n_pack FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
+
+  METHOD char_n_pack.
+    TYPES total TYPE p LENGTH 3 DECIMALS 2.
+    DATA val TYPE total.
+    val = '15.2'.
+    cl_abap_unit_assert=>assert_equals(
+      exp = '15.2'
+      act = val ).
+  ENDMETHOD.
 
   METHOD equals_tol.
     CONSTANTS pi TYPE f VALUE '3.14159265359'.
