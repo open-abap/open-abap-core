@@ -2,9 +2,17 @@ CLASS kernel_scan_abap_source DEFINITION PUBLIC.
 * handling of ABAP statement SCAN ABAP-SOURCE
   PUBLIC SECTION.
     CLASS-METHODS call IMPORTING input TYPE any.
+  PRIVATE SECTION.
     TYPES ty_stokesx TYPE STANDARD TABLE OF stokesx WITH DEFAULT KEY.
     TYPES ty_sstmnt TYPE STANDARD TABLE OF sstmnt WITH DEFAULT KEY.
-  PRIVATE SECTION.
+
+    CLASS-METHODS call_internal
+      IMPORTING
+        source     TYPE string
+      EXPORTING
+        et_stokesx TYPE ty_stokesx
+        et_sstmnt  TYPE ty_sstmnt.
+
     CONSTANTS: BEGIN OF gc_token,
                  comment    TYPE c LENGTH 1 VALUE 'C',
                  identifier TYPE c LENGTH 1 VALUE 'I',
@@ -43,15 +51,38 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
 
   METHOD call.
 
-    DATA source TYPE string.
-    FIELD-SYMBOLS <tokens>     TYPE ty_stokesx.
-    FIELD-SYMBOLS <statements> TYPE ty_sstmnt.
-
-    WRITE '@KERNEL source.set(INPUT.scan_abap_source.array ? INPUT.scan_abap_source.array().map(e => e.get()).join("\n") : INPUT.scan_abap_source.get());'.
-    WRITE '@KERNEL fs_tokens_.assign(INPUT.tokens_into);'.
-    WRITE '@KERNEL fs_statements_.assign(INPUT.statements_into);'.
-
 * non-goal: good performance
+
+    DATA lt_sstmnt  TYPE ty_sstmnt.
+    DATA lt_stokes  TYPE stokes_tab.
+    DATA ls_stokes  LIKE LINE OF lt_stokes.
+    DATA lt_stokesx TYPE ty_stokesx.
+    DATA ls_stokesx LIKE LINE OF lt_stokesx.
+    DATA lv_source  TYPE string.
+
+    WRITE '@KERNEL lv_source.set(INPUT.scan_abap_source.array ? INPUT.scan_abap_source.array().map(e => e.get()).join("\n") : INPUT.scan_abap_source.get());'.
+
+    call_internal(
+      EXPORTING
+        source     = lv_source
+      IMPORTING
+        et_stokesx = lt_stokesx
+        et_sstmnt  = lt_sstmnt ).
+
+    LOOP AT lt_stokesx INTO ls_stokesx.
+      CLEAR ls_stokes.
+      MOVE-CORRESPONDING ls_stokesx TO ls_stokes.
+      APPEND ls_stokes TO lt_stokes.
+    ENDLOOP.
+
+    WRITE '@KERNEL const len = Object.keys(INPUT.tokens_into.getRowType().get()).length;'.
+    WRITE '@KERNEL INPUT.tokens_into.set(len == 4 ? lt_stokes : lt_stokesx);'.
+
+    WRITE '@KERNEL INPUT.statements_into.set(lt_sstmnt);'.
+
+  ENDMETHOD.
+
+  METHOD call_internal.
 
 * build tokens in sequence of occurence in the source
 * take care of chained statements
@@ -59,14 +90,14 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
       EXPORTING
         source        = source
       IMPORTING
-        et_tokens     = <tokens>
-        et_statements = <statements> ).
+        et_tokens     = et_stokesx
+        et_statements = et_sstmnt ).
 
 * move comment tokens and add/change statements to comment type
     pass2(
       CHANGING
-        ct_tokens     = <tokens>
-        ct_statements = <statements> ).
+        ct_tokens     = et_stokesx
+        ct_statements = et_sstmnt ).
 
   ENDMETHOD.
 
