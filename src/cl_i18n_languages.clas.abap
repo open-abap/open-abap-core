@@ -8,6 +8,14 @@ CLASS cl_i18n_languages DEFINITION PUBLIC.
       EXCEPTIONS
         no_assignment.
 
+    CLASS-METHODS sap2_to_sap1
+      IMPORTING
+        im_lang_sap2 TYPE laiso
+      RETURNING
+        VALUE(re_lang_sap1) TYPE sy-langu
+      EXCEPTIONS
+        no_assignment.
+
     CLASS-METHODS sap2_to_iso639_1
       IMPORTING
         im_lang_sap2   TYPE string
@@ -19,6 +27,97 @@ CLASS cl_i18n_languages DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS cl_i18n_languages IMPLEMENTATION.
+  METHOD sap2_to_sap1.
+    CASE to_upper( im_lang_sap2 ).
+      WHEN 'SR'.
+        re_lang_sap1 = '0'.
+      WHEN 'ZH'.
+        re_lang_sap1 = '1'.
+      WHEN 'TH'.
+        re_lang_sap1 = '2'.
+      WHEN 'KO'.
+        re_lang_sap1 = '3'.
+      WHEN 'RO'.
+        re_lang_sap1 = '4'.
+      WHEN 'SL'.
+        re_lang_sap1 = '5'.
+      WHEN 'HR'.
+        re_lang_sap1 = '6'.
+      WHEN 'MS'.
+        re_lang_sap1 = '7'.
+      WHEN 'UK'.
+        re_lang_sap1 = '8'.
+      WHEN 'ET'.
+        re_lang_sap1 = '9'.
+      WHEN 'AR'.
+        re_lang_sap1 = 'A'.
+      WHEN 'HE'.
+        re_lang_sap1 = 'B'.
+      WHEN 'CS'.
+        re_lang_sap1 = 'C'.
+      WHEN 'DE'.
+        re_lang_sap1 = 'D'.
+      WHEN 'EN'.
+        re_lang_sap1 = 'E'.
+      WHEN 'FR'.
+        re_lang_sap1 = 'F'.
+      WHEN 'EL'.
+        re_lang_sap1 = 'G'.
+      WHEN 'HU'.
+        re_lang_sap1 = 'H'.
+      WHEN 'IT'.
+        re_lang_sap1 = 'I'.
+      WHEN 'JA'.
+        re_lang_sap1 = 'J'.
+      WHEN 'DA'.
+        re_lang_sap1 = 'K'.
+      WHEN 'PL'.
+        re_lang_sap1 = 'L'.
+      WHEN 'ZF'.
+        re_lang_sap1 = 'M'.
+      WHEN 'NL'.
+        re_lang_sap1 = 'N'.
+      WHEN 'NO'.
+        re_lang_sap1 = 'O'.
+      WHEN 'PT'.
+        re_lang_sap1 = 'P'.
+      WHEN 'SK'.
+        re_lang_sap1 = 'Q'.
+      WHEN 'RU'.
+        re_lang_sap1 = 'R'.
+      WHEN 'ES'.
+        re_lang_sap1 = 'S'.
+      WHEN 'TR'.
+        re_lang_sap1 = 'T'.
+      WHEN 'FI'.
+        re_lang_sap1 = 'U'.
+      WHEN 'SV'.
+        re_lang_sap1 = 'V'.
+      WHEN 'BG'.
+        re_lang_sap1 = 'W'.
+      WHEN 'LT'.
+        re_lang_sap1 = 'X'.
+      WHEN 'LV'.
+        re_lang_sap1 = 'Y'.
+      WHEN 'Z1'.
+        re_lang_sap1 = 'Z'.
+      WHEN 'AF'.
+        re_lang_sap1 = 'a'.
+      WHEN 'IS'.
+        re_lang_sap1 = 'b'.
+      WHEN 'CA'.
+        re_lang_sap1 = 'c'.
+      WHEN 'SH'.
+        re_lang_sap1 = 'd'.
+      WHEN 'ID'.
+        re_lang_sap1 = 'i'.
+      WHEN '1Q'.
+        re_lang_sap1 = ''.
+      WHEN OTHERS.
+        RAISE no_assignment.
+    ENDCASE.
+  ENDMETHOD.
+
   METHOD sap1_to_sap2.
 * todo, ideally this should look up in a database table first
 * if there is no database attached, fallback to the CASE below
@@ -106,8 +205,7 @@ CLASS cl_i18n_languages IMPLEMENTATION.
       WHEN 'i'.
         re_lang_sap2 = 'ID'.
       WHEN OTHERS.
-        "todo, raise classic exception
-        re_lang_sap2 = 'EN'.
+        RAISE no_assignment.
     ENDCASE.
   ENDMETHOD.
 
@@ -208,8 +306,7 @@ CLASS cl_i18n_languages IMPLEMENTATION.
       WHEN 'ID'.
         ex_lang_iso639 = 'id'.
       WHEN OTHERS.
-        "todo, raise classic exception
-        ex_lang_iso639 = 'en'.
+        RAISE no_assignment.
     ENDCASE.
   ENDMETHOD.
 ENDCLASS.
