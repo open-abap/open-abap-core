@@ -2,6 +2,7 @@ CLASS ltcl_fugr DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
     METHODS system_installed_languages FOR TESTING RAISING cx_root.
+    METHODS conversion_exit_isola_output FOR TESTING RAISING cx_root.
     METHODS conversion_exit_isola_input FOR TESTING RAISING cx_root.
     METHODS conversion_exit_isola_input_fr FOR TESTING RAISING cx_root.
     METHODS conversion_exit_alpha_output_string FOR TESTING RAISING cx_root.
@@ -118,6 +119,25 @@ CLASS ltcl_fugr IMPLEMENTATION.
 
     cl_abap_unit_assert=>assert_equals(
       exp = 'F'
+      act = lv_lang ).
+  ENDMETHOD.
+
+  METHOD conversion_exit_isola_output.
+    DATA lv_lang TYPE laiso.
+
+    CALL FUNCTION 'CONVERSION_EXIT_ISOLA_OUTPUT'
+      EXPORTING
+        input            = 'F'
+      IMPORTING
+        output           = lv_lang
+      EXCEPTIONS
+        unknown_language = 1
+        OTHERS           = 2.
+
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      exp = 'FR'
       act = lv_lang ).
   ENDMETHOD.
 
