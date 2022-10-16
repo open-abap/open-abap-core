@@ -13,8 +13,14 @@ INTERFACE if_http_server PUBLIC.
   CLASS-DATA session_id TYPE string READ-ONLY.
   CLASS-DATA authentication_method TYPE i READ-ONLY.
 
-  METHODS logoff IMPORTING redirect_url TYPE string OPTIONAL.
-  METHODS set_session_stateful.
+  METHODS logoff
+    IMPORTING
+      redirect_url TYPE string OPTIONAL.
+
+  METHODS set_session_stateful
+    IMPORTING
+      stateful TYPE i DEFAULT co_enabled
+      path     TYPE string OPTIONAL.
 
   CLASS-METHODS append_field_url
     IMPORTING
