@@ -103,7 +103,8 @@ CLASS cl_http_entity IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_entity~get_cookies.
-    ASSERT 1 = 'todo'.
+* todo
+    CLEAR cookies.
   ENDMETHOD.
 
   METHOD if_http_entity~delete_form_field.

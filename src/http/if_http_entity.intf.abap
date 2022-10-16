@@ -64,7 +64,9 @@ INTERFACE if_http_entity PUBLIC.
     RETURNING
       VALUE(data) TYPE xstring.
 
-  METHODS get_cookies CHANGING cookies TYPE any.
+  METHODS get_cookies
+    CHANGING
+      cookies TYPE any.
 
   METHODS add_cookie_field
     IMPORTING
