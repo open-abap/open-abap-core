@@ -71,11 +71,12 @@ CLASS cl_http_entity IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_entity~get_cookie_field.
-    ASSERT 1 = 'todo'.
+* todo
+    CLEAR field_value.
   ENDMETHOD.
 
   METHOD if_http_entity~set_compression.
-    ASSERT 1 = 'todo'.
+* todo
   ENDMETHOD.
 
   METHOD if_http_entity~append_cdata.
