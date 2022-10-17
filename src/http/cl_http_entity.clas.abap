@@ -239,7 +239,7 @@ CLASS cl_http_entity IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_entity~get_form_fields_cs.
-    ASSERT 2 = 'todo'.
+    fields = mt_form_fields.
   ENDMETHOD.
 
   METHOD if_http_entity~set_form_fields.
