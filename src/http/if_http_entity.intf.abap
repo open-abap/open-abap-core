@@ -2,6 +2,7 @@ INTERFACE if_http_entity PUBLIC.
 
   CONSTANTS co_request_method_get TYPE string VALUE 'GET'.
   CONSTANTS co_request_method_post TYPE string VALUE 'POST'.
+  CONSTANTS co_body_before_query_string TYPE i VALUE 3.
 
   METHODS set_cdata
     IMPORTING
@@ -121,7 +122,7 @@ INTERFACE if_http_entity PUBLIC.
       cookie_name TYPE string
       cookie_path TYPE string OPTIONAL
       field_name  TYPE string
-      base64       TYPE i DEFAULT 1
+      base64      TYPE i DEFAULT 1
     RETURNING
       VALUE(field_value) TYPE string.
 
@@ -131,16 +132,16 @@ INTERFACE if_http_entity PUBLIC.
 
   METHODS get_form_fields_cs
     IMPORTING
-      formfield_encoding TYPE i DEFAULT 0
-      search_option      TYPE i DEFAULT 3
+      formfield_encoding TYPE i OPTIONAL
+      search_option      TYPE i DEFAULT co_body_before_query_string
     CHANGING
       fields             TYPE tihttpnvp.
 
   METHODS get_form_field_cs
     IMPORTING
       name               TYPE string
-      formfield_encoding TYPE i DEFAULT 0
-      search_option      TYPE i DEFAULT 3
+      formfield_encoding TYPE i OPTIONAL
+      search_option      TYPE i DEFAULT co_body_before_query_string
     RETURNING
       VALUE(value)       TYPE string.
 
@@ -165,11 +166,11 @@ INTERFACE if_http_entity PUBLIC.
   METHODS set_cookie
     IMPORTING
       name    TYPE string
-      path    TYPE string DEFAULT ``
+      path    TYPE string OPTIONAL
       value   TYPE string
-      domain  TYPE string DEFAULT ``
-      expires TYPE string DEFAULT ``
-      secure  TYPE i DEFAULT 0.
+      domain  TYPE string OPTIONAL
+      expires TYPE string OPTIONAL
+      secure  TYPE i OPTIONAL.
 
   METHODS set_formfield_encoding
     IMPORTING
@@ -182,8 +183,8 @@ INTERFACE if_http_entity PUBLIC.
 
   METHODS set_form_fields
     IMPORTING
-      fields TYPE tihttpnvp
-      multivalue TYPE int4 DEFAULT 0.
+      fields     TYPE tihttpnvp
+      multivalue TYPE int4 OPTIONAL.
 
   METHODS set_header_fields
     IMPORTING
