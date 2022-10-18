@@ -67,6 +67,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_numeric TYPE abap_typekind VALUE '%'.
     CONSTANTS typekind_oref TYPE abap_typekind VALUE 'r'.
     CONSTANTS typekind_packed TYPE abap_typekind VALUE 'P'.
+    CONSTANTS typekind_simple TYPE abap_typekind VALUE '$'.
     CONSTANTS typekind_string TYPE abap_typekind VALUE 'g'.
     CONSTANTS typekind_struct1 TYPE abap_typekind VALUE 'u'.
     CONSTANTS typekind_struct2 TYPE abap_typekind VALUE 'v'.
