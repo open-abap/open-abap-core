@@ -69,7 +69,11 @@ CLASS cl_abap_conv_in_ce IMPLEMENTATION.
     DATA hex TYPE x LENGTH 2.
     hex = uccp.
     int = hex.
-    char = uccpi( int ).
+    TRY.
+        char = uccpi( int ).
+      CATCH cx_sy_conversion_codepage.
+* todo, hmm
+    ENDTRY.
   ENDMETHOD.
 
   METHOD uccpi.
