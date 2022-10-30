@@ -94,6 +94,8 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
         CREATE DATA dref TYPE d.
       WHEN cl_abap_typedescr=>typekind_hex.
         CREATE DATA dref TYPE x LENGTH handle->length.
+      WHEN cl_abap_typedescr=>typekind_packed.
+        CREATE DATA dref TYPE p LENGTH handle->length DECIMALS handle->decimals.
       WHEN cl_abap_typedescr=>typekind_char.
         CREATE DATA dref TYPE c LENGTH handle->length.
       WHEN cl_abap_typedescr=>typekind_time.
