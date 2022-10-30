@@ -151,12 +151,15 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 
   METHOD describe_by_data.
 
-    DATA lv_name   TYPE string.
-    DATA lv_prefix TYPE string.
-    DATA lv_length TYPE i.
-    DATA lo_elem   TYPE REF TO cl_abap_elemdescr.
+    DATA lv_name     TYPE string.
+    DATA lv_prefix   TYPE string.
+    DATA lv_length   TYPE i.
+    DATA lv_decimals TYPE i.
+    DATA lo_elem     TYPE REF TO cl_abap_elemdescr.
+
     WRITE '@KERNEL lv_name.set(p_data.constructor.name);'.
     WRITE '@KERNEL lv_length.set(p_data.getLength ? p_data.getLength() : 0);'.
+    WRITE '@KERNEL lv_decimals.set(p_data.getDecimals ? p_data.getDecimals() : 0);'.
 
 * These are the constructor names from the js runtime
     CASE lv_name.
@@ -193,6 +196,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->type_kind = typekind_packed.
         type->kind = kind_elem.
         type->length = lv_length.
+        type->decimals = lv_decimals.
       WHEN 'Time'.
         CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_time.

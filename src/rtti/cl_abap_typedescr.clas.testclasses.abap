@@ -265,6 +265,9 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = type->length
       exp = 4 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = type->decimals
+      exp = 2 ).
   ENDMETHOD.
 
   METHOD typekind_utclong.
