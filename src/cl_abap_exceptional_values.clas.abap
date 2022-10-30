@@ -44,12 +44,17 @@ CLASS cl_abap_exceptional_values IMPLEMENTATION.
 
   METHOD get_min_value.
     DATA lv_type TYPE c LENGTH 1.
+    FIELD-SYMBOLS <out> TYPE any.
 
     DESCRIBE FIELD in TYPE lv_type.
 
     CASE lv_type.
       WHEN cl_abap_typedescr=>typekind_int.
         GET REFERENCE OF cl_abap_math=>min_int4 INTO out.
+      WHEN cl_abap_typedescr=>typekind_packed.
+        out = get_max_value( in ).
+        ASSIGN out->* TO <out>.
+        <out> = <out> * -1.
       WHEN OTHERS.
         ASSERT 1 = 'todo'.
     ENDCASE.
