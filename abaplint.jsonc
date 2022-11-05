@@ -124,7 +124,7 @@
     "commented_code": false,
     "constructor_visibility_public": false,
     "cyclomatic_complexity": true,
-    "dangerous_statement": true,
+    "dangerous_statement": false,
     "db_operation_in_loop": true,
     "abapdoc": false,
     "allowed_object_naming": false,

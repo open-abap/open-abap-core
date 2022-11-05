@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "All Unit Tests",
-      "type": "pwa-node",
+      "type": "node",
       "request": "launch",
       "pauseForSourceMap": true,
       "trace": false,
