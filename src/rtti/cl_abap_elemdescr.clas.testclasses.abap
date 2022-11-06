@@ -24,7 +24,7 @@ CLASS ltcl_test IMPLEMENTATION.
     elemdescr ?= typedescr.
     cl_abap_unit_assert=>assert_equals(
       act = elemdescr->edit_mask
-      exp = '==LANGU' ).
+      exp = '==ISOLA' ).
   ENDMETHOD.
 
   METHOD output_length_basic.
