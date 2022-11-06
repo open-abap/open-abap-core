@@ -273,9 +273,12 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
       type->absolute_name = '\TYPE=' && type->absolute_name.
     ENDIF.
 
-    IF type->absolute_name = '\TYPE=sy-langu' OR type->absolute_name CP '*ty_original_language'.
+    IF type->absolute_name = '\TYPE=sy-langu'
+        OR type->absolute_name CP '*ty_language'
+        OR type->absolute_name CP '*ty_original_language'.
 * todo, this is a hack for https://github.com/SAP/abap-file-formats-tools
-      lo_elem->edit_mask = '==LANGU'.
+* real future fix: abaplint to parse the edit mask, transpiler to add it to the runtime typing
+      lo_elem->edit_mask = '==ISOLA'.
     ENDIF.
 
   ENDMETHOD.
