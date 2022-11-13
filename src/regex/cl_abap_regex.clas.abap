@@ -4,7 +4,7 @@ CLASS cl_abap_regex DEFINITION PUBLIC.
     METHODS constructor
       IMPORTING
         pattern     TYPE clike
-        ignore_case TYPE abap_bool.
+        ignore_case TYPE abap_bool DEFAULT abap_false.
 
     METHODS create_matcher
       IMPORTING
