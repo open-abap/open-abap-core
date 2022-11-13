@@ -1,0 +1,7 @@
+CLASS cx_sy_itab_error DEFINITION PUBLIC INHERITING FROM cx_dynamic_check.
+
+ENDCLASS.
+
+CLASS cx_sy_itab_error IMPLEMENTATION.
+
+ENDCLASS.

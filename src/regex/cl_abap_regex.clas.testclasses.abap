@@ -5,6 +5,8 @@ CLASS ltcl_test DEFINITION FOR TESTING DURATION SHORT RISK LEVEL HARMLESS FINAL.
     METHODS match_true  FOR TESTING RAISING cx_static_check.
     METHODS match_false FOR TESTING RAISING cx_static_check.
     METHODS no_next     FOR TESTING RAISING cx_static_check.
+    METHODS tags        FOR TESTING RAISING cx_static_check.
+    METHODS find_hello  FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -93,6 +95,47 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_matcher->match( )
       exp = abap_true ).
+
+  ENDMETHOD.
+
+  METHOD tags.
+
+    DATA lv_line  TYPE string.
+    DATA lv_count TYPE i.
+    DATA lo_tags  TYPE REF TO cl_abap_regex.
+
+    lv_line = '<td id="id">'.
+
+    CREATE OBJECT lo_tags
+      EXPORTING
+        pattern     = '<(AREA|BASE|!)'
+        ignore_case = abap_false.
+
+    FIND ALL OCCURRENCES OF REGEX lo_tags IN lv_line MATCH COUNT lv_count.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_count
+      exp = 0 ).
+
+  ENDMETHOD.
+
+  METHOD find_hello.
+
+    DATA lv_line  TYPE string.
+    DATA lv_count TYPE i.
+    DATA lo_tags  TYPE REF TO cl_abap_regex.
+
+    lv_line = 'hello'.
+
+    CREATE OBJECT lo_tags
+      EXPORTING
+        pattern = 'hello'.
+
+    FIND ALL OCCURRENCES OF REGEX lo_tags IN lv_line MATCH COUNT lv_count.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_count
+      exp = 1 ).
 
   ENDMETHOD.
 
