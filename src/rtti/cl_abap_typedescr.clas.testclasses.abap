@@ -36,6 +36,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS get_relative_name_timestamp FOR TESTING.
     METHODS get_relative_name_lif FOR TESTING.
     METHODS get_relative_name_table FOR TESTING.
+    METHODS describe_by_object_ref FOR TESTING.
 
     METHODS is_ddic_type_true1 FOR TESTING.
     METHODS is_ddic_type_true2 FOR TESTING.
@@ -49,6 +50,11 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = cl_abap_typedescr=>describe_by_name( 'CHAR1' )->is_ddic_type( )
       exp = abap_true ).
+  ENDMETHOD.
+
+  METHOD describe_by_object_ref.
+* just check it doesnt crash,
+    cl_abap_typedescr=>describe_by_object_ref( me ).
   ENDMETHOD.
 
   METHOD is_ddic_type_true2.

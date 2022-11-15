@@ -148,7 +148,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     p_descr_ref->type_kind = typekind_class.
     p_descr_ref->kind = kind_class.
 
-    WRITE '@KERNEL lv_name.set(p_object_ref.getQualifiedName());'.
+    WRITE '@KERNEL lv_name.set(p_object_ref.getQualifiedName() || "CLASS_NAME_TODO");'.
 
     p_descr_ref->relative_name = lv_name.
     p_descr_ref->absolute_name = '\TYPE=' && lv_name.
