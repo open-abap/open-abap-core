@@ -142,11 +142,16 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD describe_by_object_ref.
+    DATA lv_name TYPE string.
+
     CREATE OBJECT p_descr_ref TYPE cl_abap_classdescr.
     p_descr_ref->type_kind = typekind_class.
     p_descr_ref->kind = kind_class.
-    p_descr_ref->relative_name = 'CLASS_NAME_TODO'.
-    p_descr_ref->absolute_name = 'CLASS_NAME_TODO'.
+
+    WRITE '@KERNEL lv_name.set(p_object_ref.getQualifiedName());'.
+
+    p_descr_ref->relative_name = lv_name.
+    p_descr_ref->absolute_name = '\TYPE=' && lv_name.
   ENDMETHOD.
 
   METHOD describe_by_data.
@@ -255,6 +260,8 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     ENDCASE.
 
     WRITE '@KERNEL if(p_data.getQualifiedName && p_data.getQualifiedName() !== undefined) type.get().absolute_name.set(p_data.getQualifiedName());'.
+
+    WRITE '@KERNEL if (type.get().absolute_name.get() === "" && p_data.getType && p_data.getType().getQualifiedName() !== undefined) type.get().absolute_name.set(p_data.getType().getQualifiedName());'.
 
 * this is not completely correct, local type names and ddic names might overlap, but will work for now,
     WRITE '@KERNEL if(abap.DDIC[type.get().absolute_name.get().toUpperCase()]) { type.get().ddic.set("X"); }'.
