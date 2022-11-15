@@ -148,10 +148,10 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     p_descr_ref->type_kind = typekind_class.
     p_descr_ref->kind = kind_class.
 
-    WRITE '@KERNEL lv_name.set(p_object_ref.getQualifiedName() || "CLASS_NAME_TODO");'.
+    WRITE '@KERNEL lv_name.set(p_object_ref.get().constructor.name.toUpperCase());'.
 
     p_descr_ref->relative_name = lv_name.
-    p_descr_ref->absolute_name = '\TYPE=' && lv_name.
+    p_descr_ref->absolute_name = '\CLASS=' && lv_name.
   ENDMETHOD.
 
   METHOD describe_by_data.
@@ -275,6 +275,9 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
       SPLIT type->absolute_name AT '=>' INTO lv_prefix type->absolute_name.
       type->relative_name = type->absolute_name.
       type->absolute_name = '\CLASS=' && lv_prefix && '\TYPE=' && type->absolute_name.
+    ELSEIF type->type_kind = typekind_oref.
+      type->relative_name = type->absolute_name.
+      type->absolute_name = '\CLASS=' && type->absolute_name.
     ELSE.
       type->relative_name = type->absolute_name.
       type->absolute_name = '\TYPE=' && type->absolute_name.
