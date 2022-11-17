@@ -76,7 +76,7 @@ CLASS cl_abap_tabledescr IMPLEMENTATION.
 
     CREATE OBJECT descr.
 
-    WRITE '@KERNEL lv_flag.set(data.getOptions()?.isUnique === true ? "X" : "");'.
+    WRITE '@KERNEL lv_flag.set(data.getOptions()?.primaryKey?.isUnique === true ? "X" : "");'.
     descr->has_unique_key = lv_flag.
 
     WRITE '@KERNEL lv_dummy = data.getRowType();'.
