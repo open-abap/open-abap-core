@@ -158,6 +158,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 
     DATA lv_name     TYPE string.
     DATA lv_prefix   TYPE string.
+    DATA lv_convexit TYPE string.
     DATA lv_length   TYPE i.
     DATA lv_decimals TYPE i.
     DATA lo_elem     TYPE REF TO cl_abap_elemdescr.
@@ -283,12 +284,9 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
       type->absolute_name = '\TYPE=' && type->absolute_name.
     ENDIF.
 
-    IF type->absolute_name = '\TYPE=sy-langu'
-        OR type->absolute_name CP '*ty_language'
-        OR type->absolute_name CP '*ty_original_language'.
-* todo, this is a hack for https://github.com/SAP/abap-file-formats-tools
-* real future fix: abaplint to parse the edit mask, transpiler to add it to the runtime typing
-      lo_elem->edit_mask = '==ISOLA'.
+    WRITE '@KERNEL if(p_data.getConversionexit && p_data.getConversionexit() !== undefined) lv_convexit.set(p_data.getConversionexit());'.
+    IF lv_convexit <> ''.
+      lo_elem->edit_mask = '==' && lv_convexit.
     ENDIF.
 
   ENDMETHOD.
