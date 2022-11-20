@@ -163,9 +163,9 @@ CLASS ltcl_test IMPLEMENTATION.
         hide_column TYPE ty_personalization-hide_column,
       END OF ty_list_report.
 
-    DATA foo TYPE ty_list_report.
+    DATA foo    TYPE ty_list_report.
     DATA struct TYPE REF TO cl_abap_structdescr.
-    DATA descr TYPE REF TO cl_abap_datadescr.
+    DATA descr  TYPE REF TO cl_abap_datadescr.
 
     struct ?= cl_abap_typedescr=>describe_by_data( foo ).
     descr ?= struct->get_component_type( 'HIDE_COLUMN' ).
