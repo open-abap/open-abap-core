@@ -9,7 +9,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS component_type_kind FOR TESTING RAISING cx_static_check.
     METHODS create_empty FOR TESTING RAISING cx_static_check.
     METHODS create_basic FOR TESTING RAISING cx_static_check.
-    METHODS nested_boolean FOR TESTING RAISING cx_static_check.
+    METHODS nested_boolean1 FOR TESTING RAISING cx_static_check.
+    METHODS nested_boolean2 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -154,7 +155,7 @@ CLASS ltcl_test IMPLEMENTATION.
       exp = cl_abap_typedescr=>typekind_int ).
   ENDMETHOD.
 
-  METHOD nested_boolean.
+  METHOD nested_boolean1.
     TYPES:
       BEGIN OF ty_personalization,
         hide_column TYPE abap_bool,
@@ -169,6 +170,29 @@ CLASS ltcl_test IMPLEMENTATION.
 
     struct ?= cl_abap_typedescr=>describe_by_data( foo ).
     descr ?= struct->get_component_type( 'HIDE_COLUMN' ).
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = descr->absolute_name
+      exp = '*ABAP_BOOL*' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = descr->get_relative_name( )
+      exp = 'ABAP_BOOL' ).
+  ENDMETHOD.
+
+  METHOD nested_boolean2.
+    TYPES:
+      BEGIN OF ty_personalization,
+        hide_column TYPE abap_bool,
+      END OF ty_personalization,
+      BEGIN OF ty_list_report,
+        hide_column TYPE ty_personalization-hide_column,
+      END OF ty_list_report.
+
+    DATA foo TYPE ty_list_report-hide_column.
+    DATA descr TYPE REF TO cl_abap_datadescr.
+
+    descr ?= cl_abap_typedescr=>describe_by_data( foo ).
 
     cl_abap_unit_assert=>assert_char_cp(
       act = descr->absolute_name
