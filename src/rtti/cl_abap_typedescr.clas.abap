@@ -284,7 +284,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
       type->absolute_name = '\TYPE=' && type->absolute_name.
     ENDIF.
 
-    WRITE '@KERNEL if(p_data.getConversionexit && p_data.getConversionexit() !== undefined) lv_convexit.set(p_data.getConversionexit());'.
+    WRITE '@KERNEL if(p_data.getConversionExit && p_data.getConversionExit() !== undefined) lv_convexit.set(p_data.getConversionExit());'.
     IF lv_convexit <> ''.
       lo_elem->edit_mask = '==' && lv_convexit.
     ENDIF.
