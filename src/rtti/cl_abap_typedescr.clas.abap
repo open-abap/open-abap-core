@@ -268,6 +268,9 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 * todo: use/check getDDICName() in the future,
     WRITE '@KERNEL if(abap.DDIC[type.get().absolute_name.get().toUpperCase()]) { type.get().ddic.set("X"); }'.
 
+    TRANSLATE type->absolute_name TO UPPER CASE.
+    TRANSLATE type->relative_name TO UPPER CASE.
+
     IF type->absolute_name = 'ABAP_BOOL'.
       type->relative_name = 'ABAP_BOOL'.
       type->absolute_name = '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL'.
