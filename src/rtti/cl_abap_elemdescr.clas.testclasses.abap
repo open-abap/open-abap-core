@@ -47,6 +47,9 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = descr->output_length
       exp = 1 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = descr->edit_mask
+      exp = '' ).
   ENDMETHOD.
 
   METHOD output_length_date.
