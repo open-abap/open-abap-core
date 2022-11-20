@@ -95,10 +95,10 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
     CLASS-METHODS
       assert_char_cp
         IMPORTING
-          act TYPE clike
-          exp TYPE clike
-          msg TYPE string OPTIONAL
-          quit TYPE i OPTIONAL
+          act   TYPE clike
+          exp   TYPE clike
+          msg   TYPE string OPTIONAL
+          quit  TYPE i OPTIONAL
           level TYPE i OPTIONAL.
 
     CLASS-METHODS
@@ -152,7 +152,11 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
 
   METHOD assert_char_cp.
     IF act NP exp.
-      RAISE EXCEPTION TYPE kernel_cx_assert.
+      RAISE EXCEPTION TYPE kernel_cx_assert
+        EXPORTING
+          expected = exp
+          actual   = act
+          msg      = msg.
     ENDIF.
   ENDMETHOD.
 
@@ -206,12 +210,14 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD assert_equals.
-    DATA type1 TYPE c LENGTH 1.
-    DATA type2 TYPE c LENGTH 1.
-    DATA index TYPE i.
-    DATA diff TYPE f.
+    DATA type1  TYPE c LENGTH 1.
+    DATA type2  TYPE c LENGTH 1.
+    DATA index  TYPE i.
+    DATA diff   TYPE f.
     DATA lv_exp TYPE string.
     DATA lv_act TYPE string.
+    DATA lv_msg TYPE string.
+
     FIELD-SYMBOLS <tab1> TYPE INDEX TABLE.
     FIELD-SYMBOLS <row1> TYPE any.
     FIELD-SYMBOLS <tab2> TYPE INDEX TABLE.
@@ -265,9 +271,14 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
     ELSEIF act <> exp.
       lv_act = lcl_dump=>to_string( act ).
       lv_exp = lcl_dump=>to_string( exp ).
+      IF msg <> ''.
+        lv_msg = msg.
+      ELSE.
+        lv_msg = |Expected '{ lv_exp }', got '{ lv_act }'|.
+      ENDIF.
       RAISE EXCEPTION TYPE kernel_cx_assert
         EXPORTING
-          msg      = |Expected '{ lv_exp }', got '{ lv_act }'|
+          msg      = lv_msg
           actual   = lv_act
           expected = lv_exp.
     ENDIF.

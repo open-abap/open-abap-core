@@ -260,11 +260,12 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         ASSERT 1 = 'todo_cl_abap_typedescr'.
     ENDCASE.
 
-    WRITE '@KERNEL if(p_data.getQualifiedName && p_data.getQualifiedName() !== undefined) type.get().absolute_name.set(p_data.getQualifiedName());'.
-
+    WRITE '@KERNEL if (p_data.getQualifiedName && p_data.getQualifiedName() !== undefined) type.get().absolute_name.set(p_data.getQualifiedName());'.
+    WRITE '@KERNEL if (p_data.getDDICName && p_data.getDDICName() !== undefined) type.get().absolute_name.set(p_data.getDDICName());'.
     WRITE '@KERNEL if (type.get().absolute_name.get() === "" && p_data.getType && p_data.getType().getQualifiedName() !== undefined) type.get().absolute_name.set(p_data.getType().getQualifiedName());'.
 
 * this is not completely correct, local type names and ddic names might overlap, but will work for now,
+* todo: use/check getDDICName() in the future,
     WRITE '@KERNEL if(abap.DDIC[type.get().absolute_name.get().toUpperCase()]) { type.get().ddic.set("X"); }'.
 
     IF type->absolute_name = 'ABAP_BOOL'.
@@ -284,7 +285,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
       type->absolute_name = '\TYPE=' && type->absolute_name.
     ENDIF.
 
-    WRITE '@KERNEL if(p_data.getConversionexit && p_data.getConversionexit() !== undefined) lv_convexit.set(p_data.getConversionexit());'.
+    WRITE '@KERNEL if(p_data.getConversionExit && p_data.getConversionExit() !== undefined) lv_convexit.set(p_data.getConversionExit());'.
     IF lv_convexit <> ''.
       lo_elem->edit_mask = '==' && lv_convexit.
     ENDIF.
