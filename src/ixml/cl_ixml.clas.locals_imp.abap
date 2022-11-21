@@ -1,3 +1,39 @@
+CLASS lcl_escape DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS unescape_value
+      IMPORTING
+        iv_value TYPE string
+      RETURNING
+        VALUE(rv_value) TYPE string.
+
+    CLASS-METHODS escape_value
+      IMPORTING
+        iv_value TYPE string
+      RETURNING
+        VALUE(rv_value) TYPE string.
+ENDCLASS.
+
+CLASS lcl_escape IMPLEMENTATION.
+  METHOD unescape_value.
+    rv_value = iv_value.
+    WRITE '@KERNEL console.dir(rv_value);'.
+    REPLACE ALL OCCURRENCES OF '&amp;' IN rv_value WITH '&'.
+    REPLACE ALL OCCURRENCES OF '&lt;' IN rv_value WITH '<'.
+    REPLACE ALL OCCURRENCES OF '&gt;' IN rv_value WITH '>'.
+    REPLACE ALL OCCURRENCES OF '&quot;' IN rv_value WITH '"'.
+    REPLACE ALL OCCURRENCES OF '&apos;' IN rv_value WITH |'|.
+  ENDMETHOD.
+
+  METHOD escape_value.
+    rv_value = iv_value.
+    REPLACE ALL OCCURRENCES OF '&' IN rv_value WITH '&amp;'.
+    REPLACE ALL OCCURRENCES OF '<' IN rv_value WITH '&lt;'.
+    REPLACE ALL OCCURRENCES OF '>' IN rv_value WITH '&gt;'.
+    REPLACE ALL OCCURRENCES OF '"' IN rv_value WITH '&quot;'.
+    REPLACE ALL OCCURRENCES OF |'| IN rv_value WITH '&apos;'.
+  ENDMETHOD.
+ENDCLASS.
+
 CLASS lcl_node_iterator DEFINITION.
   PUBLIC SECTION.
     TYPES ty_list TYPE STANDARD TABLE OF REF TO if_ixml_node WITH DEFAULT KEY.
@@ -133,6 +169,7 @@ CLASS lcl_node DEFINITION.
   PRIVATE SECTION.
     DATA mv_name       TYPE string.
     DATA mv_namespace  TYPE string.
+* internal representation is unescaped
     DATA mv_value      TYPE string.
 
     DATA mo_children   TYPE REF TO lcl_node_list.
@@ -315,7 +352,7 @@ CLASS lcl_node IMPLEMENTATION.
     ENDDO.
 
     IF if_ixml_node~get_children( )->get_length( ) > 0 OR mv_value IS NOT INITIAL.
-      ostream->write_string( mv_value && '</' && lv_ns && mv_name && '>' ).
+      ostream->write_string( lcl_escape=>escape_value( mv_value ) && '</' && lv_ns && mv_name && '>' ).
     ELSE.
       ostream->write_string( '/>' ).
     ENDIF.
@@ -867,7 +904,7 @@ CLASS lcl_parser IMPLEMENTATION.
 
         CREATE OBJECT lo_node EXPORTING ii_parent = lo_parent.
         lo_node->if_ixml_node~set_name( '#text' ).
-        lo_node->if_ixml_node~set_value( lv_value ).
+        lo_node->if_ixml_node~set_value( lcl_escape=>unescape_value( lv_value ) ).
       ENDIF.
 
       lv_xml = lv_xml+lv_offset.
@@ -879,12 +916,12 @@ CLASS lcl_parser IMPLEMENTATION.
   METHOD parse_attributes.
 
     DATA ls_submatch LIKE LINE OF is_match-submatches.
-    DATA lv_name TYPE string.
-    DATA lv_value TYPE string.
-    DATA lv_xml TYPE string.
-    DATA li_node TYPE REF TO if_ixml_node.
-    DATA lv_offset TYPE i.
-    DATA lv_length TYPE i.
+    DATA lv_name     TYPE string.
+    DATA lv_value    TYPE string.
+    DATA lv_xml      TYPE string.
+    DATA li_node     TYPE REF TO if_ixml_node.
+    DATA lv_offset   TYPE i.
+    DATA lv_length   TYPE i.
 
     IF lines( is_match-submatches ) = 1.
       RETURN.
