@@ -16,7 +16,6 @@ ENDCLASS.
 CLASS lcl_escape IMPLEMENTATION.
   METHOD unescape_value.
     rv_value = iv_value.
-    WRITE '@KERNEL console.dir(rv_value);'.
     REPLACE ALL OCCURRENCES OF '&amp;' IN rv_value WITH '&'.
     REPLACE ALL OCCURRENCES OF '&lt;' IN rv_value WITH '<'.
     REPLACE ALL OCCURRENCES OF '&gt;' IN rv_value WITH '>'.
