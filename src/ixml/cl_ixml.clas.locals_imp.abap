@@ -1,3 +1,15 @@
+CLASS lcl_escape DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS unescape_value IMPORTING iv_value TYPE string RETURNING VALUE(rv_value) TYPE string.
+ENDCLASS.
+
+CLASS lcl_escape IMPLEMENTATION.
+  METHOD unescape_value.
+    rv_value = iv_value.
+    REPLACE ALL OCCURRENCES OF '&amp;' IN rv_value WITH '&'.
+  ENDMETHOD.
+ENDCLASS.
+
 CLASS lcl_node_iterator DEFINITION.
   PUBLIC SECTION.
     TYPES ty_list TYPE STANDARD TABLE OF REF TO if_ixml_node WITH DEFAULT KEY.
@@ -452,7 +464,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~set_value.
-    mv_value = value.
+    mv_value = lcl_escape=>unescape_value( value ).
   ENDMETHOD.
 ENDCLASS.
 
