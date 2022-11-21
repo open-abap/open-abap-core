@@ -916,12 +916,12 @@ CLASS lcl_parser IMPLEMENTATION.
   METHOD parse_attributes.
 
     DATA ls_submatch LIKE LINE OF is_match-submatches.
-    DATA lv_name TYPE string.
-    DATA lv_value TYPE string.
-    DATA lv_xml TYPE string.
-    DATA li_node TYPE REF TO if_ixml_node.
-    DATA lv_offset TYPE i.
-    DATA lv_length TYPE i.
+    DATA lv_name     TYPE string.
+    DATA lv_value    TYPE string.
+    DATA lv_xml      TYPE string.
+    DATA li_node     TYPE REF TO if_ixml_node.
+    DATA lv_offset   TYPE i.
+    DATA lv_length   TYPE i.
 
     IF lines( is_match-submatches ) = 1.
       RETURN.
