@@ -468,7 +468,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     DATA li_element TYPE REF TO if_ixml_element.
 
 
-    lv_xml = |<?xml version="1.0" encoding="utf-16"?><moo>&amp;</moo>|.
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?><moo>&amp;&lt;&gt;&quot;&apos;</moo>|.
     li_doc = parse( lv_xml ).
 
     li_element ?= li_doc->find_from_name_ns( depth = 0 name = 'moo' ).
@@ -478,7 +478,7 @@ CLASS ltcl_xml IMPLEMENTATION.
 
     cl_abap_unit_assert=>assert_equals(
       act = li_element->get_value( )
-      exp = |&| ).
+      exp = |&<>"'| ).
 
   ENDMETHOD.
 

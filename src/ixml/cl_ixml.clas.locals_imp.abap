@@ -7,6 +7,10 @@ CLASS lcl_escape IMPLEMENTATION.
   METHOD unescape_value.
     rv_value = iv_value.
     REPLACE ALL OCCURRENCES OF '&amp;' IN rv_value WITH '&'.
+    REPLACE ALL OCCURRENCES OF '&lt;' IN rv_value WITH '<'.
+    REPLACE ALL OCCURRENCES OF '&gt;' IN rv_value WITH '>'.
+    REPLACE ALL OCCURRENCES OF '&quot;' IN rv_value WITH '"'.
+    REPLACE ALL OCCURRENCES OF '&apos;' IN rv_value WITH |'|.
   ENDMETHOD.
 ENDCLASS.
 
