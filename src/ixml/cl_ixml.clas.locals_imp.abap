@@ -1,16 +1,36 @@
 CLASS lcl_escape DEFINITION.
   PUBLIC SECTION.
-    CLASS-METHODS unescape_value IMPORTING iv_value TYPE string RETURNING VALUE(rv_value) TYPE string.
+    CLASS-METHODS unescape_value
+      IMPORTING
+        iv_value TYPE string
+      RETURNING
+        VALUE(rv_value) TYPE string.
+
+    CLASS-METHODS escape_value
+      IMPORTING
+        iv_value TYPE string
+      RETURNING
+        VALUE(rv_value) TYPE string.
 ENDCLASS.
 
 CLASS lcl_escape IMPLEMENTATION.
   METHOD unescape_value.
     rv_value = iv_value.
+    WRITE '@KERNEL console.dir(rv_value);'.
     REPLACE ALL OCCURRENCES OF '&amp;' IN rv_value WITH '&'.
     REPLACE ALL OCCURRENCES OF '&lt;' IN rv_value WITH '<'.
     REPLACE ALL OCCURRENCES OF '&gt;' IN rv_value WITH '>'.
     REPLACE ALL OCCURRENCES OF '&quot;' IN rv_value WITH '"'.
     REPLACE ALL OCCURRENCES OF '&apos;' IN rv_value WITH |'|.
+  ENDMETHOD.
+
+  METHOD escape_value.
+    rv_value = iv_value.
+    REPLACE ALL OCCURRENCES OF '&' IN rv_value WITH '&amp;'.
+    REPLACE ALL OCCURRENCES OF '<' IN rv_value WITH '&lt;'.
+    REPLACE ALL OCCURRENCES OF '>' IN rv_value WITH '&gt;'.
+    REPLACE ALL OCCURRENCES OF '"' IN rv_value WITH '&quot;'.
+    REPLACE ALL OCCURRENCES OF |'| IN rv_value WITH '&apos;'.
   ENDMETHOD.
 ENDCLASS.
 
@@ -149,6 +169,7 @@ CLASS lcl_node DEFINITION.
   PRIVATE SECTION.
     DATA mv_name       TYPE string.
     DATA mv_namespace  TYPE string.
+* internal representation is unescaped
     DATA mv_value      TYPE string.
 
     DATA mo_children   TYPE REF TO lcl_node_list.
@@ -331,7 +352,7 @@ CLASS lcl_node IMPLEMENTATION.
     ENDDO.
 
     IF if_ixml_node~get_children( )->get_length( ) > 0 OR mv_value IS NOT INITIAL.
-      ostream->write_string( mv_value && '</' && lv_ns && mv_name && '>' ).
+      ostream->write_string( lcl_escape=>escape_value( mv_value ) && '</' && lv_ns && mv_name && '>' ).
     ELSE.
       ostream->write_string( '/>' ).
     ENDIF.
@@ -468,7 +489,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~set_value.
-    mv_value = lcl_escape=>unescape_value( value ).
+    mv_value = value.
   ENDMETHOD.
 ENDCLASS.
 
@@ -883,7 +904,7 @@ CLASS lcl_parser IMPLEMENTATION.
 
         CREATE OBJECT lo_node EXPORTING ii_parent = lo_parent.
         lo_node->if_ixml_node~set_name( '#text' ).
-        lo_node->if_ixml_node~set_value( lv_value ).
+        lo_node->if_ixml_node~set_value( lcl_escape=>unescape_value( lv_value ) ).
       ENDIF.
 
       lv_xml = lv_xml+lv_offset.
