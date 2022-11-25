@@ -19,4 +19,10 @@ INTERFACE if_http_utility PUBLIC.
     RETURNING
       VALUE(escaped) TYPE string.
 
+  CLASS-METHODS encode_base64
+    IMPORTING
+      unencoded TYPE string
+    RETURNING
+      VALUE(encoded) TYPE string.
+
 ENDINTERFACE.

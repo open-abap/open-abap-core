@@ -5,18 +5,13 @@ CLASS cl_http_utility DEFINITION PUBLIC.
     ALIASES string_to_fields FOR if_http_utility~string_to_fields.
     ALIASES unescape_url FOR if_http_utility~unescape_url.
     ALIASES escape_url FOR if_http_utility~escape_url.
+    ALIASES encode_base64 FOR if_http_utility~encode_base64.
 
     CLASS-METHODS decode_x_base64
       IMPORTING
         encoded TYPE string
       RETURNING
         VALUE(decoded) TYPE xstring.
-
-    CLASS-METHODS encode_base64
-      IMPORTING
-        data TYPE string
-      RETURNING
-        VALUE(encoded) TYPE string.
 
     CLASS-METHODS encode_x_base64
       IMPORTING
@@ -127,8 +122,8 @@ CLASS cl_http_utility IMPLEMENTATION.
     WRITE '@KERNEL escaped.set(encodeURIComponent(unescaped.get()));'.
   ENDMETHOD.
 
-  METHOD encode_base64.
-    WRITE '@KERNEL let buffer = Buffer.from(data.get());'.
+  METHOD if_http_utility~encode_base64.
+    WRITE '@KERNEL let buffer = Buffer.from(unencoded.get());'.
     WRITE '@KERNEL encoded.set(buffer.toString("base64"));'.
   ENDMETHOD.
 ENDCLASS.
