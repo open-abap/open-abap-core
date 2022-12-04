@@ -29,4 +29,10 @@ INTERFACE if_http_utility PUBLIC.
     RETURNING
       VALUE(encoded) TYPE string.
 
+  CLASS-METHODS fields_to_string
+    IMPORTING
+      fields TYPE tihttpnvp
+    RETURNING
+      VALUE(string) TYPE string.
+
 ENDINTERFACE.

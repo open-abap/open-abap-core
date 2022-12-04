@@ -7,6 +7,7 @@ CLASS cl_http_utility DEFINITION PUBLIC.
     ALIASES get_last_error FOR if_http_utility~get_last_error.
     ALIASES string_to_fields FOR if_http_utility~string_to_fields.
     ALIASES unescape_url FOR if_http_utility~unescape_url.
+    ALIASES fields_to_string FOR if_http_utility~fields_to_string.
 
     CLASS-METHODS decode_x_base64
       IMPORTING
@@ -19,12 +20,6 @@ CLASS cl_http_utility DEFINITION PUBLIC.
         data           TYPE xstring
       RETURNING
         VALUE(encoded) TYPE string.
-
-    CLASS-METHODS fields_to_string
-      IMPORTING
-        fields TYPE tihttpnvp
-      RETURNING
-        VALUE(string) TYPE string.
 
     CLASS-METHODS set_query
       IMPORTING
@@ -96,7 +91,7 @@ CLASS cl_http_utility IMPLEMENTATION.
     request->set_form_fields( string_to_fields( query ) ).
   ENDMETHOD.
 
-  METHOD fields_to_string.
+  METHOD if_http_utility~fields_to_string.
     DATA tab TYPE STANDARD TABLE OF string.
     DATA str TYPE string.
     DATA ls_field LIKE LINE OF fields.
