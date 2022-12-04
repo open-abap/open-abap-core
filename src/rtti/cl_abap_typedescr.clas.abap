@@ -28,7 +28,9 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
       is_ddic_type
         RETURNING
           VALUE(p_abap_bool) TYPE abap_bool.
-
+    METHODS is_instantiatable
+      RETURNING
+        VALUE(p_result) TYPE abap_bool.
     METHODS get_ddic_object
       RETURNING
         VALUE(p_object) TYPE any
@@ -88,6 +90,10 @@ ENDCLASS.
 CLASS cl_abap_typedescr IMPLEMENTATION.
 
   METHOD get_ddic_object.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD is_instantiatable.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
