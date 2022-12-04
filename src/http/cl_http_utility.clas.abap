@@ -2,10 +2,11 @@ CLASS cl_http_utility DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES if_http_utility.
 
+    ALIASES encode_base64 FOR if_http_utility~encode_base64.
+    ALIASES escape_url FOR if_http_utility~escape_url.
+    ALIASES get_last_error FOR if_http_utility~get_last_error.
     ALIASES string_to_fields FOR if_http_utility~string_to_fields.
     ALIASES unescape_url FOR if_http_utility~unescape_url.
-    ALIASES escape_url FOR if_http_utility~escape_url.
-    ALIASES encode_base64 FOR if_http_utility~encode_base64.
 
     CLASS-METHODS decode_x_base64
       IMPORTING
@@ -72,6 +73,10 @@ CLASS cl_http_utility IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD escape_xml_attr_value.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_http_utility~get_last_error.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 

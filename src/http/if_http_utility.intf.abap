@@ -6,6 +6,10 @@ INTERFACE if_http_utility PUBLIC.
     RETURNING
       VALUE(fields) TYPE tihttpnvp.
 
+  CLASS-METHODS get_last_error
+    RETURNING
+      VALUE(rc) TYPE i.
+
   CLASS-METHODS unescape_url
     IMPORTING
       escaped          TYPE string

@@ -1,5 +1,20 @@
 CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
   PUBLIC SECTION.
+    DATA has_unique_key TYPE abap_bool READ-ONLY.
+    DATA key            TYPE abap_keydescr_tab READ-ONLY.
+    DATA key_defkind    TYPE abap_keydefkind READ-ONLY.
+    DATA table_kind     TYPE abap_tablekind.
+
+    CONSTANTS tablekind_any TYPE c LENGTH 1 VALUE 'A'.
+    CONSTANTS tablekind_std TYPE c LENGTH 1 VALUE 'S'.
+    CONSTANTS tablekind_index TYPE c LENGTH 1 VALUE 'I'.
+    CONSTANTS tablekind_hashed TYPE c LENGTH 1 VALUE 'H'.
+    CONSTANTS tablekind_sorted TYPE c LENGTH 1 VALUE 'O'.
+    CONSTANTS keydefkind_default TYPE c LENGTH 1 VALUE 'D'.
+    CONSTANTS keydefkind_tableline TYPE c LENGTH 1 VALUE 'L'.
+    CONSTANTS keydefkind_user TYPE c LENGTH 1 VALUE 'U'.
+    CONSTANTS keydefkind_empty TYPE c LENGTH 1 VALUE 'E'.
+
     CLASS-METHODS
       construct_from_data
         IMPORTING data TYPE any
@@ -20,23 +35,14 @@ CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
       RETURNING VALUE(p_result) TYPE REF TO cl_abap_tabledescr.
 
     CLASS-METHODS create
-      IMPORTING p_line_type TYPE REF TO cl_abap_typedescr
-      RETURNING VALUE(ref) TYPE REF TO cl_abap_tabledescr.
-
-    DATA has_unique_key TYPE abap_bool READ-ONLY.
-    DATA key            TYPE abap_keydescr_tab READ-ONLY.
-    DATA key_defkind    TYPE abap_keydefkind READ-ONLY.
-    DATA table_kind     TYPE abap_tablekind.
-
-    CONSTANTS tablekind_any TYPE c LENGTH 1 VALUE 'A'.
-    CONSTANTS tablekind_std TYPE c LENGTH 1 VALUE 'S'.
-    CONSTANTS tablekind_index TYPE c LENGTH 1 VALUE 'I'.
-    CONSTANTS tablekind_hashed TYPE c LENGTH 1 VALUE 'H'.
-    CONSTANTS tablekind_sorted TYPE c LENGTH 1 VALUE 'O'.
-    CONSTANTS keydefkind_default TYPE c LENGTH 1 VALUE 'D'.
-    CONSTANTS keydefkind_tableline TYPE c LENGTH 1 VALUE 'L'.
-    CONSTANTS keydefkind_user TYPE c LENGTH 1 VALUE 'U'.
-    CONSTANTS keydefkind_empty TYPE c LENGTH 1 VALUE 'E'.
+      IMPORTING
+        p_line_type  TYPE REF TO cl_abap_typedescr
+        p_table_kind TYPE abap_tablekind DEFAULT tablekind_std
+        p_unique     TYPE abap_bool DEFAULT abap_false
+        p_key        TYPE abap_keydescr_tab OPTIONAL
+        p_key_kind   TYPE abap_keydefkind DEFAULT keydefkind_default
+      RETURNING
+        VALUE(ref) TYPE REF TO cl_abap_tabledescr.
 
   PRIVATE SECTION.
     DATA mo_line_type TYPE REF TO cl_abap_typedescr.
