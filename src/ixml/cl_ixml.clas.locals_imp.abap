@@ -191,6 +191,10 @@ CLASS lcl_node IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
+  METHOD if_ixml_node~get_next.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_node~get_namespace_prefix.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
@@ -510,6 +514,10 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_namespace_prefix.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_next.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 

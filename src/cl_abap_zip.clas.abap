@@ -14,12 +14,20 @@ CLASS cl_abap_zip DEFINITION PUBLIC.
       IMPORTING name TYPE string
       EXPORTING content TYPE xstring.
 
+    METHODS delete
+      IMPORTING
+        name  TYPE string OPTIONAL
+        index TYPE i DEFAULT 0
+      EXCEPTIONS
+        zip_index_error.
+
     CLASS-METHODS crc32
       IMPORTING content TYPE xstring
       RETURNING VALUE(crc) TYPE i.
 
     TYPES: BEGIN OF t_file,
              name TYPE string,
+             size TYPE i,
            END OF t_file.
     TYPES t_files TYPE STANDARD TABLE OF t_file WITH DEFAULT KEY.
     DATA files TYPE t_files.
@@ -42,6 +50,10 @@ CLASS cl_abap_zip IMPLEMENTATION.
     DATA lo_stream TYPE REF TO lcl_stream.
     CREATE OBJECT lo_stream.
     crc = lo_stream->append_crc( content ).
+  ENDMETHOD.
+
+  METHOD delete.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD get.
