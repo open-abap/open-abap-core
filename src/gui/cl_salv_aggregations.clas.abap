@@ -1,0 +1,8 @@
+CLASS cl_salv_aggregations DEFINITION PUBLIC.
+  PUBLIC SECTION.
+
+ENDCLASS.
+
+CLASS cl_salv_aggregations IMPLEMENTATION.
+
+ENDCLASS.
