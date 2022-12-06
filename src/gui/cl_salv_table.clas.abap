@@ -38,9 +38,16 @@ CLASS cl_salv_table DEFINITION PUBLIC.
     METHODS set_top_of_list IMPORTING val TYPE any.
     METHODS get_columns RETURNING VALUE(val) TYPE REF TO cl_salv_columns_table.
     METHODS get_functions RETURNING VALUE(val) TYPE REF TO cl_salv_functions_list.
+    METHODS get_aggregations
+      RETURNING
+        VALUE(value) TYPE REF TO cl_salv_aggregations.
 ENDCLASS.
 
 CLASS cl_salv_table IMPLEMENTATION.
+  METHOD get_aggregations.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD get_functions.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
