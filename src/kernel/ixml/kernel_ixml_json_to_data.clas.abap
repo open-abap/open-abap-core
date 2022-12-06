@@ -40,9 +40,9 @@ CLASS kernel_ixml_json_to_data IMPLEMENTATION.
   METHOD build.
 * assumptions: the top level element is an object containing iv_name
 
-    DATA li_first TYPE REF TO if_ixml_node.
-    DATA li_node TYPE REF TO if_ixml_node.
-    DATA lv_name TYPE string.
+    DATA li_first    TYPE REF TO if_ixml_node.
+    DATA li_node     TYPE REF TO if_ixml_node.
+    DATA lv_name     TYPE string.
     DATA li_iterator TYPE REF TO if_ixml_node_iterator.
 
     li_first = ii_doc->get_root( )->get_first_child( ).
@@ -68,14 +68,15 @@ CLASS kernel_ixml_json_to_data IMPLEMENTATION.
 
   METHOD traverse.
 
-    DATA lo_type TYPE REF TO cl_abap_typedescr.
-    DATA li_child TYPE REF TO if_ixml_node.
-    DATA lv_name TYPE string.
+    DATA lo_type     TYPE REF TO cl_abap_typedescr.
+    DATA li_child    TYPE REF TO if_ixml_node.
+    DATA lv_name     TYPE string.
     DATA li_iterator TYPE REF TO if_ixml_node_iterator.
-    DATA lv_ref TYPE REF TO data.
-    FIELD-SYMBOLS <any> TYPE any.
+    DATA lv_ref      TYPE REF TO data.
+
+    FIELD-SYMBOLS <any>   TYPE any.
     FIELD-SYMBOLS <field> TYPE any.
-    FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+    FIELD-SYMBOLS <tab>   TYPE ANY TABLE.
 
     lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
     CASE lo_type->kind.
@@ -101,6 +102,12 @@ CLASS kernel_ixml_json_to_data IMPLEMENTATION.
         ASSERT li_child->get_name( ) = '#text'.
         ASSIGN iv_ref->* TO <any>.
         <any> = li_child->get_value( ).
+
+        IF lo_type->type_kind = cl_abap_typedescr=>typekind_char
+            OR lo_type->type_kind = cl_abap_typedescr=>typekind_clike
+            OR lo_type->type_kind = cl_abap_typedescr=>typekind_string.
+          REPLACE ALL OCCURRENCES OF '\"' IN <any> WITH '"'.
+        ENDIF.
       WHEN cl_abap_typedescr=>kind_table.
         ASSERT ii_node->get_name( ) = 'array'.
         ASSIGN iv_ref->* TO <tab>.

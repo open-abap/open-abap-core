@@ -10,7 +10,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS test3_json_table_fs FOR TESTING RAISING cx_static_check.
     METHODS invalid_input FOR TESTING RAISING cx_static_check.
     METHODS empty_input FOR TESTING RAISING cx_static_check.
-    METHODS escaped_quotes FOR TESTING RAISING cx_static_check.
+    METHODS parse_escaped_quotes FOR TESTING RAISING cx_static_check.
 
     METHODS convert_json_to_sxml
       IMPORTING iv_json TYPE string
@@ -22,16 +22,13 @@ ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
 
-  METHOD escaped_quotes.
+  METHOD parse_escaped_quotes.
     DATA lv_response TYPE string.
-    DATA lv_foo TYPE string.
-
+    DATA lv_foo      TYPE string.
     lv_response = '{"FOO": "\""}'.
-
     CALL TRANSFORMATION id
       SOURCE XML lv_response
       RESULT foo = lv_foo.
-
     cl_abap_unit_assert=>assert_equals(
       act = lv_foo
       exp = |"| ).
@@ -72,9 +69,9 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = row-field
       exp = 321 ).
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = row-val
-    "   exp = 'hello' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = row-val
+      exp = 'hello' ).
   ENDMETHOD.
 
   METHOD test3_json_table_fs.
