@@ -23,11 +23,14 @@ CLASS kernel_unit_runner DEFINITION PUBLIC.
              runtime     TYPE i,
              message     TYPE string,
              js_location TYPE string,
+             console     TYPE string,
            END OF ty_result_item.
     TYPES: BEGIN OF ty_result,
              list TYPE STANDARD TABLE OF ty_result_item WITH DEFAULT KEY,
              json TYPE string,
            END OF ty_result.
+
+    CLASS-DATA mv_console TYPE string.
 
     CLASS-METHODS run
       IMPORTING
@@ -81,9 +84,9 @@ CLASS kernel_unit_runner IMPLEMENTATION.
 * would like to keep the dependencies of this class minimal,
 * so not using CALL TRANSFORMATION or any other ABAP classes
 
-    DATA ls_list LIKE LINE OF it_list.
+    DATA ls_list    LIKE LINE OF it_list.
     DATA lt_strings TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
-    DATA lv_string LIKE LINE OF lt_strings.
+    DATA lv_string  LIKE LINE OF lt_strings.
     DATA lv_message TYPE string.
 
 
@@ -91,10 +94,16 @@ CLASS kernel_unit_runner IMPLEMENTATION.
       lv_message = ls_list-message.
       REPLACE ALL OCCURRENCES OF |"| IN lv_message WITH |\"|.
       REPLACE ALL OCCURRENCES OF |\n| IN lv_message WITH |\\n|.
+
       REPLACE ALL OCCURRENCES OF |"| IN ls_list-expected WITH |\"|.
       REPLACE ALL OCCURRENCES OF |\n| IN ls_list-expected WITH |\\n|.
+
       REPLACE ALL OCCURRENCES OF |"| IN ls_list-actual WITH |\"|.
       REPLACE ALL OCCURRENCES OF |\n| IN ls_list-actual WITH |\\n|.
+
+      REPLACE ALL OCCURRENCES OF |"| IN ls_list-console WITH |\"|.
+      REPLACE ALL OCCURRENCES OF |\n| IN ls_list-console WITH |\\n|.
+
       lv_string = |\{"class_name": "{ ls_list-class_name
         }","testclass_name": "{ ls_list-testclass_name
         }","method_name": "{ ls_list-method_name
@@ -102,6 +111,7 @@ CLASS kernel_unit_runner IMPLEMENTATION.
         }","actual": "{ ls_list-actual
         }","status": "{ ls_list-status
         }","runtime": { ls_list-runtime
+        },"console": "{ ls_list-console
         },"message": "{ lv_message
         }","js_location": "{ ls_list-js_location }"\}|.
       APPEND lv_string TO lt_strings.
@@ -157,19 +167,23 @@ CLASS kernel_unit_runner IMPLEMENTATION.
         ENDTRY.
 
         GET RUN TIME FIELD lv_time.
+        CLEAR mv_console.
         TRY.
             CALL METHOD lo_obj->(ls_input-method_name).
-            <ls_result>-status = gc_status-success.
+            <ls_result>-status  = gc_status-success.
+            <ls_result>-console = mv_console.
           CATCH kernel_cx_assert INTO lx_assert.
             <ls_result>-status      = gc_status-failed.
             <ls_result>-actual      = lx_assert->actual.
             <ls_result>-expected    = lx_assert->expected.
             <ls_result>-message     = lx_assert->msg.
             <ls_result>-js_location = get_location( lx_assert ).
+            <ls_result>-console     = mv_console.
           CATCH cx_root INTO lx_root.
-            <ls_result>-status  = gc_status-failed.
-            <ls_result>-message = |Some exception raised|. " todo, use RTTI to find the class name?
+            <ls_result>-status      = gc_status-failed.
+            <ls_result>-message     = |Some exception raised|. " todo, use RTTI to find the class name?
             <ls_result>-js_location = get_location( lx_root ).
+            <ls_result>-console     = mv_console.
         ENDTRY.
         GET RUN TIME FIELD lv_time.
         <ls_result>-runtime = lv_time.
