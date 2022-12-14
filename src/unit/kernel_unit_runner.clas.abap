@@ -112,7 +112,7 @@ CLASS kernel_unit_runner IMPLEMENTATION.
         }","status": "{ ls_list-status
         }","runtime": { ls_list-runtime
         },"console": "{ ls_list-console
-        },"message": "{ lv_message
+        }","message": "{ lv_message
         }","js_location": "{ ls_list-js_location }"\}|.
       APPEND lv_string TO lt_strings.
     ENDLOOP.
