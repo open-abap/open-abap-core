@@ -1,4 +1,3 @@
-
 CLASS ltcl_test DEFINITION FOR TESTING DURATION SHORT RISK LEVEL HARMLESS FINAL.
 
   PRIVATE SECTION.
@@ -13,6 +12,8 @@ CLASS ltcl_test IMPLEMENTATION.
 
     CONSTANTS lc_expected TYPE i VALUE 42.
     DATA lv_int TYPE i.
+
+    zcl_shma_root=>read( ).
 
     zcl_shma_root=>update( lc_expected ).
 

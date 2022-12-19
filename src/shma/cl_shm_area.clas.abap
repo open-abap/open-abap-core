@@ -198,6 +198,18 @@ CLASS cl_shm_area IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD _attach_read71.
+    DATA created TYPE REF TO object.
+    DATA lv_name TYPE string.
+
+    IF sneak_mode = abap_false AND mo_root IS INITIAL.
+      lv_name = area_name.
+* todo, this is an evil workaround
+      REPLACE FIRST OCCURRENCE OF '_AREA' IN lv_name WITH '_ROOT'.
+      CREATE OBJECT created TYPE (lv_name).
+
+      _set_root( created ).
+    ENDIF.
+
     root = mo_root.
   ENDMETHOD.
 
