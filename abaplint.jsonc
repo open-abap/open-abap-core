@@ -1,6 +1,7 @@
 {
   "global": {
     "files": "/{src,test}/**/*.*",
+    "noIssues": ["zcl_shma_area"],
     "skipGeneratedGatewayClasses": true,
     "skipGeneratedPersistentClasses": true,
     "skipGeneratedFunctionGroups": true

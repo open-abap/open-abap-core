@@ -8,8 +8,8 @@ CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error ABSTRAC
     CONSTANTS affect_local_server TYPE shm_affect_server VALUE 281119720.
 
     DATA properties TYPE shm_properties READ-ONLY.
-    DATA inst_name TYPE shm_inst_name READ-ONLY.
-    DATA client TYPE mandt READ-ONLY.
+    DATA inst_name  TYPE shm_inst_name READ-ONLY.
+    DATA client     TYPE mandt READ-ONLY.
 
     METHODS detach_commit
       RAISING
@@ -175,12 +175,14 @@ CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error ABSTRAC
         VALUE(rc)         TYPE shm_rc
       RAISING
         cx_shm_parameter_error.
+  PRIVATE SECTION.
+    CLASS-DATA mo_root TYPE REF TO object.
 ENDCLASS.
 
 CLASS cl_shm_area IMPLEMENTATION.
 
   METHOD is_valid.
-    ASSERT 1 = 'todo'.
+    valid = abap_true.
   ENDMETHOD.
 
   METHOD _free_instance71.
@@ -188,15 +190,15 @@ CLASS cl_shm_area IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD detach_commit.
-    ASSERT 1 = 'todo'.
+    RETURN.
   ENDMETHOD.
 
   METHOD detach.
-    ASSERT 1 = 'todo'.
+    RETURN.
   ENDMETHOD.
 
   METHOD _attach_read71.
-    ASSERT 1 = 'todo'.
+    root = mo_root.
   ENDMETHOD.
 
   METHOD _get_instance_infos71.
@@ -212,7 +214,7 @@ CLASS cl_shm_area IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD _set_root.
-    ASSERT 1 = 'todo'.
+    mo_root = root.
   ENDMETHOD.
 
   METHOD _invalidate_instance71.
@@ -228,7 +230,8 @@ CLASS cl_shm_area IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD _attach_write70.
-    ASSERT 1 = 'todo'.
+* open-abap is currently single threaded, so no lock conflicts
+    RETURN.
   ENDMETHOD.
 
 ENDCLASS.
