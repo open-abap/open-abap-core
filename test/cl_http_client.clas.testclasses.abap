@@ -32,6 +32,9 @@ CLASS ltcl_test IMPLEMENTATION.
         ssl_id = 'ANONYM'
       IMPORTING
         client = li_client ).
+
+    li_client->propertytype_logon_popup = if_http_client=>co_disabled.
+
     li_client->send( ).
     li_client->receive( ).
 
