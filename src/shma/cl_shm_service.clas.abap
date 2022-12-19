@@ -33,7 +33,7 @@ ENDCLASS.
 CLASS cl_shm_service IMPLEMENTATION.
 
   METHOD initialize.
-    ASSERT 1 = 'todo'.
+    RETURN.
   ENDMETHOD.
 
   METHOD get_auto_build_class_name.

@@ -8,8 +8,8 @@ CLASS cl_shm_area DEFINITION PUBLIC INHERITING FROM cx_shm_general_error ABSTRAC
     CONSTANTS affect_local_server TYPE shm_affect_server VALUE 281119720.
 
     DATA properties TYPE shm_properties READ-ONLY.
-    DATA inst_name TYPE shm_inst_name READ-ONLY.
-    DATA client TYPE mandt READ-ONLY.
+    DATA inst_name  TYPE shm_inst_name READ-ONLY.
+    DATA client     TYPE mandt READ-ONLY.
 
     METHODS detach_commit
       RAISING
@@ -228,7 +228,8 @@ CLASS cl_shm_area IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD _attach_write70.
-    ASSERT 1 = 'todo'.
+* open-abap is currently single threaded, so no lock conflicts
+    RETURN.
   ENDMETHOD.
 
 ENDCLASS.
