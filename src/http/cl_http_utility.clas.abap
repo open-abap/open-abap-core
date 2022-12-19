@@ -97,6 +97,8 @@ CLASS cl_http_utility IMPLEMENTATION.
     DATA ls_field LIKE LINE OF fields.
 
     LOOP AT fields INTO ls_field.
+      REPLACE ALL OCCURRENCES OF ':' IN ls_field-value WITH '%3a'.
+      REPLACE ALL OCCURRENCES OF '/' IN ls_field-value WITH '%2f'.
       str = ls_field-name && '=' && ls_field-value.
       APPEND str TO tab.
     ENDLOOP.
