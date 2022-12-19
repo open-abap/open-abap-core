@@ -88,6 +88,7 @@ CLASS cl_http_client IMPLEMENTATION.
     DATA lv_body          TYPE string.
     DATA lv_name          TYPE string.
     DATA lv_value         TYPE string.
+    DATA lv_content_type  TYPE string.
     DATA lt_form_fields   TYPE tihttpnvp.
     DATA lt_header_fields TYPE tihttpnvp.
     DATA ls_field         LIKE LINE OF lt_header_fields.
@@ -120,6 +121,12 @@ CLASS cl_http_client IMPLEMENTATION.
     LOOP AT lt_header_fields INTO ls_field WHERE name <> '~request_uri'.
       WRITE '@KERNEL headers[ls_field.get().name.get()] = ls_field.get().value.get();'.
     ENDLOOP.
+
+    lv_content_type = if_http_client~request->get_content_type( ).
+    IF lv_content_type IS NOT INITIAL.
+      WRITE '@KERNEL headers["content-type"] = lv_content_type.get();'.
+    ENDIF.
+
 *    WRITE '@KERNEL console.dir(headers);'.
 
     lv_body = if_http_client~request->get_cdata( ).

@@ -14,6 +14,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS co_disabled FOR TESTING RAISING cx_static_check.
     METHODS request_uri_with_host FOR TESTING RAISING cx_static_check.
     METHODS default_user_agent FOR TESTING RAISING cx_static_check.
+    METHODS post_content_type FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -32,6 +33,9 @@ CLASS ltcl_test IMPLEMENTATION.
         ssl_id = 'ANONYM'
       IMPORTING
         client = li_client ).
+
+    li_client->propertytype_logon_popup = if_http_client=>co_disabled.
+
     li_client->send( ).
     li_client->receive( ).
 
@@ -370,6 +374,31 @@ CLASS ltcl_test IMPLEMENTATION.
     li_client->receive( ).
     cl_abap_unit_assert=>assert_not_initial( li_client->request->get_header_field( name = 'user-agent' ) ).
 
+  ENDMETHOD.
+
+  METHOD post_content_type.
+    DATA li_client TYPE REF TO if_http_client.
+    DATA lv_cdata  TYPE string.
+
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = 'https://httpbin.org/post'
+        ssl_id = 'ANONYM'
+      IMPORTING
+        client = li_client ).
+    li_client->request->set_method( 'POST' ).
+    li_client->request->set_form_field( name = 'foo1' value = 'bar1' ).
+    li_client->request->set_form_field( name = 'foo2' value = 'bar2' ).
+    li_client->request->set_content_type( 'application/x-www-form-urlencoded' ).
+
+    li_client->send( ).
+    li_client->receive( ).
+
+    lv_cdata = li_client->response->get_cdata( ).
+    WRITE '@KERNEL console.dir(lv_cdata);'.
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = '*application/x-www-form-urlencoded*' ).
   ENDMETHOD.
 
 ENDCLASS.
