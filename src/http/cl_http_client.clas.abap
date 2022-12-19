@@ -111,7 +111,12 @@ CLASS cl_http_client IMPLEMENTATION.
     lv_url = mv_host && lv_url.
     if_http_client~request->get_form_fields( CHANGING fields = lt_form_fields ).
     IF lines( lt_form_fields ) > 0.
-      lv_url = lv_url && '?' && cl_http_utility=>fields_to_string( lt_form_fields ).
+      CASE lv_method.
+        WHEN 'GET'.
+          lv_url = lv_url && '?' && cl_http_utility=>fields_to_string( lt_form_fields ).
+        WHEN 'POST'.
+          if_http_client~request->set_cdata( cl_http_utility=>fields_to_string( lt_form_fields ) ).
+      ENDCASE.
     ENDIF.
     " WRITE '@KERNEL console.dir(lv_url.get());'.
 
