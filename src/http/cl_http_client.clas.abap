@@ -118,7 +118,7 @@ CLASS cl_http_client IMPLEMENTATION.
           if_http_client~request->set_cdata( cl_http_utility=>fields_to_string( lt_form_fields ) ).
       ENDCASE.
     ENDIF.
-    " WRITE '@KERNEL console.dir(lv_url.get());'.
+*    WRITE '@KERNEL console.dir(lv_url.get());'.
 
 * building headers
     if_http_client~request->get_header_fields( CHANGING fields = lt_header_fields ).
@@ -135,6 +135,8 @@ CLASS cl_http_client IMPLEMENTATION.
 *    WRITE '@KERNEL console.dir(headers);'.
 
     lv_body = if_http_client~request->get_cdata( ).
+*    WRITE '@KERNEL console.dir(lv_body);'.
+    WRITE '@KERNEL headers["content-length"] = lv_body.get().length;'.
 
     WRITE '@KERNEL const https = await import("https");'.
     WRITE '@KERNEL const http = await import("http");'.
@@ -147,7 +149,7 @@ CLASS cl_http_client IMPLEMENTATION.
     WRITE '@KERNEL         res.on("data", (chunk) => {chunks.push(chunk);});'.
     WRITE '@KERNEL         res.on("error", reject);'.
     WRITE '@KERNEL         res.on("end", () => {'.
-*    WRITE '@KERNEL           console.dir(res.statusCode + " " + res.headers["content-type"]);'.
+    WRITE '@KERNEL           console.dir(res.statusCode + " " + JSON.stringify(res.headers));'.
     WRITE '@KERNEL           if (res.statusCode >= 200 && res.statusCode <= 299) {'.
     WRITE '@KERNEL             resolve({statusCode: res.statusCode, headers: res.headers, body: Buffer.concat(chunks)});'.
     WRITE '@KERNEL           } else {'.
@@ -170,6 +172,7 @@ CLASS cl_http_client IMPLEMENTATION.
 
     WRITE '@KERNEL for (const h in response.headers) {'.
     WRITE '@KERNEL   lv_name.set(h);'.
+    WRITE '@KERNEL   if (Array.isArray(response.headers[h])) continue;'.
     WRITE '@KERNEL   lv_value.set(response.headers[h]);'.
     if_http_client~response->set_header_field(
       name  = lv_name
