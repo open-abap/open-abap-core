@@ -151,7 +151,7 @@ CLASS cl_http_client IMPLEMENTATION.
     WRITE '@KERNEL         res.on("data", (chunk) => {chunks.push(chunk);});'.
     WRITE '@KERNEL         res.on("error", reject);'.
     WRITE '@KERNEL         res.on("end", () => {'.
-    WRITE '@KERNEL           console.dir(res.statusCode + " " + JSON.stringify(res.headers));'.
+*    WRITE '@KERNEL           console.dir(res.statusCode + " " + JSON.stringify(res.headers));'.
     WRITE '@KERNEL           if (res.statusCode >= 200 && res.statusCode <= 299) {'.
     WRITE '@KERNEL             resolve({statusCode: res.statusCode, headers: res.headers, body: Buffer.concat(chunks)});'.
     WRITE '@KERNEL           } else {'.
