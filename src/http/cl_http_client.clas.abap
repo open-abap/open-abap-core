@@ -136,7 +136,9 @@ CLASS cl_http_client IMPLEMENTATION.
 
     lv_body = if_http_client~request->get_cdata( ).
 *    WRITE '@KERNEL console.dir(lv_body);'.
-    WRITE '@KERNEL headers["content-length"] = lv_body.get().length;'.
+    IF strlen( lv_body ) > 0.
+      WRITE '@KERNEL headers["content-length"] = lv_body.get().length;'.
+    ENDIF.
 
     WRITE '@KERNEL const https = await import("https");'.
     WRITE '@KERNEL const http = await import("http");'.
