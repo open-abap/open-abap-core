@@ -49,14 +49,15 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
     CLASS-METHODS
       file_open_dialog
         IMPORTING
-          window_title     TYPE string OPTIONAL
-          default_filename TYPE string OPTIONAL
-          multiselection   TYPE abap_bool OPTIONAL
-          file_filter      TYPE string OPTIONAL
+          window_title      TYPE string OPTIONAL
+          default_filename  TYPE string OPTIONAL
+          default_extension TYPE string OPTIONAL
+          multiselection    TYPE abap_bool OPTIONAL
+          file_filter       TYPE string OPTIONAL
         CHANGING
-          file_table  TYPE filetable
-          rc          TYPE i
-          user_action TYPE i OPTIONAL.
+          file_table        TYPE filetable
+          rc                TYPE i
+          user_action       TYPE i OPTIONAL.
 
     CLASS-METHODS
       get_platform
