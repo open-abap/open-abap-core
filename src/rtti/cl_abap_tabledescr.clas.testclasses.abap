@@ -2,6 +2,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
     METHODS test1 FOR TESTING RAISING cx_static_check.
+    METHODS string_table FOR TESTING RAISING cx_static_check.
     METHODS has_unique_key1 FOR TESTING RAISING cx_static_check.
     METHODS has_unique_key2 FOR TESTING RAISING cx_static_check.
     METHODS get_with_keys FOR TESTING RAISING cx_static_check.
@@ -11,6 +12,12 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
+
+  METHOD string_table.
+    DATA tab TYPE string_table.
+* just test it doesnt dump,
+    cl_abap_typedescr=>describe_by_data( tab ).
+  ENDMETHOD.
 
   METHOD get_with_keys.
     DATA lo_table TYPE REF TO cl_abap_tabledescr.
@@ -86,6 +93,10 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = table_descr->key_defkind
       exp = cl_abap_tabledescr=>keydefkind_user ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( table_descr->key )
+      exp = 1 ).
   ENDMETHOD.
 
   METHOD keydefkind_default.
@@ -101,6 +112,10 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = table_descr->key_defkind
       exp = cl_abap_tabledescr=>keydefkind_default ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( table_descr->key )
+      exp = 2 ).
   ENDMETHOD.
 
 ENDCLASS.
