@@ -167,7 +167,9 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     DATA lv_convexit TYPE string.
     DATA lv_length   TYPE i.
     DATA lv_decimals TYPE i.
+    DATA lv_any      TYPE any.
     DATA lo_elem     TYPE REF TO cl_abap_elemdescr.
+    DATA lo_ref      TYPE REF TO cl_abap_refdescr.
 
     WRITE '@KERNEL lv_name.set(p_data.constructor.name);'.
     WRITE '@KERNEL lv_length.set(p_data.getLength ? p_data.getLength() : 0);'.
@@ -261,6 +263,10 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         CREATE OBJECT type TYPE cl_abap_refdescr.
         type->type_kind = typekind_dref.
         type->kind = kind_ref.
+
+        lo_ref ?= type.
+        WRITE '@KERNEL lv_any = p_data.type;'.
+        lo_ref->referenced = describe_by_data( lv_any ).
       WHEN OTHERS.
         WRITE / lv_name.
         ASSERT 1 = 'todo_cl_abap_typedescr'.

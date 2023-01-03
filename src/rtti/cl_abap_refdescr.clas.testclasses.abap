@@ -39,9 +39,13 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD absolute_name.
-    DATA foo TYPE REF TO i.
+    DATA foo   TYPE REF TO i.
     DATA descr TYPE REF TO cl_abap_refdescr.
     descr ?= cl_abap_typedescr=>describe_by_data( foo ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = descr->get_referenced_type( )->kind
+      exp = cl_abap_typedescr=>kind_elem ).
 
     cl_abap_unit_assert=>assert_equals(
       act = descr->get_referenced_type( )->absolute_name
