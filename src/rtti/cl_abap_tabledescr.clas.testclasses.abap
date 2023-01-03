@@ -108,6 +108,10 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = table_descr->key_defkind
       exp = cl_abap_tabledescr=>keydefkind_default ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( table_descr->key )
+      exp = 2 ).
   ENDMETHOD.
 
 ENDCLASS.

@@ -29,13 +29,13 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
     METHODS is_ddic_type RETURNING VALUE(bool) TYPE abap_bool.
 
     METHODS get_component_type
-        IMPORTING
-          p_name TYPE any
-        RETURNING
-          VALUE(p_descr_ref) TYPE REF TO cl_abap_datadescr
-        EXCEPTIONS
-          component_not_found
-          unsupported_input_type.
+      IMPORTING
+        p_name TYPE any
+      RETURNING
+        VALUE(p_descr_ref) TYPE REF TO cl_abap_datadescr
+      EXCEPTIONS
+        component_not_found
+        unsupported_input_type.
 
     METHODS get_included_view
       IMPORTING
