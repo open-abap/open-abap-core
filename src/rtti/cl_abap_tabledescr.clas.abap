@@ -102,6 +102,10 @@ CLASS cl_abap_tabledescr IMPLEMENTATION.
       ls_key-name = lv_str.
       APPEND ls_key TO descr->key.
       WRITE '@KERNEL }'.
+
+      IF lines( descr->key ) = 1 AND ls_key-name = 'TABLE_LINE'.
+        descr->key_defkind = keydefkind_tableline.
+      ENDIF.
     ELSE.
 * EMPTY KEY currently not supported in open-abap
       descr->key_defkind = keydefkind_default.
