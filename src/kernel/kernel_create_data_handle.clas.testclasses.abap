@@ -72,9 +72,10 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD table.
-    DATA foo TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
-    DATA handle TYPE REF TO cl_abap_datadescr.
+    DATA foo          TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    DATA handle       TYPE REF TO cl_abap_datadescr.
     DATA lo_value_new TYPE REF TO data.
+
     handle ?= cl_abap_typedescr=>describe_by_data( foo ).
     CREATE DATA lo_value_new TYPE HANDLE handle.
     cl_abap_unit_assert=>assert_bound( lo_value_new ).
@@ -84,7 +85,7 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA rr_data TYPE REF TO data.
     DATA lo_type TYPE REF TO cl_abap_structdescr.
     DATA lt_comp TYPE cl_abap_structdescr=>component_table.
-    DATA row LIKE LINE OF lt_comp.
+    DATA row     LIKE LINE OF lt_comp.
 
     row-name = 'FOO'.
     row-type = cl_abap_refdescr=>get_ref_to_data( ).
