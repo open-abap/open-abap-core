@@ -91,7 +91,11 @@ CLASS cl_abap_tabledescr IMPLEMENTATION.
     WRITE '@KERNEL lv_flag.set(data.options.primaryKey.keyFields.length > 0 ? "X" : "");'.
     IF lv_flag = abap_true.
       descr->key_defkind = keydefkind_user.
+    ELSE.
+* EMPTY KEY currently not supported in open-abap
+      descr->key_defkind = keydefkind_default.
     ENDIF.
+
   ENDMETHOD.
 
   METHOD get_table_line_type.

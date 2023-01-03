@@ -6,6 +6,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS has_unique_key2 FOR TESTING RAISING cx_static_check.
     METHODS get_with_keys FOR TESTING RAISING cx_static_check.
     METHODS keydefkind_user FOR TESTING RAISING cx_static_check.
+    METHODS keydefkind_default FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -85,6 +86,21 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = table_descr->key_defkind
       exp = cl_abap_tabledescr=>keydefkind_user ).
+  ENDMETHOD.
+
+  METHOD keydefkind_default.
+    TYPES: BEGIN OF ts_field,
+             name  TYPE string,
+             value TYPE string,
+           END OF ts_field.
+    DATA lt_fields TYPE STANDARD TABLE OF ts_field WITH DEFAULT KEY.
+    DATA table_descr TYPE REF TO cl_abap_tabledescr.
+
+    table_descr ?= cl_abap_typedescr=>describe_by_data( lt_fields ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = table_descr->key_defkind
+      exp = cl_abap_tabledescr=>keydefkind_default ).
   ENDMETHOD.
 
 ENDCLASS.
