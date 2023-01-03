@@ -79,6 +79,7 @@ CLASS cl_abap_tabledescr IMPLEMENTATION.
 * todo, this method should be private
     DATA lv_dummy      TYPE i.
     DATA lv_flag       TYPE abap_bool.
+    DATA lv_str        TYPE string.
     DATA lo_struct     TYPE REF TO cl_abap_structdescr.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
     DATA ls_component  LIKE LINE OF lt_components.
@@ -95,6 +96,12 @@ CLASS cl_abap_tabledescr IMPLEMENTATION.
     WRITE '@KERNEL lv_flag.set(data.getOptions()?.primaryKey?.keyFields.length > 0 ? "X" : "");'.
     IF lv_flag = abap_true.
       descr->key_defkind = keydefkind_user.
+
+      WRITE '@KERNEL for (const k of data.getOptions()?.primaryKey?.keyFields) {'.
+      WRITE '@KERNEL lv_str.set(k);'.
+      ls_key-name = lv_str.
+      APPEND ls_key TO descr->key.
+      WRITE '@KERNEL }'.
     ELSE.
 * EMPTY KEY currently not supported in open-abap
       descr->key_defkind = keydefkind_default.
