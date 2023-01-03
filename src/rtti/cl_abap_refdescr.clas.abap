@@ -14,6 +14,7 @@ CLASS cl_abap_refdescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_ref_to_data.
-    ASSERT 1 = 'todo'.
+    DATA foo TYPE REF TO data.
+    p_result ?= cl_abap_typedescr=>describe_by_data( foo ).
   ENDMETHOD.
 ENDCLASS.
