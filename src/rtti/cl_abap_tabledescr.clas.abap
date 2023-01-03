@@ -88,7 +88,7 @@ CLASS cl_abap_tabledescr IMPLEMENTATION.
     WRITE '@KERNEL lv_dummy = data.getRowType();'.
     descr->mo_line_type = cl_abap_typedescr=>describe_by_data( lv_dummy ).
 
-    WRITE '@KERNEL lv_flag.set(data.options.primaryKey.keyFields.length > 0 ? "X" : "");'.
+    WRITE '@KERNEL lv_flag.set(data.getOptions()?.primaryKey?.keyFields.length > 0 ? "X" : "");'.
     IF lv_flag = abap_true.
       descr->key_defkind = keydefkind_user.
     ELSE.
