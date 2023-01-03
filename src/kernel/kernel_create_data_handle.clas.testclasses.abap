@@ -7,6 +7,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS abap_bool FOR TESTING RAISING cx_static_check.
     METHODS structure FOR TESTING RAISING cx_static_check.
     METHODS table FOR TESTING RAISING cx_static_check.
+    METHODS ref FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -77,6 +78,20 @@ CLASS ltcl_test IMPLEMENTATION.
     handle ?= cl_abap_typedescr=>describe_by_data( foo ).
     CREATE DATA lo_value_new TYPE HANDLE handle.
     cl_abap_unit_assert=>assert_bound( lo_value_new ).
+  ENDMETHOD.
+
+  METHOD ref.
+    DATA rr_data TYPE REF TO data.
+    DATA lo_type TYPE REF TO cl_abap_structdescr.
+    DATA lt_comp TYPE cl_abap_structdescr=>component_table.
+    DATA row LIKE LINE OF lt_comp.
+
+    row-name = 'FOO'.
+    row-type = cl_abap_refdescr=>get_ref_to_data( ).
+    APPEND row TO lt_comp.
+
+    lo_type = cl_abap_structdescr=>create( lt_comp ).
+    CREATE DATA rr_data TYPE HANDLE lo_type.
   ENDMETHOD.
 
 ENDCLASS.
