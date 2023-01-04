@@ -75,7 +75,7 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
 
   METHOD create.
     DATA ls_component LIKE LINE OF p_components.
-    DATA ls_ref LIKE LINE OF mt_refs.
+    DATA ls_ref       LIKE LINE OF mt_refs.
 
     IF lines( p_components ) = 0.
       RAISE EXCEPTION TYPE cx_sy_struct_attributes.
@@ -86,6 +86,8 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
         RAISE EXCEPTION TYPE cx_sy_struct_comp_name.
       ELSEIF ls_component-type IS INITIAL.
         RAISE EXCEPTION TYPE cx_sy_struct_comp_type.
+      ELSEIF strlen( ls_component-name ) > 30. " todo, use abap_max_comp_name_ln
+        RAISE EXCEPTION TYPE cx_sy_struct_comp_name.
       ENDIF.
     ENDLOOP.
 
