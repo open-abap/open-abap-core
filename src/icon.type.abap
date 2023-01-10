@@ -33,6 +33,7 @@ CONSTANTS icon_led_inactive TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_led_red TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_led_yellow TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_list TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_message_critical TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_message_information TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_message_question TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_okay TYPE c LENGTH 4 VALUE 'ICON'.
