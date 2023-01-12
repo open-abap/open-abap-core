@@ -31,7 +31,7 @@ CLASS cl_message_helper IMPLEMENTATION.
     DATA lv_msgv4 LIKE sy-msgv4.
 
 * when the transpiler can do more, the below can be implemented in ABAP instead of using KERNEL,
-    WRITE '@KERNEL if (text.get().if_t100_message$t100key === undefined) { result.set(this.gc_fallback); return result; };'.
+    WRITE '@KERNEL if (text.get()?.if_t100_message$t100key === undefined) { result.set(this.gc_fallback); return result; };'.
 
     WRITE '@KERNEL lv_msgid.set(text.get().if_t100_message$t100key.get().msgid);'.
     WRITE '@KERNEL lv_msgno.set(text.get().if_t100_message$t100key.get().msgno);'.
