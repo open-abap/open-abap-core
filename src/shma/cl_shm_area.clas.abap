@@ -238,7 +238,19 @@ CLASS cl_shm_area IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD _attach_update70.
-    ASSERT 1 = 'todo'.
+    DATA created TYPE REF TO object.
+    DATA lv_name TYPE string.
+
+    IF mo_root IS INITIAL.
+* todo, this should respect the auto build flag configuration from the SHMA area
+* todo, this is an evil workaround
+      REPLACE FIRST OCCURRENCE OF '_AREA' IN lv_name WITH '_ROOT'.
+      CREATE OBJECT created TYPE (lv_name).
+
+      _set_root( created ).
+    ENDIF.
+* open-abap is currently single threaded, so no lock conflicts
+    root = mo_root.
   ENDMETHOD.
 
   METHOD _attach_write70.
