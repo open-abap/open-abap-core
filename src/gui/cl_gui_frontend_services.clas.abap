@@ -54,6 +54,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
           default_extension TYPE string OPTIONAL
           multiselection    TYPE abap_bool OPTIONAL
           file_filter       TYPE string OPTIONAL
+          initial_directory TYPE string OPTIONAL
         CHANGING
           file_table        TYPE filetable
           rc                TYPE i
