@@ -41,7 +41,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
         IMPORTING
           filename TYPE string
           filetype TYPE string OPTIONAL
-          codepage TYPE abap_encoding DEFAULT space
+          codepage TYPE  abap_encoding DEFAULT space
         EXPORTING
           filelength TYPE i
         CHANGING
