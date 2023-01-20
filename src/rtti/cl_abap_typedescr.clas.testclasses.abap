@@ -5,6 +5,11 @@ INTERFACE lif_test_types.
            element_2 TYPE element,
          END OF structure.
   TYPES table_structure TYPE STANDARD TABLE OF structure WITH DEFAULT KEY.
+
+  TYPES foo TYPE char1.
+  CONSTANTS: BEGIN OF c_foo,
+               true TYPE foo VALUE abap_true,
+             END OF c_foo.
 ENDINTERFACE.
 
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
@@ -42,6 +47,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS is_ddic_type_true1 FOR TESTING.
     METHODS is_ddic_type_true2 FOR TESTING.
     METHODS is_ddic_type_false FOR TESTING.
+
+    METHODS contant_field_absolute FOR TESTING.
 
 ENDCLASS.
 
@@ -373,6 +380,15 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = sy-subrc
       exp = 16 ).
+  ENDMETHOD.
+
+  METHOD contant_field_absolute.
+    DATA lo_descr TYPE REF TO cl_abap_typedescr.
+    lo_descr = cl_abap_typedescr=>describe_by_data( lif_test_types=>c_foo-true ).
+*    WRITE / lo_descr->absolute_name.
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lo_descr->absolute_name
+      exp = '*\TYPE=FOO' ).
   ENDMETHOD.
 
 ENDCLASS.
