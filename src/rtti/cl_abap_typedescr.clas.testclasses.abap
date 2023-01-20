@@ -385,7 +385,7 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD contant_field_absolute.
     DATA lo_descr TYPE REF TO cl_abap_typedescr.
     lo_descr = cl_abap_typedescr=>describe_by_data( lif_test_types=>c_foo-true ).
-*    WRITE / lo_descr->absolute_name.
+
     cl_abap_unit_assert=>assert_char_cp(
       act = lo_descr->absolute_name
       exp = '*\TYPE=FOO' ).
