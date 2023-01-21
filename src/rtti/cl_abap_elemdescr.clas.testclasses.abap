@@ -118,6 +118,9 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = ls_dfies-inttype
       exp = 'C' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-domname
+      exp = 'ABAP_BOOLEAN' ).
   ENDMETHOD.
 
   METHOD get_ddic_field2.

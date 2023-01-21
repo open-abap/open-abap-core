@@ -84,6 +84,9 @@ CLASS cl_abap_elemdescr IMPLEMENTATION.
     p_flddescr-position = 1.
     p_flddescr-leng     = length.
     p_flddescr-decimals = decimals.
+
+    WRITE '@KERNEL p_flddescr.get().domname.set(abap.DDIC[this.relative_name.get()]?.domain || "");'.
+
 * todo, dfies-convexit
   ENDMETHOD.
 
