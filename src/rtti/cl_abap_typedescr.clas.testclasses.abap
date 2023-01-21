@@ -49,6 +49,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS is_ddic_type_false FOR TESTING.
 
     METHODS contant_field_absolute FOR TESTING.
+    METHODS structure_field_absolute FOR TESTING.
 
 ENDCLASS.
 
@@ -389,6 +390,22 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = lo_descr->absolute_name
       exp = '*\TYPE=FOO' ).
+  ENDMETHOD.
+
+  METHOD structure_field_absolute.
+
+    TYPES: BEGIN OF ty_data,
+         field TYPE lif_test_types=>foo,
+       END OF ty_data.
+
+    DATA ls_data TYPE ty_data.
+    DATA lo_descr TYPE REF TO cl_abap_typedescr.
+    lo_descr = cl_abap_typedescr=>describe_by_data( ls_data-field ).
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lo_descr->absolute_name
+      exp = '*\TYPE=FOO' ).
+
   ENDMETHOD.
 
 ENDCLASS.
