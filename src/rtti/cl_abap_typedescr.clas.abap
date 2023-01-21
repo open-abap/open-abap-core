@@ -290,7 +290,8 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
       type->relative_name = 'ABAP_BOOL'.
       type->absolute_name = '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL'.
     ELSEIF type->absolute_name IS INITIAL.
-      type->absolute_name = 'ABSOLUTE_NAME_TODO'.
+* todo,
+      type->absolute_name = '\TYPE=%_T0000000000000000000000001'.
     ELSEIF type->absolute_name CS '=>'.
       SPLIT type->absolute_name AT '=>' INTO lv_prefix type->absolute_name.
       type->relative_name = type->absolute_name.

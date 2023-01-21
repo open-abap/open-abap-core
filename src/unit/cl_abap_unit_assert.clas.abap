@@ -113,22 +113,41 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
     CLASS-METHODS
       assert_bound
         IMPORTING
-          act TYPE any
-          msg TYPE string OPTIONAL
-          quit TYPE i OPTIONAL
+          act   TYPE any
+          msg   TYPE string OPTIONAL
+          quit  TYPE i OPTIONAL
           level TYPE i OPTIONAL.
 
     CLASS-METHODS
       assert_not_bound
         IMPORTING
-          act TYPE any
-          msg TYPE string OPTIONAL
-          quit TYPE i OPTIONAL
+          act   TYPE any
+          msg   TYPE string OPTIONAL
+          quit  TYPE i OPTIONAL
           level TYPE i OPTIONAL.
+
+    CLASS-METHODS
+      assert_text_matches
+        IMPORTING
+          pattern TYPE csequence
+          text    TYPE csequence
+          msg     TYPE csequence OPTIONAL
+          quit    TYPE i OPTIONAL
+          level   TYPE i OPTIONAL.
 
 ENDCLASS.
 
 CLASS cl_abap_unit_assert IMPLEMENTATION.
+
+  METHOD assert_text_matches.
+    IF boolc( contains( val = text regex = pattern ) ) = abap_false.
+      RAISE EXCEPTION TYPE kernel_cx_assert
+        EXPORTING
+          expected = pattern
+          actual   = text
+          msg      = msg.
+    ENDIF.
+  ENDMETHOD.
 
   METHOD abort.
     ASSERT 1 = 'todo'.

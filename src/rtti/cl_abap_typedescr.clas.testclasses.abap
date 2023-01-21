@@ -50,6 +50,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
     METHODS contant_field_absolute FOR TESTING.
     METHODS structure_field_absolute FOR TESTING.
+    METHODS unnamed_type FOR TESTING.
 
 ENDCLASS.
 
@@ -405,6 +406,19 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = lo_descr->absolute_name
       exp = '*\TYPE=FOO' ).
+
+  ENDMETHOD.
+
+  METHOD unnamed_type.
+
+    DATA lt_tab   TYPE STANDARD TABLE OF char1 WITH DEFAULT KEY.
+    DATA lo_descr TYPE REF TO cl_abap_typedescr.
+
+    lo_descr = cl_abap_typedescr=>describe_by_data( lt_tab ).
+
+    cl_abap_unit_assert=>assert_text_matches(
+      pattern = '\\TYPE=%_T\d\d\d\d\d\w\d\d\d\d\d\d\d\d\w\d\d\d\d\d\d\d\d\d\d'
+      text    = lo_descr->absolute_name ).
 
   ENDMETHOD.
 
