@@ -85,6 +85,9 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS kind_ref    TYPE c LENGTH 1 VALUE 'R'.
     CONSTANTS kind_class  TYPE c LENGTH 1 VALUE 'C'.
     CONSTANTS kind_intf   TYPE c LENGTH 1 VALUE 'I'.
+
+  PRIVATE SECTION.
+    CLASS-DATA gv_counter TYPE n LENGTH 10.
 ENDCLASS.
 
 CLASS cl_abap_typedescr IMPLEMENTATION.
@@ -290,8 +293,8 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
       type->relative_name = 'ABAP_BOOL'.
       type->absolute_name = '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL'.
     ELSEIF type->absolute_name IS INITIAL.
-* todo,
-      type->absolute_name = '\TYPE=%_T0000000000000000000000001'.
+      gv_counter = gv_counter + 1.
+      type->absolute_name = '\TYPE=%_T000000000000000' && gv_counter.
     ELSEIF type->absolute_name CS '=>'.
       SPLIT type->absolute_name AT '=>' INTO lv_prefix type->absolute_name.
       type->relative_name = type->absolute_name.

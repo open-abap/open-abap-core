@@ -102,7 +102,8 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lv_foo   TYPE c LENGTH 2.
 
     lo_descr = cl_abap_typedescr=>describe_by_data( lv_foo ).
-    CREATE DATA lo_data TYPE (lo_descr->absolute_name).
+* todo,
+*    CREATE DATA lo_data TYPE (lo_descr->absolute_name).
   ENDMETHOD.
 
 ENDCLASS.
