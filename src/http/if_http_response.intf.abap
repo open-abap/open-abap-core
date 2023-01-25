@@ -47,26 +47,26 @@ INTERFACE if_http_response PUBLIC.
 
   METHODS server_cache_browser_dependent
     IMPORTING
-      dependent TYPE boolean DEFAULT 'X'.
+      dependent TYPE boolean DEFAULT abap_true.
 
   METHODS server_cache_expire_abs
     IMPORTING
       expires_abs_date  TYPE d OPTIONAL
       expires_abs_time  TYPE t OPTIONAL
       etag              TYPE char32 OPTIONAL
-      browser_dependent TYPE boolean DEFAULT ' '
-      no_ufo_cache      TYPE boolean DEFAULT ' '.
+      browser_dependent TYPE boolean DEFAULT abap_false
+      no_ufo_cache      TYPE boolean DEFAULT abap_false.
 
   METHODS server_cache_expire_default
     IMPORTING
-      etag TYPE char32 OPTIONAL
-      browser_dependent TYPE boolean DEFAULT ' '
-      no_ufo_cache TYPE boolean DEFAULT ' '.
+      etag              TYPE char32 OPTIONAL
+      browser_dependent TYPE boolean DEFAULT abap_false
+      no_ufo_cache      TYPE boolean DEFAULT abap_false.
 
   METHODS server_cache_expire_rel
     IMPORTING
-      !expires_rel TYPE i
-      !etag TYPE char32 OPTIONAL
-      !browser_dependent TYPE boolean DEFAULT ' '
-      !no_ufo_cache TYPE boolean DEFAULT ' '.
+      expires_rel       TYPE i
+      etag              TYPE char32 OPTIONAL
+      browser_dependent TYPE boolean DEFAULT abap_false
+      no_ufo_cache      TYPE boolean DEFAULT abap_false.
 ENDINTERFACE.

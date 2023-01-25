@@ -31,10 +31,10 @@ CLASS cl_abap_gzip DEFINITION PUBLIC.
 
     CLASS-METHODS compress_text
       IMPORTING
-        text_in TYPE csequence
-        text_in_len TYPE i DEFAULT -1
+        text_in        TYPE csequence
+        text_in_len    TYPE i DEFAULT -1
         compress_level TYPE i DEFAULT 6
-        conversion TYPE abap_encod DEFAULT 'DEFAULT'
+        conversion     TYPE abap_encod DEFAULT 'DEFAULT'
       EXPORTING
         gzip_out TYPE xsequence
         gzip_out_len TYPE i
@@ -43,9 +43,27 @@ CLASS cl_abap_gzip DEFINITION PUBLIC.
         cx_sy_buffer_overflow
         cx_sy_conversion_codepage
         cx_sy_compression_error.
+
+    CLASS-METHODS decompress_binary_with_header
+      IMPORTING
+        gzip_in TYPE xstring
+      EXPORTING
+        raw_out TYPE xstring
+      RAISING
+        cx_parameter_invalid
+        cx_sy_buffer_overflow
+        cx_sy_compression_error.
 ENDCLASS.
 
 CLASS cl_abap_gzip IMPLEMENTATION.
+  METHOD decompress_binary_with_header.
+    WRITE '@KERNEL const zlib = await import("zlib");'.
+    WRITE '@KERNEL const buf = Buffer.from(gzip_in.get(), "hex");'.
+    WRITE '@KERNEL const decompress = zlib.gunzipSync(buf).toString("hex").toUpperCase();'.
+
+    WRITE '@KERNEL raw_out.set(decompress);'.
+  ENDMETHOD.
+
   METHOD decompress_text.
     ASSERT 1 = 'todo'.
   ENDMETHOD.

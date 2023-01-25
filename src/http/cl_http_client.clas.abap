@@ -89,6 +89,7 @@ CLASS cl_http_client IMPLEMENTATION.
     DATA lv_name          TYPE string.
     DATA lv_value         TYPE string.
     DATA lv_content_type  TYPE string.
+    DATA lv_xstr          TYPE xstring.
     DATA lt_form_fields   TYPE tihttpnvp.
     DATA lt_header_fields TYPE tihttpnvp.
     DATA ls_field         LIKE LINE OF lt_header_fields.
@@ -170,7 +171,7 @@ CLASS cl_http_client IMPLEMENTATION.
     WRITE '@KERNEL let response = await postData(lv_url.get(), {method: lv_method.get(), headers: headers, agent: this.agent}, lv_body.get());'.
 
     " WRITE '@KERNEL console.dir(response);'.
-    " WRITE '@KERNEL console.dir(response.headers);'.
+    WRITE '@KERNEL console.dir(response.headers);'.
 
     WRITE '@KERNEL for (const h in response.headers) {'.
     WRITE '@KERNEL   lv_name.set(h);'.
@@ -185,6 +186,17 @@ CLASS cl_http_client IMPLEMENTATION.
     WRITE '@KERNEL this.if_http_client$response.get().mv_content_type.set(response.headers["content-type"] || "");'.
     WRITE '@KERNEL this.if_http_client$response.get().mv_status.set(response.statusCode);'.
     WRITE '@KERNEL this.if_http_client$response.get().mv_data.set(response.body.toString("hex").toUpperCase());'.
+    WRITE '@KERNEL console.dir(this.if_http_client$response.get().mv_data);'.
+
+    lv_value = if_http_client~response->get_header_field( 'content-encoding' ).
+    IF lv_value = 'gzip'.
+      cl_abap_gzip=>decompress_binary_with_header(
+        EXPORTING
+          gzip_in = if_http_client~response->get_data( )
+        IMPORTING
+          raw_out = lv_xstr ).
+      if_http_client~response->set_data( lv_xstr ).
+    ENDIF.
 
 * workaround for classic exceptions, this should work sometime in the transpiler instead
     sy-subrc = 0.
