@@ -132,6 +132,7 @@ CLASS cl_http_client IMPLEMENTATION.
     IF lv_content_type IS NOT INITIAL.
       WRITE '@KERNEL headers["content-type"] = lv_content_type.get();'.
     ENDIF.
+    WRITE '@KERNEL headers["accept-encoding"] = "gzip";'.
 
 *    WRITE '@KERNEL console.dir(headers);'.
 
