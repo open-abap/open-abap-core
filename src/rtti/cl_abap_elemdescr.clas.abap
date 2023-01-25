@@ -39,7 +39,7 @@ CLASS cl_abap_elemdescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
         VALUE(p_result) TYPE REF TO cl_abap_elemdescr.
     CLASS-METHODS get_p
       IMPORTING
-        p_length TYPE i
+        p_length   TYPE i
         p_decimals TYPE i
       RETURNING
         VALUE(p_result) TYPE REF TO cl_abap_elemdescr.
@@ -66,7 +66,9 @@ CLASS cl_abap_elemdescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_n.
-    ASSERT 1 = 'todo'.
+    DATA foo TYPE REF TO data.
+    CREATE DATA foo TYPE n LENGTH p_length.
+    p_result ?= cl_abap_typedescr=>describe_by_data_ref( foo ).
   ENDMETHOD.
 
   METHOD get_x.
