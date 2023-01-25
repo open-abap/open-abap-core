@@ -89,6 +89,7 @@ CLASS cl_http_client IMPLEMENTATION.
     DATA lv_name          TYPE string.
     DATA lv_value         TYPE string.
     DATA lv_content_type  TYPE string.
+    DATA lv_xstr          TYPE xstring.
     DATA lt_form_fields   TYPE tihttpnvp.
     DATA lt_header_fields TYPE tihttpnvp.
     DATA ls_field         LIKE LINE OF lt_header_fields.
@@ -131,6 +132,7 @@ CLASS cl_http_client IMPLEMENTATION.
     IF lv_content_type IS NOT INITIAL.
       WRITE '@KERNEL headers["content-type"] = lv_content_type.get();'.
     ENDIF.
+    WRITE '@KERNEL headers["accept-encoding"] = "gzip";'.
 
 *    WRITE '@KERNEL console.dir(headers);'.
 
@@ -185,6 +187,17 @@ CLASS cl_http_client IMPLEMENTATION.
     WRITE '@KERNEL this.if_http_client$response.get().mv_content_type.set(response.headers["content-type"] || "");'.
     WRITE '@KERNEL this.if_http_client$response.get().mv_status.set(response.statusCode);'.
     WRITE '@KERNEL this.if_http_client$response.get().mv_data.set(response.body.toString("hex").toUpperCase());'.
+*    WRITE '@KERNEL console.dir(this.if_http_client$response.get().mv_data);'.
+
+    lv_value = if_http_client~response->get_header_field( 'content-encoding' ).
+    IF lv_value = 'gzip'.
+      cl_abap_gzip=>decompress_binary_with_header(
+        EXPORTING
+          gzip_in = if_http_client~response->get_data( )
+        IMPORTING
+          raw_out = lv_xstr ).
+      if_http_client~response->set_data( lv_xstr ).
+    ENDIF.
 
 * workaround for classic exceptions, this should work sometime in the transpiler instead
     sy-subrc = 0.

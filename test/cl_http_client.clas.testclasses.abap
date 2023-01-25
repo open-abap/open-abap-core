@@ -16,6 +16,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS default_user_agent FOR TESTING RAISING cx_static_check.
     METHODS post_content_type FOR TESTING RAISING cx_static_check.
     METHODS status_500 FOR TESTING RAISING cx_static_check.
+    METHODS decode_gzip FOR TESTING RAISING cx_static_check.
+    METHODS accepts_gzip FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -422,6 +424,56 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_code
       exp = 500 ).
+
+  ENDMETHOD.
+
+  METHOD decode_gzip.
+
+    DATA li_client TYPE REF TO if_http_client.
+    DATA lv_code   TYPE i.
+    DATA lv_cdata  TYPE string.
+
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = 'https://httpbin.org/gzip'
+        ssl_id = 'ANONYM'
+      IMPORTING
+        client = li_client ).
+    li_client->request->set_method( 'GET' ).
+
+    li_client->send( ).
+    li_client->receive( ).
+
+    lv_cdata = li_client->response->get_cdata( ).
+    WRITE '@KERNEL console.dir(lv_cdata);'.
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = '*"gzipped": true*' ).
+
+  ENDMETHOD.
+
+  METHOD accepts_gzip.
+
+    DATA li_client TYPE REF TO if_http_client.
+    DATA lv_code   TYPE i.
+    DATA lv_cdata  TYPE string.
+
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = 'https://httpbin.org/headers'
+        ssl_id = 'ANONYM'
+      IMPORTING
+        client = li_client ).
+    li_client->request->set_method( 'GET' ).
+
+    li_client->send( ).
+    li_client->receive( ).
+
+    lv_cdata = li_client->response->get_cdata( ).
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = '*"Accept-Encoding": "gzip"*' ).
 
   ENDMETHOD.
 
