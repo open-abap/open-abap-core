@@ -27,6 +27,7 @@ INTERFACE if_http_request PUBLIC.
   ALIASES set_form_fields FOR if_http_entity~set_form_fields.
   ALIASES set_header_field FOR if_http_entity~set_header_field.
   ALIASES set_header_fields FOR if_http_entity~set_header_fields.
+  ALIASES set_compression FOR if_http_entity~set_compression.
 
   METHODS set_method
     IMPORTING
