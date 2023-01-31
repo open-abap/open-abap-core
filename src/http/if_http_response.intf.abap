@@ -14,6 +14,7 @@ INTERFACE if_http_response PUBLIC.
   ALIASES append_cdata FOR if_http_entity~append_cdata.
   ALIASES set_cookie FOR if_http_entity~set_cookie.
   ALIASES delete_header_field FOR if_http_entity~delete_header_field.
+  ALIASES set_compression FOR if_http_entity~set_compression.
 
   METHODS get_status
     EXPORTING
