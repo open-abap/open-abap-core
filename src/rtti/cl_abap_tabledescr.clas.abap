@@ -49,8 +49,20 @@ CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
 ENDCLASS.
 
 CLASS cl_abap_tabledescr IMPLEMENTATION.
+
   METHOD create.
-    ASSERT 1 = 'todo'.
+
+    CREATE OBJECT ref.
+    ref->has_unique_key = p_unique.
+    ref->mo_line_type   = p_line_type.
+    ref->key            = p_key.
+    ref->key_defkind    = p_key_kind.
+    ref->table_kind     = p_table_kind.
+
+    " cl_abap_typedescr
+    ref->type_kind      = typekind_table.
+    ref->kind           = kind_table.
+
   ENDMETHOD.
 
   METHOD get_with_keys.
