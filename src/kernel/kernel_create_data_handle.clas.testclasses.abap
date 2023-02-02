@@ -10,6 +10,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS table FOR TESTING RAISING cx_static_check.
     METHODS ref FOR TESTING RAISING cx_static_check.
     METHODS unnamed_type FOR TESTING RAISING cx_static_check.
+    METHODS table_table FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -113,6 +114,17 @@ CLASS ltcl_test IMPLEMENTATION.
     lo_descr = cl_abap_typedescr=>describe_by_data( lv_foo ).
 * todo,
 *    CREATE DATA lo_data TYPE (lo_descr->absolute_name).
+  ENDMETHOD.
+
+  METHOD table_table.
+    DATA lr_ref TYPE REF TO data.
+    DATA lo_descr TYPE REF TO cl_abap_tabledescr.
+    FIELD-SYMBOLS <fs> TYPE ANY TABLE.
+    lo_descr = cl_abap_tabledescr=>create( cl_abap_elemdescr=>get_i( ) ).
+    CREATE DATA lr_ref TYPE HANDLE lo_descr.
+    ASSIGN lr_ref->* TO <fs>.
+    INSERT 2 INTO TABLE <fs>.
+    ASSERT lines( <fs> ) = 1.
   ENDMETHOD.
 
 ENDCLASS.
