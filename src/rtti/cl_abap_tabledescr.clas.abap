@@ -66,6 +66,7 @@ CLASS cl_abap_tabledescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_with_keys.
+
     DATA ls_key LIKE LINE OF p_keys.
 
     IF lines( p_keys ) <> 1.
@@ -79,8 +80,11 @@ CLASS cl_abap_tabledescr IMPLEMENTATION.
     p_result->mo_line_type   = p_line_type.
     p_result->key_defkind    = ls_key-key_kind.
     p_result->table_kind     = ls_key-access_kind.
+
+    " cl_abap_typedescr
     p_result->type_kind      = typekind_table.
     p_result->kind           = kind_table.
+
   ENDMETHOD.
 
   METHOD get.
