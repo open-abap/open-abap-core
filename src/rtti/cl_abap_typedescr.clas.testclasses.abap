@@ -51,6 +51,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS contant_field_absolute FOR TESTING.
     METHODS structure_field_absolute FOR TESTING.
     METHODS unnamed_type FOR TESTING.
+    METHODS describe_by_dashed FOR TESTING.
 
 ENDCLASS.
 
@@ -419,6 +420,18 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_text_matches(
       pattern = '\\TYPE=%_T\d\d\d\d\d\w\d\d\d\d\d\d\d\d\w\d\d\d\d\d\d\d\d\d\d'
       text    = lo_descr->absolute_name ).
+
+  ENDMETHOD.
+
+  METHOD describe_by_dashed.
+
+    DATA lo_descr TYPE REF TO cl_abap_typedescr.
+
+    lo_descr = cl_abap_typedescr=>describe_by_name( 'T100-ARBGB' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_descr->type_kind
+      exp = cl_abap_typedescr=>typekind_char ).
 
   ENDMETHOD.
 
