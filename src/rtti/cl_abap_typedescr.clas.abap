@@ -88,6 +88,11 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
 
   PRIVATE SECTION.
     CLASS-DATA gv_counter TYPE n LENGTH 10.
+
+    CLASS-METHODS
+      describe_by_dashes
+        IMPORTING p_name TYPE clike
+        RETURNING VALUE(type) TYPE REF TO cl_abap_typedescr.
 ENDCLASS.
 
 CLASS cl_abap_typedescr IMPLEMENTATION.
@@ -100,10 +105,35 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
+  METHOD describe_by_dashes.
+    DATA lt_parts   TYPE STANDARD TABLE OF string.
+    DATA lv_part    LIKE LINE OF lt_parts.
+    DATA lo_current TYPE REF TO cl_abap_typedescr.
+    DATA lo_struct  TYPE REF TO cl_abap_structdescr.
+
+    SPLIT p_name AT '-' INTO TABLE lt_parts.
+
+    LOOP AT lt_parts INTO lv_part.
+      IF lo_current IS INITIAL.
+        lo_current = describe_by_name( lv_part ).
+      ELSEIF lo_current->kind = kind_struct.
+        lo_struct ?= lo_current.
+        lo_current = lo_struct->get_component_type( lv_part ).
+      ENDIF.
+    ENDLOOP.
+
+    type = lo_current.
+  ENDMETHOD.
+
   METHOD describe_by_name.
-    DATA ref     TYPE REF TO data.
+    DATA ref         TYPE REF TO data.
     DATA objectdescr TYPE REF TO cl_abap_objectdescr.
-    DATA oo_type TYPE string.
+    DATA oo_type     TYPE string.
+
+    IF p_name CA '-'.
+      type = describe_by_dashes( p_name ).
+      RETURN.
+    ENDIF.
 
     WRITE '@KERNEL oo_type.set(abap.Classes[p_name.get().toUpperCase()]?.INTERNAL_TYPE || "");'.
 

@@ -304,18 +304,28 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD assert_not_initial.
+    DATA lv_msg TYPE string.
     IF act IS INITIAL.
+      lv_msg = msg.
+      IF lv_msg IS INITIAL.
+        lv_msg = |Expected non initial value|.
+      ENDIF.
       RAISE EXCEPTION TYPE kernel_cx_assert
         EXPORTING
-          msg = |Expected non initial value|.
+          msg = lv_msg.
     ENDIF.
   ENDMETHOD.
 
   METHOD assert_initial.
+    DATA lv_msg TYPE string.
     IF act IS NOT INITIAL.
+      lv_msg = msg.
+      IF lv_msg IS INITIAL.
+        lv_msg = |Expected initial value|.
+      ENDIF.
       RAISE EXCEPTION TYPE kernel_cx_assert
         EXPORTING
-          msg = |Expected initial value|.
+          msg = lv_msg.
     ENDIF.
   ENDMETHOD.
 
