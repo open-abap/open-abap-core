@@ -298,7 +298,7 @@ CLASS lcl_reader IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-* todo, for now this only hanles json, but the class is really meant for XML
+* todo, for now this only handles json, but the class is really meant for XML
     CREATE OBJECT lo_json.
     lt_parsed = lo_json->parse( mv_json ).
 
