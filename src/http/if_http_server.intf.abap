@@ -15,7 +15,8 @@ INTERFACE if_http_server PUBLIC.
 
   METHODS logoff
     IMPORTING
-      redirect_url TYPE string OPTIONAL.
+      delete_mysapsso2_cookie TYPE abap_bool OPTIONAL
+      redirect_url            TYPE string OPTIONAL.
 
   METHODS set_session_stateful
     IMPORTING
