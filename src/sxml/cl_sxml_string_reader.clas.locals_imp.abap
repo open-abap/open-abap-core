@@ -189,8 +189,8 @@ CLASS lcl_attribute DEFINITION.
 
     METHODS constructor
       IMPORTING
-        name TYPE string
-        value TYPE string
+        name       TYPE string
+        value      TYPE string
         value_type TYPE if_sxml_value=>value_type.
 
   PRIVATE SECTION.

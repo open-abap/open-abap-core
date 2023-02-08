@@ -2,9 +2,9 @@ CLASS ltcl_json DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
     TYPES: BEGIN OF ty_node,
-             type TYPE if_sxml_node=>node_type,
-             name TYPE string,
-             key TYPE string,
+             type  TYPE if_sxml_node=>node_type,
+             name  TYPE string,
+             key   TYPE string,
              value TYPE string,
            END OF ty_node.
 
@@ -15,9 +15,9 @@ CLASS ltcl_json DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS setup.
     METHODS add_expected
       IMPORTING
-        iv_type TYPE if_sxml_node=>node_type
-        iv_name TYPE string OPTIONAL
-        iv_key TYPE string OPTIONAL
+        iv_type  TYPE if_sxml_node=>node_type
+        iv_name  TYPE string OPTIONAL
+        iv_key   TYPE string OPTIONAL
         iv_value TYPE string OPTIONAL.
     METHODS dump_nodes
       IMPORTING iv_json TYPE string
