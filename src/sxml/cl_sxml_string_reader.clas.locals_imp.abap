@@ -28,28 +28,49 @@ CLASS lcl_json_parser DEFINITION.
 
     METHODS traverse
       IMPORTING
-        iv_json TYPE string
-        iv_key TYPE string OPTIONAL.
+        iv_json TYPE any
+        iv_key  TYPE string OPTIONAL.
     METHODS traverse_object
       IMPORTING
-        iv_json TYPE string
-        iv_key TYPE string OPTIONAL.
+        iv_json TYPE any
+        iv_key  TYPE string OPTIONAL.
     METHODS traverse_basic
       IMPORTING
-        iv_json TYPE string
-        iv_key TYPE string OPTIONAL.
+        iv_json TYPE any
+        iv_key  TYPE string OPTIONAL.
     METHODS traverse_array
       IMPORTING
-        iv_json TYPE string
-        iv_key TYPE string OPTIONAL.
+        iv_json TYPE any
+        iv_key  TYPE string OPTIONAL.
 
 ENDCLASS.
 
 CLASS lcl_json_parser IMPLEMENTATION.
 
   METHOD parse.
+
+    DATA lv_error         TYPE abap_bool.
+    DATA lv_error_message TYPE string.
+    DATA lv_xml_offset    TYPE i.
+    DATA lv_json          TYPE i.
+
+* Note: iv_json is an object to avoid problems with the ANY importing parameter
+
+    WRITE '@KERNEL try {'.
+    WRITE '@KERNEL   lv_json = {value: JSON.parse(iv_json.get())};'.
+    WRITE '@KERNEL } catch(e) {'.
+    WRITE '@KERNEL   lv_error_message.set(e.message);'.
+    WRITE '@KERNEL   lv_error.set("X")'.
+    WRITE '@KERNEL }'.
+    IF lv_error = abap_true.
+      FIND REGEX ' position (\d+)' IN lv_error_message SUBMATCHES lv_xml_offset.
+      RAISE EXCEPTION TYPE cx_sxml_parse_error
+        EXPORTING
+          xml_offset = lv_xml_offset.
+    ENDIF.
+
     CLEAR mt_nodes.
-    traverse( iv_json ).
+    traverse( lv_json ).
     rt_nodes = mt_nodes.
   ENDMETHOD.
 
@@ -64,26 +85,10 @@ CLASS lcl_json_parser IMPLEMENTATION.
 
   METHOD traverse.
 
-    DATA lv_type  TYPE string.
-    DATA lv_error TYPE abap_bool.
-    DATA lv_error_message TYPE string.
-    DATA lv_xml_offset TYPE i.
+    DATA lv_type TYPE string.
 
-    WRITE '@KERNEL let parsed;'.
-    WRITE '@KERNEL try {'.
-    WRITE '@KERNEL   parsed = JSON.parse(iv_json.get());'.
-    WRITE '@KERNEL } catch(e) {'.
-    WRITE '@KERNEL   lv_error_message.set(e.message);'.
-    WRITE '@KERNEL   lv_error.set("X")'.
-    WRITE '@KERNEL }'.
-    IF lv_error = abap_true.
-      FIND REGEX ' position (\d+)' IN lv_error_message SUBMATCHES lv_xml_offset.
-      RAISE EXCEPTION TYPE cx_sxml_parse_error
-        EXPORTING
-          xml_offset = lv_xml_offset.
-    ENDIF.
-    WRITE '@KERNEL lv_type.set(Array.isArray(parsed) ? "array" : typeof parsed);'.
-    WRITE '@KERNEL if (parsed === null) lv_type.set("null");'.
+    WRITE '@KERNEL lv_type.set(Array.isArray(iv_json.value) ? "array" : typeof iv_json.value);'.
+    WRITE '@KERNEL if (iv_json.value === null) lv_type.set("null");'.
 
     CASE lv_type.
       WHEN 'object'.
@@ -102,7 +107,8 @@ CLASS lcl_json_parser IMPLEMENTATION.
 
     DATA lv_type TYPE string.
 
-    WRITE '@KERNEL let parsed = JSON.parse(iv_json.get());'.
+    WRITE '@KERNEL let parsed = iv_json.value;'.
+    WRITE '@KERNEL iv_json = new abap.types.String().set(iv_json.value + "");'.
     WRITE '@KERNEL lv_type.set(typeof parsed);'.
     WRITE '@KERNEL if (parsed === null) lv_type.set("null");'.
 
@@ -119,13 +125,8 @@ CLASS lcl_json_parser IMPLEMENTATION.
             iv_name = lv_type
             iv_key  = iv_key ).
     IF lv_type <> 'null'.
-      IF lv_type = 'str'.
-        append( iv_type  = if_sxml_node=>co_nt_value
-                iv_value = substring( val = iv_json off = 1 len = strlen( iv_json ) - 2 ) ).
-      ELSE.
-        append( iv_type  = if_sxml_node=>co_nt_value
-                iv_value = iv_json ).
-      ENDIF.
+      append( iv_type  = if_sxml_node=>co_nt_value
+              iv_value = iv_json ).
     ENDIF.
     append( iv_type = if_sxml_node=>co_nt_element_close
             iv_name = lv_type ).
@@ -134,11 +135,11 @@ CLASS lcl_json_parser IMPLEMENTATION.
 
   METHOD traverse_array.
 
-    DATA lv_value TYPE string.
+    DATA lv_value  TYPE string.
     DATA lv_length TYPE i.
-    DATA lv_index TYPE i.
+    DATA lv_index  TYPE i.
 
-    WRITE '@KERNEL let parsed = JSON.parse(iv_json.get());'.
+    WRITE '@KERNEL let parsed = iv_json.value;'.
     WRITE '@KERNEL lv_length.set(parsed.length);'.
 
     append( iv_type = if_sxml_node=>co_nt_element_open
@@ -147,7 +148,7 @@ CLASS lcl_json_parser IMPLEMENTATION.
 
     DO lv_length TIMES.
       lv_index = sy-index - 1.
-      WRITE '@KERNEL lv_value.set(JSON.stringify(parsed[lv_index.get()]));'.
+      WRITE '@KERNEL lv_value = {value: parsed[lv_index.get()]};'.
       traverse( lv_value ).
     ENDDO.
 
@@ -158,11 +159,11 @@ CLASS lcl_json_parser IMPLEMENTATION.
 
   METHOD traverse_object.
 
-    DATA lt_keys TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
-    DATA lv_key LIKE LINE OF lt_keys.
+    DATA lt_keys   TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA lv_key   LIKE LINE OF lt_keys.
     DATA lv_value TYPE string.
 
-    WRITE '@KERNEL let parsed = JSON.parse(iv_json.get());'.
+    WRITE '@KERNEL let parsed = iv_json.value;'.
     WRITE '@KERNEL Object.keys(parsed).forEach(k => lt_keys.append(k));'.
 
     append( iv_type = if_sxml_node=>co_nt_element_open
@@ -170,7 +171,7 @@ CLASS lcl_json_parser IMPLEMENTATION.
             iv_key  = iv_key ).
 
     LOOP AT lt_keys INTO lv_key.
-      WRITE '@KERNEL lv_value.set(JSON.stringify(parsed[lv_key.get()]));'.
+      WRITE '@KERNEL lv_value = {value: parsed[lv_key.get()]};'.
       traverse( iv_json = lv_value
                 iv_key  = lv_key ).
     ENDLOOP.
