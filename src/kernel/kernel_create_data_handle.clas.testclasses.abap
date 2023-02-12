@@ -11,6 +11,9 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS ref FOR TESTING RAISING cx_static_check.
     METHODS unnamed_type FOR TESTING RAISING cx_static_check.
     METHODS table_table FOR TESTING RAISING cx_static_check.
+    METHODS numc4 FOR TESTING RAISING cx_static_check.
+    METHODS char5 FOR TESTING RAISING cx_static_check.
+    METHODS hex2 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -125,6 +128,57 @@ CLASS ltcl_test IMPLEMENTATION.
     ASSIGN lr_ref->* TO <fs>.
     INSERT 2 INTO TABLE <fs>.
     ASSERT lines( <fs> ) = 1.
+  ENDMETHOD.
+
+  METHOD numc4.
+    DATA data    TYPE n LENGTH 4.
+    DATA lr_ref  TYPE REF TO data.
+    DATA type    TYPE REF TO cl_abap_elemdescr.
+    DATA lv_text TYPE c LENGTH 50.
+    FIELD-SYMBOLS <fs> TYPE any.
+
+    type ?= cl_abap_typedescr=>describe_by_data( data ).
+    CREATE DATA lr_ref TYPE HANDLE type.
+    ASSIGN lr_ref->* TO <fs>.
+    <fs> = 1.
+    WRITE <fs> TO lv_text.
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_text
+      exp = '0001' ).
+  ENDMETHOD.
+
+  METHOD char5.
+    DATA data    TYPE c LENGTH 5.
+    DATA lr_ref  TYPE REF TO data.
+    DATA type    TYPE REF TO cl_abap_elemdescr.
+    DATA lv_text TYPE c LENGTH 50.
+    FIELD-SYMBOLS <fs> TYPE any.
+
+    type ?= cl_abap_typedescr=>describe_by_data( data ).
+    CREATE DATA lr_ref TYPE HANDLE type.
+    ASSIGN lr_ref->* TO <fs>.
+    <fs> = 'hello world'.
+    WRITE <fs> TO lv_text.
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_text
+      exp = 'hello' ).
+  ENDMETHOD.
+
+  METHOD hex2.
+    DATA data    TYPE x LENGTH 2.
+    DATA lr_ref  TYPE REF TO data.
+    DATA type    TYPE REF TO cl_abap_elemdescr.
+    DATA lv_text TYPE c LENGTH 50.
+    FIELD-SYMBOLS <fs> TYPE any.
+
+    type ?= cl_abap_typedescr=>describe_by_data( data ).
+    CREATE DATA lr_ref TYPE HANDLE type.
+    ASSIGN lr_ref->* TO <fs>.
+    <fs> = '1122334455'.
+    WRITE <fs> TO lv_text.
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_text
+      exp = '1122' ).
   ENDMETHOD.
 
 ENDCLASS.

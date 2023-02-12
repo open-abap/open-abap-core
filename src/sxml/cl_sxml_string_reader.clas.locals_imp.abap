@@ -302,6 +302,7 @@ CLASS lcl_reader IMPLEMENTATION.
 * todo, for now this only handles json, but the class is really meant for XML
     CREATE OBJECT lo_json.
     lt_parsed = lo_json->parse( mv_json ).
+    CLEAR lo_json. " release memory
 
     LOOP AT lt_parsed INTO ls_parsed.
       CASE ls_parsed-type.
@@ -343,10 +344,11 @@ CLASS lcl_reader IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_sxml_reader~next_node.
-    DATA node LIKE LINE OF mt_nodes.
-    DATA open TYPE REF TO if_sxml_open_element.
+    DATA node  LIKE LINE OF mt_nodes.
+    DATA open  TYPE REF TO if_sxml_open_element.
     DATA close TYPE REF TO if_sxml_close_element.
     DATA value TYPE REF TO if_sxml_value_node.
+
     initialize( ).
     READ TABLE mt_nodes INDEX mv_pointer INTO node.
     mv_pointer = mv_pointer + 1.

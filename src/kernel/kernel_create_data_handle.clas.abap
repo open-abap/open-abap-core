@@ -105,6 +105,7 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD elem.
+    DATA lv_half TYPE i.
     CASE handle->type_kind.
       WHEN cl_abap_typedescr=>typekind_float.
         CREATE DATA dref TYPE f.
@@ -121,9 +122,11 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
       WHEN cl_abap_typedescr=>typekind_packed.
         CREATE DATA dref TYPE p LENGTH handle->length DECIMALS handle->decimals.
       WHEN cl_abap_typedescr=>typekind_char.
-        CREATE DATA dref TYPE c LENGTH handle->length.
+        lv_half = handle->length / 2.
+        CREATE DATA dref TYPE c LENGTH lv_half.
       WHEN cl_abap_typedescr=>typekind_num.
-        CREATE DATA dref TYPE n LENGTH handle->length.
+        lv_half = handle->length / 2.
+        CREATE DATA dref TYPE n LENGTH lv_half.
       WHEN cl_abap_typedescr=>typekind_time.
         CREATE DATA dref TYPE t.
       WHEN OTHERS.
