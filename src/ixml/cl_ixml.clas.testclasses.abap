@@ -7,12 +7,12 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS render_element_ns_prefix FOR TESTING RAISING cx_static_check.
     METHODS render_element_ns_prefix_value FOR TESTING RAISING cx_static_check.
     METHODS render_element_and_attribute FOR TESTING RAISING cx_static_check.
-    METHODS render_element_and_two_attribute FOR TESTING RAISING cx_static_check.
+    METHODS render_element_and_two_attribu FOR TESTING RAISING cx_static_check.
     METHODS render_attribute FOR TESTING RAISING cx_static_check.
     METHODS render_value FOR TESTING RAISING cx_static_check.
     METHODS render_escape FOR TESTING RAISING cx_static_check.
     METHODS render_nested FOR TESTING RAISING cx_static_check.
-    METHODS render_document_namespace_prefix FOR TESTING RAISING cx_static_check.
+    METHODS render_document_namespace_pref FOR TESTING RAISING cx_static_check.
 
     METHODS parse_basic FOR TESTING RAISING cx_static_check.
     METHODS parse_namespace FOR TESTING RAISING cx_static_check.
@@ -153,7 +153,7 @@ CLASS ltcl_xml IMPLEMENTATION.
       exp = '<?xml version="1.0" encoding="utf-16"?><moo xmlns="bar"/>' ).
   ENDMETHOD.
 
-  METHOD render_element_and_two_attribute.
+  METHOD render_element_and_two_attribu.
     DATA lo_element TYPE REF TO if_ixml_element.
     DATA lv_xml     TYPE string.
 
@@ -223,7 +223,7 @@ CLASS ltcl_xml IMPLEMENTATION.
       exp = '<?xml version="1.0" encoding="utf-16"?><top><sub/></top>' ).
   ENDMETHOD.
 
-  METHOD render_document_namespace_prefix.
+  METHOD render_document_namespace_pref.
     DATA lv_xml  TYPE string.
     DATA li_node TYPE REF TO if_ixml_node.
 
