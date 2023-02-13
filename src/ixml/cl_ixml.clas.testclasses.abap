@@ -323,8 +323,8 @@ CLASS ltcl_xml IMPLEMENTATION.
 
   METHOD parse_basic.
 
-    DATA lv_xml     TYPE string.
-    DATA lv_dump    TYPE string.
+    DATA lv_xml      TYPE string.
+    DATA lv_dump     TYPE string.
     DATA lv_expected TYPE string.
 
     lv_xml = |<?xml version="1.0" encoding="utf-16"?>\n| &&
@@ -350,8 +350,8 @@ CLASS ltcl_xml IMPLEMENTATION.
 
   METHOD parse_namespace.
 
-    DATA lv_xml     TYPE string.
-    DATA lv_dump    TYPE string.
+    DATA lv_xml      TYPE string.
+    DATA lv_dump     TYPE string.
     DATA lv_expected TYPE string.
 
     lv_xml = |<?xml version="1.0" encoding="utf-16"?>\n| &&
@@ -383,12 +383,12 @@ CLASS ltcl_xml IMPLEMENTATION.
 
   METHOD moving_nodes.
 
-    DATA lv_xml  TYPE string.
-    DATA li_git  TYPE REF TO if_ixml_node.
-    DATA li_sub  TYPE REF TO if_ixml_node.
-    DATA li_doc  TYPE REF TO if_ixml_document.
+    DATA lv_xml   TYPE string.
+    DATA li_git   TYPE REF TO if_ixml_node.
+    DATA li_sub   TYPE REF TO if_ixml_node.
+    DATA li_doc   TYPE REF TO if_ixml_document.
     DATA li_found TYPE REF TO if_ixml_element.
-    DATA lv_dump TYPE string.
+    DATA lv_dump  TYPE string.
 
     lv_xml = |<?xml version="1.0" encoding="utf-16"?><abapGit><sub></sub></abapGit>|.
 
