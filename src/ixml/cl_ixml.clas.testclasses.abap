@@ -27,18 +27,21 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
     DATA mi_ixml TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
+
     METHODS setup.
 
     METHODS parse
       IMPORTING
-        iv_xml TYPE string
+        iv_xml        TYPE string
       RETURNING
         VALUE(ri_doc) TYPE REF TO if_ixml_document.
+
     METHODS dump
       IMPORTING
         ii_list        TYPE REF TO if_ixml_node_list
       RETURNING
         VALUE(rv_dump) TYPE string.
+
     METHODS render
       RETURNING
         VALUE(rv_xml) TYPE string.
