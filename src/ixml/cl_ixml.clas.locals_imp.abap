@@ -340,9 +340,11 @@ CLASS lcl_node IMPLEMENTATION.
       lv_ns = mv_namespace && ':'.
     ENDIF.
 
-    ostream->write_string( '<' && lv_ns && mv_name && lv_attributes ).
-    IF if_ixml_node~get_children( )->get_length( ) > 0 OR mv_value IS NOT INITIAL.
-      ostream->write_string( '>' ).
+    IF mv_name <> '#text'.
+      ostream->write_string( '<' && lv_ns && mv_name && lv_attributes ).
+      IF if_ixml_node~get_children( )->get_length( ) > 0 OR mv_value IS NOT INITIAL.
+        ostream->write_string( '>' ).
+      ENDIF.
     ENDIF.
 
     li_iterator = if_ixml_node~get_children( )->create_iterator( ).
@@ -355,7 +357,10 @@ CLASS lcl_node IMPLEMENTATION.
     ENDDO.
 
     IF if_ixml_node~get_children( )->get_length( ) > 0 OR mv_value IS NOT INITIAL.
-      ostream->write_string( lcl_escape=>escape_value( mv_value ) && '</' && lv_ns && mv_name && '>' ).
+      ostream->write_string( lcl_escape=>escape_value( mv_value ) ).
+      IF mv_name <> '#text'.
+        ostream->write_string( '</' && lv_ns && mv_name && '>' ).
+      ENDIF.
     ELSE.
       ostream->write_string( '/>' ).
     ENDIF.
