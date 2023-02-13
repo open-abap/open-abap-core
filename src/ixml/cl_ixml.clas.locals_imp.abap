@@ -908,7 +908,6 @@ CLASS lcl_parser IMPLEMENTATION.
 * value
         FIND FIRST OCCURRENCE OF '<' IN lv_xml MATCH OFFSET lv_offset.
         lv_value = lv_xml(lv_offset).
-
         CREATE OBJECT lo_node EXPORTING ii_parent = lo_parent.
         lo_node->if_ixml_node~set_name( '#text' ).
         lo_node->if_ixml_node~set_value( lcl_escape=>unescape_value( lv_value ) ).
