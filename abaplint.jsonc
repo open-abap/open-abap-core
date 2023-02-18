@@ -94,7 +94,9 @@
     "nesting": true,
     "unused_variables": false,
     "try_without_catch": true,
-    "identical_descriptions": true,
+    "identical_descriptions": {
+      "exclude": ["funcname", "sxco_fm_name"]
+    },
     "check_subrc": false,
     "check_text_elements": true,
     "line_only_punc": true,
