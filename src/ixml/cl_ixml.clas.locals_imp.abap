@@ -340,9 +340,11 @@ CLASS lcl_node IMPLEMENTATION.
       lv_ns = mv_namespace && ':'.
     ENDIF.
 
-    ostream->write_string( '<' && lv_ns && mv_name && lv_attributes ).
-    IF if_ixml_node~get_children( )->get_length( ) > 0 OR mv_value IS NOT INITIAL.
-      ostream->write_string( '>' ).
+    IF mv_name <> '#text'.
+      ostream->write_string( '<' && lv_ns && mv_name && lv_attributes ).
+      IF if_ixml_node~get_children( )->get_length( ) > 0 OR mv_value IS NOT INITIAL.
+        ostream->write_string( '>' ).
+      ENDIF.
     ENDIF.
 
     li_iterator = if_ixml_node~get_children( )->create_iterator( ).
@@ -355,7 +357,10 @@ CLASS lcl_node IMPLEMENTATION.
     ENDDO.
 
     IF if_ixml_node~get_children( )->get_length( ) > 0 OR mv_value IS NOT INITIAL.
-      ostream->write_string( lcl_escape=>escape_value( mv_value ) && '</' && lv_ns && mv_name && '>' ).
+      ostream->write_string( lcl_escape=>escape_value( mv_value ) ).
+      IF mv_name <> '#text'.
+        ostream->write_string( '</' && lv_ns && mv_name && '>' ).
+      ENDIF.
     ELSE.
       ostream->write_string( '/>' ).
     ENDIF.
@@ -908,7 +913,6 @@ CLASS lcl_parser IMPLEMENTATION.
 * value
         FIND FIRST OCCURRENCE OF '<' IN lv_xml MATCH OFFSET lv_offset.
         lv_value = lv_xml(lv_offset).
-
         CREATE OBJECT lo_node EXPORTING ii_parent = lo_parent.
         lo_node->if_ixml_node~set_name( '#text' ).
         lo_node->if_ixml_node~set_value( lcl_escape=>unescape_value( lv_value ) ).

@@ -7,12 +7,12 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS render_element_ns_prefix FOR TESTING RAISING cx_static_check.
     METHODS render_element_ns_prefix_value FOR TESTING RAISING cx_static_check.
     METHODS render_element_and_attribute FOR TESTING RAISING cx_static_check.
-    METHODS render_element_and_two_attribute FOR TESTING RAISING cx_static_check.
+    METHODS render_element_and_two_attribu FOR TESTING RAISING cx_static_check.
     METHODS render_attribute FOR TESTING RAISING cx_static_check.
     METHODS render_value FOR TESTING RAISING cx_static_check.
     METHODS render_escape FOR TESTING RAISING cx_static_check.
     METHODS render_nested FOR TESTING RAISING cx_static_check.
-    METHODS render_document_namespace_prefix FOR TESTING RAISING cx_static_check.
+    METHODS render_document_namespace_pref FOR TESTING RAISING cx_static_check.
 
     METHODS parse_basic FOR TESTING RAISING cx_static_check.
     METHODS parse_namespace FOR TESTING RAISING cx_static_check.
@@ -21,23 +21,28 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_attributes FOR TESTING RAISING cx_static_check.
     METHODS parse_attributes2 FOR TESTING RAISING cx_static_check.
     METHODS parse_attributes3 FOR TESTING RAISING cx_static_check.
+    METHODS parse_value_whitespace FOR TESTING RAISING cx_static_check.
     METHODS create FOR TESTING RAISING cx_static_check.
     METHODS create_set_attributes FOR TESTING RAISING cx_static_check.
+    METHODS parse_and_render FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
+
     METHODS setup.
 
     METHODS parse
       IMPORTING
-        iv_xml TYPE string
+        iv_xml        TYPE string
       RETURNING
         VALUE(ri_doc) TYPE REF TO if_ixml_document.
+
     METHODS dump
       IMPORTING
         ii_list        TYPE REF TO if_ixml_node_list
       RETURNING
         VALUE(rv_dump) TYPE string.
+
     METHODS render
       RETURNING
         VALUE(rv_xml) TYPE string.
@@ -153,7 +158,7 @@ CLASS ltcl_xml IMPLEMENTATION.
       exp = '<?xml version="1.0" encoding="utf-16"?><moo xmlns="bar"/>' ).
   ENDMETHOD.
 
-  METHOD render_element_and_two_attribute.
+  METHOD render_element_and_two_attribu.
     DATA lo_element TYPE REF TO if_ixml_element.
     DATA lv_xml     TYPE string.
 
@@ -223,7 +228,7 @@ CLASS ltcl_xml IMPLEMENTATION.
       exp = '<?xml version="1.0" encoding="utf-16"?><top><sub/></top>' ).
   ENDMETHOD.
 
-  METHOD render_document_namespace_prefix.
+  METHOD render_document_namespace_pref.
     DATA lv_xml  TYPE string.
     DATA li_node TYPE REF TO if_ixml_node.
 
@@ -322,8 +327,8 @@ CLASS ltcl_xml IMPLEMENTATION.
 
   METHOD parse_basic.
 
-    DATA lv_xml     TYPE string.
-    DATA lv_dump    TYPE string.
+    DATA lv_xml      TYPE string.
+    DATA lv_dump     TYPE string.
     DATA lv_expected TYPE string.
 
     lv_xml = |<?xml version="1.0" encoding="utf-16"?>\n| &&
@@ -349,8 +354,8 @@ CLASS ltcl_xml IMPLEMENTATION.
 
   METHOD parse_namespace.
 
-    DATA lv_xml     TYPE string.
-    DATA lv_dump    TYPE string.
+    DATA lv_xml      TYPE string.
+    DATA lv_dump     TYPE string.
     DATA lv_expected TYPE string.
 
     lv_xml = |<?xml version="1.0" encoding="utf-16"?>\n| &&
@@ -382,12 +387,12 @@ CLASS ltcl_xml IMPLEMENTATION.
 
   METHOD moving_nodes.
 
-    DATA lv_xml  TYPE string.
-    DATA li_git  TYPE REF TO if_ixml_node.
-    DATA li_sub  TYPE REF TO if_ixml_node.
-    DATA li_doc  TYPE REF TO if_ixml_document.
+    DATA lv_xml   TYPE string.
+    DATA li_git   TYPE REF TO if_ixml_node.
+    DATA li_sub   TYPE REF TO if_ixml_node.
+    DATA li_doc   TYPE REF TO if_ixml_document.
     DATA li_found TYPE REF TO if_ixml_element.
-    DATA lv_dump TYPE string.
+    DATA lv_dump  TYPE string.
 
     lv_xml = |<?xml version="1.0" encoding="utf-16"?><abapGit><sub></sub></abapGit>|.
 
@@ -496,6 +501,45 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = li_element->get_value( )
       exp = |&<>"'| ).
+
+  ENDMETHOD.
+
+  METHOD parse_value_whitespace.
+
+    DATA lv_xml     TYPE string.
+    DATA li_doc     TYPE REF TO if_ixml_document.
+    DATA li_element TYPE REF TO if_ixml_element.
+
+
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?><moo> A </moo>|.
+    li_doc = parse( lv_xml ).
+
+    li_element ?= li_doc->find_from_name_ns( depth = 0 name = 'moo' ).
+    cl_abap_unit_assert=>assert_not_initial( li_element ).
+
+    li_element ?= mi_document->find_from_name_ns( depth = 0 name = 'moo' ).
+
+    " todo
+    " cl_abap_unit_assert=>assert_equals(
+    "   act = li_element->get_value( )
+    "   exp = | A | ).
+
+  ENDMETHOD.
+
+  METHOD parse_and_render.
+
+    DATA lv_xml      TYPE string.
+    DATA lv_rendered TYPE string.
+
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?><foo>bar</foo>|.
+
+    parse( lv_xml ).
+
+    lv_rendered = render( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_rendered
+      exp = lv_xml ).
 
   ENDMETHOD.
 
