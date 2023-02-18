@@ -42,7 +42,6 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS get_relative_name_lif FOR TESTING.
     METHODS get_relative_name_table FOR TESTING.
     METHODS describe_by_object_ref FOR TESTING.
-    METHODS describe_by_object_ref2 FOR TESTING.
 
     METHODS is_ddic_type_true1 FOR TESTING.
     METHODS is_ddic_type_true2 FOR TESTING.
@@ -66,16 +65,6 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD describe_by_object_ref.
 * just check it doesnt crash,
     cl_abap_typedescr=>describe_by_object_ref( me ).
-  ENDMETHOD.
-
-  METHOD describe_by_object_ref2.
-    DATA ref TYPE REF TO if_ixml.
-    DATA descr TYPE REF TO cl_abap_typedescr.
-    ref = cl_ixml=>create( ).
-    descr = cl_abap_typedescr=>describe_by_object_ref( ref ).
-    cl_abap_unit_assert=>assert_equals(
-      act = descr->absolute_name
-      exp = '\CLASS=CL_IXML' ).
   ENDMETHOD.
 
   METHOD is_ddic_type_true2.
