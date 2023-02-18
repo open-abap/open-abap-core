@@ -1,3 +1,0 @@
-INTERFACE if_ixml_istream PUBLIC.
-  METHODS close.
-ENDINTERFACE.

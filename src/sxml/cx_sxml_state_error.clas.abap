@@ -1,7 +1,0 @@
-CLASS cx_sxml_state_error DEFINITION PUBLIC INHERITING FROM cx_sxml_error.
-  PUBLIC SECTION.
-ENDCLASS.
-
-CLASS cx_sxml_state_error IMPLEMENTATION.
-
-ENDCLASS.
