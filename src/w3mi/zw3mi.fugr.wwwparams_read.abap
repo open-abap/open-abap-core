@@ -11,6 +11,22 @@ FUNCTION wwwparams_read.
 *"      ENTRY_NOT_EXISTS
 *"----------------------------------------------------------------------
 
-  ASSERT 1 = 'todo'.
+  DATA filename TYPE string.
+  DATA filesize TYPE i.
+
+  WRITE '@KERNEL filename.set(abap.W3MI[objid.get()].filename);'.
+
+  WRITE '@KERNEL const fs = await import("fs");'.
+  WRITE '@KERNEL const path = await import("path");'.
+  WRITE '@KERNEL const url = await import("url");'.
+  WRITE '@KERNEL const __filename = url.fileURLToPath(import.meta.url);'.
+  WRITE '@KERNEL const __dirname = path.dirname(__filename);'.
+  WRITE '@KERNEL const buf = fs.readFileSync(__dirname + path.sep + filename.get());'.
+
+  IF name = 'filesize'.
+    WRITE '@KERNEL filesize.set(buf.length);'.
+    value = filesize.
+    CONDENSE value.
+  ENDIF.
 
 ENDFUNCTION.
