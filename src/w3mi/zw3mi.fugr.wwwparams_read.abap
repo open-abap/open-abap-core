@@ -27,6 +27,8 @@ FUNCTION wwwparams_read.
     WRITE '@KERNEL filesize.set(buf.length);'.
     value = filesize.
     CONDENSE value.
+  ELSE.
+    ASSERT 1 = 'todo'.
   ENDIF.
 
 ENDFUNCTION.
