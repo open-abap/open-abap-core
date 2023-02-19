@@ -9,6 +9,7 @@ CLASS ltcl_fugr DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS conversion_exit_alpha_output_char FOR TESTING RAISING cx_static_check.
     METHODS generate_sec_random FOR TESTING RAISING cx_static_check.
     METHODS text_split1 FOR TESTING RAISING cx_static_check.
+    METHODS text_split2 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -30,6 +31,25 @@ CLASS ltcl_fugr IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_rest
       exp = |123456789| ).
+  ENDMETHOD.
+
+  METHOD text_split2.
+    DATA lv_text TYPE c LENGTH 200.
+    DATA lv_line TYPE string.
+    DATA lv_rest TYPE string.
+
+    lv_text = |Here is a very long text more than 200 characters and we have to invent a nice story about abapGit to fill this long message|.
+
+    CALL FUNCTION 'TEXT_SPLIT'
+      EXPORTING
+        length = 50
+        text   = lv_text
+      IMPORTING
+        line   = lv_line
+        rest   = lv_rest.
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_rest
+      exp = |and we have to invent a nice story about abapGit to fill this long message| ).
   ENDMETHOD.
 
   METHOD generate_sec_random.
