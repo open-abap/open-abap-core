@@ -1,17 +1,36 @@
 CLASS ltcl_fugr DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
-    METHODS system_installed_languages FOR TESTING RAISING cx_root.
-    METHODS conversion_exit_isola_output FOR TESTING RAISING cx_root.
-    METHODS conversion_exit_isola_input FOR TESTING RAISING cx_root.
-    METHODS conversion_exit_isola_input_fr FOR TESTING RAISING cx_root.
-    METHODS conversion_exit_alpha_output_string FOR TESTING RAISING cx_root.
-    METHODS conversion_exit_alpha_output_char FOR TESTING RAISING cx_root.
-    METHODS generate_sec_random FOR TESTING RAISING cx_root.
+    METHODS system_installed_languages FOR TESTING RAISING cx_static_check.
+    METHODS conversion_exit_isola_output FOR TESTING RAISING cx_static_check.
+    METHODS conversion_exit_isola_input FOR TESTING RAISING cx_static_check.
+    METHODS conversion_exit_isola_input_fr FOR TESTING RAISING cx_static_check.
+    METHODS conversion_exit_alpha_output_string FOR TESTING RAISING cx_static_check.
+    METHODS conversion_exit_alpha_output_char FOR TESTING RAISING cx_static_check.
+    METHODS generate_sec_random FOR TESTING RAISING cx_static_check.
+    METHODS text_split1 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_fugr IMPLEMENTATION.
+
+  METHOD text_split1.
+    CONSTANTS lc_text TYPE c LENGTH 200 VALUE '01234567890123456789012345678901234567890123456789 123456789'.
+    DATA lv_line TYPE string.
+    DATA lv_rest TYPE string.
+
+    CALL FUNCTION 'TEXT_SPLIT'
+      EXPORTING
+        length = 50
+        text   = lc_text
+      IMPORTING
+        line   = lv_line
+        rest   = lv_rest.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_rest
+      exp = |123456789| ).
+  ENDMETHOD.
 
   METHOD generate_sec_random.
 
