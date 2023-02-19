@@ -15,6 +15,7 @@ FUNCTION text_split.
   ELSE.
     line = text(50).
     rest = text+50.
+    CONDENSE rest.
   ENDIF.
 
 ENDFUNCTION.
