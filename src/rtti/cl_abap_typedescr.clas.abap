@@ -255,6 +255,10 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_float.
         type->kind = kind_elem.
+      WHEN 'DecFloat34'.
+        CREATE OBJECT type TYPE cl_abap_elemdescr.
+        type->type_kind = typekind_decfloat34.
+        type->kind = kind_elem.
       WHEN 'Structure'.
         type ?= cl_abap_structdescr=>construct_from_data( p_data ).
         type->type_kind = typekind_struct2.
