@@ -140,7 +140,11 @@ ENDCLASS.
 CLASS cl_abap_unit_assert IMPLEMENTATION.
 
   METHOD assert_text_matches.
-    IF boolc( contains( val = text regex = pattern ) ) = abap_false.
+    DATA lv_match TYPE abap_bool.
+    lv_match = boolc( contains(
+      val   = text
+      regex = pattern ) ).
+    IF lv_match = abap_false.
       RAISE EXCEPTION TYPE kernel_cx_assert
         EXPORTING
           expected = pattern
