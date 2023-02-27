@@ -2,7 +2,8 @@ CLASS ltcl_exceptional_values DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATIO
 
   PRIVATE SECTION.
     METHODS max_integer FOR TESTING RAISING cx_static_check.
-    METHODS max_packed FOR TESTING RAISING cx_static_check.
+    METHODS max_packed1 FOR TESTING RAISING cx_static_check.
+    METHODS max_packed2 FOR TESTING RAISING cx_static_check.
     METHODS min_packed FOR TESTING RAISING cx_static_check.
     METHODS min_integer FOR TESTING RAISING cx_static_check.
 
@@ -10,7 +11,7 @@ ENDCLASS.
 
 CLASS ltcl_exceptional_values IMPLEMENTATION.
 
-  METHOD max_packed.
+  METHOD max_packed1.
     DATA max TYPE p LENGTH 3 DECIMALS 1.
     DATA ref TYPE REF TO data.
     FIELD-SYMBOLS <field> TYPE any.
@@ -20,6 +21,18 @@ CLASS ltcl_exceptional_values IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = <field>
       exp = '9999.9' ).
+  ENDMETHOD.
+
+  METHOD max_packed2.
+    DATA max TYPE p LENGTH 7 DECIMALS 3.
+    DATA ref TYPE REF TO data.
+    FIELD-SYMBOLS <field> TYPE any.
+    ref = cl_abap_exceptional_values=>get_max_value( max ).
+    ASSIGN ref->* TO <field>.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = <field>
+      exp = '9999999999.999' ).
   ENDMETHOD.
 
   METHOD min_packed.

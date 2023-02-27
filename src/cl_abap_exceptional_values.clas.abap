@@ -34,6 +34,8 @@ CLASS cl_abap_exceptional_values IMPLEMENTATION.
 
         IF lv_length = 3 AND lv_decimals = 1.
           <out> = '9999.9'.
+        ELSEIF lv_length = 7 AND lv_decimals = 3.
+          <out> = '9999999999.999'.
         ELSE.
           ASSERT 1 = 'todo'.
         ENDIF.
