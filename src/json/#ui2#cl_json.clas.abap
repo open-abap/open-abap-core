@@ -53,9 +53,16 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     lo_type = cl_abap_typedescr=>describe_by_data( data ).
     CASE lo_type->kind.
       WHEN cl_abap_typedescr=>kind_elem.
+*        WRITE '@KERNEL console.dir(lo_type);'.
         CASE lo_type->type_kind.
           WHEN cl_abap_typedescr=>typekind_char.
-            IF data IS INITIAL.
+            IF lo_type->absolute_name = `\TYPE-POOL=ABAP\TYPE=ABAP_BOOL`.
+              IF data = abap_true.
+                r_json = 'true'.
+              ELSE.
+                r_json = 'false'.
+              ENDIF.
+            ELSEIF data IS INITIAL.
               r_json = '""'.
             ELSE.
               r_json = '"' && data && '"'.

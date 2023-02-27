@@ -166,10 +166,35 @@ CLASS ltcl_serialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT F
     METHODS character10 FOR TESTING RAISING cx_static_check.
     METHODS character10_value FOR TESTING RAISING cx_static_check.
     METHODS string_spaces FOR TESTING RAISING cx_static_check.
+    METHODS bool_false FOR TESTING RAISING cx_static_check.
+    METHODS bool_true FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_serialize IMPLEMENTATION.
+
+  METHOD bool_false.
+    DATA: BEGIN OF ls_data,
+        foo_bar TYPE abap_bool,
+      END OF ls_data.
+    DATA lv_json TYPE string.
+    lv_json = /ui2/cl_json=>serialize( ls_data ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = '{"FOO_BAR":false}' ).
+  ENDMETHOD.
+
+  METHOD bool_true.
+    DATA: BEGIN OF ls_data,
+        foo_bar TYPE abap_bool,
+      END OF ls_data.
+    DATA lv_json TYPE string.
+    ls_data-foo_bar = abap_true.
+    lv_json = /ui2/cl_json=>serialize( ls_data ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = '{"FOO_BAR":true}' ).
+  ENDMETHOD.
 
   METHOD character10.
     DATA: BEGIN OF ls_data,
