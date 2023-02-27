@@ -59,7 +59,11 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             r_json = '"' && data && '"'.
           WHEN OTHERS.
             IF ts_as_iso8601 = abap_true AND lo_type->absolute_name = `\TYPE=TIMESTAMP`.
-              r_json = |"{ data TIMESTAMP = ISO }.0000000Z"|.
+              IF data IS INITIAL.
+                r_json = |""|.
+              ELSE.
+                r_json = |"{ data TIMESTAMP = ISO }.0000000Z"|.
+              ENDIF.
             ELSE.
               r_json = data.
             ENDIF.
