@@ -58,14 +58,20 @@ CLASS /ui2/cl_json IMPLEMENTATION.
               OR cl_abap_typedescr=>typekind_string.
             r_json = '"' && data && '"'.
           WHEN OTHERS.
-            r_json = data.
+            IF ts_as_iso8601 = abap_true AND lo_type->absolute_name = `\TYPE=TIMESTAMP`.
+              r_json = |"{ data TIMESTAMP = ISO }.0000000Z"|.
+            ELSE.
+              r_json = data.
+            ENDIF.
         ENDCASE.
       WHEN cl_abap_typedescr=>kind_table.
         r_json = '['.
         ASSIGN data TO <tab>.
         LOOP AT <tab> ASSIGNING <any>.
           lv_index = sy-tabix.
-          r_json = r_json && serialize( <any> ).
+          r_json = r_json && serialize(
+            data          = <any>
+            ts_as_iso8601 = ts_as_iso8601 ).
           IF lines( data ) <> lv_index.
             r_json = r_json && ','.
           ENDIF.
@@ -79,7 +85,9 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           lv_index = sy-tabix.
           ASSIGN COMPONENT ls_component-name OF STRUCTURE data TO <any>.
           ASSERT sy-subrc = 0.
-          r_json = r_json && |"{ ls_component-name }":| && serialize( <any> ).
+          r_json = r_json && |"{ ls_component-name }":| && serialize(
+            data          = <any>
+            ts_as_iso8601 = ts_as_iso8601 ).
           IF lines( lt_components ) <> lv_index.
             r_json = r_json && ','.
           ENDIF.
