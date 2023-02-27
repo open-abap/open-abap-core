@@ -162,10 +162,24 @@ CLASS ltcl_serialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT F
     METHODS basic_array FOR TESTING RAISING cx_static_check.
     METHODS serialize_timestamp_iso FOR TESTING RAISING cx_static_check.
     METHODS serialize_timestamp_iso_empty FOR TESTING RAISING cx_static_check.
+    METHODS camel_case FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_serialize IMPLEMENTATION.
+
+  METHOD camel_case.
+    DATA: BEGIN OF ls_data,
+            foo_bar TYPE i,
+          END OF ls_data.
+    DATA lv_json TYPE string.
+    lv_json = /ui2/cl_json=>serialize(
+      data        = ls_data
+      pretty_name = /ui2/cl_json=>pretty_mode-camel_case ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = '{"fooBar":0}' ).
+  ENDMETHOD.
 
   METHOD serialize_timestamp_iso.
     DATA: BEGIN OF foo,
