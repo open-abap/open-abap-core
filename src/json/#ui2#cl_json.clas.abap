@@ -54,8 +54,13 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     CASE lo_type->kind.
       WHEN cl_abap_typedescr=>kind_elem.
         CASE lo_type->type_kind.
-          WHEN cl_abap_typedescr=>typekind_char
-              OR cl_abap_typedescr=>typekind_string.
+          WHEN cl_abap_typedescr=>typekind_char.
+            IF data IS INITIAL.
+              r_json = '""'.
+            ELSE.
+              r_json = '"' && data && '"'.
+            ENDIF.
+          WHEN cl_abap_typedescr=>typekind_string.
             r_json = '"' && data && '"'.
           WHEN OTHERS.
             IF ts_as_iso8601 = abap_true AND lo_type->absolute_name = `\TYPE=TIMESTAMP`.
