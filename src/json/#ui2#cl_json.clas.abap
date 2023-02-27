@@ -75,6 +75,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           lv_index = sy-tabix.
           r_json = r_json && serialize(
             data          = <any>
+            pretty_name   = pretty_name
             ts_as_iso8601 = ts_as_iso8601 ).
           IF lines( data ) <> lv_index.
             r_json = r_json && ','.
@@ -89,8 +90,14 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           lv_index = sy-tabix.
           ASSIGN COMPONENT ls_component-name OF STRUCTURE data TO <any>.
           ASSERT sy-subrc = 0.
-          r_json = r_json && |"{ ls_component-name }":| && serialize(
+          IF pretty_name = pretty_mode-camel_case.
+            r_json = r_json && |"{ to_mixed( to_lower( ls_component-name ) ) }":|.
+          ELSE.
+            r_json = r_json && |"{ ls_component-name }":|.
+          ENDIF.
+          r_json = r_json && serialize(
             data          = <any>
+            pretty_name   = pretty_name
             ts_as_iso8601 = ts_as_iso8601 ).
           IF lines( lt_components ) <> lv_index.
             r_json = r_json && ','.
