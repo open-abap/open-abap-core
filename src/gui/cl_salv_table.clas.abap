@@ -41,9 +41,16 @@ CLASS cl_salv_table DEFINITION PUBLIC.
     METHODS get_aggregations
       RETURNING
         VALUE(value) TYPE REF TO cl_salv_aggregations.
+    METHODS get_filters
+      RETURNING
+        VALUE(foo) TYPE any.
 ENDCLASS.
 
 CLASS cl_salv_table IMPLEMENTATION.
+  METHOD get_filters.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD get_aggregations.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
