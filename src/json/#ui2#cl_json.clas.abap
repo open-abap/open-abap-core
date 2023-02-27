@@ -92,6 +92,8 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           ASSERT sy-subrc = 0.
           IF pretty_name = pretty_mode-camel_case.
             r_json = r_json && |"{ to_mixed( to_lower( ls_component-name ) ) }":|.
+          ELSEIF pretty_name = pretty_mode-low_case.
+            r_json = r_json && |"{ to_lower( ls_component-name ) }":|.
           ELSE.
             r_json = r_json && |"{ ls_component-name }":|.
           ENDIF.
