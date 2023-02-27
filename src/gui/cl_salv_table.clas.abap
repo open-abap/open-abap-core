@@ -47,6 +47,7 @@ CLASS cl_salv_table DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS cl_salv_table IMPLEMENTATION.
+
   METHOD get_filters.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
