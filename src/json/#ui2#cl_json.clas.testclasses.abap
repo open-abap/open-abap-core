@@ -161,6 +161,7 @@ CLASS ltcl_serialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT F
     METHODS structure_two_fields FOR TESTING RAISING cx_static_check.
     METHODS basic_array FOR TESTING RAISING cx_static_check.
     METHODS serialize_timestamp_iso FOR TESTING RAISING cx_static_check.
+    METHODS serialize_timestamp_iso_empty FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -178,6 +179,19 @@ CLASS ltcl_serialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_text_matches(
       text    = lv_json
       pattern = '\{"TS":"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.0000000Z"\}' ).
+  ENDMETHOD.
+
+  METHOD serialize_timestamp_iso_empty.
+    DATA: BEGIN OF foo,
+            ts TYPE timestamp,
+          END OF foo.
+    DATA lv_json TYPE string.
+    lv_json = /ui2/cl_json=>serialize(
+      data          = foo
+      ts_as_iso8601 = abap_true ).
+    cl_abap_unit_assert=>assert_equals(
+      act    = lv_json
+      exp = '{"TS":""}' ).
   ENDMETHOD.
 
   METHOD basic_array.
