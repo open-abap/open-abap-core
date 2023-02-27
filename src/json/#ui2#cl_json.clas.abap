@@ -23,6 +23,7 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
         compress      TYPE abap_bool OPTIONAL
         pretty_name   TYPE string OPTIONAL
         assoc_arrays  TYPE abap_bool OPTIONAL
+        ts_as_iso8601 TYPE abap_bool OPTIONAL
       RETURNING
         VALUE(r_json) TYPE string.
 
