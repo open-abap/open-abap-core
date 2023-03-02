@@ -31,4 +31,7 @@ FUNCTION wwwparams_read.
     ASSERT 1 = 'todo'.
   ENDIF.
 
+* temp workaround, classic exceptions not really handled in transpiler yet
+  sy-subrc = 0.
+
 ENDFUNCTION.
