@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_TABL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD02V>
+    <TABNAME>ABAP_SORTORDER</TABNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <TABCLASS>INTTAB</TABCLASS>
+    <CLIDEP>X</CLIDEP>
+    <DDTEXT>ABAP_SORTORDER</DDTEXT>
+    <CONTFLAG>A</CONTFLAG>
+    <EXCLASS>1</EXCLASS>
+   </DD02V>
+   <DD03P_TABLE>
+    <DD03P>
+     <FIELDNAME>NAME</FIELDNAME>
+     <ROLLNAME></ROLLNAME>
+     <COMPTYPE></COMPTYPE>
+     <DATATYPE>SSTRING</DATATYPE>
+     <LENG></LENG>
+     <DECIMALS></DECIMALS>
+     <PRECFIELD></PRECFIELD>
+     <REFTYPE></REFTYPE>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>DESCENDING</FIELDNAME>
+     <ROLLNAME></ROLLNAME>
+     <COMPTYPE></COMPTYPE>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>1</LENG>
+     <DECIMALS></DECIMALS>
+     <PRECFIELD></PRECFIELD>
+     <REFTYPE></REFTYPE>
+    </DD03P>
+    <DD03P>
+     <FIELDNAME>ASTEXT</FIELDNAME>
+     <ROLLNAME></ROLLNAME>
+     <COMPTYPE></COMPTYPE>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>1</LENG>
+     <DECIMALS></DECIMALS>
+     <PRECFIELD></PRECFIELD>
+     <REFTYPE></REFTYPE>
+    </DD03P>
+   </DD03P_TABLE>
+  </asx:values>
+ </asx:abap>
+</abapGit>
