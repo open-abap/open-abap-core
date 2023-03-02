@@ -102,9 +102,9 @@ CLASS ltcl_fugr IMPLEMENTATION.
       IMPORTING
         output = lv_output.
 
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = lv_output
-    "   exp = |10        | ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_output
+      exp = |10        | ).
 
   ENDMETHOD.
 
