@@ -9,8 +9,9 @@ FUNCTION conversion_exit_alpha_output.
 
   output = input.
 
-* todo, handle alpha
-
   SHIFT output LEFT DELETING LEADING '0'.
+  DO strlen( input ) - strlen( output ) TIMES.
+    output = output && | |.
+  ENDDO.
 
 ENDFUNCTION.

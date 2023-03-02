@@ -65,7 +65,7 @@
     "omit_preceding_zeros": true,
     "pragma_style": true,
     "prefer_corresponding": false,
-    "reduce_string_templates": true,
+    "reduce_string_templates": false,
     "release_idoc": true,
     "whitespace_end": true,
     "method_overwrites_builtin": false,

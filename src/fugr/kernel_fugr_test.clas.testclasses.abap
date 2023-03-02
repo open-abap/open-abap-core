@@ -7,6 +7,7 @@ CLASS ltcl_fugr DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS conversion_exit_isola_input_fr FOR TESTING RAISING cx_static_check.
     METHODS conversion_exit_alpha_output_string FOR TESTING RAISING cx_static_check.
     METHODS conversion_exit_alpha_output_char FOR TESTING RAISING cx_static_check.
+    METHODS conversion_exit_alpha_input FOR TESTING RAISING cx_static_check.
     METHODS generate_sec_random FOR TESTING RAISING cx_static_check.
     METHODS text_split1 FOR TESTING RAISING cx_static_check.
     METHODS text_split2 FOR TESTING RAISING cx_static_check.
@@ -72,6 +73,24 @@ CLASS ltcl_fugr IMPLEMENTATION.
 
   ENDMETHOD.
 
+  METHOD conversion_exit_alpha_input.
+
+    DATA lv_input TYPE c LENGTH 10.
+    DATA lv_output TYPE c LENGTH 10.
+    lv_input = '10'.
+
+    CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
+      EXPORTING
+        input  = lv_input
+      IMPORTING
+        output = lv_output.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_output
+      exp = '0000000010' ).
+
+  ENDMETHOD.
+
   METHOD conversion_exit_alpha_output_char.
 
     DATA lv_input TYPE c LENGTH 10.
@@ -102,9 +121,9 @@ CLASS ltcl_fugr IMPLEMENTATION.
       IMPORTING
         output = lv_output.
 
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = lv_output
-    "   exp = |10        | ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_output
+      exp = |10        | ).
 
   ENDMETHOD.
 
