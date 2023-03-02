@@ -11,9 +11,11 @@ FUNCTION wwwdata_import.
 *"----------------------------------------------------------------------
 
   DATA filename TYPE string.
-  DATA xstr TYPE xstring.
-  DATA row TYPE w3mime.
-  DATA len TYPE i.
+  DATA xstr     TYPE xstring.
+  DATA row      TYPE w3mime.
+  DATA len      TYPE i.
+
+  CLEAR mime.
 
   WRITE '@KERNEL filename.set(abap.W3MI[key.get().objid.get()].filename);'.
   WRITE '@KERNEL const fs = await import("fs");'.
