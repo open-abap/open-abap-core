@@ -68,8 +68,10 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
         ENDDO.
       WHEN cl_abap_typedescr=>kind_elem.
         li_child = ii_node->get_first_child( ).
-        ASSIGN iv_ref->* TO <any>.
-        <any> = li_child->get_value( ).
+        IF li_child IS NOT INITIAL.
+          ASSIGN iv_ref->* TO <any>.
+          <any> = li_child->get_value( ).
+        ENDIF.
       WHEN cl_abap_typedescr=>kind_table.
         ASSIGN iv_ref->* TO <tab>.
         li_iterator = ii_node->get_children( )->create_iterator( ).

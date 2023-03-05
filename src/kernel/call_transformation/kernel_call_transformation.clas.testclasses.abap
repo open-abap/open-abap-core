@@ -36,17 +36,17 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
       |<REPO><URL>https://github.com/abapGit/abapGit</URL><BRANCH_NAME></BRANCH_NAME></REPO>| &&
       |</asx:values></asx:abap>|.
 
-    " CALL TRANSFORMATION id
-    "   OPTIONS value_handling = 'accept_data_loss'
-    "   SOURCE XML lv_xml
-    "   RESULT repo = rs_repo.
+    CALL TRANSFORMATION id
+      OPTIONS value_handling = 'accept_data_loss'
+      SOURCE XML lv_xml
+      RESULT repo = rs_repo.
 
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = rs_repo-url
-    "   exp = 'https://github.com/abapGit/abapGit' ).
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = rs_repo-branch_name
-    "   exp = '' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = rs_repo-url
+      exp = 'https://github.com/abapGit/abapGit' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = rs_repo-branch_name
+      exp = '' ).
   ENDMETHOD.
 
   METHOD to_string_simple.
