@@ -1,4 +1,4 @@
-FUNCTION function_exists.
+FUNCTION call_v1_ping.
 
 * todo
 
