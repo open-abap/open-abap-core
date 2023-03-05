@@ -15,6 +15,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS render_document_namespace_pref FOR TESTING RAISING cx_static_check.
 
     METHODS parse_basic FOR TESTING RAISING cx_static_check.
+    METHODS parse_empty FOR TESTING RAISING cx_static_check.
     METHODS parse_namespace FOR TESTING RAISING cx_static_check.
     METHODS parse_unescape FOR TESTING RAISING cx_static_check.
     METHODS moving_nodes FOR TESTING RAISING cx_static_check.
@@ -343,6 +344,29 @@ CLASS ltcl_xml IMPLEMENTATION.
       |NAME:#text,DEPTH:0,VALUE:blah,LEAF:X\n| &&
       |NAME:bar,DEPTH:1,VALUE:moo\n| &&
       |NAME:#text,DEPTH:0,VALUE:moo,LEAF:X\n|.
+
+    lv_dump = dump( parse( lv_xml )->if_ixml_node~get_children( ) ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_dump
+      exp = lv_expected ).
+
+  ENDMETHOD.
+
+  METHOD parse_empty.
+
+    DATA lv_xml      TYPE string.
+    DATA lv_dump     TYPE string.
+    DATA lv_expected TYPE string.
+
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?>\n| &&
+      |<abapGit version="v1.0.0">\n| &&
+      | <foo></foo>\n| &&
+      |</abapGit>|.
+
+    lv_expected =
+      |NAME:abapGit,DEPTH:1,VALUE:\n| &&
+      |NAME:foo,DEPTH:0,VALUE:,LEAF:X\n|.
 
     lv_dump = dump( parse( lv_xml )->if_ixml_node~get_children( ) ).
 
