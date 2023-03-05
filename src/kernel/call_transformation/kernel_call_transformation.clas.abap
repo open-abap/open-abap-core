@@ -7,6 +7,7 @@ CLASS kernel_call_transformation DEFINITION PUBLIC.
     CLASS-DATA mi_writer TYPE REF TO if_sxml_writer.
 
     CLASS-METHODS parse_xml IMPORTING iv_xml TYPE string.
+
     CLASS-METHODS traverse_write
       IMPORTING iv_ref TYPE REF TO data.
     CLASS-METHODS traverse_write_type
@@ -22,8 +23,10 @@ CLASS kernel_call_transformation IMPLEMENTATION.
 
     DATA lv_name   TYPE string.
     DATA lv_source TYPE string.
+    DATA lv_result TYPE string.
     DATA result    TYPE REF TO data.
     DATA lt_rtab   TYPE abap_trans_resbind_tab.
+    DATA lo_writer TYPE REF TO cl_sxml_string_writer.
     DATA ls_rtab   LIKE LINE OF lt_rtab.
     DATA lv_type   TYPE string.
 
@@ -73,6 +76,29 @@ CLASS kernel_call_transformation IMPLEMENTATION.
       mi_writer->close_element( ).
       WRITE '@KERNEL }'.
       mi_writer->close_element( ).
+      RETURN.
+    ENDIF.
+
+    WRITE '@KERNEL if (INPUT.resultXML && INPUT.resultXML.constructor.name === "String") {'.
+    WRITE '@KERNEL   lv_result.set("X");'.
+    WRITE '@KERNEL }'.
+    IF lv_result = abap_true.
+      lv_result = '<?xml version="1.0" encoding="utf-16"?><asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0"><asx:values>'.
+
+      WRITE '@KERNEL for (const name in INPUT.source) {'.
+      WRITE '@KERNEL   lv_name.set(name);'.
+      WRITE '@KERNEL   if (INPUT.source[name].constructor.name === "FieldSymbol") {'.
+      WRITE '@KERNEL     result.assign(INPUT.source[name].getPointer());'.
+      WRITE '@KERNEL   } else {'.
+      WRITE '@KERNEL     result.assign(INPUT.source[name]);'.
+      WRITE '@KERNEL   }'.
+      lv_result = lv_result && |<{ to_upper( lv_name ) }>|.
+      lv_result = lv_result && lcl_data_to_xml=>run( result ).
+      lv_result = lv_result && |</{ to_upper( lv_name ) }>|.
+      WRITE '@KERNEL }'.
+
+      lv_result = lv_result && |</asx:values></asx:abap>|.
+      WRITE '@KERNEL   INPUT.resultXML.set(lv_result);'.
       RETURN.
     ENDIF.
 

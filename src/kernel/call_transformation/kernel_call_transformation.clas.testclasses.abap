@@ -29,6 +29,7 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     DATA: BEGIN OF ls_xml,
             field TYPE i,
           END OF ls_xml.
+
     CALL TRANSFORMATION id
       SOURCE repo = ls_xml
       RESULT XML lv_actual.
