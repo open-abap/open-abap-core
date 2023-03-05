@@ -10,6 +10,15 @@ FUNCTION convert_itf_to_stream_text.
 *"      TEXT_STREAM OPTIONAL
 *"----------------------------------------------------------------------
 
+  CLEAR stream_lines.
+  CLEAR text_stream.
+
+  IF lines( itf_text ) = 0.
+    RETURN.
+  ENDIF.
+
+* todo
+
   ASSERT 'todo' = 1.
 
 ENDFUNCTION.
