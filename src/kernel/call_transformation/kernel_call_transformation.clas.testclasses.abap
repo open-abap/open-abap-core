@@ -11,7 +11,8 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS invalid_input FOR TESTING RAISING cx_static_check.
     METHODS empty_input FOR TESTING RAISING cx_static_check.
     METHODS parse_escaped_quotes FOR TESTING RAISING cx_static_check.
-    METHODS to_string FOR TESTING RAISING cx_static_check.
+    METHODS to_string_simple FOR TESTING RAISING cx_static_check.
+    METHODS to_string_array FOR TESTING RAISING cx_static_check.
 
     METHODS convert_json_to_sxml
       IMPORTING iv_json TYPE string
@@ -23,7 +24,7 @@ ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
 
-  METHOD to_string.
+  METHOD to_string_simple.
     DATA lv_actual TYPE string.
     DATA lv_expected TYPE string.
     DATA: BEGIN OF ls_xml,
@@ -37,6 +38,25 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     lv_expected = |*<?xml version="1.0" encoding="utf-16"?>| &&
       |<asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">| &&
       |<asx:values><REPO><FIELD>0</FIELD></REPO></asx:values>| &&
+      |</asx:abap>|.
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_actual
+      exp = lv_expected ).
+  ENDMETHOD.
+
+  METHOD to_string_array.
+    DATA lv_actual TYPE string.
+    DATA lv_expected TYPE string.
+    DATA lt_xml TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+
+    APPEND 'foo' TO lt_xml.
+    CALL TRANSFORMATION id
+      SOURCE table = lt_xml
+      RESULT XML lv_actual.
+* note the byte order mark,
+    lv_expected = |*<?xml version="1.0" encoding="utf-16"?>| &&
+      |<asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">| &&
+      |<asx:values><TABLE><item>foo</item></TABLE></asx:values>| &&
       |</asx:abap>|.
     cl_abap_unit_assert=>assert_char_cp(
       act = lv_actual
