@@ -16,6 +16,7 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
     DATA ls_compo LIKE LINE OF lt_comps.
     DATA lv_ref TYPE REF TO data.
     FIELD-SYMBOLS <any> TYPE any.
+    FIELD-SYMBOLS <table> TYPE ANY TABLE.
     FIELD-SYMBOLS <field> TYPE any.
 
     lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
@@ -35,7 +36,13 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
       WHEN cl_abap_typedescr=>kind_elem.
         rv_xml = rv_xml && iv_ref->*.
       WHEN cl_abap_typedescr=>kind_table.
-        ASSERT 1 = 'todo,lcl_data_to_xml'.
+        ASSIGN iv_ref->* TO <table>.
+        LOOP AT <table> ASSIGNING <any>.
+          GET REFERENCE OF <any> INTO lv_ref.
+          rv_xml = rv_xml && |<item>|.
+          rv_xml = rv_xml && run( lv_ref ).
+          rv_xml = rv_xml && |</item>|.
+        ENDLOOP.
       WHEN OTHERS.
         ASSERT 1 = 'todo,lcl_data_to_xml'.
     ENDCASE.
