@@ -10,6 +10,16 @@ FUNCTION docu_get.
 *"      LINE STRUCTURE  TLINE
 *"----------------------------------------------------------------------
 
+  CLEAR line.
+
+  IF id = 'NA' AND object = '00001'.
+* message class 00, number 001
+    RETURN.
+  ENDIF.
+
+* todo
+
+  WRITE '@KERNEL console.dir(INPUT);'.
   ASSERT 'todo' = 1.
 
 ENDFUNCTION.
