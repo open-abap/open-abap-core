@@ -11,6 +11,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS invalid_input FOR TESTING RAISING cx_static_check.
     METHODS empty_input FOR TESTING RAISING cx_static_check.
     METHODS parse_escaped_quotes FOR TESTING RAISING cx_static_check.
+    METHODS to_string FOR TESTING RAISING cx_static_check.
 
     METHODS convert_json_to_sxml
       IMPORTING iv_json TYPE string
@@ -21,6 +22,25 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
+
+  METHOD to_string.
+    DATA lv_actual TYPE string.
+    DATA lv_expected TYPE string.
+    DATA: BEGIN OF ls_xml,
+            field TYPE i,
+          END OF ls_xml.
+    CALL TRANSFORMATION id
+      SOURCE repo = ls_xml
+      RESULT XML lv_actual.
+* note the byte order mark,
+    lv_expected = |*<?xml version="1.0" encoding="utf-16"?>| &&
+      |<asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">| &&
+      |<asx:values><REPO><FIELD>0</FIELD></REPO></asx:values>| &&
+      |</asx:abap>|.
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_actual
+      exp = lv_expected ).
+  ENDMETHOD.
 
   METHOD parse_escaped_quotes.
     DATA lv_response TYPE string.
