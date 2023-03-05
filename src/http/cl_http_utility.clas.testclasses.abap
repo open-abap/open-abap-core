@@ -7,6 +7,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS unescape_url FOR TESTING RAISING cx_static_check.
     METHODS unescape_url_eqs1 FOR TESTING RAISING cx_static_check.
     METHODS unescape_url_eqs2 FOR TESTING RAISING cx_static_check.
+    METHODS unescape_url_colon FOR TESTING RAISING cx_static_check.
+    METHODS unescape_url_colon2 FOR TESTING RAISING cx_static_check.
     METHODS escape_url FOR TESTING RAISING cx_static_check.
     METHODS encode_base64 FOR TESTING RAISING cx_static_check.
     METHODS fields_identity01 FOR TESTING RAISING cx_static_check.
@@ -99,6 +101,24 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_name
       exp  = 'ello==' ).
+  ENDMETHOD.
+
+  METHOD unescape_url_colon.
+    DATA lv_act TYPE string.
+    lv_act = cl_http_utility=>unescape_url( 'foo%3Abar' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_act
+      exp = 'foo:bar' ).
+  ENDMETHOD.
+
+  METHOD unescape_url_colon2.
+    DATA lv_act TYPE string.
+    DATA lv_input TYPE string.
+    lv_input = 'url=https%3A%2F%2Fgithub.com%2FabapGit%2FabapGit&package=ZSDFSDd&branch_name=&folder_logic=PREFIX&display_name=&labels='.
+    lv_act = cl_http_utility=>unescape_url( lv_input ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_act
+      exp = 'url=https://github.com/abapGit/abapGit&package=ZSDFSDd&branch_name=&folder_logic=PREFIX&display_name=&labels=' ).
   ENDMETHOD.
 
   METHOD escape_url.
