@@ -3,6 +3,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
   PRIVATE SECTION.
     METHODS test1_xml FOR TESTING RAISING cx_static_check.
     METHODS test2_xml FOR TESTING RAISING cx_static_check.
+    METHODS test3_xml FOR TESTING RAISING cx_static_check.
 
     METHODS test1_json FOR TESTING RAISING cx_static_check.
     METHODS test2_json_fs FOR TESTING RAISING cx_static_check.
@@ -23,6 +24,30 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
+
+  METHOD test3_xml.
+    DATA lv_xml TYPE string.
+    DATA: BEGIN OF rs_repo,
+            url         TYPE string,
+            branch_name TYPE string,
+          END OF rs_repo.
+
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?><asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0"><asx:values>| &&
+      |<REPO><URL>https://github.com/abapGit/abapGit</URL><BRANCH_NAME></BRANCH_NAME></REPO>| &&
+      |</asx:values></asx:abap>|.
+
+    CALL TRANSFORMATION id
+      OPTIONS value_handling = 'accept_data_loss'
+      SOURCE XML lv_xml
+      RESULT repo = rs_repo.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = rs_repo-url
+      exp = 'https://github.com/abapGit/abapGit' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = rs_repo-branch_name
+      exp = '' ).
+  ENDMETHOD.
 
   METHOD to_string_simple.
     DATA lv_actual TYPE string.
