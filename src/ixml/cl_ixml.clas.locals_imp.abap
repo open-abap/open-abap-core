@@ -831,7 +831,7 @@ CLASS lcl_parser DEFINITION.
         istream  TYPE REF TO if_ixml_istream
         document TYPE REF TO if_ixml_document.
   PRIVATE SECTION.
-    CONSTANTS lc_regex_tag TYPE string VALUE '<\/?([\w:]+)( [\w:]+="[\w\.:\/]+")*>'.
+    CONSTANTS lc_regex_tag TYPE string VALUE '<\/?([\w:]+)( [\w:]+="[\w\.:\/]+")*/?>'.
     CONSTANTS lc_regex_attr TYPE string VALUE '([\w:]+)="([\w\.:\/]+)"'.
 
     DATA mi_istream  TYPE REF TO if_ixml_istream.
@@ -909,6 +909,10 @@ CLASS lcl_parser IMPLEMENTATION.
           is_match = ls_match ).
 
         lv_offset = ls_match-length.
+
+        IF lv_xml CP '*/>'.
+          lo_parent ?= lo_parent->if_ixml_node~get_parent( ).
+        ENDIF.
       ELSE.
 * value
         FIND FIRST OCCURRENCE OF '<' IN lv_xml MATCH OFFSET lv_offset.
