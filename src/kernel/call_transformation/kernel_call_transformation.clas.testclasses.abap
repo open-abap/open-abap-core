@@ -4,6 +4,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS test1_xml FOR TESTING RAISING cx_static_check.
     METHODS test2_xml FOR TESTING RAISING cx_static_check.
     METHODS test3_xml FOR TESTING RAISING cx_static_check.
+    METHODS test4_xml FOR TESTING RAISING cx_static_check.
 
     METHODS test1_json FOR TESTING RAISING cx_static_check.
     METHODS test2_json_fs FOR TESTING RAISING cx_static_check.
@@ -24,6 +25,25 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
+
+  METHOD test4_xml.
+
+    DATA lv_xml TYPE string.
+    DATA: BEGIN OF rs_repo,
+            empty TYPE string,
+          END OF rs_repo.
+
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?>| &&
+      |<asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0"><asx:values>| &&
+      |<REPO><EMPTY/></REPO>| &&
+      |</asx:values></asx:abap>|.
+
+    CALL TRANSFORMATION id
+      OPTIONS value_handling = 'accept_data_loss'
+      SOURCE XML lv_xml
+      RESULT repo = rs_repo.
+
+  ENDMETHOD.
 
   METHOD test3_xml.
     DATA lv_xml TYPE string.
