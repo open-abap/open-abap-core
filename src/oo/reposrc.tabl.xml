@@ -37,6 +37,16 @@
      <DATATYPE>STRG</DATATYPE>
      <MASK>  STRG</MASK>
     </DD03P>
+    <DD03P>
+     <FIELDNAME>UNAM</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000024</INTLEN>
+     <NOTNULL>X</NOTNULL>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000012</LENG>
+     <MASK>  CHAR</MASK>
+    </DD03P>
    </DD03P_TABLE>
   </asx:values>
  </asx:abap>
