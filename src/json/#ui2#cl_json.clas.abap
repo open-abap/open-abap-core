@@ -69,6 +69,8 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             ENDIF.
           WHEN cl_abap_typedescr=>typekind_string.
             r_json = '"' && data && '"'.
+          WHEN cl_abap_typedescr=>typekind_int.
+            r_json = |{ data }|.
           WHEN OTHERS.
             IF ts_as_iso8601 = abap_true AND lo_type->absolute_name = `\TYPE=TIMESTAMP`.
               IF data IS INITIAL.
