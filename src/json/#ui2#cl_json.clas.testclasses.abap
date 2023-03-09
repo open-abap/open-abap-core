@@ -157,6 +157,7 @@ CLASS ltcl_serialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT F
 
   PRIVATE SECTION.
     METHODS structure_integer FOR TESTING RAISING cx_static_check.
+    METHODS structure_integer_negative FOR TESTING RAISING cx_static_check.
     METHODS structure_string FOR TESTING RAISING cx_static_check.
     METHODS structure_two_fields FOR TESTING RAISING cx_static_check.
     METHODS basic_array FOR TESTING RAISING cx_static_check.
@@ -292,6 +293,18 @@ CLASS ltcl_serialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_json
       exp = '{"FOO":2}' ).
+  ENDMETHOD.
+
+  METHOD structure_integer_negative.
+    DATA: BEGIN OF stru,
+            foo TYPE i,
+          END OF stru.
+    DATA lv_json TYPE string.
+    stru-foo = -2.
+    lv_json = /ui2/cl_json=>serialize( stru ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = '{"FOO":-2}' ).
   ENDMETHOD.
 
   METHOD structure_two_fields.
