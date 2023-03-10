@@ -1,6 +1,5 @@
 CLASS cl_abap_objectdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
   PUBLIC SECTION.
-
     CONSTANTS changing  TYPE abap_parmkind VALUE 'C'.
     CONSTANTS exporting TYPE abap_parmkind VALUE 'E'.
     CONSTANTS importing TYPE abap_parmkind VALUE 'I'.
