@@ -339,8 +339,6 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
       type->absolute_name = 'T'.
     ELSEIF lv_name = 'Date'.
       type->absolute_name = 'D'.
-    ELSE.
-      type->absolute_name = lv_qualified.
     ENDIF.
 
 * this is not completely correct, local type names and ddic names might overlap, but will work for now,

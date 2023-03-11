@@ -454,6 +454,8 @@ CLASS ltcl_test IMPLEMENTATION.
              value4 TYPE xstring,
              value5 TYPE t,
              value6 TYPE d,
+             value7 TYPE x LENGTH 2,
+             value8 TYPE c LENGTH 2,
            END OF ty_data.
     DATA ls_data   TYPE ty_data.
     DATA ls_row    TYPE abap_compdescr.
@@ -491,6 +493,16 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_data->absolute_name
       exp = '\TYPE=D' ).
+
+    lo_data = lo_struct->get_component_type( 'VALUE7' ).
+    cl_abap_unit_assert=>assert_text_matches(
+      pattern = '\\TYPE=%_T\d\d\d\d\d\w\d\d\d\d\d\d\d\d\w\d\d\d\d\d\d\d\d\d\d'
+      text    = lo_data->absolute_name ).
+
+    lo_data = lo_struct->get_component_type( 'VALUE8' ).
+    cl_abap_unit_assert=>assert_text_matches(
+      pattern = '\\TYPE=%_T\d\d\d\d\d\w\d\d\d\d\d\d\d\d\w\d\d\d\d\d\d\d\d\d\d'
+      text    = lo_data->absolute_name ).
   ENDMETHOD.
 
 ENDCLASS.
