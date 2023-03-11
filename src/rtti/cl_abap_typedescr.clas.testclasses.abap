@@ -53,6 +53,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS structure_field_absolute FOR TESTING.
     METHODS unnamed_type FOR TESTING.
     METHODS describe_by_dashed FOR TESTING.
+    METHODS structure_absolute FOR TESTING.
 
 ENDCLASS.
 
@@ -407,8 +408,8 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD structure_field_absolute.
 
     TYPES: BEGIN OF ty_data,
-         field TYPE lif_test_types=>foo,
-       END OF ty_data.
+             field TYPE lif_test_types=>foo,
+           END OF ty_data.
 
     DATA ls_data TYPE ty_data.
     DATA lo_descr TYPE REF TO cl_abap_typedescr.
@@ -443,6 +444,65 @@ CLASS ltcl_test IMPLEMENTATION.
       act = lo_descr->type_kind
       exp = cl_abap_typedescr=>typekind_char ).
 
+  ENDMETHOD.
+
+  METHOD structure_absolute.
+    TYPES: BEGIN OF ty_data,
+             value1 TYPE string,
+             value2 TYPE i,
+             value3 TYPE f,
+             value4 TYPE xstring,
+             value5 TYPE t,
+             value6 TYPE d,
+             value7 TYPE x LENGTH 2,
+             value8 TYPE c LENGTH 2,
+           END OF ty_data.
+    DATA ls_data   TYPE ty_data.
+    DATA ls_row    TYPE abap_compdescr.
+    DATA lo_struct TYPE REF TO cl_abap_structdescr.
+    DATA lo_data   TYPE REF TO cl_abap_datadescr.
+
+    lo_struct ?= cl_abap_typedescr=>describe_by_data( ls_data ).
+
+    lo_data = lo_struct->get_component_type( 'VALUE1' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_data->absolute_name
+      exp = '\TYPE=STRING' ).
+
+    lo_data = lo_struct->get_component_type( 'VALUE2' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_data->absolute_name
+      exp = '\TYPE=I' ).
+
+    lo_data = lo_struct->get_component_type( 'VALUE3' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_data->absolute_name
+      exp = '\TYPE=F' ).
+
+    lo_data = lo_struct->get_component_type( 'VALUE4' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_data->absolute_name
+      exp = '\TYPE=XSTRING' ).
+
+    lo_data = lo_struct->get_component_type( 'VALUE5' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_data->absolute_name
+      exp = '\TYPE=T' ).
+
+    lo_data = lo_struct->get_component_type( 'VALUE6' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_data->absolute_name
+      exp = '\TYPE=D' ).
+
+    lo_data = lo_struct->get_component_type( 'VALUE7' ).
+    cl_abap_unit_assert=>assert_text_matches(
+      pattern = '\\TYPE=%_T\d\d\d\d\d\w\d\d\d\d\d\d\d\d\w\d\d\d\d\d\d\d\d\d\d'
+      text    = lo_data->absolute_name ).
+
+    lo_data = lo_struct->get_component_type( 'VALUE8' ).
+    cl_abap_unit_assert=>assert_text_matches(
+      pattern = '\\TYPE=%_T\d\d\d\d\d\w\d\d\d\d\d\d\d\d\w\d\d\d\d\d\d\d\d\d\d'
+      text    = lo_data->absolute_name ).
   ENDMETHOD.
 
 ENDCLASS.

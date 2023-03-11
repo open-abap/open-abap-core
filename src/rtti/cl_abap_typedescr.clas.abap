@@ -202,14 +202,16 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 
   METHOD describe_by_data.
 
-    DATA lv_name     TYPE string.
-    DATA lv_prefix   TYPE string.
-    DATA lv_convexit TYPE string.
-    DATA lv_length   TYPE i.
-    DATA lv_decimals TYPE i.
-    DATA lv_any      TYPE any.
-    DATA lo_elem     TYPE REF TO cl_abap_elemdescr.
-    DATA lo_ref      TYPE REF TO cl_abap_refdescr.
+    DATA lv_name      TYPE string.
+    DATA lv_prefix    TYPE string.
+    DATA lv_convexit  TYPE string.
+    DATA lv_length    TYPE i.
+    DATA lv_decimals  TYPE i.
+    DATA lv_any       TYPE any.
+    DATA lo_elem      TYPE REF TO cl_abap_elemdescr.
+    DATA lo_ref       TYPE REF TO cl_abap_refdescr.
+    DATA lv_ddicname  TYPE string.
+    DATA lv_qualified TYPE string.
 
     WRITE '@KERNEL lv_name.set(p_data.constructor.name);'.
     WRITE '@KERNEL lv_length.set(p_data.getLength ? p_data.getLength() : 0);'.
@@ -316,12 +318,28 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         ASSERT 1 = 'todo_cl_abap_typedescr'.
     ENDCASE.
 
-*    WRITE '@KERNEL console.dir(p_data);'.
-    WRITE '@KERNEL if (p_data.getQualifiedName && p_data.getQualifiedName() !== undefined) type.get().absolute_name.set(p_data.getQualifiedName());'.
-    IF type->absolute_name CA '-'.
-      WRITE '@KERNEL if (p_data.getDDICName && p_data.getDDICName() !== undefined) type.get().absolute_name.set(p_data.getDDICName());'.
+
+    WRITE '@KERNEL lv_ddicname.set(p_data.getDDICName ? p_data.getDDICName() || "" : "");'.
+    WRITE '@KERNEL lv_convexit.set(p_data.getConversionExit ? p_data.getConversionExit() || "" : "");'.
+    WRITE '@KERNEL lv_qualified.set(p_data.getQualifiedName ? p_data.getQualifiedName() || "" : "");'.
+
+    IF lv_qualified NA '-'.
+      type->absolute_name = lv_qualified.
+    ELSEIF lv_ddicname <> ''.
+      type->absolute_name = lv_ddicname.
+    ELSEIF lv_name = 'String'.
+      type->absolute_name = 'STRING'.
+    ELSEIF lv_name = 'XString'.
+      type->absolute_name = 'XSTRING'.
+    ELSEIF lv_name = 'Integer'.
+      type->absolute_name = 'I'.
+    ELSEIF lv_name = 'Float'.
+      type->absolute_name = 'F'.
+    ELSEIF lv_name = 'Time'.
+      type->absolute_name = 'T'.
+    ELSEIF lv_name = 'Date'.
+      type->absolute_name = 'D'.
     ENDIF.
-    WRITE '@KERNEL if (type.get().absolute_name.get() === "" && p_data.getType && p_data.getType().getQualifiedName() !== undefined) type.get().absolute_name.set(p_data.getType().getQualifiedName());'.
 
 * this is not completely correct, local type names and ddic names might overlap, but will work for now,
 * todo: use/check getDDICName() in the future,
@@ -348,7 +366,6 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
       type->absolute_name = '\TYPE=' && type->absolute_name.
     ENDIF.
 
-    WRITE '@KERNEL if(p_data.getConversionExit && p_data.getConversionExit() !== undefined) lv_convexit.set(p_data.getConversionExit());'.
     IF lv_convexit <> ''.
       lo_elem->edit_mask = '==' && lv_convexit.
     ENDIF.
