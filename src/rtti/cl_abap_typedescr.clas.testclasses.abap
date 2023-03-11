@@ -408,8 +408,8 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD structure_field_absolute.
 
     TYPES: BEGIN OF ty_data,
-         field TYPE lif_test_types=>foo,
-       END OF ty_data.
+             field TYPE lif_test_types=>foo,
+           END OF ty_data.
 
     DATA ls_data TYPE ty_data.
     DATA lo_descr TYPE REF TO cl_abap_typedescr.
@@ -451,6 +451,9 @@ CLASS ltcl_test IMPLEMENTATION.
              value1 TYPE string,
              value2 TYPE i,
              value3 TYPE f,
+             value4 TYPE xstring,
+             value5 TYPE t,
+             value6 TYPE d,
            END OF ty_data.
     DATA ls_data   TYPE ty_data.
     DATA ls_row    TYPE abap_compdescr.
@@ -464,15 +467,20 @@ CLASS ltcl_test IMPLEMENTATION.
       act = lo_data->absolute_name
       exp = '\TYPE=STRING' ).
 
-    " lo_data = lo_struct->get_component_type( 'VALUE2' ).
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = lo_data->absolute_name
-    "   exp = '\TYPE=I' ).
+    lo_data = lo_struct->get_component_type( 'VALUE2' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_data->absolute_name
+      exp = '\TYPE=I' ).
 
-    " lo_data = lo_struct->get_component_type( 'VALUE3' ).
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = lo_data->absolute_name
-    "   exp = '\TYPE=F' ).
+    lo_data = lo_struct->get_component_type( 'VALUE3' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_data->absolute_name
+      exp = '\TYPE=F' ).
+
+    lo_data = lo_struct->get_component_type( 'VALUE4' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_data->absolute_name
+      exp = '\TYPE=XSTRING' ).
   ENDMETHOD.
 
 ENDCLASS.
