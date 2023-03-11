@@ -53,6 +53,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS structure_field_absolute FOR TESTING.
     METHODS unnamed_type FOR TESTING.
     METHODS describe_by_dashed FOR TESTING.
+    METHODS structure_absolute FOR TESTING.
 
 ENDCLASS.
 
@@ -443,6 +444,35 @@ CLASS ltcl_test IMPLEMENTATION.
       act = lo_descr->type_kind
       exp = cl_abap_typedescr=>typekind_char ).
 
+  ENDMETHOD.
+
+  METHOD structure_absolute.
+    TYPES: BEGIN OF ty_data,
+             value1 TYPE string,
+             value2 TYPE i,
+             value3 TYPE f,
+           END OF ty_data.
+    DATA ls_data   TYPE ty_data.
+    DATA ls_row    TYPE abap_compdescr.
+    DATA lo_struct TYPE REF TO cl_abap_structdescr.
+    DATA lo_data   TYPE REF TO cl_abap_datadescr.
+
+    lo_struct ?= cl_abap_typedescr=>describe_by_data( ls_data ).
+
+    lo_data = lo_struct->get_component_type( 'VALUE1' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_data->absolute_name
+      exp = '\TYPE=STRING' ).
+
+    " lo_data = lo_struct->get_component_type( 'VALUE2' ).
+    " cl_abap_unit_assert=>assert_equals(
+    "   act = lo_data->absolute_name
+    "   exp = '\TYPE=I' ).
+
+    " lo_data = lo_struct->get_component_type( 'VALUE3' ).
+    " cl_abap_unit_assert=>assert_equals(
+    "   act = lo_data->absolute_name
+    "   exp = '\TYPE=F' ).
   ENDMETHOD.
 
 ENDCLASS.
