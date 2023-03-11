@@ -323,12 +323,6 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     WRITE '@KERNEL lv_convexit.set(p_data.getConversionExit ? p_data.getConversionExit() || "" : "");'.
     WRITE '@KERNEL lv_qualified.set(p_data.getQualifiedName ? p_data.getQualifiedName() || "" : "");'.
 
-*    WRITE '@KERNEL console.dir(p_data);'.
-*    WRITE '@KERNEL if (p_data.getQualifiedName && p_data.getQualifiedName() !== undefined) type.get().absolute_name.set(p_data.getQualifiedName());'.
-    " IF type->absolute_name CA '-'.
-
-    " ENDIF.
-
     IF lv_qualified NA '-'.
       type->absolute_name = lv_qualified.
     ELSEIF lv_ddicname <> ''.
@@ -341,6 +335,10 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
       type->absolute_name = 'I'.
     ELSEIF lv_name = 'Float'.
       type->absolute_name = 'F'.
+    ELSEIF lv_name = 'Time'.
+      type->absolute_name = 'T'.
+    ELSEIF lv_name = 'Date'.
+      type->absolute_name = 'D'.
     ELSE.
       type->absolute_name = lv_qualified.
     ENDIF.

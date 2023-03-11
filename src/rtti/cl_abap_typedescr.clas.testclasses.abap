@@ -481,6 +481,16 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_data->absolute_name
       exp = '\TYPE=XSTRING' ).
+
+    lo_data = lo_struct->get_component_type( 'VALUE5' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_data->absolute_name
+      exp = '\TYPE=T' ).
+
+    lo_data = lo_struct->get_component_type( 'VALUE6' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_data->absolute_name
+      exp = '\TYPE=D' ).
   ENDMETHOD.
 
 ENDCLASS.
