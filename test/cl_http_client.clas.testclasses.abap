@@ -445,7 +445,7 @@ CLASS ltcl_test IMPLEMENTATION.
     li_client->receive( ).
 
     lv_cdata = li_client->response->get_cdata( ).
-    WRITE '@KERNEL console.dir(lv_cdata);'.
+*    WRITE '@KERNEL console.dir(lv_cdata);'.
     cl_abap_unit_assert=>assert_char_cp(
       act = lv_cdata
       exp = '*"gzipped": true*' ).
