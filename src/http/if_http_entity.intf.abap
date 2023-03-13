@@ -59,7 +59,9 @@ INTERFACE if_http_entity PUBLIC.
     RETURNING
       VALUE(data) TYPE xstring.
 
-  METHODS get_header_fields CHANGING fields TYPE any.
+  METHODS get_header_fields
+    CHANGING
+      fields TYPE tihttpnvp.
 
   METHODS to_xstring
     RETURNING
