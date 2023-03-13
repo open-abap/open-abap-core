@@ -183,16 +183,14 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
   METHOD describe_by_object_ref.
     DATA lv_name TYPE string.
     DATA lo_cdescr TYPE REF TO cl_abap_classdescr.
-    FIELD-SYMBOLS <fs> TYPE abap_attrdescr.
 
-    CREATE OBJECT lo_cdescr TYPE cl_abap_classdescr.
+    CREATE OBJECT lo_cdescr TYPE cl_abap_classdescr
+      EXPORTING
+        p_object = p_object_ref.
     lo_cdescr->type_kind = typekind_class.
     lo_cdescr->kind = kind_class.
 
     WRITE '@KERNEL lv_name.set(p_object_ref.get().constructor.name.toUpperCase());'.
-
-    APPEND INITIAL LINE TO lo_cdescr->attributes ASSIGNING <fs>.
-    <fs>-name = 'DUMMY_RTTI_TODO'.
 
     lo_cdescr->relative_name = lv_name.
     lo_cdescr->absolute_name = '\CLASS=' && lv_name.

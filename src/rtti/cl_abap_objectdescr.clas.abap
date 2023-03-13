@@ -14,6 +14,10 @@ CLASS cl_abap_objectdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
     DATA methods    TYPE abap_methdescr_tab READ-ONLY.
     DATA interfaces TYPE abap_intfdescr_tab READ-ONLY.
 
+    METHODS constructor
+      IMPORTING
+        p_object TYPE any OPTIONAL.
+
     METHODS get_attribute_type
       IMPORTING
         p_name TYPE any
@@ -44,6 +48,16 @@ CLASS cl_abap_objectdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
 ENDCLASS.
 
 CLASS cl_abap_objectdescr IMPLEMENTATION.
+
+  METHOD constructor.
+    FIELD-SYMBOLS <fs> TYPE abap_attrdescr.
+
+    APPEND INITIAL LINE TO attributes ASSIGNING <fs>.
+    <fs>-name = 'DUMMY_RTTI_TODO'.
+
+    super->constructor( ).
+  ENDMETHOD.
+
   METHOD get_method_parameter_type.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
