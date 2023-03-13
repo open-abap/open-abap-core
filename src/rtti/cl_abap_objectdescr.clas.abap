@@ -45,6 +45,7 @@ CLASS cl_abap_objectdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
   PROTECTED SECTION.
     DATA mv_object_name TYPE string.
     DATA mv_object_type TYPE string.
+    DATA mo_object      TYPE REF TO object.
 ENDCLASS.
 
 CLASS cl_abap_objectdescr IMPLEMENTATION.
@@ -60,6 +61,8 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
       <fs>-name = to_upper( lv_name ).
     ENDIF.
     WRITE '@KERNEL }'.
+
+    mo_object = p_object.
 
     super->constructor( ).
   ENDMETHOD.
@@ -77,15 +80,20 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     DATA l_sub   TYPE string.
     DATA l_any   TYPE string.
 
-    lv_name = p_name.
+    lv_name = to_lower( p_name ).
 
-    WRITE '@KERNEL let foo = abap.Classes[this.mv_object_name.get()];'.
+    IF mv_object_name IS INITIAL.
+      WRITE '@KERNEL l_any = this.mo_object.get()[lv_name.get()];'.
 
-    CONCATENATE mv_object_name '$' lv_name INTO l_sub.
-    l_sub = to_lower( l_sub ).
+    ELSE.
+      WRITE '@KERNEL const foo = abap.Classes[this.mv_object_name.get()];'.
 
-    " note that the typing here is misused
-    WRITE '@KERNEL l_any = foo[l_sub.get()];'.
+      CONCATENATE mv_object_name '$' lv_name INTO l_sub.
+      l_sub = to_lower( l_sub ).
+
+      " note that the typing here is misused
+      WRITE '@KERNEL l_any = foo[l_sub.get()];'.
+    ENDIF.
 
     p_descr_ref ?= describe_by_data( l_any ).
   ENDMETHOD.
