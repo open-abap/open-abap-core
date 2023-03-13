@@ -50,10 +50,16 @@ ENDCLASS.
 CLASS cl_abap_objectdescr IMPLEMENTATION.
 
   METHOD constructor.
+    DATA lv_name TYPE string.
     FIELD-SYMBOLS <fs> TYPE abap_attrdescr.
 
-    APPEND INITIAL LINE TO attributes ASSIGNING <fs>.
-    <fs>-name = 'DUMMY_RTTI_TODO'.
+    WRITE '@KERNEL for (const a in p_object.get()) {'.
+    WRITE '@KERNEL   lv_name.set(a)'.
+    IF lv_name <> 'me'.
+      APPEND INITIAL LINE TO attributes ASSIGNING <fs>.
+      <fs>-name = to_upper( lv_name ).
+    ENDIF.
+    WRITE '@KERNEL }'.
 
     super->constructor( ).
   ENDMETHOD.
