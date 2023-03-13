@@ -61,6 +61,7 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
       <fs>-name = to_upper( lv_name ).
     ENDIF.
     WRITE '@KERNEL }'.
+    SORT attributes BY name ASCENDING.
 
     mo_object = p_object.
 
