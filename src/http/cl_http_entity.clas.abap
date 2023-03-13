@@ -207,11 +207,13 @@ CLASS cl_http_entity IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_entity~get_content_type.
-    val = mv_content_type.
+    val = if_http_entity~get_header_field( 'content-type' ).
   ENDMETHOD.
 
   METHOD if_http_entity~set_content_type.
-    mv_content_type = content_type.
+    if_http_entity~set_header_field(
+      name  = 'content-type'
+      value = content_type ).
   ENDMETHOD.
 
   METHOD if_http_entity~get_data.
