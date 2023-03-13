@@ -1,5 +1,6 @@
 CLASS ltcl_foo DEFINITION FOR TESTING FINAL.
   PUBLIC SECTION.
+    DATA zzz TYPE i.
     DATA bar TYPE i.
 ENDCLASS.
 
@@ -25,7 +26,7 @@ CLASS ltcl_test IMPLEMENTATION.
     lo_obj ?= cl_abap_typedescr=>describe_by_object_ref( lo_foo ).
     cl_abap_unit_assert=>assert_equals(
       act = lines( lo_obj->attributes )
-      exp = 1 ).
+      exp = 2 ).
 
     READ TABLE lo_obj->attributes INDEX 1 INTO ls_attr.
     cl_abap_unit_assert=>assert_subrc( ).
