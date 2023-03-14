@@ -72,7 +72,9 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           WHEN cl_abap_typedescr=>typekind_int.
             r_json = |{ data }|.
           WHEN OTHERS.
-            IF ts_as_iso8601 = abap_true AND lo_type->absolute_name = `\TYPE=TIMESTAMP`.
+            IF ts_as_iso8601 = abap_true
+                AND ( lo_type->absolute_name = `\TYPE=TIMESTAMP`
+                OR lo_type->absolute_name = `\TYPE=TIMESTAMPL` ).
               IF data IS INITIAL.
                 r_json = |""|.
               ELSE.
