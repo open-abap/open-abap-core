@@ -142,6 +142,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         CREATE OBJECT type TYPE cl_abap_intfdescr.
         type->type_kind = typekind_intf.
         type->kind = kind_intf.
+        type->absolute_name = '\CLASS=' && to_upper( p_name ).
         objectdescr ?= type.
         objectdescr->mv_object_name = to_upper( p_name ). " todo, this should give syntax error, as they are not friends
         objectdescr->mv_object_type = oo_type. " todo, this should give syntax error, as they are not friends
@@ -149,6 +150,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         CREATE OBJECT type TYPE cl_abap_classdescr.
         type->type_kind = typekind_class.
         type->kind = kind_class.
+        type->absolute_name = '\CLASS=' && to_upper( p_name ).
         objectdescr ?= type.
         objectdescr->mv_object_name = to_upper( p_name ). " todo, this should give syntax error, as they are not friends
         objectdescr->mv_object_type = oo_type. " todo, this should give syntax error, as they are not friends
@@ -299,6 +301,10 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         CREATE OBJECT type TYPE cl_abap_refdescr.
         type->type_kind = typekind_oref.
         type->kind = kind_ref.
+
+        lo_ref ?= type.
+        WRITE '@KERNEL lv_name.set(p_data.qualifiedName || "");'.
+        lo_ref->referenced = describe_by_name( lv_name ).
       WHEN 'UTCLong'.
         CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_utclong.

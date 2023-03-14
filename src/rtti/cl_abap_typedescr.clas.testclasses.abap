@@ -28,6 +28,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS typekind_utclong FOR TESTING.
     METHODS typekind_float FOR TESTING.
     METHODS typekind_decfloat34 FOR TESTING.
+    METHODS typekind_oref FOR TESTING.
     METHODS kind_elem FOR TESTING.
     METHODS kind_table FOR TESTING.
     METHODS field_symbol FOR TESTING.
@@ -324,6 +325,33 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = type->type_kind
       exp = cl_abap_typedescr=>typekind_decfloat34 ).
+  ENDMETHOD.
+
+  METHOD typekind_oref.
+    DATA ref TYPE REF TO cl_abap_codepage.
+    DATA type TYPE REF TO cl_abap_typedescr.
+    DATA refdescr TYPE REF TO cl_abap_refdescr.
+    DATA sub TYPE REF TO cl_abap_typedescr.
+
+    type = cl_abap_typedescr=>describe_by_data( ref ).
+    cl_abap_unit_assert=>assert_equals(
+      act = type->type_kind
+      exp = cl_abap_typedescr=>typekind_oref ).
+    cl_abap_unit_assert=>assert_equals(
+      act = type->kind
+      exp = cl_abap_typedescr=>kind_ref ).
+    refdescr ?= type.
+
+    sub = refdescr->get_referenced_type( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = sub->type_kind
+      exp = cl_abap_typedescr=>typekind_class ).
+    cl_abap_unit_assert=>assert_equals(
+      act = sub->kind
+      exp = cl_abap_typedescr=>kind_class ).
+    cl_abap_unit_assert=>assert_equals(
+      act = sub->absolute_name
+      exp = '\CLASS=CL_ABAP_CODEPAGE' ).
   ENDMETHOD.
 
   METHOD typekind_numc.
