@@ -142,6 +142,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         CREATE OBJECT type TYPE cl_abap_intfdescr.
         type->type_kind = typekind_intf.
         type->kind = kind_intf.
+        type->relative_name = to_upper( p_name ).
         type->absolute_name = '\CLASS=' && to_upper( p_name ).
         objectdescr ?= type.
         objectdescr->mv_object_name = to_upper( p_name ). " todo, this should give syntax error, as they are not friends
@@ -150,6 +151,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         CREATE OBJECT type TYPE cl_abap_classdescr.
         type->type_kind = typekind_class.
         type->kind = kind_class.
+        type->relative_name = to_upper( p_name ).
         type->absolute_name = '\CLASS=' && to_upper( p_name ).
         objectdescr ?= type.
         objectdescr->mv_object_name = to_upper( p_name ). " todo, this should give syntax error, as they are not friends

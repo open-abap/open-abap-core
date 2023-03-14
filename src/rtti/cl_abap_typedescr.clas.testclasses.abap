@@ -352,6 +352,9 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = sub->absolute_name
       exp = '\CLASS=CL_ABAP_CODEPAGE' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = sub->get_relative_name( )
+      exp = 'CL_ABAP_CODEPAGE' ).
   ENDMETHOD.
 
   METHOD typekind_numc.
