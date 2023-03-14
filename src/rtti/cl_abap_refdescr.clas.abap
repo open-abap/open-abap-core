@@ -13,11 +13,7 @@ ENDCLASS.
 
 CLASS cl_abap_refdescr IMPLEMENTATION.
   METHOD get_referenced_type.
-    IF referenced IS NOT INITIAL.
-      type = referenced.
-    ELSE.
-      type ?= me.
-    ENDIF.
+    type = referenced.
   ENDMETHOD.
 
   METHOD get_ref_to_data.
