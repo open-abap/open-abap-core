@@ -45,6 +45,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS get_relative_name_table FOR TESTING.
     METHODS describe_by_object_ref FOR TESTING.
     METHODS describe_by_object_ref2 FOR TESTING.
+    METHODS describe_by_data_ref_str FOR TESTING.
 
     METHODS is_ddic_type_true1 FOR TESTING.
     METHODS is_ddic_type_true2 FOR TESTING.
@@ -534,6 +535,22 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_text_matches(
       pattern = '\\TYPE=%_T\d\d\d\d\d\w\d\d\d\d\d\d\d\d\w\d\d\d\d\d\d\d\d\d\d'
       text    = lo_data->absolute_name ).
+  ENDMETHOD.
+
+  METHOD describe_by_data_ref_str.
+
+    DATA foo       TYPE REF TO data.
+    DATA str       TYPE string.
+    DATA refdescr  TYPE REF TO cl_abap_refdescr.
+    DATA elemdescr TYPE REF TO cl_abap_elemdescr.
+
+    str = 'Test'.
+    GET REFERENCE OF str INTO foo.
+    elemdescr ?= cl_abap_typedescr=>describe_by_data_ref( foo ).
+    cl_abap_unit_assert=>assert_equals(
+      act = elemdescr->type_kind
+      exp = cl_abap_typedescr=>typekind_string ).
+
   ENDMETHOD.
 
 ENDCLASS.
