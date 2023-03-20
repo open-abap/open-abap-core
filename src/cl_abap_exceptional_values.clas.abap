@@ -34,12 +34,15 @@ CLASS cl_abap_exceptional_values IMPLEMENTATION.
 
         IF lv_length = 3 AND lv_decimals = 1.
           <out> = '9999.9'.
+        ELSEIF lv_length = 4 AND lv_decimals = 1.
+          <out> = '999999.9'.
         ELSEIF lv_length = 7 AND lv_decimals = 3.
           <out> = '9999999999.999'.
         ELSE.
           ASSERT 1 = 'todo'.
         ENDIF.
       WHEN OTHERS.
+        WRITE '@KERNEL console.dir(INPUT);'.
         ASSERT 1 = 'todo'.
     ENDCASE.
   ENDMETHOD.
@@ -58,6 +61,7 @@ CLASS cl_abap_exceptional_values IMPLEMENTATION.
         ASSIGN out->* TO <out>.
         <out> = <out> * -1.
       WHEN OTHERS.
+        WRITE '@KERNEL console.dir(INPUT);'.
         ASSERT 1 = 'todo'.
     ENDCASE.
   ENDMETHOD.
