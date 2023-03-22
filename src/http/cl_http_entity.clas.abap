@@ -233,7 +233,8 @@ CLASS cl_http_entity IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_entity~num_multiparts.
-    ASSERT 2 = 'todo'.
+* todo
+    num = 0.
   ENDMETHOD.
 
   METHOD if_http_entity~get_multipart.
