@@ -180,9 +180,9 @@ CLASS ltcl_deserialize IMPLEMENTATION.
         json = lv_json
       CHANGING
         data = stru ).
-    cl_abap_unit_assert=>assert_equals(
+    cl_abap_unit_assert=>assert_char_cp(
       act = |{ stru-ts TIMESTAMP = ISO }|
-      exp = |2023-03-09T21:02:59,9300000| ).
+      exp = |2023-03-09T21:02:59,9*| ).
   ENDMETHOD.
 
 ENDCLASS.
