@@ -9,6 +9,7 @@ CLASS ltcl_deserialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
     METHODS parse_abap_true_flag FOR TESTING RAISING cx_static_check.
     METHODS parse_abap_false FOR TESTING RAISING cx_static_check.
     METHODS camel_case FOR TESTING RAISING cx_static_check.
+    METHODS long_timestamp FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -149,6 +150,22 @@ CLASS ltcl_deserialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_int
       exp = 7 ).
+  ENDMETHOD.
+
+  METHOD long_timestamp.
+    DATA: BEGIN OF stru,
+            ts TYPE timestampl,
+          END OF stru.
+    DATA lv_json TYPE string.
+    lv_json = '{"ts": "2023-03-09T21:02:59.930Z"}'.
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = lv_json
+      CHANGING
+        data = stru ).
+    cl_abap_unit_assert=>assert_equals(
+      act = |{ stru-ts TIMESTAMP = ISO }|
+      exp = |2023-03-09T21:02:59,9300000| ).
   ENDMETHOD.
 
 ENDCLASS.
