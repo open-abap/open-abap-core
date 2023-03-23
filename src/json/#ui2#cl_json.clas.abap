@@ -150,6 +150,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     DATA lt_members    TYPE string_table.
     DATA ref           TYPE REF TO data.
     DATA lv_name       TYPE string.
+    DATA lv_value      TYPE string.
     DATA lv_member     LIKE LINE OF lt_members.
 
     FIELD-SYMBOLS <any> TYPE any.
@@ -162,6 +163,14 @@ CLASS /ui2/cl_json IMPLEMENTATION.
         IF lo_type->absolute_name = '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL'
             OR lo_type->absolute_name = '\TYPE=FLAG'.
           data = boolc( mo_parsed->value_string( prefix ) = 'true' ).
+        ELSEIF lo_type->absolute_name = `\TYPE=TIMESTAMP`
+            OR lo_type->absolute_name = `\TYPE=TIMESTAMPL`.
+          lv_value = mo_parsed->value_string( prefix ).
+          REPLACE ALL OCCURRENCES OF '-' IN lv_value WITH ''.
+          REPLACE ALL OCCURRENCES OF 'T' IN lv_value WITH ''.
+          REPLACE ALL OCCURRENCES OF ':' IN lv_value WITH ''.
+          REPLACE ALL OCCURRENCES OF 'Z' IN lv_value WITH ''.
+          data = lv_value.
         ELSE.
           data = mo_parsed->value_string( prefix ).
         ENDIF.
