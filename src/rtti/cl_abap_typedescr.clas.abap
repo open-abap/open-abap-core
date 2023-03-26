@@ -274,7 +274,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type ?= cl_abap_structdescr=>construct_from_data( p_data ).
         type->type_kind = typekind_struct2.
         type->kind = kind_struct.
-      WHEN 'Table'.
+      WHEN 'Table' OR 'HashedTable'.
         type ?= cl_abap_tabledescr=>construct_from_data( p_data ).
         type->type_kind = typekind_table.
         type->kind = kind_table.
