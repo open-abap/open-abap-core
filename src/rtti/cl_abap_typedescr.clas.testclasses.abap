@@ -31,6 +31,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS typekind_oref FOR TESTING.
     METHODS kind_elem FOR TESTING.
     METHODS kind_table FOR TESTING.
+    METHODS kind_table_hashed FOR TESTING.
     METHODS field_symbol FOR TESTING.
     METHODS typekind_packed FOR TESTING.
     METHODS abap_bool_absolute FOR TESTING.
@@ -144,6 +145,19 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD kind_table.
 
     DATA tab TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    DATA type TYPE REF TO cl_abap_typedescr.
+
+    type = cl_abap_typedescr=>describe_by_data( tab ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = type->kind
+      exp = cl_abap_typedescr=>kind_table ).
+
+  ENDMETHOD.
+
+  METHOD kind_table_hashed.
+
+    DATA tab TYPE HASHED TABLE OF i WITH UNIQUE KEY table_line.
     DATA type TYPE REF TO cl_abap_typedescr.
 
     type = cl_abap_typedescr=>describe_by_data( tab ).
