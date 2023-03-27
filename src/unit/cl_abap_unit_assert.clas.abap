@@ -135,9 +135,74 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
           quit    TYPE i OPTIONAL
           level   TYPE i OPTIONAL.
 
+  PRIVATE SECTION.
+    CLASS-METHODS
+      compare_tables
+        IMPORTING
+          act TYPE any
+          exp TYPE any.
+
 ENDCLASS.
 
 CLASS cl_abap_unit_assert IMPLEMENTATION.
+
+  METHOD compare_tables.
+
+    DATA index    TYPE i.
+    DATA type1    TYPE REF TO cl_abap_tabledescr.
+    DATA type2    TYPE REF TO cl_abap_tabledescr.
+    DATA lv_match TYPE abap_bool.
+
+    FIELD-SYMBOLS <tab1> TYPE INDEX TABLE.
+    FIELD-SYMBOLS <row1> TYPE any.
+    FIELD-SYMBOLS <tab2> TYPE INDEX TABLE.
+    FIELD-SYMBOLS <row2> TYPE any.
+
+    IF lines( act ) <> lines( exp ).
+      RAISE EXCEPTION TYPE kernel_cx_assert
+        EXPORTING
+          msg = |Expected table to contain { lines( exp ) } rows, got { lines( act ) }|.
+    ENDIF.
+
+    ASSIGN act TO <tab1>.
+    ASSIGN exp TO <tab2>.
+
+    type1 ?= cl_abap_typedescr=>describe_by_data( act ).
+    type2 ?= cl_abap_typedescr=>describe_by_data( exp ).
+*    WRITE '@KERNEL console.dir(type1);'.
+    IF type1->table_kind = cl_abap_tabledescr=>tablekind_hashed
+        OR type2->table_kind = cl_abap_tabledescr=>tablekind_hashed.
+      LOOP AT <tab1> ASSIGNING <row1>.
+        LOOP AT <tab2> ASSIGNING <row2>.
+          TRY.
+              assert_equals(
+                act = <row1>
+                exp = <row2> ).
+              lv_match = abap_true.
+            CATCH kernel_cx_assert.
+              lv_match = abap_false.
+          ENDTRY.
+        ENDLOOP.
+        IF lv_match = abap_false.
+          RAISE EXCEPTION TYPE kernel_cx_assert
+            EXPORTING
+              msg = |Hashed table contents differs|.
+        ENDIF.
+      ENDLOOP.
+    ELSE.
+      DO lines( act ) TIMES.
+        index = sy-index.
+        READ TABLE <tab1> INDEX index ASSIGNING <row1>.
+        assert_subrc( ).
+        READ TABLE <tab2> INDEX index ASSIGNING <row2>.
+        assert_subrc( ).
+        assert_equals(
+          act = <row1>
+          exp = <row2> ).
+      ENDDO.
+    ENDIF.
+
+  ENDMETHOD.
 
   METHOD assert_text_matches.
     DATA lv_match TYPE abap_bool.
@@ -235,16 +300,10 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
   METHOD assert_equals.
     DATA type1  TYPE c LENGTH 1.
     DATA type2  TYPE c LENGTH 1.
-    DATA index  TYPE i.
     DATA diff   TYPE f.
     DATA lv_exp TYPE string.
     DATA lv_act TYPE string.
     DATA lv_msg TYPE string.
-
-    FIELD-SYMBOLS <tab1> TYPE INDEX TABLE.
-    FIELD-SYMBOLS <row1> TYPE any.
-    FIELD-SYMBOLS <tab2> TYPE INDEX TABLE.
-    FIELD-SYMBOLS <row2> TYPE any.
 
     DESCRIBE FIELD act TYPE type1.
     DESCRIBE FIELD exp TYPE type2.
@@ -268,22 +327,9 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
     ENDIF.
 
     IF type1 = 'h'.
-      IF lines( act ) <> lines( exp ).
-        RAISE EXCEPTION TYPE kernel_cx_assert
-          EXPORTING
-            msg = |Expected table to contain { lines( exp ) } rows, got { lines( act ) }|.
-      ENDIF.
-      ASSIGN act TO <tab1>.
-      ASSIGN exp TO <tab2>.
-      DO lines( act ) TIMES.
-        index = sy-index.
-        READ TABLE <tab1> INDEX index ASSIGNING <row1>.
-        assert_subrc( ).
-        READ TABLE <tab2> INDEX index ASSIGNING <row2>.
-        assert_subrc( ).
-        assert_equals( act = <row1>
-                       exp = <row2> ).
-      ENDDO.
+      compare_tables(
+        act = act
+        exp = exp ).
     ELSEIF tol IS SUPPLIED.
       diff = exp - act.
 *      WRITE '@KERNEL console.dir(tol);'.

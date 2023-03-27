@@ -8,6 +8,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS initial_hex FOR TESTING RAISING cx_static_check.
     METHODS equals FOR TESTING RAISING cx_static_check.
     METHODS equals_table FOR TESTING RAISING cx_static_check.
+    METHODS equals_hashed FOR TESTING RAISING cx_static_check.
+    METHODS differs_hashed FOR TESTING RAISING cx_static_check.
     METHODS equals_tol FOR TESTING RAISING cx_static_check.
     METHODS differs FOR TESTING RAISING cx_static_check.
     METHODS differs_nested FOR TESTING RAISING cx_static_check.
@@ -115,7 +117,34 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lt_tab2 TYPE string_table.
     APPEND 'foo' TO lt_tab1.
     APPEND 'foo' TO lt_tab2.
-    cl_abap_unit_assert=>assert_equals( act = lt_tab1 exp = lt_tab2 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lt_tab1
+      exp = lt_tab2 ).
+  ENDMETHOD.
+
+  METHOD equals_hashed.
+    DATA lt_tab1 TYPE HASHED TABLE OF string WITH UNIQUE KEY table_line.
+    DATA lt_tab2 TYPE HASHED TABLE OF string WITH UNIQUE KEY table_line.
+    DATA lv_str TYPE string.
+    lv_str = 'sdf'.
+    INSERT lv_str INTO TABLE lt_tab1.
+    INSERT lv_str INTO TABLE lt_tab2.
+    cl_abap_unit_assert=>assert_equals(
+      act = lt_tab1
+      exp = lt_tab2 ).
+  ENDMETHOD.
+
+  METHOD differs_hashed.
+    DATA lt_tab1 TYPE HASHED TABLE OF string WITH UNIQUE KEY table_line.
+    DATA lt_tab2 TYPE HASHED TABLE OF string WITH UNIQUE KEY table_line.
+    DATA lv_str TYPE string.
+    lv_str = 'foo'.
+    INSERT lv_str INTO TABLE lt_tab1.
+    lv_str = 'bar'.
+    INSERT lv_str INTO TABLE lt_tab2.
+    cl_abap_unit_assert=>assert_differs(
+      act = lt_tab1
+      exp = lt_tab2 ).
   ENDMETHOD.
 
   METHOD differs.

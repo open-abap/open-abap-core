@@ -96,6 +96,7 @@ CLASS cl_abap_tabledescr IMPLEMENTATION.
     DATA lv_dummy      TYPE i.
     DATA lv_flag       TYPE abap_bool.
     DATA lv_str        TYPE string.
+    DATA lv_type       TYPE string.
     DATA lo_struct     TYPE REF TO cl_abap_structdescr.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
     DATA ls_component  LIKE LINE OF lt_components.
@@ -105,6 +106,18 @@ CLASS cl_abap_tabledescr IMPLEMENTATION.
 
     WRITE '@KERNEL lv_flag.set(data.getOptions()?.primaryKey?.isUnique === true ? "X" : "");'.
     descr->has_unique_key = lv_flag.
+
+    WRITE '@KERNEL lv_type.set(data.getOptions()?.primaryKey?.type || "");'.
+    CASE lv_type.
+      WHEN 'STANDARD'.
+        descr->table_kind = tablekind_std.
+      WHEN 'SORTED'.
+        descr->table_kind = tablekind_sorted.
+      WHEN 'HASHED'.
+        descr->table_kind = tablekind_hashed.
+      WHEN OTHERS.
+        descr->table_kind = tablekind_std.
+    ENDCASE.
 
     WRITE '@KERNEL lv_dummy = data.getRowType();'.
     descr->mo_line_type = cl_abap_typedescr=>describe_by_data( lv_dummy ).

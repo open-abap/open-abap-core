@@ -9,6 +9,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS keydefkind_user FOR TESTING RAISING cx_static_check.
     METHODS keydefkind_default FOR TESTING RAISING cx_static_check.
     METHODS keydefkind_tableline FOR TESTING RAISING cx_static_check.
+    METHODS tablekind_hashed FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -133,6 +134,15 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lines( table_descr->key )
       exp = 1 ).
+  ENDMETHOD.
+
+  METHOD tablekind_hashed.
+    DATA tab TYPE HASHED TABLE OF string WITH UNIQUE KEY table_line.
+    DATA table_descr TYPE REF TO cl_abap_tabledescr.
+    table_descr ?= cl_abap_typedescr=>describe_by_data( tab ).
+    cl_abap_unit_assert=>assert_equals(
+      act = table_descr->table_kind
+      exp = cl_abap_tabledescr=>tablekind_hashed ).
   ENDMETHOD.
 
 ENDCLASS.
