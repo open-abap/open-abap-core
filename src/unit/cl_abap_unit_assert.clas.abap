@@ -173,6 +173,7 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
     IF type1->table_kind = cl_abap_tabledescr=>tablekind_hashed
         OR type2->table_kind = cl_abap_tabledescr=>tablekind_hashed.
       LOOP AT <tab1> ASSIGNING <row1>.
+        lv_match = abap_false.
         LOOP AT <tab2> ASSIGNING <row2>.
           TRY.
               assert_equals(
@@ -180,7 +181,6 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
                 exp = <row2> ).
               lv_match = abap_true.
             CATCH kernel_cx_assert.
-              lv_match = abap_false.
           ENDTRY.
         ENDLOOP.
         IF lv_match = abap_false.

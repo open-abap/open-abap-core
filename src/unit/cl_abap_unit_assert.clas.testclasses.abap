@@ -9,6 +9,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS equals FOR TESTING RAISING cx_static_check.
     METHODS equals_table FOR TESTING RAISING cx_static_check.
     METHODS equals_hashed FOR TESTING RAISING cx_static_check.
+    METHODS equals_hashed_two_rows FOR TESTING RAISING cx_static_check.
     METHODS differs_hashed FOR TESTING RAISING cx_static_check.
     METHODS equals_tol FOR TESTING RAISING cx_static_check.
     METHODS differs FOR TESTING RAISING cx_static_check.
@@ -129,6 +130,22 @@ CLASS ltcl_test IMPLEMENTATION.
     lv_str = 'sdf'.
     INSERT lv_str INTO TABLE lt_tab1.
     INSERT lv_str INTO TABLE lt_tab2.
+    cl_abap_unit_assert=>assert_equals(
+      act = lt_tab1
+      exp = lt_tab2 ).
+  ENDMETHOD.
+
+  METHOD equals_hashed_two_rows.
+    DATA lt_tab1 TYPE HASHED TABLE OF string WITH UNIQUE KEY table_line.
+    DATA lt_tab2 TYPE HASHED TABLE OF string WITH UNIQUE KEY table_line.
+    DATA lv_str1 TYPE string.
+    DATA lv_str2 TYPE string.
+    lv_str1 = 'foo'.
+    lv_str2 = 'bar'.
+    INSERT lv_str1 INTO TABLE lt_tab1.
+    INSERT lv_str2 INTO TABLE lt_tab1.
+    INSERT lv_str1 INTO TABLE lt_tab2.
+    INSERT lv_str2 INTO TABLE lt_tab2.
     cl_abap_unit_assert=>assert_equals(
       act = lt_tab1
       exp = lt_tab2 ).
