@@ -180,6 +180,7 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
                 act = <row1>
                 exp = <row2> ).
               lv_match = abap_true.
+              EXIT. " current loop
             CATCH kernel_cx_assert.
           ENDTRY.
         ENDLOOP.
