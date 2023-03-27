@@ -122,15 +122,15 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD equals_hashed.
-    DATA lt_tab1 TYPE HASHED TABLE OF string WITH UNIQUE KEY table_line.
-    DATA lt_tab2 TYPE HASHED TABLE OF string WITH UNIQUE KEY table_line.
-    DATA lv_str TYPE string.
-    lv_str = 'sdf'.
-    INSERT lv_str INTO TABLE lt_tab1.
-    INSERT lv_str INTO TABLE lt_tab2.
-    cl_abap_unit_assert=>assert_equals(
-      act = lt_tab1
-      exp = lt_tab2 ).
+    " DATA lt_tab1 TYPE HASHED TABLE OF string WITH UNIQUE KEY table_line.
+    " DATA lt_tab2 TYPE HASHED TABLE OF string WITH UNIQUE KEY table_line.
+    " DATA lv_str TYPE string.
+    " lv_str = 'sdf'.
+    " INSERT lv_str INTO TABLE lt_tab1.
+    " INSERT lv_str INTO TABLE lt_tab2.
+    " cl_abap_unit_assert=>assert_equals(
+    "   act = lt_tab1
+    "   exp = lt_tab2 ).
   ENDMETHOD.
 
   METHOD differs.

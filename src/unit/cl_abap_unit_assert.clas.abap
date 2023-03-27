@@ -135,9 +135,44 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
           quit    TYPE i OPTIONAL
           level   TYPE i OPTIONAL.
 
+  PRIVATE SECTION.
+    CLASS-METHODS
+      compare_tables
+        IMPORTING
+          act TYPE any
+          exp TYPE any.
+
 ENDCLASS.
 
 CLASS cl_abap_unit_assert IMPLEMENTATION.
+
+  METHOD compare_tables.
+
+    DATA index TYPE i.
+
+    FIELD-SYMBOLS <tab1> TYPE INDEX TABLE.
+    FIELD-SYMBOLS <row1> TYPE any.
+    FIELD-SYMBOLS <tab2> TYPE INDEX TABLE.
+    FIELD-SYMBOLS <row2> TYPE any.
+
+    IF lines( act ) <> lines( exp ).
+      RAISE EXCEPTION TYPE kernel_cx_assert
+        EXPORTING
+          msg = |Expected table to contain { lines( exp ) } rows, got { lines( act ) }|.
+    ENDIF.
+    ASSIGN act TO <tab1>.
+    ASSIGN exp TO <tab2>.
+    DO lines( act ) TIMES.
+      index = sy-index.
+      READ TABLE <tab1> INDEX index ASSIGNING <row1>.
+      assert_subrc( ).
+      READ TABLE <tab2> INDEX index ASSIGNING <row2>.
+      assert_subrc( ).
+      assert_equals( act = <row1>
+                     exp = <row2> ).
+    ENDDO.
+
+  ENDMETHOD.
 
   METHOD assert_text_matches.
     DATA lv_match TYPE abap_bool.
@@ -235,16 +270,10 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
   METHOD assert_equals.
     DATA type1  TYPE c LENGTH 1.
     DATA type2  TYPE c LENGTH 1.
-    DATA index  TYPE i.
     DATA diff   TYPE f.
     DATA lv_exp TYPE string.
     DATA lv_act TYPE string.
     DATA lv_msg TYPE string.
-
-    FIELD-SYMBOLS <tab1> TYPE INDEX TABLE.
-    FIELD-SYMBOLS <row1> TYPE any.
-    FIELD-SYMBOLS <tab2> TYPE INDEX TABLE.
-    FIELD-SYMBOLS <row2> TYPE any.
 
     DESCRIBE FIELD act TYPE type1.
     DESCRIBE FIELD exp TYPE type2.
@@ -268,22 +297,9 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
     ENDIF.
 
     IF type1 = 'h'.
-      IF lines( act ) <> lines( exp ).
-        RAISE EXCEPTION TYPE kernel_cx_assert
-          EXPORTING
-            msg = |Expected table to contain { lines( exp ) } rows, got { lines( act ) }|.
-      ENDIF.
-      ASSIGN act TO <tab1>.
-      ASSIGN exp TO <tab2>.
-      DO lines( act ) TIMES.
-        index = sy-index.
-        READ TABLE <tab1> INDEX index ASSIGNING <row1>.
-        assert_subrc( ).
-        READ TABLE <tab2> INDEX index ASSIGNING <row2>.
-        assert_subrc( ).
-        assert_equals( act = <row1>
-                       exp = <row2> ).
-      ENDDO.
+      compare_tables(
+        act = act
+        exp = exp ).
     ELSEIF tol IS SUPPLIED.
       diff = exp - act.
 *      WRITE '@KERNEL console.dir(tol);'.
