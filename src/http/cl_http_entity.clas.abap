@@ -251,7 +251,6 @@ CLASS cl_http_entity IMPLEMENTATION.
 
   METHOD if_http_entity~get_form_fields.
     DATA ls_field LIKE LINE OF mt_form_fields.
-
     LOOP AT mt_form_fields INTO ls_field.
       TRANSLATE ls_field-value TO LOWER CASE.
       APPEND ls_field TO fields.
