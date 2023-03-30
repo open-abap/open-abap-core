@@ -129,6 +129,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     DATA ref         TYPE REF TO data.
     DATA objectdescr TYPE REF TO cl_abap_objectdescr.
     DATA oo_type     TYPE string.
+    DATA lv_any      TYPE string.
 
     IF p_name CA '-'.
       type = describe_by_dashes( p_name ).
@@ -136,10 +137,13 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     ENDIF.
 
     WRITE '@KERNEL oo_type.set(abap.Classes[p_name.get().toUpperCase()]?.INTERNAL_TYPE || "");'.
+    WRITE '@KERNEL lv_any = abap.Classes[p_name.get().toUpperCase()];'.
 
     CASE oo_type.
       WHEN 'INTF'.
-        CREATE OBJECT type TYPE cl_abap_intfdescr.
+        CREATE OBJECT type TYPE cl_abap_intfdescr
+          EXPORTING
+            p_object = lv_any.
         type->type_kind = typekind_intf.
         type->kind = kind_intf.
         type->relative_name = to_upper( p_name ).
@@ -185,12 +189,15 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD describe_by_object_ref.
-    DATA lv_name TYPE string.
+    DATA lv_name   TYPE string.
     DATA lo_cdescr TYPE REF TO cl_abap_classdescr.
+    DATA lv_any TYPE string.
+
+    WRITE '@KERNEL lv_any = p_object_ref.get().constructor;'.
 
     CREATE OBJECT lo_cdescr TYPE cl_abap_classdescr
       EXPORTING
-        p_object = p_object_ref.
+        p_object = lv_any.
     lo_cdescr->type_kind = typekind_class.
     lo_cdescr->kind = kind_class.
 

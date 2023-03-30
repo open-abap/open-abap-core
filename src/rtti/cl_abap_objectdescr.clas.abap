@@ -45,7 +45,6 @@ CLASS cl_abap_objectdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
   PROTECTED SECTION.
     DATA mv_object_name TYPE string.
     DATA mv_object_type TYPE string.
-    DATA mo_object      TYPE REF TO object.
 ENDCLASS.
 
 CLASS cl_abap_objectdescr IMPLEMENTATION.
@@ -54,18 +53,16 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     DATA lv_name TYPE string.
     FIELD-SYMBOLS <fs> TYPE abap_attrdescr.
 
-    IF p_object IS NOT INITIAL.
-      WRITE '@KERNEL for (const a in p_object.get()) {'.
-      WRITE '@KERNEL   lv_name.set(a)'.
-      IF lv_name <> 'me'.
-        APPEND INITIAL LINE TO attributes ASSIGNING <fs>.
-        <fs>-name = to_upper( lv_name ).
-      ENDIF.
-      WRITE '@KERNEL }'.
-      SORT attributes BY name ASCENDING.
-    ENDIF.
-
-    mo_object = p_object.
+    WRITE '@KERNEL for (const a in p_object.ATTRIBUTES || []) {'.
+    WRITE '@KERNEL   lv_name.set(a)'.
+    APPEND INITIAL LINE TO attributes ASSIGNING <fs>.
+    <fs>-name = lv_name.
+    WRITE '@KERNEL   lv_name.set(p_object.ATTRIBUTES[a].is_constant)'.
+    <fs>-is_constant = lv_name.
+    WRITE '@KERNEL   lv_name.set(p_object.ATTRIBUTES[a].visibility)'.
+    <fs>-visibility = lv_name.
+    WRITE '@KERNEL }'.
+    SORT attributes BY name ASCENDING.
 
     super->constructor( ).
   ENDMETHOD.
