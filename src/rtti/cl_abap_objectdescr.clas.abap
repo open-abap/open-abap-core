@@ -45,22 +45,37 @@ CLASS cl_abap_objectdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
   PROTECTED SECTION.
     DATA mv_object_name TYPE string.
     DATA mv_object_type TYPE string.
+    TYPES: BEGIN OF ty_types,
+             name TYPE string,
+             type TYPE REF TO cl_abap_datadescr,
+           END OF ty_types.
+    DATA mt_types TYPE STANDARD TABLE OF ty_types WITH DEFAULT KEY.
 ENDCLASS.
 
 CLASS cl_abap_objectdescr IMPLEMENTATION.
 
   METHOD constructor.
     DATA lv_name TYPE string.
+    DATA lv_any TYPE string.
     FIELD-SYMBOLS <fs> TYPE abap_attrdescr.
+    FIELD-SYMBOLS <type> LIKE LINE OF mt_types.
 
     WRITE '@KERNEL for (const a in p_object.ATTRIBUTES || []) {'.
+
     WRITE '@KERNEL   lv_name.set(a)'.
     APPEND INITIAL LINE TO attributes ASSIGNING <fs>.
+    APPEND INITIAL LINE TO mt_types ASSIGNING <type>.
     <fs>-name = lv_name.
-    WRITE '@KERNEL   lv_name.set(p_object.ATTRIBUTES[a].is_constant)'.
+    <type>-name = lv_name.
+
+    WRITE '@KERNEL   lv_name.set(p_object.ATTRIBUTES[a].is_constant);'.
     <fs>-is_constant = lv_name.
-    WRITE '@KERNEL   lv_name.set(p_object.ATTRIBUTES[a].visibility)'.
+    WRITE '@KERNEL   lv_name.set(p_object.ATTRIBUTES[a].visibility);'.
     <fs>-visibility = lv_name.
+
+    WRITE '@KERNEL   lv_any = p_object.ATTRIBUTES[a].type;'.
+    <type>-type ?= describe_by_data( lv_any ).
+
     WRITE '@KERNEL }'.
     SORT attributes BY name ASCENDING.
 
@@ -77,24 +92,10 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
 
   METHOD get_attribute_type.
     DATA lv_name TYPE string.
-    DATA l_sub   TYPE string.
-    DATA l_any   TYPE string.
+    DATA ls_type LIKE LINE OF mt_types.
 
-    lv_name = to_lower( p_name ).
-
-    IF mv_object_name IS INITIAL.
-      WRITE '@KERNEL l_any = this.mo_object.get()[lv_name.get()];'.
-
-    ELSE.
-      WRITE '@KERNEL const foo = abap.Classes[this.mv_object_name.get()];'.
-
-      CONCATENATE mv_object_name '$' lv_name INTO l_sub.
-      l_sub = to_lower( l_sub ).
-
-      " note that the typing here is misused
-      WRITE '@KERNEL l_any = foo[l_sub.get()];'.
-    ENDIF.
-
-    p_descr_ref ?= describe_by_data( l_any ).
+    lv_name = to_upper( p_name ).
+    READ TABLE mt_types INTO ls_type WITH KEY name = lv_name.
+    p_descr_ref = ls_type-type.
   ENDMETHOD.
 ENDCLASS.
