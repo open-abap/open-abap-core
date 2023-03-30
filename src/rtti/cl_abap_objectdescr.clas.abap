@@ -73,7 +73,7 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     WRITE '@KERNEL   lv_name.set(p_object.ATTRIBUTES[a].visibility);'.
     <fs>-visibility = lv_name.
 
-    WRITE '@KERNEL   lv_any = p_object.ATTRIBUTES[a].type;'.
+    WRITE '@KERNEL   lv_any = p_object.ATTRIBUTES[a].type();'.
     <type>-type ?= describe_by_data( lv_any ).
 
     WRITE '@KERNEL }'.
