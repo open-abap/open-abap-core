@@ -54,14 +54,16 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     DATA lv_name TYPE string.
     FIELD-SYMBOLS <fs> TYPE abap_attrdescr.
 
-    WRITE '@KERNEL for (const a in p_object.get()) {'.
-    WRITE '@KERNEL   lv_name.set(a)'.
-    IF lv_name <> 'me'.
-      APPEND INITIAL LINE TO attributes ASSIGNING <fs>.
-      <fs>-name = to_upper( lv_name ).
+    IF p_object IS NOT INITIAL.
+      WRITE '@KERNEL for (const a in p_object.get()) {'.
+      WRITE '@KERNEL   lv_name.set(a)'.
+      IF lv_name <> 'me'.
+        APPEND INITIAL LINE TO attributes ASSIGNING <fs>.
+        <fs>-name = to_upper( lv_name ).
+      ENDIF.
+      WRITE '@KERNEL }'.
+      SORT attributes BY name ASCENDING.
     ENDIF.
-    WRITE '@KERNEL }'.
-    SORT attributes BY name ASCENDING.
 
     mo_object = p_object.
 
