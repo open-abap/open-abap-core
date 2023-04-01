@@ -191,7 +191,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
   METHOD describe_by_object_ref.
     DATA lv_name   TYPE string.
     DATA lo_cdescr TYPE REF TO cl_abap_classdescr.
-    DATA lv_any TYPE string.
+    DATA lv_any    TYPE string.
 
     WRITE '@KERNEL lv_any = p_object_ref.get().constructor;'.
 
@@ -211,15 +211,15 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 
   METHOD describe_by_data.
 
-    DATA lv_name      TYPE string.
-    DATA lv_prefix    TYPE string.
-    DATA lv_convexit  TYPE string.
-    DATA lv_length    TYPE i.
-    DATA lv_decimals  TYPE i.
-    DATA lv_any       TYPE any.
     DATA lo_elem      TYPE REF TO cl_abap_elemdescr.
     DATA lo_ref       TYPE REF TO cl_abap_refdescr.
+    DATA lv_any       TYPE string.
+    DATA lv_convexit  TYPE string.
     DATA lv_ddicname  TYPE string.
+    DATA lv_decimals  TYPE i.
+    DATA lv_length    TYPE i.
+    DATA lv_name      TYPE string.
+    DATA lv_prefix    TYPE string.
     DATA lv_qualified TYPE string.
 
     WRITE '@KERNEL lv_name.set(p_data.constructor.name);'.
