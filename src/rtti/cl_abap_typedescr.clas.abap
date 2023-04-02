@@ -28,12 +28,14 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
       is_ddic_type
         RETURNING
           VALUE(p_abap_bool) TYPE abap_bool.
+
     METHODS is_instantiatable
       RETURNING
         VALUE(p_result) TYPE abap_bool.
+
     METHODS get_ddic_object
       RETURNING
-        VALUE(p_object) TYPE any
+        VALUE(p_object) TYPE string_table
       EXCEPTIONS
         not_found
         no_ddic_type.

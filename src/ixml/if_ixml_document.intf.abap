@@ -42,12 +42,12 @@ INTERFACE if_ixml_document PUBLIC.
         filter1 TYPE any
         filter2 TYPE any
       RETURNING
-        VALUE(val) TYPE any,
+        VALUE(val) TYPE REF TO if_ixml_node_filter,
     create_iterator
       RETURNING VALUE(rval) TYPE REF TO if_ixml_node_iterator,
     create_filter_node_type
       IMPORTING typ TYPE string
-      RETURNING VALUE(val) TYPE any,
+      RETURNING VALUE(val) TYPE REF TO if_ixml_node_filter,
     create_simple_element_ns
       IMPORTING
         name       TYPE string
@@ -57,7 +57,7 @@ INTERFACE if_ixml_document PUBLIC.
         VALUE(val) TYPE REF TO if_ixml_element,
     create_filter_attribute
       IMPORTING name TYPE string
-      RETURNING VALUE(val) TYPE any,
+      RETURNING VALUE(val) TYPE REF TO if_ixml_node_filter,
     create_simple_element
       IMPORTING
         name       TYPE string
@@ -87,13 +87,13 @@ INTERFACE if_ixml_document PUBLIC.
         name TYPE string
         namespace TYPE string OPTIONAL
         uri TYPE string OPTIONAL
-      RETURNING VALUE(val) TYPE any,
+      RETURNING VALUE(val) TYPE REF TO if_ixml_node_collection,
     get_elements_by_tag_name
       IMPORTING
         depth     TYPE i OPTIONAL
         name      TYPE string
         namespace TYPE string OPTIONAL
-      RETURNING VALUE(val) TYPE any,
+      RETURNING VALUE(val) TYPE REF TO if_ixml_node_collection,
     get_root RETURNING VALUE(node) TYPE REF TO if_ixml_node,
     get_root_element RETURNING VALUE(root) TYPE REF TO if_ixml_element.
 ENDINTERFACE.

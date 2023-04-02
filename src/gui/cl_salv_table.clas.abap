@@ -44,7 +44,7 @@ CLASS cl_salv_table DEFINITION PUBLIC.
         VALUE(value) TYPE REF TO cl_salv_aggregations.
     METHODS get_filters
       RETURNING
-        VALUE(foo) TYPE any.
+        VALUE(foo) TYPE REF TO cl_salv_filters.
 ENDCLASS.
 
 CLASS cl_salv_table IMPLEMENTATION.

@@ -52,14 +52,16 @@ INTERFACE if_ixml_element PUBLIC.
     get_children
       RETURNING VALUE(val) TYPE REF TO if_ixml_node_list,
     get_elements_by_tag_name
-      IMPORTING name TYPE string
-      RETURNING VALUE(val) TYPE any,
+      IMPORTING
+        name TYPE string
+      RETURNING
+        VALUE(val) TYPE REF TO if_ixml_node_collection,
     get_elements_by_tag_name_ns
       IMPORTING
         name TYPE string
         uri  TYPE string OPTIONAL
       RETURNING
-        VALUE(val) TYPE any,
+        VALUE(val) TYPE REF TO if_ixml_node_collection,
     get_attribute_node_ns
         IMPORTING
         name TYPE string

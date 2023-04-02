@@ -10,7 +10,7 @@ CLASS cl_salv_columns_table DEFINITION PUBLIC.
       IMPORTING columnname TYPE string
       RETURNING VALUE(value) TYPE REF TO cl_salv_column.
     METHODS get
-      RETURNING VALUE(value) TYPE any.
+      RETURNING VALUE(value) TYPE string.
 ENDCLASS.
 
 CLASS cl_salv_columns_table IMPLEMENTATION.
