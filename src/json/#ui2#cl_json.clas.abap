@@ -129,8 +129,12 @@ CLASS /ui2/cl_json IMPLEMENTATION.
 
   METHOD deserialize.
     CREATE OBJECT mo_parsed.
-    ASSERT jsonx IS INITIAL. " todo
-    mo_parsed->parse( json ).
+
+    IF jsonx IS NOT INITIAL.
+      mo_parsed->parse( cl_abap_codepage=>convert_from( jsonx ) ).
+    ELSE.
+      mo_parsed->parse( json ).
+    ENDIF.
 
     CLEAR data.
 
