@@ -11,6 +11,7 @@ CLASS ltcl_deserialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
     METHODS camel_case FOR TESTING RAISING cx_static_check.
     METHODS short_timestamp FOR TESTING RAISING cx_static_check.
     METHODS long_timestamp FOR TESTING RAISING cx_static_check.
+    METHODS via_jsonx FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -183,6 +184,22 @@ CLASS ltcl_deserialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = |{ stru-ts TIMESTAMP = ISO }|
       exp = |2023-03-09T21:02:59,9*| ).
+  ENDMETHOD.
+
+  METHOD via_jsonx.
+    DATA: BEGIN OF stru,
+            foo TYPE i,
+          END OF stru.
+    DATA lv_jsonx TYPE xstring.
+    lv_jsonx = '7B22666F6F223A20327D'.
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        jsonx = lv_jsonx
+      CHANGING
+        data  = stru ).
+    cl_abap_unit_assert=>assert_equals(
+      act = stru-foo
+      exp = 2 ).
   ENDMETHOD.
 
 ENDCLASS.
