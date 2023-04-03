@@ -10,6 +10,7 @@ CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
     CONSTANTS tablekind_index TYPE c LENGTH 1 VALUE 'I'.
     CONSTANTS tablekind_hashed TYPE c LENGTH 1 VALUE 'H'.
     CONSTANTS tablekind_sorted TYPE c LENGTH 1 VALUE 'O'.
+
     CONSTANTS keydefkind_default TYPE c LENGTH 1 VALUE 'D'.
     CONSTANTS keydefkind_tableline TYPE c LENGTH 1 VALUE 'L'.
     CONSTANTS keydefkind_user TYPE c LENGTH 1 VALUE 'U'.
