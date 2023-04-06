@@ -22,6 +22,10 @@ CLASS cl_bcs DEFINITION PUBLIC.
       RAISING
         cx_bcs.
 
+    METHODS set_status_attributes
+      IMPORTING
+        i_requested_status TYPE any.
+
     METHODS set_document
       IMPORTING
         i_document TYPE REF TO if_document_bcs
@@ -52,6 +56,10 @@ ENDCLASS.
 CLASS cl_bcs IMPLEMENTATION.
 
   METHOD set_document.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD set_status_attributes.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
