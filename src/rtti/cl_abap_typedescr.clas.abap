@@ -7,8 +7,12 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
         RETURNING VALUE(type) TYPE REF TO cl_abap_typedescr.
     CLASS-METHODS
       describe_by_name
-        IMPORTING p_name TYPE clike
-        RETURNING VALUE(type) TYPE REF TO cl_abap_typedescr.
+        IMPORTING
+          p_name TYPE clike
+        RETURNING
+          VALUE(type) TYPE REF TO cl_abap_typedescr
+        EXCEPTIONS
+          type_not_found.
     CLASS-METHODS
       describe_by_data_ref
         IMPORTING p_data_ref TYPE REF TO data
