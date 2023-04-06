@@ -435,8 +435,10 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD describe_by_name_not_found.
     cl_abap_typedescr=>describe_by_name(
-      EXPORTING p_name = 'SDFSDFSDF'
-      EXCEPTIONS type_not_found = 16 ).
+      EXPORTING
+        p_name = 'SDFSDFSDF'
+      EXCEPTIONS
+        type_not_found = 16 ).
     cl_abap_unit_assert=>assert_equals(
       act = sy-subrc
       exp = 16 ).
