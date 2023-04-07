@@ -193,6 +193,8 @@ CLASS ltcl_test IMPLEMENTATION.
           lo_table_descr  TYPE REF TO cl_abap_tabledescr,
           lo_struct_descr TYPE REF TO cl_abap_structdescr.
 
+    FIELD-SYMBOLS <fs> TYPE any.
+
     ls_comp_descr-name = `FIELD1`.
     ls_comp_descr-type = cl_abap_elemdescr=>get_string( ).
     INSERT ls_comp_descr INTO TABLE lt_comp_descr.
@@ -203,6 +205,13 @@ CLASS ltcl_test IMPLEMENTATION.
 
     cl_abap_unit_assert=>assert_equals(
       act = cl_abap_typedescr=>describe_by_data_ref( ls_data-table )->type_kind
+      exp = cl_abap_typedescr=>typekind_table ).
+
+    ASSIGN ls_data-table->* TO <fs>.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_typedescr=>describe_by_data( <fs> )->type_kind
       exp = cl_abap_typedescr=>typekind_table ).
 
   ENDMETHOD.
