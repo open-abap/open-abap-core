@@ -241,6 +241,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->length = 4.
         lo_elem ?= type.
         lo_elem->output_length = 11.
+        type->absolute_name = 'I'.
       WHEN 'Numc'.
         CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_num.
@@ -262,6 +263,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->length = 16.
         lo_elem ?= type.
         lo_elem->output_length = 8.
+        type->absolute_name = 'D'.
       WHEN 'Packed'.
         CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_packed.
@@ -275,10 +277,12 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->length = 12.
         lo_elem ?= type.
         lo_elem->output_length = 6.
+        type->absolute_name = 'T'.
       WHEN 'Float'.
         CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_float.
         type->kind = kind_elem.
+        type->absolute_name = 'F'.
       WHEN 'DecFloat34'.
         CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_decfloat34.
@@ -296,11 +300,13 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->type_kind = typekind_xstring.
         type->kind = kind_elem.
         type->length = 8.
+        type->absolute_name = 'XSTRING'.
       WHEN 'String'.
         CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_string.
         type->kind = kind_elem.
         type->length = 8.
+        type->absolute_name = 'STRING'.
       WHEN 'Character'.
         CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_char.
@@ -346,18 +352,6 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
       type->absolute_name = lv_qualified.
     ELSEIF lv_ddicname <> ''.
       type->absolute_name = lv_ddicname.
-    ELSEIF lv_name = 'String'.
-      type->absolute_name = 'STRING'.
-    ELSEIF lv_name = 'XString'.
-      type->absolute_name = 'XSTRING'.
-    ELSEIF lv_name = 'Integer'.
-      type->absolute_name = 'I'.
-    ELSEIF lv_name = 'Float'.
-      type->absolute_name = 'F'.
-    ELSEIF lv_name = 'Time'.
-      type->absolute_name = 'T'.
-    ELSEIF lv_name = 'Date'.
-      type->absolute_name = 'D'.
     ENDIF.
 
 * this is not completely correct, local type names and ddic names might overlap, but will work for now,

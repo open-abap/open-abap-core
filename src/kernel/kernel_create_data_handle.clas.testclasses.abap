@@ -14,6 +14,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS numc4 FOR TESTING RAISING cx_static_check.
     METHODS char5 FOR TESTING RAISING cx_static_check.
     METHODS hex2 FOR TESTING RAISING cx_static_check.
+    METHODS reference_table FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -179,6 +180,40 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_text
       exp = '1122' ).
+  ENDMETHOD.
+
+  METHOD reference_table.
+
+    DATA: BEGIN OF ls_data,
+            table TYPE REF TO data,
+          END OF ls_data.
+
+    DATA: ls_comp_descr   TYPE abap_componentdescr,
+          lt_comp_descr   TYPE abap_component_tab,
+          lo_table_descr  TYPE REF TO cl_abap_tabledescr,
+          lo_struct_descr TYPE REF TO cl_abap_structdescr.
+
+    FIELD-SYMBOLS <fs> TYPE any.
+
+    ls_comp_descr-name = `FIELD1`.
+    ls_comp_descr-type = cl_abap_elemdescr=>get_string( ).
+    INSERT ls_comp_descr INTO TABLE lt_comp_descr.
+
+    lo_struct_descr = cl_abap_structdescr=>create( lt_comp_descr ).
+    lo_table_descr  = cl_abap_tabledescr=>create( lo_struct_descr ).
+    CREATE DATA ls_data-table TYPE HANDLE lo_table_descr.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_typedescr=>describe_by_data_ref( ls_data-table )->type_kind
+      exp = cl_abap_typedescr=>typekind_table ).
+
+    ASSIGN ls_data-table->* TO <fs>.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_typedescr=>describe_by_data( <fs> )->type_kind
+      exp = cl_abap_typedescr=>typekind_table ).
+
   ENDMETHOD.
 
 ENDCLASS.
