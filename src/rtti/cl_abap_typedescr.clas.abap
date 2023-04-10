@@ -142,8 +142,8 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
       RETURN.
     ENDIF.
 
-    WRITE '@KERNEL oo_type.set(abap.Classes[p_name.get().toUpperCase()]?.INTERNAL_TYPE || "");'.
-    WRITE '@KERNEL lv_any = abap.Classes[p_name.get().toUpperCase()];'.
+    WRITE '@KERNEL oo_type.set(abap.Classes[p_name.get().toUpperCase().trimEnd()]?.INTERNAL_TYPE || "");'.
+    WRITE '@KERNEL lv_any = abap.Classes[p_name.get().toUpperCase().trimEnd()];'.
 
     CASE oo_type.
       WHEN 'INTF'.
