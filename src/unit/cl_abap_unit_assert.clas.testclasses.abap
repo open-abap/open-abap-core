@@ -7,6 +7,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS initial_date FOR TESTING RAISING cx_static_check.
     METHODS initial_hex FOR TESTING RAISING cx_static_check.
     METHODS equals FOR TESTING RAISING cx_static_check.
+    METHODS equals_date FOR TESTING RAISING cx_static_check.
     METHODS equals_table FOR TESTING RAISING cx_static_check.
     METHODS equals_hashed FOR TESTING RAISING cx_static_check.
     METHODS equals_hashed_two_rows FOR TESTING RAISING cx_static_check.
@@ -111,6 +112,16 @@ CLASS ltcl_test IMPLEMENTATION.
 
     cl_abap_unit_assert=>assert_equals( act = 2 exp = 2 ).
     cl_abap_unit_assert=>assert_equals( act = 'hello' exp = 'hello' ).
+  ENDMETHOD.
+
+  METHOD equals_date.
+    DATA lv_date1 TYPE d.
+    DATA lv_date2 TYPE d.
+    lv_date1 = sy-datum.
+    lv_date2 = sy-datum.
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_date1
+      exp = lv_date2 ).
   ENDMETHOD.
 
   METHOD equals_table.

@@ -17,7 +17,8 @@ FUNCTION wwwdata_import.
 
   CLEAR mime.
 
-  WRITE '@KERNEL filename.set(abap.W3MI[key.get().objid.get()].filename);'.
+  WRITE '@KERNEL filename.set(abap.W3MI[key.get().objid.get().trimEnd()].filename);'.
+
   WRITE '@KERNEL const fs = await import("fs");'.
   WRITE '@KERNEL const path = await import("path");'.
   WRITE '@KERNEL const url = await import("url");'.
