@@ -65,7 +65,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             ELSEIF data IS INITIAL.
               r_json = '""'.
             ELSE.
-              r_json = '"' && data && '"'.
+              r_json = '"' && |{ data }| && '"'.
             ENDIF.
           WHEN cl_abap_typedescr=>typekind_string.
             r_json = '"' && data && '"'.

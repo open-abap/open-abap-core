@@ -20,9 +20,11 @@ CLASS cl_abap_objectdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
 
     METHODS get_attribute_type
       IMPORTING
-        p_name TYPE any
+        p_name             TYPE any
       RETURNING
-        VALUE(p_descr_ref) TYPE REF TO cl_abap_datadescr.
+        VALUE(p_descr_ref) TYPE REF TO cl_abap_datadescr
+      EXCEPTIONS
+        attribute_not_found.
 
     METHODS get_method_parameter_type
       IMPORTING
@@ -46,7 +48,7 @@ CLASS cl_abap_objectdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
     DATA mv_object_name TYPE string.
     DATA mv_object_type TYPE string.
     TYPES: BEGIN OF ty_types,
-             name TYPE string,
+             name TYPE abap_attrname,
              type TYPE REF TO cl_abap_datadescr,
            END OF ty_types.
     DATA mt_types TYPE STANDARD TABLE OF ty_types WITH DEFAULT KEY.
@@ -55,8 +57,9 @@ ENDCLASS.
 CLASS cl_abap_objectdescr IMPLEMENTATION.
 
   METHOD constructor.
-    DATA lv_name TYPE string.
-    DATA lv_any TYPE string.
+    DATA lv_name  TYPE abap_attrname.
+    DATA lv_char1 TYPE c LENGTH 1.
+    DATA lv_any   TYPE string.
     FIELD-SYMBOLS <fs> TYPE abap_attrdescr.
     FIELD-SYMBOLS <type> LIKE LINE OF mt_types.
 
@@ -68,10 +71,10 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     <fs>-name = lv_name.
     <type>-name = lv_name.
 
-    WRITE '@KERNEL   lv_name.set(p_object.ATTRIBUTES[a].is_constant);'.
-    <fs>-is_constant = lv_name.
-    WRITE '@KERNEL   lv_name.set(p_object.ATTRIBUTES[a].visibility);'.
-    <fs>-visibility = lv_name.
+    WRITE '@KERNEL   lv_char1.set(p_object.ATTRIBUTES[a].is_constant);'.
+    <fs>-is_constant = lv_char1.
+    WRITE '@KERNEL   lv_char1.set(p_object.ATTRIBUTES[a].visibility);'.
+    <fs>-visibility = lv_char1.
 
     WRITE '@KERNEL   lv_any = p_object.ATTRIBUTES[a].type();'.
     <type>-type ?= describe_by_data( lv_any ).
@@ -91,11 +94,14 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_attribute_type.
-    DATA lv_name TYPE string.
+    DATA lv_name TYPE abap_attrname.
     DATA ls_type LIKE LINE OF mt_types.
 
     lv_name = to_upper( p_name ).
     READ TABLE mt_types INTO ls_type WITH KEY name = lv_name.
+    IF sy-subrc <> 0.
+      RAISE attribute_not_found.
+    ENDIF.
     p_descr_ref = ls_type-type.
   ENDMETHOD.
 ENDCLASS.
