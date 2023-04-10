@@ -14,7 +14,7 @@ FUNCTION wwwparams_read.
   DATA filename TYPE string.
   DATA filesize TYPE i.
 
-  WRITE '@KERNEL filename.set(abap.W3MI[objid.get()].filename);'.
+  WRITE '@KERNEL filename.set(abap.W3MI[objid.get().trimEnd()].filename);'.
 
   WRITE '@KERNEL const fs = await import("fs");'.
   WRITE '@KERNEL const path = await import("path");'.
