@@ -35,10 +35,10 @@ CLASS cl_message_helper IMPLEMENTATION.
 
     WRITE '@KERNEL lv_msgid.set(text.get().if_t100_message$t100key.get().msgid);'.
     WRITE '@KERNEL lv_msgno.set(text.get().if_t100_message$t100key.get().msgno);'.
-    WRITE '@KERNEL lv_msgv1.set(text.get()[text.get().if_t100_message$t100key.get().attr1.get().toLowerCase().replace("~", "$")] ? text.get()[text.get().if_t100_message$t100key.get().attr1.get().toLowerCase().replace("~", "$")].get() : "");'.
-    WRITE '@KERNEL lv_msgv2.set(text.get()[text.get().if_t100_message$t100key.get().attr2.get().toLowerCase().replace("~", "$")] ? text.get()[text.get().if_t100_message$t100key.get().attr2.get().toLowerCase().replace("~", "$")].get() : "");'.
-    WRITE '@KERNEL lv_msgv3.set(text.get()[text.get().if_t100_message$t100key.get().attr3.get().toLowerCase().replace("~", "$")] ? text.get()[text.get().if_t100_message$t100key.get().attr3.get().toLowerCase().replace("~", "$")].get() : "");'.
-    WRITE '@KERNEL lv_msgv4.set(text.get()[text.get().if_t100_message$t100key.get().attr4.get().toLowerCase().replace("~", "$")] ? text.get()[text.get().if_t100_message$t100key.get().attr4.get().toLowerCase().replace("~", "$")].get() : "");'.
+    WRITE '@KERNEL lv_msgv1.set(text.get()[text.get().if_t100_message$t100key.get().attr1.get().toLowerCase().replace("~", "$").trimEnd()] ? text.get()[text.get().if_t100_message$t100key.get().attr1.get().toLowerCase().replace("~", "$").trimEnd()].get() : "");'.
+    WRITE '@KERNEL lv_msgv2.set(text.get()[text.get().if_t100_message$t100key.get().attr2.get().toLowerCase().replace("~", "$").trimEnd()] ? text.get()[text.get().if_t100_message$t100key.get().attr2.get().toLowerCase().replace("~", "$").trimEnd()].get() : "");'.
+    WRITE '@KERNEL lv_msgv3.set(text.get()[text.get().if_t100_message$t100key.get().attr3.get().toLowerCase().replace("~", "$").trimEnd()] ? text.get()[text.get().if_t100_message$t100key.get().attr3.get().toLowerCase().replace("~", "$").trimEnd()].get() : "");'.
+    WRITE '@KERNEL lv_msgv4.set(text.get()[text.get().if_t100_message$t100key.get().attr4.get().toLowerCase().replace("~", "$").trimEnd()] ? text.get()[text.get().if_t100_message$t100key.get().attr4.get().toLowerCase().replace("~", "$").trimEnd()].get() : "");'.
 
     MESSAGE ID lv_msgid TYPE 'I' NUMBER lv_msgno WITH lv_msgv1 lv_msgv2 lv_msgv3 lv_msgv4 INTO result.
 

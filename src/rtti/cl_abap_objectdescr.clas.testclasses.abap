@@ -35,6 +35,7 @@ CLASS ltcl_test IMPLEMENTATION.
       exp = 'BAR' ).
 
     lo_descr = lo_obj->get_attribute_type( ls_attr-name ).
+    cl_abap_unit_assert=>assert_bound( lo_descr ).
     cl_abap_unit_assert=>assert_equals(
       act = lo_descr->type_kind
       exp = cl_abap_typedescr=>typekind_int ).

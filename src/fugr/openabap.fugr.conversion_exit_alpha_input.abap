@@ -8,14 +8,17 @@ FUNCTION conversion_exit_alpha_input.
 *"----------------------------------------------------------------------
 
   DATA lv_len TYPE i.
+  DATA lv_tmp TYPE string.
 
-  output = input.
-  CONDENSE output.
+  lv_tmp = input.
+  CONDENSE lv_tmp.
 
   DESCRIBE FIELD output LENGTH lv_len IN CHARACTER MODE.
 
-  DO lv_len - strlen( output ) TIMES.
-    output = |0| && output.
+  DO lv_len - strlen( lv_tmp ) TIMES.
+    lv_tmp = |0| && lv_tmp.
   ENDDO.
+
+  output = lv_tmp.
 
 ENDFUNCTION.
