@@ -154,10 +154,10 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD single_method.
-    DATA lt_input TYPE kernel_unit_runner=>ty_input.
-    DATA ls_input LIKE LINE OF lt_input.
+    DATA lt_input  TYPE kernel_unit_runner=>ty_input.
+    DATA ls_input  LIKE LINE OF lt_input.
     DATA ls_result TYPE kernel_unit_runner=>ty_result.
-    DATA ls_list LIKE LINE OF ls_result-list.
+    DATA ls_list   LIKE LINE OF ls_result-list.
 
     ls_input-class_name     = 'CL_ABAP_UNIT_ASSERT'.
     ls_input-testclass_name = 'LTCL_TEST'.
