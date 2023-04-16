@@ -22,6 +22,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
       RAISING cx_static_check.
 
     METHODS json_to_sxml1 FOR TESTING RAISING cx_static_check.
+    METHODS ref_to_xml FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
@@ -334,7 +335,19 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = ls_data-foo
       exp = 2 ).
+  ENDMETHOD.
 
+  METHOD ref_to_xml.
+    DATA result TYPE string.
+    DATA ref    TYPE REF TO data.
+
+    CALL TRANSFORMATION id
+      SOURCE data = ref
+      RESULT XML result.
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = result
+      exp = '*<DATA/>*' ).
   ENDMETHOD.
 
 ENDCLASS.
