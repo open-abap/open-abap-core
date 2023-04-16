@@ -12,6 +12,7 @@ CLASS ltcl_deserialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
     METHODS short_timestamp FOR TESTING RAISING cx_static_check.
     METHODS long_timestamp FOR TESTING RAISING cx_static_check.
     METHODS via_jsonx FOR TESTING RAISING cx_static_check.
+    METHODS empty_reference FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -200,6 +201,17 @@ CLASS ltcl_deserialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = stru-foo
       exp = 2 ).
+  ENDMETHOD.
+
+  METHOD empty_reference.
+    DATA ref TYPE REF TO data.
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json         = ''
+        assoc_arrays = abap_true
+      CHANGING
+       data          = ref ).
+    cl_abap_unit_assert=>assert_initial( ref ).
   ENDMETHOD.
 
 ENDCLASS.

@@ -213,6 +213,8 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             CHANGING
               data        = <any> ).
         ENDLOOP.
+      WHEN cl_abap_typedescr=>kind_ref.
+        RETURN.
       WHEN OTHERS.
         ASSERT 1 = 'cl_json, unknown kind'.
     ENDCASE.
