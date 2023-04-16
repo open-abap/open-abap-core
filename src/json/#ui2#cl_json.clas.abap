@@ -122,6 +122,16 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           ENDIF.
         ENDLOOP.
         r_json = r_json && '}'.
+      WHEN cl_abap_typedescr=>kind_ref.
+        IF data IS INITIAL.
+          r_json = 'null'.
+          RETURN.
+        ENDIF.
+        ASSIGN data->* TO <any>.
+        r_json = serialize(
+          data          = <any>
+          pretty_name   = pretty_name
+          ts_as_iso8601 = ts_as_iso8601 ).
       WHEN OTHERS.
         ASSERT 1 = 'cl_json, unknown kind'.
     ENDCASE.
@@ -136,7 +146,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
       mo_parsed->parse( json ).
     ENDIF.
 
-    CLEAR data.
+*    CLEAR data.
 
     _deserialize(
       EXPORTING
@@ -213,6 +223,18 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             CHANGING
               data        = <any> ).
         ENDLOOP.
+      WHEN cl_abap_typedescr=>kind_ref.
+        IF data IS INITIAL.
+          RETURN.
+        ENDIF.
+        ASSIGN data->* TO <any>.
+*        WRITE '@KERNEL console.dir(data);'.
+        _deserialize(
+          EXPORTING
+            prefix      = prefix
+            pretty_name = pretty_name
+          CHANGING
+            data        = <any> ).
       WHEN OTHERS.
         ASSERT 1 = 'cl_json, unknown kind'.
     ENDCASE.

@@ -12,6 +12,8 @@ CLASS ltcl_deserialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
     METHODS short_timestamp FOR TESTING RAISING cx_static_check.
     METHODS long_timestamp FOR TESTING RAISING cx_static_check.
     METHODS via_jsonx FOR TESTING RAISING cx_static_check.
+    METHODS empty_reference FOR TESTING RAISING cx_static_check.
+    METHODS basic_reference FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -202,6 +204,34 @@ CLASS ltcl_deserialize IMPLEMENTATION.
       exp = 2 ).
   ENDMETHOD.
 
+  METHOD empty_reference.
+    DATA ref TYPE REF TO data.
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json         = ''
+        assoc_arrays = abap_true
+      CHANGING
+       data          = ref ).
+    cl_abap_unit_assert=>assert_initial( ref ).
+  ENDMETHOD.
+
+  METHOD basic_reference.
+    TYPES: BEGIN OF ty,
+             field TYPE i,
+           END OF ty.
+    DATA ref TYPE REF TO ty.
+    CREATE DATA ref.
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json         = '{"field":2}'
+        assoc_arrays = abap_true
+      CHANGING
+        data         = ref ).
+    cl_abap_unit_assert=>assert_equals(
+      exp = 2
+      act = ref->field ).
+  ENDMETHOD.
+
 ENDCLASS.
 
 CLASS ltcl_serialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
@@ -222,6 +252,8 @@ CLASS ltcl_serialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT F
     METHODS string_spaces FOR TESTING RAISING cx_static_check.
     METHODS bool_false FOR TESTING RAISING cx_static_check.
     METHODS bool_true FOR TESTING RAISING cx_static_check.
+    METHODS empty_reference FOR TESTING RAISING cx_static_check.
+    METHODS basic_ref FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -407,6 +439,28 @@ CLASS ltcl_serialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_json
       exp = '{"FOO":"hello"}' ).
+  ENDMETHOD.
+
+  METHOD empty_reference.
+    DATA ref TYPE REF TO data.
+    DATA lv_json TYPE string.
+    lv_json = /ui2/cl_json=>serialize( ref ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = 'null' ).
+  ENDMETHOD.
+
+  METHOD basic_ref.
+    TYPES: BEGIN OF ty,
+             field TYPE i,
+           END OF ty.
+    DATA ref TYPE REF TO ty.
+    DATA lv_json TYPE string.
+    CREATE DATA ref.
+    lv_json = /ui2/cl_json=>serialize( ref ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = '{"FIELD":0}' ).
   ENDMETHOD.
 
 ENDCLASS.
