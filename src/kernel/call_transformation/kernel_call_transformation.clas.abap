@@ -24,6 +24,7 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     DATA lv_name   TYPE string.
     DATA lv_source TYPE string.
     DATA lv_result TYPE string.
+    DATA lv_foo    TYPE string.
     DATA result    TYPE REF TO data.
     DATA lt_rtab   TYPE abap_trans_resbind_tab.
     DATA lo_writer TYPE REF TO cl_sxml_string_writer.
@@ -92,9 +93,12 @@ CLASS kernel_call_transformation IMPLEMENTATION.
       WRITE '@KERNEL   } else {'.
       WRITE '@KERNEL     result.assign(INPUT.source[name]);'.
       WRITE '@KERNEL   }'.
-      lv_result = lv_result && |<{ to_upper( lv_name ) }>|.
-      lv_result = lv_result && lcl_data_to_xml=>run( result ).
-      lv_result = lv_result && |</{ to_upper( lv_name ) }>|.
+      lv_foo = lcl_data_to_xml=>run( result ).
+      IF lv_foo IS INITIAL.
+        lv_result = lv_result && |<{ to_upper( lv_name ) }/>|.
+      ELSE.
+        lv_result = lv_result && |<{ to_upper( lv_name ) }>{ lv_foo }</{ to_upper( lv_name ) }>|.
+      ENDIF.
       WRITE '@KERNEL }'.
 
       lv_result = lv_result && |</asx:values></asx:abap>|.

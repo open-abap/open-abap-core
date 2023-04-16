@@ -43,6 +43,11 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
           rv_xml = rv_xml && run( lv_ref ).
           rv_xml = rv_xml && |</item>|.
         ENDLOOP.
+      WHEN cl_abap_typedescr=>kind_ref.
+        IF iv_ref->* IS INITIAL.
+          RETURN.
+        ENDIF.
+        ASSERT 1 = 'todo,lcl_data_to_xml'.
       WHEN OTHERS.
         ASSERT 1 = 'todo,lcl_data_to_xml'.
     ENDCASE.
