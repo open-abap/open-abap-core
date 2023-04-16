@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>SYREPID</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DATATYPE>CHAR</DATATYPE>
+    <HEADLEN>55</HEADLEN>
+    <SCRLEN1>10</SCRLEN1>
+    <SCRLEN2>20</SCRLEN2>
+    <SCRLEN3>20</SCRLEN3>
+    <DDTEXT>SYREPID</DDTEXT>
+    <REPTEXT>SYREPID</REPTEXT>
+    <SCRTEXT_S>SYREPID</SCRTEXT_S>
+    <SCRTEXT_M>SYREPID</SCRTEXT_M>
+    <SCRTEXT_L>SYREPID</SCRTEXT_L>
+    <DTELMASTER>E</DTELMASTER>
+    <LENG>000040</LENG>
+    <DECIMALS>000000</DECIMALS>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>

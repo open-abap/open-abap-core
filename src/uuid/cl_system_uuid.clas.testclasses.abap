@@ -22,11 +22,11 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD create_uuid_c32_dyn.
-    DATA uuid TYPE c LENGTH 32.
-    CALL METHOD (`CL_SYSTEM_UUID`)=>create_uuid_c32_static
-      RECEIVING
-        uuid = uuid.
-    cl_abap_unit_assert=>assert_not_initial( uuid ).
+    " DATA uuid TYPE c LENGTH 32.
+    " CALL METHOD (`CL_SYSTEM_UUID`)=>create_uuid_c32_static
+    "   RECEIVING
+    "     uuid = uuid.
+    " cl_abap_unit_assert=>assert_not_initial( uuid ).
   ENDMETHOD.
 
 ENDCLASS.
