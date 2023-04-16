@@ -39,6 +39,7 @@ CLASS ltcl_test IMPLEMENTATION.
 
     READ TABLE lo_obj->attributes INDEX 1 INTO ls_attr.
     cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_not_initial( ls_attr-type_kind ).
     cl_abap_unit_assert=>assert_equals(
       act = ls_attr-name
       exp = 'BAR' ).

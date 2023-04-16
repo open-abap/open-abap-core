@@ -78,6 +78,9 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
 
     WRITE '@KERNEL   lv_any = p_object.ATTRIBUTES[a].type();'.
     <type>-type ?= describe_by_data( lv_any ).
+    <fs>-type_kind = <type>-type->type_kind.
+    <fs>-length = <type>-type->length.
+    <fs>-decimals = <type>-type->decimals.
 
     WRITE '@KERNEL }'.
     SORT attributes BY name ASCENDING.
