@@ -228,7 +228,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           RETURN.
         ENDIF.
         ASSIGN data->* TO <any>.
-        WRITE '@KERNEL console.dir(data);'.
+*        WRITE '@KERNEL console.dir(data);'.
         _deserialize(
           EXPORTING
             prefix      = prefix
