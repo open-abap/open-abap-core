@@ -146,7 +146,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
       mo_parsed->parse( json ).
     ENDIF.
 
-    CLEAR data.
+*    CLEAR data.
 
     _deserialize(
       EXPORTING
@@ -224,8 +224,17 @@ CLASS /ui2/cl_json IMPLEMENTATION.
               data        = <any> ).
         ENDLOOP.
       WHEN cl_abap_typedescr=>kind_ref.
-* todo, add more logic here
-        RETURN.
+        IF data IS INITIAL.
+          RETURN.
+        ENDIF.
+        ASSIGN data->* TO <any>.
+        WRITE '@KERNEL console.dir(data);'.
+        _deserialize(
+          EXPORTING
+            prefix      = prefix
+            pretty_name = pretty_name
+          CHANGING
+            data        = <any> ).
       WHEN OTHERS.
         ASSERT 1 = 'cl_json, unknown kind'.
     ENDCASE.
