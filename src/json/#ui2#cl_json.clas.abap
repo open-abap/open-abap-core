@@ -125,9 +125,13 @@ CLASS /ui2/cl_json IMPLEMENTATION.
       WHEN cl_abap_typedescr=>kind_ref.
         IF data IS INITIAL.
           r_json = 'null'.
-        ELSE.
-          ASSERT 1 = 'cl_json, ref todo'.
+          RETURN.
         ENDIF.
+        ASSIGN data->* TO <any>.
+        r_json = serialize(
+          data          = <any>
+          pretty_name   = pretty_name
+          ts_as_iso8601 = ts_as_iso8601 ).
       WHEN OTHERS.
         ASSERT 1 = 'cl_json, unknown kind'.
     ENDCASE.
@@ -220,6 +224,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
               data        = <any> ).
         ENDLOOP.
       WHEN cl_abap_typedescr=>kind_ref.
+* todo, add more logic here
         RETURN.
       WHEN OTHERS.
         ASSERT 1 = 'cl_json, unknown kind'.
