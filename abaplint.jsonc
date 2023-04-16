@@ -95,7 +95,7 @@
     "unused_variables": false,
     "try_without_catch": true,
     "identical_descriptions": {
-      "exclude": ["funcname", "sxco_fm_name"]
+      "exclude": ["funcname", "sxco_fm_name", "sysuuid"]
     },
     "check_subrc": false,
     "check_text_elements": true,

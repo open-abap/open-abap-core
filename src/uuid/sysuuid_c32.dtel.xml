@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>SYSUUID_C32</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DATATYPE>CHAR</DATATYPE>
+    <HEADLEN>55</HEADLEN>
+    <SCRLEN1>04</SCRLEN1>
+    <SCRLEN2>04</SCRLEN2>
+    <SCRLEN3>04</SCRLEN3>
+    <DDTEXT>UUID</DDTEXT>
+    <REPTEXT>UUID</REPTEXT>
+    <SCRTEXT_S>UUID</SCRTEXT_S>
+    <SCRTEXT_M>UUID</SCRTEXT_M>
+    <SCRTEXT_L>UUID</SCRTEXT_L>
+    <DTELMASTER>E</DTELMASTER>
+    <LENG>000032</LENG>
+    <DECIMALS>000000</DECIMALS>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>
