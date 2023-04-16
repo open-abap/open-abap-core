@@ -122,6 +122,12 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           ENDIF.
         ENDLOOP.
         r_json = r_json && '}'.
+      WHEN cl_abap_typedescr=>kind_ref.
+        IF data IS INITIAL.
+          r_json = 'null'.
+        ELSE.
+          ASSERT 1 = 'cl_json, ref todo'.
+        ENDIF.
       WHEN OTHERS.
         ASSERT 1 = 'cl_json, unknown kind'.
     ENDCASE.
