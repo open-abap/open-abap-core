@@ -26,12 +26,14 @@ CLASS lcl_heap IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD add.
-    DATA lv_name TYPE string.
+    DATA lv_name         TYPE string.
+    DATA is_serializable TYPE abap_bool.
+    DATA lo_descr        TYPE REF TO cl_abap_classdescr.
 
     mv_counter = mv_counter + 1.
 
-    WRITE '@KERNEL lv_name.set(iv_ref.get().constructor.name);'.
-    TRANSLATE lv_name TO UPPER CASE.
+    lo_descr ?= cl_abap_typedescr=>describe_by_object_ref( iv_ref ).
+    lv_name = lo_descr->relative_name.
 
     mv_data = mv_data && |<prg:{ lv_name } xmlns:prg="http://www.sap.com/abapxml/classes/class-pool/TODO" id="o{ mv_counter }"/>|.
 
@@ -41,7 +43,9 @@ ENDCLASS.
 
 CLASS lcl_data_to_xml DEFINITION.
   PUBLIC SECTION.
-    METHODS constructor.
+    METHODS constructor
+      IMPORTING
+        io_heap TYPE REF TO lcl_heap OPTIONAL.
 
     METHODS run
       IMPORTING
@@ -49,6 +53,7 @@ CLASS lcl_data_to_xml DEFINITION.
         iv_ref        TYPE REF TO data
       RETURNING
         VALUE(rv_xml) TYPE string.
+
     METHODS serialize_heap
       RETURNING
         VALUE(rv_xml) TYPE string.
@@ -59,7 +64,11 @@ ENDCLASS.
 CLASS lcl_data_to_xml IMPLEMENTATION.
 
   METHOD constructor.
-    CREATE OBJECT mo_heap.
+    IF io_heap IS INITIAL.
+      CREATE OBJECT mo_heap.
+    ELSE.
+      mo_heap = io_heap.
+    ENDIF.
   ENDMETHOD.
 
   METHOD serialize_heap.
