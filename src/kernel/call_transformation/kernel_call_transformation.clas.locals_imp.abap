@@ -13,55 +13,6 @@ CLASS lcl_heap DEFINITION.
     DATA mv_data TYPE string.
 ENDCLASS.
 
-CLASS lcl_heap IMPLEMENTATION.
-  METHOD serialize.
-* todo
-    IF mv_counter = 0.
-      RETURN.
-    ENDIF.
-
-    rv_xml = rv_xml && |<asx:heap xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:abap="http://www.sap.com/abapxml/types/built-in" xmlns:cls="http://www.sap.com/abapxml/classes/global" xmlns:dic="http://www.sap.com/abapxml/types/dictionary">|.
-    rv_xml = rv_xml && mv_data.
-    rv_xml = rv_xml && |</asx:heap>|.
-  ENDMETHOD.
-
-  METHOD add.
-    DATA lv_name         TYPE string.
-    DATA is_serializable TYPE abap_bool.
-    DATA lo_descr        TYPE REF TO cl_abap_classdescr.
-    DATA ls_interface    TYPE abap_intfdescr.
-    DATA ls_attribute    TYPE abap_attrdescr.
-
-    mv_counter = mv_counter + 1.
-
-    lo_descr ?= cl_abap_typedescr=>describe_by_object_ref( iv_ref ).
-    lv_name = lo_descr->relative_name.
-
-    LOOP AT lo_descr->interfaces INTO ls_interface.
-      IF ls_interface-name = 'IF_SERIALIZABLE_OBJECT'.
-        is_serializable = abap_true.
-      ENDIF.
-    ENDLOOP.
-
-    IF is_serializable = abap_true.
-      mv_data = mv_data &&
-        |<prg:{ lv_name } xmlns:prg="http://www.sap.com/abapxml/classes/class-pool/TODO" id="o{ mv_counter }">| &&
-        |<local.{ lv_name }>|.
-      LOOP AT lo_descr->attributes INTO ls_attribute.
-        mv_data = mv_data && |<{ ls_attribute-name }></{ ls_attribute-name }>|.
-      ENDLOOP.
-      mv_data = mv_data &&
-        |</local.{ lv_name }>| &&
-        |</prg:{ lv_name }>|.
-    ELSE.
-      mv_data = mv_data &&
-        |<prg:{ lv_name } xmlns:prg="http://www.sap.com/abapxml/classes/class-pool/TODO" id="o{ mv_counter }"/>|.
-    ENDIF.
-
-    rv_id = |{ mv_counter }|.
-  ENDMETHOD.
-ENDCLASS.
-
 CLASS lcl_data_to_xml DEFINITION.
   PUBLIC SECTION.
     METHODS constructor
@@ -80,6 +31,68 @@ CLASS lcl_data_to_xml DEFINITION.
         VALUE(rv_xml) TYPE string.
   PRIVATE SECTION.
     DATA mo_heap TYPE REF TO lcl_heap.
+ENDCLASS.
+
+CLASS lcl_heap IMPLEMENTATION.
+  METHOD serialize.
+* todo
+    IF mv_counter = 0.
+      RETURN.
+    ENDIF.
+
+    rv_xml = rv_xml && |<asx:heap xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:abap="http://www.sap.com/abapxml/types/built-in" xmlns:cls="http://www.sap.com/abapxml/classes/global" xmlns:dic="http://www.sap.com/abapxml/types/dictionary">|.
+    rv_xml = rv_xml && mv_data.
+    rv_xml = rv_xml && |</asx:heap>|.
+  ENDMETHOD.
+
+  METHOD add.
+    DATA lv_name         TYPE string.
+    DATA is_serializable TYPE abap_bool.
+    DATA lo_descr        TYPE REF TO cl_abap_classdescr.
+    DATA ls_interface    TYPE abap_intfdescr.
+    DATA ls_attribute    TYPE abap_attrdescr.
+    DATA lo_data_to_xml  TYPE REF TO lcl_data_to_xml.
+    DATA lv_ref          TYPE REF TO data.
+
+    FIELD-SYMBOLS <any> TYPE REF TO any.
+
+    mv_counter = mv_counter + 1.
+
+    lo_descr ?= cl_abap_typedescr=>describe_by_object_ref( iv_ref ).
+    lv_name = lo_descr->relative_name.
+
+    LOOP AT lo_descr->interfaces INTO ls_interface.
+      IF ls_interface-name = 'IF_SERIALIZABLE_OBJECT'.
+        is_serializable = abap_true.
+      ENDIF.
+    ENDLOOP.
+
+    IF is_serializable = abap_true.
+      CREATE OBJECT lo_data_to_xml
+        EXPORTING
+          io_heap = me.
+      mv_data = mv_data &&
+        |<prg:{ lv_name } xmlns:prg="http://www.sap.com/abapxml/classes/class-pool/TODO" id="o{ mv_counter }">| &&
+        |<local.{ lv_name }>|.
+      LOOP AT lo_descr->attributes INTO ls_attribute.
+        ASSIGN iv_ref->(ls_attribute-name) TO <any>.
+        ASSERT sy-subrc = 0.
+        GET REFERENCE OF <any> INTO lv_ref.
+        mv_data = mv_data && lo_data_to_xml->run(
+          iv_name = ls_attribute-name
+          iv_ref  = lv_ref ).
+*        |<{ ls_attribute-name }></{ ls_attribute-name }>|.
+      ENDLOOP.
+      mv_data = mv_data &&
+        |</local.{ lv_name }>| &&
+        |</prg:{ lv_name }>|.
+    ELSE.
+      mv_data = mv_data &&
+        |<prg:{ lv_name } xmlns:prg="http://www.sap.com/abapxml/classes/class-pool/TODO" id="o{ mv_counter }"/>|.
+    ENDIF.
+
+    rv_id = |{ mv_counter }|.
+  ENDMETHOD.
 ENDCLASS.
 
 CLASS lcl_data_to_xml IMPLEMENTATION.

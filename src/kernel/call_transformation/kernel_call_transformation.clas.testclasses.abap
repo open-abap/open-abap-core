@@ -409,9 +409,9 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
       pattern = |<prg:LCL_ATTRIBUTE |
       text    = lv_xml ).
 
-    " cl_abap_unit_assert=>assert_text_matches(
-    "   pattern = |<FOO>0</FOO>|
-    "   text    = lv_xml ).
+    cl_abap_unit_assert=>assert_text_matches(
+      pattern = |<FOO>0</FOO>|
+      text    = lv_xml ).
   ENDMETHOD.
 
 ENDCLASS.

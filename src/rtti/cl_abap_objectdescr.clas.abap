@@ -66,7 +66,7 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     FIELD-SYMBOLS <type> LIKE LINE OF mt_types.
 
     WRITE '@KERNEL for (const a in p_object.ATTRIBUTES || []) {'.
-    WRITE '@KERNEL   lv_name.set(a)'.
+    WRITE '@KERNEL   lv_name.set(a);'.
     APPEND INITIAL LINE TO attributes ASSIGNING <fs>.
     APPEND INITIAL LINE TO mt_types ASSIGNING <type>.
     <fs>-name = lv_name.
@@ -83,8 +83,8 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     WRITE '@KERNEL }'.
     SORT attributes BY name ASCENDING.
 
-    WRITE '@KERNEL for (const a in p_object.IMPLEMENTED_INTERFACES || []) {'.
-    WRITE '@KERNEL   lv_name.set(a)'.
+    WRITE '@KERNEL for (const a of p_object.IMPLEMENTED_INTERFACES || []) {'.
+    WRITE '@KERNEL   lv_name.set(a);'.
     APPEND INITIAL LINE TO interfaces ASSIGNING <intf>.
     <intf>-name = lv_name.
     WRITE '@KERNEL }'.
