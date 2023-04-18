@@ -29,7 +29,6 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     DATA lo_writer TYPE REF TO cl_sxml_string_writer.
     DATA ls_rtab   LIKE LINE OF lt_rtab.
     DATA lv_type   TYPE string.
-    DATA lo_heap   TYPE REF TO lcl_heap.
     DATA lo_data_to_xml TYPE REF TO lcl_data_to_xml.
 
     CLEAR mi_doc.
@@ -99,7 +98,8 @@ CLASS kernel_call_transformation IMPLEMENTATION.
         iv_ref  = result ).
       WRITE '@KERNEL }'.
 
-      lv_result = lv_result && |</asx:values></asx:abap>|.
+      lv_result = lv_result &&
+        |</asx:values>{ lo_data_to_xml->serialize_heap( ) }</asx:abap>|.
       WRITE '@KERNEL   INPUT.resultXML.set(lv_result);'.
       RETURN.
     ENDIF.

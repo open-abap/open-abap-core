@@ -363,21 +363,21 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
 
     CREATE OBJECT lo.
 
-    " CALL TRANSFORMATION id
-    "    SOURCE data = lo
-    "    RESULT XML lv_xml.
+    CALL TRANSFORMATION id
+       SOURCE data = lo
+       RESULT XML lv_xml.
 
-    " cl_abap_unit_assert=>assert_text_matches(
-    "   pattern = |<DATA href="#o|
-    "   text    = lv_xml ).
+    cl_abap_unit_assert=>assert_text_matches(
+      pattern = |<DATA href="#o|
+      text    = lv_xml ).
 
-    " cl_abap_unit_assert=>assert_text_matches(
-    "   pattern = |<prg:LCL_EMPTY |
-    "   text    = lv_xml ).
+    cl_abap_unit_assert=>assert_text_matches(
+      pattern = |<prg:LCL_EMPTY |
+      text    = lv_xml ).
 
-    " cl_abap_unit_assert=>assert_text_matches(
-    "   pattern = |<asx:heap |
-    "   text    = lv_xml ).
+    cl_abap_unit_assert=>assert_text_matches(
+      pattern = |<asx:heap |
+      text    = lv_xml ).
 
   ENDMETHOD.
 

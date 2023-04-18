@@ -2,19 +2,35 @@ CLASS lcl_heap DEFINITION.
   PUBLIC SECTION.
     METHODS add
       IMPORTING
-        iv_ref TYPE any.
+        iv_ref TYPE any
+      RETURNING
+        VALUE(rv_id) TYPE string.
     METHODS serialize
       RETURNING
         VALUE(rv_xml) TYPE string.
+  PRIVATE SECTION.
+    DATA mv_counter TYPE i.
+    DATA mv_data TYPE string.
 ENDCLASS.
 
 CLASS lcl_heap IMPLEMENTATION.
   METHOD serialize.
 * todo
+    IF mv_counter = 0.
+      RETURN.
+    ENDIF.
+
+    rv_xml = rv_xml && |<asx:heap xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:abap="http://www.sap.com/abapxml/types/built-in" xmlns:cls="http://www.sap.com/abapxml/classes/global" xmlns:dic="http://www.sap.com/abapxml/types/dictionary">|.
+    rv_xml = rv_xml && mv_data.
+    rv_xml = rv_xml && |</asx:heap>|.
   ENDMETHOD.
 
   METHOD add.
-* todo
+    mv_counter = mv_counter + 1.
+
+    mv_data = mv_data && |<prg:LCL_EMPTY xmlns:prg="http://www.sap.com/abapxml/classes/class-pool/TODO" id="o{ mv_counter }"/>|.
+
+    rv_id = |{ mv_counter }|.
   ENDMETHOD.
 ENDCLASS.
 
@@ -28,6 +44,9 @@ CLASS lcl_data_to_xml DEFINITION.
         iv_ref        TYPE REF TO data
       RETURNING
         VALUE(rv_xml) TYPE string.
+    METHODS serialize_heap
+      RETURNING
+        VALUE(rv_xml) TYPE string.
   PRIVATE SECTION.
     DATA mo_heap TYPE REF TO lcl_heap.
 ENDCLASS.
@@ -36,6 +55,10 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
 
   METHOD constructor.
     CREATE OBJECT mo_heap.
+  ENDMETHOD.
+
+  METHOD serialize_heap.
+    rv_xml = mo_heap->serialize( ).
   ENDMETHOD.
 
   METHOD run.
@@ -75,7 +98,9 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
         rv_xml = rv_xml && |<{ iv_name }>|.
         LOOP AT <table> ASSIGNING <any>.
           GET REFERENCE OF <any> INTO lv_ref.
-          rv_xml = rv_xml && run( iv_name = |item| iv_ref = lv_ref ).
+          rv_xml = rv_xml && run(
+            iv_name = |item|
+            iv_ref = lv_ref ).
         ENDLOOP.
         rv_xml = rv_xml && |</{ iv_name }>|.
       WHEN cl_abap_typedescr=>kind_ref.
@@ -85,7 +110,7 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
               rv_xml = |<{ iv_name }/>|.
               RETURN.
             ENDIF.
-            rv_xml = |<{ iv_name } href="#o34"/>|.
+            rv_xml = |<{ iv_name } href="#o{ mo_heap->add( iv_ref ) }"/>|.
           WHEN OTHERS.
             IF iv_ref->* IS INITIAL.
               rv_xml = |<{ iv_name }/>|.
