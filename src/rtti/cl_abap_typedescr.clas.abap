@@ -324,8 +324,13 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->kind = kind_ref.
 
         lo_ref ?= type.
-        WRITE '@KERNEL lv_name.set(p_data.qualifiedName || "");'.
-        lo_ref->referenced = describe_by_name( lv_name ).
+        IF p_data IS INITIAL.
+* note: using the name doesnt work for local classes
+          WRITE '@KERNEL lv_name.set(p_data.qualifiedName || "");'.
+          lo_ref->referenced = describe_by_name( lv_name ).
+        ELSE.
+          lo_ref->referenced = describe_by_object_ref( p_data ).
+        ENDIF.
       WHEN 'UTCLong'.
         CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_utclong.
