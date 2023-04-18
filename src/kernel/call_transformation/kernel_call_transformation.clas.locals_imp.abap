@@ -2,7 +2,7 @@ CLASS lcl_heap DEFINITION.
   PUBLIC SECTION.
     METHODS add
       IMPORTING
-        iv_ref TYPE any
+        iv_ref      TYPE any
       RETURNING
         VALUE(rv_id) TYPE string.
     METHODS serialize
@@ -26,9 +26,14 @@ CLASS lcl_heap IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD add.
+    DATA lv_name TYPE string.
+
     mv_counter = mv_counter + 1.
 
-    mv_data = mv_data && |<prg:LCL_EMPTY xmlns:prg="http://www.sap.com/abapxml/classes/class-pool/TODO" id="o{ mv_counter }"/>|.
+    WRITE '@KERNEL lv_name.set(iv_ref.get().constructor.name);'.
+    TRANSLATE lv_name TO UPPER CASE.
+
+    mv_data = mv_data && |<prg:{ lv_name } xmlns:prg="http://www.sap.com/abapxml/classes/class-pool/TODO" id="o{ mv_counter }"/>|.
 
     rv_id = |{ mv_counter }|.
   ENDMETHOD.
@@ -110,7 +115,7 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
               rv_xml = |<{ iv_name }/>|.
               RETURN.
             ENDIF.
-            rv_xml = |<{ iv_name } href="#o{ mo_heap->add( iv_ref ) }"/>|.
+            rv_xml = |<{ iv_name } href="#o{ mo_heap->add( iv_ref->* ) }"/>|.
           WHEN OTHERS.
             IF iv_ref->* IS INITIAL.
               rv_xml = |<{ iv_name }/>|.
