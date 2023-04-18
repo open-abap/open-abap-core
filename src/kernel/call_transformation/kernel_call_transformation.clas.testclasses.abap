@@ -1,3 +1,8 @@
+CLASS lcl_empty DEFINITION.
+ENDCLASS.
+CLASS lcl_empty IMPLEMENTATION.
+ENDCLASS.
+
 CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
@@ -23,6 +28,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
 
     METHODS json_to_sxml1 FOR TESTING RAISING cx_static_check.
     METHODS ref_to_xml FOR TESTING RAISING cx_static_check.
+    METHODS object_to_xml FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
@@ -348,6 +354,31 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = result
       exp = '*<DATA/>*' ).
+  ENDMETHOD.
+
+  METHOD object_to_xml.
+
+    DATA lo     TYPE REF TO lcl_empty.
+    DATA lv_xml TYPE string.
+
+    CREATE OBJECT lo.
+
+    CALL TRANSFORMATION id
+       SOURCE data = lo
+       RESULT XML lv_xml.
+
+    cl_abap_unit_assert=>assert_text_matches(
+      pattern = |<DATA href="#o|
+      text    = lv_xml ).
+
+    cl_abap_unit_assert=>assert_text_matches(
+      pattern = |<prg:LCL_EMPTY |
+      text    = lv_xml ).
+
+    cl_abap_unit_assert=>assert_text_matches(
+      pattern = |<asx:heap |
+      text    = lv_xml ).
+
   ENDMETHOD.
 
 ENDCLASS.
