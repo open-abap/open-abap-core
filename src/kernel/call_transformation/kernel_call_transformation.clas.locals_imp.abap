@@ -29,13 +29,34 @@ CLASS lcl_heap IMPLEMENTATION.
     DATA lv_name         TYPE string.
     DATA is_serializable TYPE abap_bool.
     DATA lo_descr        TYPE REF TO cl_abap_classdescr.
+    DATA ls_interface    TYPE abap_intfdescr.
+    DATA ls_attribute    TYPE abap_attrdescr.
 
     mv_counter = mv_counter + 1.
 
     lo_descr ?= cl_abap_typedescr=>describe_by_object_ref( iv_ref ).
     lv_name = lo_descr->relative_name.
 
-    mv_data = mv_data && |<prg:{ lv_name } xmlns:prg="http://www.sap.com/abapxml/classes/class-pool/TODO" id="o{ mv_counter }"/>|.
+    LOOP AT lo_descr->interfaces INTO ls_interface.
+      IF ls_interface-name = 'IF_SERIALIZABLE_OBJECT'.
+        is_serializable = abap_true.
+      ENDIF.
+    ENDLOOP.
+
+    IF is_serializable = abap_true.
+      mv_data = mv_data &&
+        |<prg:{ lv_name } xmlns:prg="http://www.sap.com/abapxml/classes/class-pool/TODO" id="o{ mv_counter }">| &&
+        |<local.{ lv_name }>|.
+      LOOP AT lo_descr->attributes INTO ls_attribute.
+        mv_data = mv_data && |<{ ls_attribute-name }></{ ls_attribute-name }>|.
+      ENDLOOP.
+      mv_data = mv_data &&
+        |</local.{ lv_name }>| &&
+        |</prg:{ lv_name }>|.
+    ELSE.
+      mv_data = mv_data &&
+        |<prg:{ lv_name } xmlns:prg="http://www.sap.com/abapxml/classes/class-pool/TODO" id="o{ mv_counter }"/>|.
+    ENDIF.
 
     rv_id = |{ mv_counter }|.
   ENDMETHOD.
