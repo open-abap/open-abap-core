@@ -30,6 +30,8 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     DATA lo_writer TYPE REF TO cl_sxml_string_writer.
     DATA ls_rtab   LIKE LINE OF lt_rtab.
     DATA lv_type   TYPE string.
+    DATA lo_heap   TYPE REF TO lcl_heap.
+    DATA lo_data_to_xml TYPE REF TO lcl_data_to_xml.
 
     CLEAR mi_doc.
     CLEAR mi_writer.
@@ -85,7 +87,7 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     WRITE '@KERNEL }'.
     IF lv_result = abap_true.
       lv_result = '<?xml version="1.0" encoding="utf-16"?><asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0"><asx:values>'.
-
+      CREATE OBJECT lo_data_to_xml.
       WRITE '@KERNEL for (const name in INPUT.source) {'.
       WRITE '@KERNEL   lv_name.set(name);'.
       WRITE '@KERNEL   if (INPUT.source[name].constructor.name === "FieldSymbol") {'.
@@ -93,7 +95,7 @@ CLASS kernel_call_transformation IMPLEMENTATION.
       WRITE '@KERNEL   } else {'.
       WRITE '@KERNEL     result.assign(INPUT.source[name]);'.
       WRITE '@KERNEL   }'.
-      lv_foo = lcl_data_to_xml=>run( result ).
+      lv_foo = lo_data_to_xml->run( result ).
       IF lv_foo IS INITIAL.
         lv_result = lv_result && |<{ to_upper( lv_name ) }/>|.
       ELSE.
