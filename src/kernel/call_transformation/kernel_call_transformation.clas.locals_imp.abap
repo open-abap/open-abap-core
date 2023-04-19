@@ -81,7 +81,6 @@ CLASS lcl_heap IMPLEMENTATION.
         mv_data = mv_data && lo_data_to_xml->run(
           iv_name = ls_attribute-name
           iv_ref  = lv_ref ).
-*        |<{ ls_attribute-name }></{ ls_attribute-name }>|.
       ENDLOOP.
       mv_data = mv_data &&
         |</local.{ lv_name }>| &&
@@ -154,7 +153,7 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
       WHEN cl_abap_typedescr=>kind_ref.
         CASE lo_type->type_kind.
           WHEN cl_abap_typedescr=>typekind_oref.
-            IF iv_ref IS INITIAL.
+            IF iv_ref->* IS INITIAL.
               rv_xml = |<{ iv_name }/>|.
               RETURN.
             ENDIF.
