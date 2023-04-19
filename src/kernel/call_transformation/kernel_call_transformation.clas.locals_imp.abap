@@ -81,7 +81,6 @@ CLASS lcl_heap IMPLEMENTATION.
         mv_data = mv_data && lo_data_to_xml->run(
           iv_name = ls_attribute-name
           iv_ref  = lv_ref ).
-*        |<{ ls_attribute-name }></{ ls_attribute-name }>|.
       ENDLOOP.
       mv_data = mv_data &&
         |</local.{ lv_name }>| &&
