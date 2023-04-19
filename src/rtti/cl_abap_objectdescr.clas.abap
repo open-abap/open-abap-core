@@ -60,30 +60,35 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     DATA lv_name  TYPE abap_attrname.
     DATA lv_char1 TYPE c LENGTH 1.
     DATA lv_any   TYPE string.
-    FIELD-SYMBOLS <fs> TYPE abap_attrdescr.
+
+    FIELD-SYMBOLS <fs>   TYPE abap_attrdescr.
+    FIELD-SYMBOLS <intf> TYPE abap_intfdescr.
     FIELD-SYMBOLS <type> LIKE LINE OF mt_types.
 
     WRITE '@KERNEL for (const a in p_object.ATTRIBUTES || []) {'.
-
-    WRITE '@KERNEL   lv_name.set(a)'.
+    WRITE '@KERNEL   lv_name.set(a);'.
     APPEND INITIAL LINE TO attributes ASSIGNING <fs>.
     APPEND INITIAL LINE TO mt_types ASSIGNING <type>.
     <fs>-name = lv_name.
     <type>-name = lv_name.
-
     WRITE '@KERNEL   lv_char1.set(p_object.ATTRIBUTES[a].is_constant);'.
     <fs>-is_constant = lv_char1.
     WRITE '@KERNEL   lv_char1.set(p_object.ATTRIBUTES[a].visibility);'.
     <fs>-visibility = lv_char1.
-
     WRITE '@KERNEL   lv_any = p_object.ATTRIBUTES[a].type();'.
     <type>-type ?= describe_by_data( lv_any ).
     <fs>-type_kind = <type>-type->type_kind.
     <fs>-length = <type>-type->length.
     <fs>-decimals = <type>-type->decimals.
-
     WRITE '@KERNEL }'.
     SORT attributes BY name ASCENDING.
+
+    WRITE '@KERNEL for (const a of p_object.IMPLEMENTED_INTERFACES || []) {'.
+    WRITE '@KERNEL   lv_name.set(a);'.
+    APPEND INITIAL LINE TO interfaces ASSIGNING <intf>.
+    <intf>-name = lv_name.
+    WRITE '@KERNEL }'.
+    SORT interfaces BY name ASCENDING.
 
     super->constructor( ).
   ENDMETHOD.
