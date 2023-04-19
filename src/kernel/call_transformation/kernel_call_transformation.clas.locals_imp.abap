@@ -154,7 +154,7 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
       WHEN cl_abap_typedescr=>kind_ref.
         CASE lo_type->type_kind.
           WHEN cl_abap_typedescr=>typekind_oref.
-            IF iv_ref IS INITIAL.
+            IF iv_ref->* IS INITIAL.
               rv_xml = |<{ iv_name }/>|.
               RETURN.
             ENDIF.

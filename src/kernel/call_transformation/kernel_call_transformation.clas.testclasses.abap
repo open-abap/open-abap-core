@@ -38,6 +38,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS ref_to_xml FOR TESTING RAISING cx_static_check.
     METHODS empty_object_to_xml FOR TESTING RAISING cx_static_check.
     METHODS attr_object_to_xml FOR TESTING RAISING cx_static_check.
+    METHODS empty_obj_in_structure FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
@@ -373,8 +374,8 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     CREATE OBJECT lo.
 
     CALL TRANSFORMATION id
-       SOURCE data = lo
-       RESULT XML lv_xml.
+      SOURCE data = lo
+      RESULT XML lv_xml.
 
     cl_abap_unit_assert=>assert_text_matches(
       pattern = |<DATA href="#o|
@@ -412,6 +413,24 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     cl_abap_unit_assert=>assert_text_matches(
       pattern = |<FOO>0</FOO>|
       text    = lv_xml ).
+
+  ENDMETHOD.
+
+  METHOD empty_obj_in_structure.
+
+    DATA: BEGIN OF foo,
+            bar TYPE REF TO cx_root,
+          END OF foo.
+    DATA lv_xml TYPE string.
+
+    CALL TRANSFORMATION id
+      SOURCE data = foo
+      RESULT XML lv_xml.
+
+    cl_abap_unit_assert=>assert_text_matches(
+      pattern = |<DATA><BAR/></DATA>|
+      text    = lv_xml ).
+
   ENDMETHOD.
 
 ENDCLASS.
