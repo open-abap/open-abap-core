@@ -146,8 +146,6 @@ CLASS /ui2/cl_json IMPLEMENTATION.
       mo_parsed->parse( json ).
     ENDIF.
 
-*    CLEAR data.
-
     _deserialize(
       EXPORTING
         prefix      = ''
@@ -225,7 +223,19 @@ CLASS /ui2/cl_json IMPLEMENTATION.
         ENDLOOP.
       WHEN cl_abap_typedescr=>kind_ref.
         IF data IS INITIAL.
-          RETURN.
+          lt_members = mo_parsed->members( prefix && '/' ).
+
+          IF lines( lt_members ) = 0.
+            RETURN.
+          ENDIF.
+
+          LOOP AT lt_members INTO lv_member.
+            WRITE '@KERNEL console.dir(lv_member.get());'.
+          ENDLOOP.
+
+* cl_abap_refdescr=>get_ref_to_data( ).
+* cl_abap_structdescr=>create( comp ).
+* CREATE DATA data TYPE HANDLE handle.
         ENDIF.
         ASSIGN data->* TO <any>.
 *        WRITE '@KERNEL console.dir(data);'.
