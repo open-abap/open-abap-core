@@ -31,10 +31,10 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
     CLASS-DATA mo_parsed TYPE REF TO lcl_parser.
     CLASS-METHODS _deserialize
       IMPORTING
-        prefix      TYPE string
-        pretty_name TYPE string OPTIONAL
+        VALUE(prefix) TYPE string
+        pretty_name   TYPE string OPTIONAL
       CHANGING
-        data        TYPE data.
+        data          TYPE data.
 ENDCLASS.
 
 CLASS /ui2/cl_json IMPLEMENTATION.
@@ -146,8 +146,6 @@ CLASS /ui2/cl_json IMPLEMENTATION.
       mo_parsed->parse( json ).
     ENDIF.
 
-*    CLEAR data.
-
     _deserialize(
       EXPORTING
         prefix      = ''
@@ -215,7 +213,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             WHEN OTHERS.
               lv_name = to_lower( ls_component-name ).
           ENDCASE.
-*          WRITE '@KERNEL console.dir(lv_name.get());'.
+*          WRITE '@KERNEL console.dir("structure: " + lv_name.get());'.
           _deserialize(
             EXPORTING
               prefix      = prefix && '/' && lv_name
@@ -225,7 +223,35 @@ CLASS /ui2/cl_json IMPLEMENTATION.
         ENDLOOP.
       WHEN cl_abap_typedescr=>kind_ref.
         IF data IS INITIAL.
-          RETURN.
+          lt_members = mo_parsed->members( prefix && '/' ).
+
+          IF lines( lt_members ) = 0 AND prefix = ''.
+*            WRITE '@KERNEL console.dir("return");'.
+            RETURN.
+          ENDIF.
+          IF lines( lt_members ) > 0.
+            LOOP AT lt_members INTO lv_member.
+*              WRITE '@KERNEL console.dir(lv_member.get());'.
+              CLEAR ls_component.
+              ls_component-name = to_upper( lv_member ).
+              ls_component-type = cl_abap_refdescr=>get_ref_to_data( ).
+              APPEND ls_component TO lt_components.
+            ENDLOOP.
+            lo_struct = cl_abap_structdescr=>create( lt_components ).
+            CREATE DATA data TYPE HANDLE lo_struct.
+          ELSE.
+* todo, handling array?
+*            WRITE '@KERNEL console.dir(this.mo_parsed.get().mt_data.array()[1].get());'.
+            prefix = mo_parsed->find_ignore_case( prefix ).
+            lv_value = mo_parsed->value_string( prefix ).
+            IF lv_value CO '-0123456789'.
+              CREATE DATA data TYPE i.
+            ELSEIF lv_value = 'true' OR lv_value = 'false'.
+              CREATE DATA data TYPE HANDLE cl_abap_typedescr=>describe_by_name( 'ABAP_BOOL' ).
+            ELSE.
+              CREATE DATA data TYPE HANDLE cl_abap_elemdescr=>get_string( ).
+            ENDIF.
+          ENDIF.
         ENDIF.
         ASSIGN data->* TO <any>.
 *        WRITE '@KERNEL console.dir(data);'.

@@ -123,7 +123,9 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD table_table.
     DATA lr_ref TYPE REF TO data.
     DATA lo_descr TYPE REF TO cl_abap_tabledescr.
+
     FIELD-SYMBOLS <fs> TYPE ANY TABLE.
+
     lo_descr = cl_abap_tabledescr=>create( cl_abap_elemdescr=>get_i( ) ).
     CREATE DATA lr_ref TYPE HANDLE lo_descr.
     ASSIGN lr_ref->* TO <fs>.
@@ -136,6 +138,7 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lr_ref  TYPE REF TO data.
     DATA type    TYPE REF TO cl_abap_elemdescr.
     DATA lv_text TYPE c LENGTH 50.
+
     FIELD-SYMBOLS <fs> TYPE any.
 
     type ?= cl_abap_typedescr=>describe_by_data( data ).
