@@ -33,6 +33,10 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
   METHOD call.
     ASSERT handle IS BOUND.
 
+    WRITE '@KERNEL if (dref.constructor.name === "FieldSymbol") {'.
+    WRITE '@KERNEL   dref = dref.getPointer();'.
+    WRITE '@KERNEL }'.
+
     CASE handle->kind.
       WHEN cl_abap_typedescr=>kind_elem.
         elem( EXPORTING handle = handle
