@@ -128,6 +128,8 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
       WHEN cl_abap_typedescr=>typekind_char.
         lv_half = handle->length / 2.
         CREATE DATA dref TYPE c LENGTH lv_half.
+* todo, this needs some redesign to work properly,
+        WRITE '@KERNEL dref.getPointer().extra = {"qualifiedName": handle.get().relative_name};'.
       WHEN cl_abap_typedescr=>typekind_num.
         lv_half = handle->length / 2.
         CREATE DATA dref TYPE n LENGTH lv_half.
