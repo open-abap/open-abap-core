@@ -213,7 +213,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             WHEN OTHERS.
               lv_name = to_lower( ls_component-name ).
           ENDCASE.
-*          WRITE '@KERNEL console.dir("structure: " + lv_name.get());'.
+          " WRITE '@KERNEL console.dir("structure: " + lv_name.get());'.
           _deserialize(
             EXPORTING
               prefix      = prefix && '/' && lv_name
@@ -231,11 +231,14 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             RETURN.
           ENDIF.
           IF lines( lt_members ) > 0.
+            CLEAR lt_components.
             LOOP AT lt_members INTO lv_member.
-              " WRITE '@KERNEL console.dir("component: " + lv_member.get());'.
+*              WRITE '@KERNEL console.dir("component: " + lv_member.get());'.
               CLEAR ls_component.
               ls_component-name = to_upper( lv_member ).
+              TRANSLATE ls_component-name USING '-_'.
               ls_component-type = cl_abap_refdescr=>get_ref_to_data( ).
+              ASSERT ls_component-name IS NOT INITIAL.
               APPEND ls_component TO lt_components.
             ENDLOOP.
             lo_struct = cl_abap_structdescr=>create( lt_components ).

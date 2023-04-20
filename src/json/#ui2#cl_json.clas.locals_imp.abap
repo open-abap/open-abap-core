@@ -125,6 +125,7 @@ CLASS lcl_parser IMPLEMENTATION.
         RETURN.
       ENDIF.
     ENDLOOP.
+    rv_path = iv_path.
   ENDMETHOD.
 
   METHOD exists.

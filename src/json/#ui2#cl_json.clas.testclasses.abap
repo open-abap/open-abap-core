@@ -17,6 +17,7 @@ CLASS ltcl_deserialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
     METHODS basic_reference FOR TESTING RAISING cx_static_check.
     METHODS deserialize_to_ref FOR TESTING RAISING cx_static_check.
     METHODS deserialize_to_ref_nested FOR TESTING RAISING cx_static_check.
+    METHODS deserialize_to_esc FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -298,6 +299,36 @@ CLASS ltcl_deserialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = <any>
       exp = 'ABC' ).
+  ENDMETHOD.
+
+  METHOD deserialize_to_esc.
+    DATA lr_actual TYPE REF TO data.
+    DATA lv_json   TYPE string.
+
+    FIELD-SYMBOLS <any> TYPE any.
+
+    lv_json = '{"oUpdate":{"MS_ERROR-CLASSNAME":"hello"}}'.
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = lv_json
+      CHANGING
+        data = lr_actual ).
+
+    cl_abap_unit_assert=>assert_not_initial( lr_actual ).
+    ASSIGN lr_actual->* TO <any>.
+    cl_abap_unit_assert=>assert_subrc( ).
+    ASSIGN COMPONENT 'OUPDATE' OF STRUCTURE <any> TO <any>.
+    cl_abap_unit_assert=>assert_subrc( ).
+    ASSIGN <any>->* TO <any>.
+
+    ASSIGN COMPONENT 'MS_ERROR_CLASSNAME' OF STRUCTURE <any> TO <any>.
+    cl_abap_unit_assert=>assert_subrc( ).
+    ASSIGN <any>->* TO <any>.
+
+    " cl_abap_unit_assert=>assert_equals(
+    "   act = <any>
+    "   exp = 'hello' ).
   ENDMETHOD.
 
 ENDCLASS.
