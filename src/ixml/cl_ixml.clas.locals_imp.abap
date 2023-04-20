@@ -831,7 +831,7 @@ CLASS lcl_parser DEFINITION.
         istream  TYPE REF TO if_ixml_istream
         document TYPE REF TO if_ixml_document.
   PRIVATE SECTION.
-    CONSTANTS lc_regex_tag TYPE string VALUE '<\/?([\w:]+)( [\w:]+="[\w\.:\/#]+")*/?>'.
+    CONSTANTS lc_regex_tag TYPE string VALUE '<\/?([\w:]+)( [\w:]+="[\w\.:\-\/#]+")*/?>'.
     CONSTANTS lc_regex_attr TYPE string VALUE '([\w:]+)="([\w\.:\/]+)"'.
 
     DATA mi_istream  TYPE REF TO if_ixml_istream.
