@@ -232,7 +232,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           ENDIF.
           IF lines( lt_members ) > 0.
             LOOP AT lt_members INTO lv_member.
-              WRITE '@KERNEL console.dir("component: " + lv_member.get());'.
+              " WRITE '@KERNEL console.dir("component: " + lv_member.get());'.
               CLEAR ls_component.
               ls_component-name = to_upper( lv_member ).
               ls_component-type = cl_abap_refdescr=>get_ref_to_data( ).
@@ -243,13 +243,16 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           ELSE.
 * todo, handling array?
             lv_value = mo_parsed->value_string( prefix ).
-            WRITE '@KERNEL console.dir("value: " + lv_value.get());'.
+            " WRITE '@KERNEL console.dir("value: " + lv_value.get());'.
             IF lv_value CO '-0123456789'.
               CREATE DATA data TYPE i.
             ELSEIF lv_value = 'true' OR lv_value = 'false'.
               CREATE DATA data TYPE HANDLE cl_abap_typedescr=>describe_by_name( 'ABAP_BOOL' ).
             ELSE.
+              " WRITE '@KERNEL console.dir("create data string");'.
+*              WRITE '@KERNEL console.dir(data);'.
               CREATE DATA data TYPE HANDLE cl_abap_elemdescr=>get_string( ).
+*              WRITE '@KERNEL console.dir(data);'.
             ENDIF.
           ENDIF.
         ENDIF.
@@ -261,6 +264,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             pretty_name = pretty_name
           CHANGING
             data        = <any> ).
+*        WRITE '@KERNEL console.dir(data);'.
       WHEN OTHERS.
         ASSERT 1 = 'cl_json, unknown kind'.
     ENDCASE.
