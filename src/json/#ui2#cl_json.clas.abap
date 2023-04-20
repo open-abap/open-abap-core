@@ -251,7 +251,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             IF lv_value CO '-0123456789'.
               CREATE DATA data TYPE i.
             ELSEIF lv_value = 'true' OR lv_value = 'false'.
-              CREATE DATA data TYPE HANDLE cl_abap_typedescr=>describe_by_name( 'ABAP_BOOLEAN' ).
+              CREATE DATA data TYPE HANDLE cl_abap_typedescr=>describe_by_name( 'ABAP_BOOL' ).
             ELSE.
               CREATE DATA data TYPE HANDLE cl_abap_elemdescr=>get_string( ).
             ENDIF.
