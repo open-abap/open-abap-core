@@ -136,10 +136,14 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
         ENDLOOP.
         rv_xml = rv_xml && |</{ iv_name }>|.
       WHEN cl_abap_typedescr=>kind_elem.
-        rv_xml = rv_xml &&
-          |<{ iv_name }>| &&
-          iv_ref->* &&
-          |</{ iv_name }>|.
+        IF lo_type->type_kind = cl_abap_typedescr=>typekind_string AND iv_ref->* IS INITIAL.
+          rv_xml = rv_xml && |<{ iv_name }/>|.
+        ELSE.
+          rv_xml = rv_xml &&
+            |<{ iv_name }>| &&
+            iv_ref->* &&
+            |</{ iv_name }>|.
+        ENDIF.
       WHEN cl_abap_typedescr=>kind_table.
         ASSIGN iv_ref->* TO <table>.
         rv_xml = rv_xml && |<{ iv_name }>|.
