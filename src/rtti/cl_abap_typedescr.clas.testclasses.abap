@@ -386,7 +386,7 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD abap_bool_absolute.
-    DATA bool TYPE abap_bool.
+    DATA bool    TYPE abap_bool.
     DATA lo_type TYPE REF TO cl_abap_typedescr.
     lo_type = cl_abap_typedescr=>describe_by_data( bool ).
 * this is checked in ajson(which is used by abapGit)

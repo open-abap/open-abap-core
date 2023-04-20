@@ -15,6 +15,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS char5 FOR TESTING RAISING cx_static_check.
     METHODS hex2 FOR TESTING RAISING cx_static_check.
     METHODS reference_table FOR TESTING RAISING cx_static_check.
+    METHODS keep_absolute FOR TESTING RAISING cx_static_check.
 
     METHODS ref_test1 CHANGING foo TYPE REF TO data.
     METHODS ref_test2 FOR TESTING RAISING cx_static_check.
@@ -294,6 +295,20 @@ CLASS ltcl_test IMPLEMENTATION.
     APPEND ls_component TO lt_components.
     lo_struct = cl_abap_structdescr=>create( lt_components ).
     CREATE DATA data TYPE HANDLE lo_struct.
+  ENDMETHOD.
+
+  METHOD keep_absolute.
+    DATA lo_data  TYPE REF TO data.
+    DATA lo_descr TYPE REF TO cl_abap_datadescr.
+    FIELD-SYMBOLS <any> TYPE any.
+
+    lo_descr ?= cl_abap_typedescr=>describe_by_name( 'ABAP_BOOL' ).
+    CREATE DATA lo_data TYPE HANDLE lo_descr.
+    ASSIGN lo_data->* TO <any>.
+    lo_descr ?= cl_abap_typedescr=>describe_by_data( <any> ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_descr->absolute_name
+      exp = '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL' ).
   ENDMETHOD.
 
 ENDCLASS.
