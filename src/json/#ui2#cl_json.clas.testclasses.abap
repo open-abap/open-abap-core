@@ -16,6 +16,7 @@ CLASS ltcl_deserialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
     METHODS empty_reference2 FOR TESTING RAISING cx_static_check.
     METHODS basic_reference FOR TESTING RAISING cx_static_check.
     METHODS deserialize_to_ref FOR TESTING RAISING cx_static_check.
+    METHODS deserialize_to_ref_nested FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -268,6 +269,35 @@ CLASS ltcl_deserialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = <any>
       exp = 2 ).
+  ENDMETHOD.
+
+  METHOD deserialize_to_ref_nested.
+    DATA lr_actual TYPE REF TO data.
+    DATA lv_json   TYPE string.
+
+    FIELD-SYMBOLS <any> TYPE any.
+
+    lv_json = '{"oSystem":{"ID":"ABC"}}'.
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = lv_json
+      CHANGING
+        data = lr_actual ).
+
+    cl_abap_unit_assert=>assert_not_initial( lr_actual ).
+    ASSIGN lr_actual->* TO <any>.
+    cl_abap_unit_assert=>assert_subrc( ).
+    ASSIGN COMPONENT 'OSYSTEM' OF STRUCTURE <any> TO <any>.
+    cl_abap_unit_assert=>assert_subrc( ).
+    ASSIGN <any>->* TO <any>.
+    cl_abap_unit_assert=>assert_subrc( ).
+    ASSIGN COMPONENT 'ID' OF STRUCTURE <any> TO <any>.
+    cl_abap_unit_assert=>assert_subrc( ).
+    ASSIGN <any>->* TO <any>.
+    cl_abap_unit_assert=>assert_equals(
+      act = <any>
+      exp = 'ABC' ).
   ENDMETHOD.
 
 ENDCLASS.
