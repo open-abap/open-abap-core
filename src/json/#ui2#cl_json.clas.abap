@@ -223,15 +223,16 @@ CLASS /ui2/cl_json IMPLEMENTATION.
         ENDLOOP.
       WHEN cl_abap_typedescr=>kind_ref.
         IF data IS INITIAL.
+          prefix = mo_parsed->find_ignore_case( prefix ).
           lt_members = mo_parsed->members( prefix && '/' ).
 
+*          WRITE '@KERNEL console.dir(prefix.get());'.
           IF lines( lt_members ) = 0 AND prefix = ''.
-*            WRITE '@KERNEL console.dir("return");'.
             RETURN.
           ENDIF.
           IF lines( lt_members ) > 0.
             LOOP AT lt_members INTO lv_member.
-*              WRITE '@KERNEL console.dir(lv_member.get());'.
+              WRITE '@KERNEL console.dir("component: " + lv_member.get());'.
               CLEAR ls_component.
               ls_component-name = to_upper( lv_member ).
               ls_component-type = cl_abap_refdescr=>get_ref_to_data( ).
@@ -241,9 +242,8 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             CREATE DATA data TYPE HANDLE lo_struct.
           ELSE.
 * todo, handling array?
-*            WRITE '@KERNEL console.dir(this.mo_parsed.get().mt_data.array()[1].get());'.
-            prefix = mo_parsed->find_ignore_case( prefix ).
             lv_value = mo_parsed->value_string( prefix ).
+            WRITE '@KERNEL console.dir("value: " + lv_value.get());'.
             IF lv_value CO '-0123456789'.
               CREATE DATA data TYPE i.
             ELSEIF lv_value = 'true' OR lv_value = 'false'.
