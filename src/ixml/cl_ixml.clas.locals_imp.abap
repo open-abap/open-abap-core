@@ -243,10 +243,10 @@ CLASS lcl_node IMPLEMENTATION.
 
 * todo: take importing parameter DEPTH into account
     DATA li_iterator TYPE REF TO if_ixml_node_iterator.
-    DATA li_node TYPE REF TO if_ixml_node.
+    DATA li_node     TYPE REF TO if_ixml_node.
     DATA li_children TYPE REF TO if_ixml_node_list.
-    DATA lt_nodes TYPE STANDARD TABLE OF REF TO if_ixml_node WITH DEFAULT KEY.
-    DATA li_top LIKE LINE OF lt_nodes.
+    DATA lt_nodes    TYPE STANDARD TABLE OF REF TO if_ixml_node WITH DEFAULT KEY.
+    DATA li_top      LIKE LINE OF lt_nodes.
 
     APPEND me TO lt_nodes.
 
@@ -842,6 +842,7 @@ CLASS lcl_parser DEFINITION.
         iv_xml TYPE string
         is_match TYPE match_result.
 ENDCLASS.
+
 CLASS lcl_parser IMPLEMENTATION.
   METHOD constructor.
     mi_istream = istream.
