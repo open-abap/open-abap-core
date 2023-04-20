@@ -353,9 +353,9 @@ CLASS ltcl_deserialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_subrc( ).
     ASSIGN <any>->* TO <any>.
 
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = <any>
-    "   exp = abap_true ).
+    cl_abap_unit_assert=>assert_equals(
+      act = <any>
+      exp = abap_true ).
   ENDMETHOD.
 
 ENDCLASS.
