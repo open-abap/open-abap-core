@@ -249,22 +249,17 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             ELSEIF lv_value = 'true' OR lv_value = 'false'.
               CREATE DATA data TYPE HANDLE cl_abap_typedescr=>describe_by_name( 'ABAP_BOOL' ).
             ELSE.
-              " WRITE '@KERNEL console.dir("create data string");'.
-*              WRITE '@KERNEL console.dir(data);'.
               CREATE DATA data TYPE HANDLE cl_abap_elemdescr=>get_string( ).
-*              WRITE '@KERNEL console.dir(data);'.
             ENDIF.
           ENDIF.
         ENDIF.
         ASSIGN data->* TO <any>.
-*        WRITE '@KERNEL console.dir(data);'.
         _deserialize(
           EXPORTING
             prefix      = prefix
             pretty_name = pretty_name
           CHANGING
             data        = <any> ).
-*        WRITE '@KERNEL console.dir(data);'.
       WHEN OTHERS.
         ASSERT 1 = 'cl_json, unknown kind'.
     ENDCASE.
