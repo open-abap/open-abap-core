@@ -24,6 +24,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_attributes3 FOR TESTING RAISING cx_static_check.
     METHODS parse_value_whitespace FOR TESTING RAISING cx_static_check.
     METHODS parse_special FOR TESTING RAISING cx_static_check.
+    METHODS parse_hash FOR TESTING RAISING cx_static_check.
     METHODS create FOR TESTING RAISING cx_static_check.
     METHODS create_set_attributes FOR TESTING RAISING cx_static_check.
     METHODS parse_and_render FOR TESTING RAISING cx_static_check.
@@ -569,6 +570,23 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = li_element->get_value( )
       exp = |sap-icon://validate| ).
+
+  ENDMETHOD.
+
+  METHOD parse_hash.
+
+    DATA lv_xml     TYPE string.
+    DATA li_doc     TYPE REF TO if_ixml_document.
+    DATA li_element TYPE REF TO if_ixml_element.
+
+
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?><O_APP href="#o1"/>|.
+    li_doc = parse( lv_xml ).
+
+    li_element ?= li_doc->find_from_name_ns(
+      depth = 0
+      name = 'O_APP' ).
+    cl_abap_unit_assert=>assert_not_initial( li_element ).
 
   ENDMETHOD.
 
