@@ -18,6 +18,11 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
     METHODS ref_test1 CHANGING foo TYPE REF TO data.
     METHODS ref_test2 FOR TESTING RAISING cx_static_check.
+
+    METHODS method1 FOR TESTING.
+    METHODS method2 CHANGING data TYPE data.
+    METHODS method3 CHANGING data TYPE data.
+    METHODS method4 CHANGING data TYPE data.
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
@@ -235,6 +240,60 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = <any>
       exp = '' ).
+  ENDMETHOD.
+
+  METHOD method1.
+    DATA lr_actual TYPE REF TO data.
+    FIELD-SYMBOLS <any> TYPE any.
+
+    method2( CHANGING data = lr_actual ).
+
+    cl_abap_unit_assert=>assert_not_initial( lr_actual ).
+    ASSIGN lr_actual->* TO <any>.
+    cl_abap_unit_assert=>assert_subrc( ).
+    ASSIGN COMPONENT 'OSYSTEM' OF STRUCTURE <any> TO <any>.
+    cl_abap_unit_assert=>assert_subrc( ).
+    ASSIGN <any>->* TO <any>.
+    cl_abap_unit_assert=>assert_subrc( ).
+  ENDMETHOD.
+
+  METHOD method2.
+    DATA lt_components TYPE cl_abap_structdescr=>component_table.
+    DATA ls_component  LIKE LINE OF lt_components.
+    DATA lo_struct     TYPE REF TO cl_abap_structdescr.
+    FIELD-SYMBOLS <any> TYPE any.
+
+    CLEAR ls_component.
+    ls_component-name = 'OSYSTEM'.
+    ls_component-type = cl_abap_refdescr=>get_ref_to_data( ).
+    APPEND ls_component TO lt_components.
+    lo_struct = cl_abap_structdescr=>create( lt_components ).
+    CREATE DATA data TYPE HANDLE lo_struct.
+
+    ASSIGN data->* TO <any>.
+
+    method3( CHANGING data = <any> ).
+  ENDMETHOD.
+
+  METHOD method3.
+    FIELD-SYMBOLS <any> TYPE any.
+    ASSIGN COMPONENT 'OSYSTEM' OF STRUCTURE data TO <any>.
+
+    method4( CHANGING data = <any> ).
+  ENDMETHOD.
+
+  METHOD method4.
+    DATA lt_components TYPE cl_abap_structdescr=>component_table.
+    DATA ls_component  LIKE LINE OF lt_components.
+    DATA lo_struct     TYPE REF TO cl_abap_structdescr.
+    FIELD-SYMBOLS <any> TYPE any.
+
+    CLEAR ls_component.
+    ls_component-name = 'ID'.
+    ls_component-type = cl_abap_refdescr=>get_ref_to_data( ).
+    APPEND ls_component TO lt_components.
+    lo_struct = cl_abap_structdescr=>create( lt_components ).
+    CREATE DATA data TYPE HANDLE lo_struct.
   ENDMETHOD.
 
 ENDCLASS.
