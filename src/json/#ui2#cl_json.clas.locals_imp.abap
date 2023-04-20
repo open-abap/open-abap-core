@@ -86,7 +86,7 @@ CLASS lcl_parser DEFINITION.
         VALUE(rv_value) TYPE i.
     METHODS value_string
       IMPORTING
-        iv_path         TYPE string
+        iv_path             TYPE string
       RETURNING
         VALUE(rv_value) TYPE string.
     METHODS exists
@@ -99,6 +99,11 @@ CLASS lcl_parser DEFINITION.
         iv_path           TYPE string
       RETURNING
         VALUE(rt_members) TYPE string_table.
+    METHODS find_ignore_case
+      IMPORTING
+        iv_path        TYPE string
+      RETURNING
+        VALUE(rv_path) TYPE string.
   PRIVATE SECTION.
     TYPES: BEGIN OF ty_data,
          parent    TYPE string,
@@ -111,6 +116,16 @@ CLASS lcl_parser DEFINITION.
 ENDCLASS.
 
 CLASS lcl_parser IMPLEMENTATION.
+
+  METHOD find_ignore_case.
+    DATA ls_data LIKE LINE OF mt_data.
+    LOOP AT mt_data INTO ls_data.
+      IF to_upper( ls_data-full_name ) = to_upper( iv_path ).
+        rv_path = ls_data-full_name.
+        RETURN.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
 
   METHOD exists.
     READ TABLE mt_data WITH KEY full_name = iv_path TRANSPORTING NO FIELDS.
@@ -138,6 +153,7 @@ CLASS lcl_parser IMPLEMENTATION.
 
   METHOD value_string.
     DATA ls_data LIKE LINE OF mt_data.
+
     READ TABLE mt_data INTO ls_data WITH KEY full_name = iv_path.
     IF sy-subrc = 0.
       rv_value = ls_data-value.
