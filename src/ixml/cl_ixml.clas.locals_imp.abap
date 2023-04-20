@@ -836,10 +836,11 @@ CLASS lcl_parser DEFINITION.
 
     DATA mi_istream  TYPE REF TO if_ixml_istream.
     DATA mi_document TYPE REF TO if_ixml_document.
+
     METHODS parse_attributes
       IMPORTING
-        ii_node TYPE REF TO if_ixml_node
-        iv_xml TYPE string
+        ii_node  TYPE REF TO if_ixml_node
+        iv_xml   TYPE string
         is_match TYPE match_result.
 ENDCLASS.
 
@@ -855,16 +856,16 @@ CLASS lcl_parser IMPLEMENTATION.
 
   METHOD if_ixml_parser~parse.
 
-    DATA lv_xml TYPE string.
-    DATA lv_offset TYPE i.
-    DATA lv_value TYPE string.
-    DATA lv_name TYPE string.
+    DATA lv_xml       TYPE string.
+    DATA lv_offset    TYPE i.
+    DATA lv_value     TYPE string.
+    DATA lv_name      TYPE string.
     DATA lv_namespace TYPE string.
-    DATA ls_match TYPE match_result.
-    DATA ls_submatch LIKE LINE OF ls_match-submatches.
+    DATA ls_match     TYPE match_result.
+    DATA ls_submatch  LIKE LINE OF ls_match-submatches.
 
     DATA lo_parent TYPE REF TO lcl_node.
-    DATA lo_node TYPE REF TO lcl_node.
+    DATA lo_node   TYPE REF TO lcl_node.
 
 
     lo_parent ?= mi_document->get_root( ).
