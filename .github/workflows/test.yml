@@ -28,6 +28,6 @@ jobs:
     - uses: actions/setup-node@v3
       with:
         node-version: '16'
-    - run: docker run -p 80:80 kennethreitz/httpbin
+    - run: docker run -d 80:80 kennethreitz/httpbin
     - run: npm install
     - run: npm run integration
