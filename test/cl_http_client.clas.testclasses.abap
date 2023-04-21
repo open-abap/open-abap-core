@@ -1,6 +1,8 @@
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
+    METHODS get_http_bin_host RETURNING VALUE(rv_host) TYPE string.
+
     METHODS basic_get_https FOR TESTING RAISING cx_static_check.
     METHODS basic_get_http FOR TESTING RAISING cx_static_check.
     METHODS basic_post FOR TESTING RAISING cx_static_check.
@@ -23,6 +25,13 @@ ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
 
+  METHOD get_http_bin_host.
+    WRITE '@KERNEL rv_host.set(process.env.HTTP_BIN_HOST || "");'.
+    IF rv_host IS INITIAL.
+      rv_host = |https://httpbin.org|.
+    ENDIF.
+  ENDMETHOD.
+
   METHOD basic_get_https.
 
     DATA li_client TYPE REF TO if_http_client.
@@ -32,7 +41,7 @@ CLASS ltcl_test IMPLEMENTATION.
 
     cl_http_client=>create_by_url(
       EXPORTING
-        url    = 'https://httpbin.org/get'
+        url    = |{ get_http_bin_host( ) }/get|
         ssl_id = 'ANONYM'
       IMPORTING
         client = li_client ).
@@ -92,7 +101,7 @@ CLASS ltcl_test IMPLEMENTATION.
 
     cl_http_client=>create_by_url(
       EXPORTING
-        url    = 'https://httpbin.org/post'
+        url    = |{ get_http_bin_host( ) }/post|
         ssl_id = 'ANONYM'
       IMPORTING
         client = li_client ).
@@ -122,7 +131,7 @@ CLASS ltcl_test IMPLEMENTATION.
 
     cl_http_client=>create_by_url(
       EXPORTING
-        url    = 'https://httpbin.org/basic-auth/sdf/sdf'
+        url    = |{ get_http_bin_host( ) }/basic-auth/sdf/sdf|
         ssl_id = 'ANONYM'
       IMPORTING
         client = li_client ).
@@ -210,7 +219,7 @@ CLASS ltcl_test IMPLEMENTATION.
 
     cl_http_client=>create_by_url(
       EXPORTING
-        url    = 'https://httpbin.org/get'
+        url    = |{ get_http_bin_host( ) }/get|
         ssl_id = 'ANONYM'
       IMPORTING
         client = li_client ).
@@ -385,7 +394,7 @@ CLASS ltcl_test IMPLEMENTATION.
 
     cl_http_client=>create_by_url(
       EXPORTING
-        url    = 'https://httpbin.org/post'
+        url    = |{ get_http_bin_host( ) }/post|
         ssl_id = 'ANONYM'
       IMPORTING
         client = li_client ).
@@ -411,7 +420,7 @@ CLASS ltcl_test IMPLEMENTATION.
 
     cl_http_client=>create_by_url(
       EXPORTING
-        url    = 'https://httpbin.org/status/500'
+        url    = |{ get_http_bin_host( ) }/status/500|
         ssl_id = 'ANONYM'
       IMPORTING
         client = li_client ).
@@ -435,7 +444,7 @@ CLASS ltcl_test IMPLEMENTATION.
 
     cl_http_client=>create_by_url(
       EXPORTING
-        url    = 'https://httpbin.org/gzip'
+        url    = |{ get_http_bin_host( ) }/gzip|
         ssl_id = 'ANONYM'
       IMPORTING
         client = li_client ).
@@ -460,7 +469,7 @@ CLASS ltcl_test IMPLEMENTATION.
 
     cl_http_client=>create_by_url(
       EXPORTING
-        url    = 'https://httpbin.org/headers'
+        url    = |{ get_http_bin_host( ) }/headers|
         ssl_id = 'ANONYM'
       IMPORTING
         client = li_client ).
