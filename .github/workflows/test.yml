@@ -1,9 +1,10 @@
 name: test
 
 on:
-  push:
   pull_request:
-    types: [opened]
+
+permissions:
+  contents: read
 
 jobs:
   unit:
