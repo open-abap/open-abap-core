@@ -1,9 +1,10 @@
 name: test
 
 on:
-  push:
   pull_request:
-    types: [opened]
+
+permissions:
+  contents: read
 
 jobs:
   unit:
@@ -20,10 +21,13 @@ jobs:
     needs: unit
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    env:
+      HTTP_BIN_HOST: http://localhost:8080
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
       with:
         node-version: '16'
+    - run: docker run -d -p8080:80 kennethreitz/httpbin
     - run: npm install
     - run: npm run integration
