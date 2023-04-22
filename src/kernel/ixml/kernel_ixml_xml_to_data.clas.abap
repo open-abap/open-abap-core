@@ -89,6 +89,7 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
         ENDDO.
       WHEN OTHERS.
         WRITE '@KERNEL console.dir(lo_type.get().kind.get());'.
+        ASSERT 1 = 'todo'.
     ENDCASE.
 
   ENDMETHOD.

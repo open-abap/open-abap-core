@@ -354,7 +354,6 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 * convert to internal name,
             REPLACE FIRST OCCURRENCE OF '\CLASS-POOL=' IN lv_rtti_name WITH 'CLAS-'.
             REPLACE FIRST OCCURRENCE OF '\CLASS=' IN lv_rtti_name WITH '-'.
-            WRITE '@KERNEL console.dir(lv_rtti_name);'.
             lo_ref->referenced = describe_by_name( lv_rtti_name ).
           ELSE.
             WRITE '@KERNEL lv_name.set(p_data.qualifiedName || "");'.
