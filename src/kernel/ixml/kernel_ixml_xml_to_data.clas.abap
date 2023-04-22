@@ -98,10 +98,15 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
           lv_internal = kernel_internal_name=>rtti_to_internal( lv_rtti_name ).
           WRITE '@KERNEL fs_any_.pointer.value = new abap.Classes[lv_internal.get()]();'.
 
-          lo_clasdescr ?= cl_abap_typedescr=>describe_by_object_ref( <any> ).
-          LOOP AT lo_clasdescr->attributes INTO ls_attribute.
-            WRITE '@KERNEL console.dir(ls_attribute);'.
-          ENDLOOP.
+          li_child = ii_node->get_attributes( )->get_named_item_ns( 'href' ).
+          WRITE '@KERNEL console.dir(li_child.get());'.
+          " li_child = ii_node->get_attributes( )->get_named_item_ns( 'href' ).
+          " WRITE '@KERNEL console.dir(ii_node.get());'.
+
+          " lo_clasdescr ?= cl_abap_typedescr=>describe_by_object_ref( <any> ).
+          " LOOP AT lo_clasdescr->attributes INTO ls_attribute.
+          "   WRITE '@KERNEL console.dir(ls_attribute);'.
+          " ENDLOOP.
 
           ASSERT 1 = 'todo_ref1'.
         ELSE.
