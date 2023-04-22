@@ -39,7 +39,6 @@ CLASS kernel_ixml_json_to_data IMPLEMENTATION.
 
   METHOD build.
 * assumptions: the top level element is an object containing iv_name
-
     DATA li_first    TYPE REF TO if_ixml_node.
     DATA li_node     TYPE REF TO if_ixml_node.
     DATA lv_name     TYPE string.
@@ -125,6 +124,7 @@ CLASS kernel_ixml_json_to_data IMPLEMENTATION.
         ENDDO.
       WHEN OTHERS.
         WRITE '@KERNEL console.dir(lo_type.get().kind.get());'.
+        ASSERT 1 = 'todo'.
     ENDCASE.
 
   ENDMETHOD.

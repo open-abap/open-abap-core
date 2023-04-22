@@ -53,6 +53,7 @@ CLASS lcl_heap IMPLEMENTATION.
     DATA ls_attribute    TYPE abap_attrdescr.
     DATA lo_data_to_xml  TYPE REF TO lcl_data_to_xml.
     DATA lv_ref          TYPE REF TO data.
+    DATA lv_internal     TYPE string.
 
     FIELD-SYMBOLS <any> TYPE REF TO any.
 
@@ -67,12 +68,14 @@ CLASS lcl_heap IMPLEMENTATION.
       ENDIF.
     ENDLOOP.
 
+    WRITE '@KERNEL lv_internal.set(iv_ref.get().constructor.INTERNAL_NAME);'.
+
     IF is_serializable = abap_true.
       CREATE OBJECT lo_data_to_xml
         EXPORTING
           io_heap = me.
       mv_data = mv_data &&
-        |<prg:{ lv_name } xmlns:prg="http://www.sap.com/abapxml/classes/class-pool/TODO" id="o{ mv_counter }">| &&
+        |<prg:{ lv_name } xmlns:prg="http://www.sap.com/abapxml/classes/class-pool/TODO" id="o{ mv_counter }" internalName="{ lv_internal }">| &&
         |<local.{ lv_name }>|.
       LOOP AT lo_descr->attributes INTO ls_attribute.
         ASSIGN iv_ref->(ls_attribute-name) TO <any>.

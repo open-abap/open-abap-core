@@ -832,7 +832,7 @@ CLASS lcl_parser DEFINITION.
         document TYPE REF TO if_ixml_document.
   PRIVATE SECTION.
     CONSTANTS lc_regex_tag TYPE string VALUE '<\/?([\w:\.]+)( [\w:]+="[\w\.:\-\/#]+")*/?>'.
-    CONSTANTS lc_regex_attr TYPE string VALUE '([\w:]+)="([\w\.:\/]+)"'.
+    CONSTANTS lc_regex_attr TYPE string VALUE '([\w:]+)="([\w\.:\-\/#]+)"'.
 
     DATA mi_istream  TYPE REF TO if_ixml_istream.
     DATA mi_document TYPE REF TO if_ixml_document.
