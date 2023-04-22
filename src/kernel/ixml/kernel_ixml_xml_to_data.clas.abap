@@ -150,7 +150,7 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
           "   WRITE '@KERNEL console.dir(ls_attribute);'.
           " ENDLOOP.
 
-          ASSERT 1 = 'todo_ref1'.
+          " ASSERT 1 = 'todo_ref1'.
         ELSE.
           ASSERT 1 = 'todo_ref2'.
         ENDIF.

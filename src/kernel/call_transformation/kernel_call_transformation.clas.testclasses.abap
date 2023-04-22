@@ -466,7 +466,7 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
 
     CLEAR lo.
 
-    WRITE '@KERNEL console.dir(lv_xml);'.
+    " WRITE '@KERNEL console.dir(lv_xml);'.
 
     CALL TRANSFORMATION id
        SOURCE XML lv_xml
