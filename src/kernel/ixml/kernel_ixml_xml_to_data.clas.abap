@@ -124,7 +124,7 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
           CREATE DATA lv_ref LIKE LINE OF <tab>.
           ASSIGN lv_ref->* TO <any>.
           traverse( ii_node = li_child
-                  iv_ref  = lv_ref ).
+                    iv_ref  = lv_ref ).
           INSERT <any> INTO TABLE <tab>.
         ENDDO.
       WHEN cl_abap_typedescr=>kind_ref.
@@ -150,9 +150,10 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
             WRITE '@KERNEL console.dir(ls_attribute.get().name.get());'.
             ASSIGN <any>->(ls_attribute-name) TO <field>.
             ASSERT sy-subrc = 0.
+            GET REFERENCE OF <field> INTO lv_ref.
+            traverse( ii_node = li_child
+                      iv_ref  = lv_ref ).
           ENDLOOP.
-
-          " ASSERT 1 = 'todo_ref1'.
         ELSE.
           ASSERT 1 = 'todo_ref2'.
         ENDIF.
