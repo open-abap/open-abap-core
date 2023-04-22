@@ -11,6 +11,19 @@ ENDCLASS.
 CLASS lcl_attribute IMPLEMENTATION.
 ENDCLASS.
 
+INTERFACE lif_intf.
+  INTERFACES if_serializable_object.
+  DATA id TYPE string.
+ENDINTERFACE.
+
+CLASS lcl_impl DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_intf.
+    DATA bar TYPE i.
+ENDCLASS.
+CLASS lcl_impl IMPLEMENTATION.
+ENDCLASS.
+
 CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
@@ -42,6 +55,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS empty_obj_in_structure FOR TESTING RAISING cx_static_check.
     METHODS obj_to_xml_to_obj FOR TESTING RAISING cx_static_check.
     METHODS obj_to_xml_to_obj_nested FOR TESTING RAISING cx_static_check.
+    METHODS obj_to_xml_to_obj_intf FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
@@ -504,6 +518,40 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
 
     cl_abap_unit_assert=>assert_equals(
       act = nested-lo->foo
+      exp = 5 ).
+
+  ENDMETHOD.
+
+  METHOD obj_to_xml_to_obj_intf.
+
+    DATA: BEGIN OF nested,
+            foo TYPE i,
+            lo  TYPE REF TO lif_intf,
+          END OF nested.
+    DATA lv_xml TYPE string.
+    DATA ref TYPE REF TO lcl_impl.
+
+    CREATE OBJECT ref.
+    ref->bar = 5.
+    nested-lo = ref.
+
+    CALL TRANSFORMATION id
+      SOURCE data = nested
+      RESULT XML lv_xml.
+
+    CLEAR nested.
+    CLEAR ref.
+
+    CALL TRANSFORMATION id
+      SOURCE XML lv_xml
+      RESULT data = nested.
+
+    cl_abap_unit_assert=>assert_not_initial( nested-lo ).
+
+    ref ?= nested-lo.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ref->bar
       exp = 5 ).
 
   ENDMETHOD.

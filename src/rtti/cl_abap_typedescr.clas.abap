@@ -349,8 +349,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
           WRITE '@KERNEL lv_rtti_name.set(p_data.RTTIName || "");'.
           IF lv_rtti_name CP '\CLASS-POOL=*'.
 * convert to internal name,
-            REPLACE FIRST OCCURRENCE OF '\CLASS-POOL=' IN lv_rtti_name WITH 'CLAS-'.
-            REPLACE FIRST OCCURRENCE OF '\CLASS=' IN lv_rtti_name WITH '-'.
+            lv_rtti_name = kernel_internal_name=>rtti_to_internal( lv_rtti_name ).
             lo_ref->referenced = describe_by_name( lv_rtti_name ).
           ELSE.
             WRITE '@KERNEL lv_name.set(p_data.qualifiedName || "");'.
