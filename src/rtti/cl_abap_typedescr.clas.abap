@@ -5,6 +5,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
       describe_by_data
         IMPORTING p_data TYPE any
         RETURNING VALUE(type) TYPE REF TO cl_abap_typedescr.
+
     CLASS-METHODS
       describe_by_name
         IMPORTING
@@ -13,6 +14,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
           VALUE(type) TYPE REF TO cl_abap_typedescr
         EXCEPTIONS
           type_not_found.
+
     CLASS-METHODS
       describe_by_data_ref
         IMPORTING p_data_ref TYPE REF TO data
@@ -30,10 +32,12 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     METHODS get_ddic_header
       RETURNING
         VALUE(p_header) TYPE abap_bool. " hmm, todo
+
     METHODS
       get_relative_name
         RETURNING
           VALUE(name) TYPE string.
+
     METHODS
       is_ddic_type
         RETURNING
@@ -143,7 +147,8 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     DATA oo_type     TYPE string.
     DATA lv_any      TYPE string.
 
-    IF p_name CA '-'.
+* note, p_name might be internal name, so check and skip these,
+    IF p_name CA '-' AND p_name NP 'CLAS-*' AND p_name NP 'PROG-*'.
       type = describe_by_dashes( p_name ).
       RETURN.
     ENDIF.
@@ -168,7 +173,14 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->type_kind = typekind_class.
         type->kind = kind_class.
         type->relative_name = to_upper( p_name ).
-        type->absolute_name = '\CLASS=' && to_upper( p_name ).
+        IF p_name CP 'CLAS-*'.
+          type->absolute_name = p_name.
+          REPLACE FIRST OCCURRENCE OF 'CLAS-' IN type->absolute_name WITH '\CLASS#POOL='.
+          REPLACE FIRST OCCURRENCE OF '-' IN type->absolute_name WITH '\CLASS='.
+          REPLACE FIRST OCCURRENCE OF '#' IN type->absolute_name WITH '-'.
+        ELSE.
+          type->absolute_name = '\CLASS=' && to_upper( p_name ).
+        ENDIF.
         objectdescr ?= type.
         objectdescr->mv_object_name = to_upper( p_name ). " todo, this should give syntax error, as they are not friends
         objectdescr->mv_object_type = oo_type. " todo, this should give syntax error, as they are not friends
@@ -237,6 +249,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     DATA lv_name      TYPE string.
     DATA lv_prefix    TYPE string.
     DATA lv_qualified TYPE string.
+    DATA lv_rtti_name TYPE string.
 
     WRITE '@KERNEL lv_name.set(p_data.constructor.name);'.
     WRITE '@KERNEL lv_length.set(p_data.getLength ? p_data.getLength() : 0);'.
@@ -336,8 +349,17 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         lo_ref ?= type.
         IF p_data IS INITIAL.
 * note: using the name doesnt work for local classes
-          WRITE '@KERNEL lv_name.set(p_data.qualifiedName || "");'.
-          lo_ref->referenced = describe_by_name( lv_name ).
+          WRITE '@KERNEL lv_rtti_name.set(p_data.RTTIName || "");'.
+          IF lv_rtti_name CP '\CLASS-POOL=*'.
+* convert to internal name,
+            REPLACE FIRST OCCURRENCE OF '\CLASS-POOL=' IN lv_rtti_name WITH 'CLAS-'.
+            REPLACE FIRST OCCURRENCE OF '\CLASS=' IN lv_rtti_name WITH '-'.
+            WRITE '@KERNEL console.dir(lv_rtti_name);'.
+            lo_ref->referenced = describe_by_name( lv_rtti_name ).
+          ELSE.
+            WRITE '@KERNEL lv_name.set(p_data.qualifiedName || "");'.
+            lo_ref->referenced = describe_by_name( lv_name ).
+          ENDIF.
         ELSE.
           lo_ref->referenced = describe_by_object_ref( p_data ).
         ENDIF.

@@ -1,3 +1,8 @@
+CLASS lcl_test DEFINITION.
+ENDCLASS.
+CLASS lcl_test IMPLEMENTATION.
+ENDCLASS.
+
 INTERFACE lif_test_types.
   TYPES element TYPE string.
   TYPES: BEGIN OF structure,
@@ -47,6 +52,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS get_relative_name_table FOR TESTING.
     METHODS describe_by_object_ref FOR TESTING.
     METHODS describe_by_object_ref2 FOR TESTING.
+    METHODS describe_by_object_empty FOR TESTING.
     METHODS describe_by_data_ref_str FOR TESTING.
 
     METHODS is_ddic_type_true1 FOR TESTING.
@@ -82,6 +88,17 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = descr->absolute_name
       exp = '\CLASS=CL_IXML' ).
+  ENDMETHOD.
+
+  METHOD describe_by_object_empty.
+    DATA ref TYPE REF TO lcl_test.
+    DATA refdescr TYPE REF TO cl_abap_refdescr.
+    DATA referenced TYPE REF TO cl_abap_typedescr.
+    refdescr ?= cl_abap_typedescr=>describe_by_data( ref ).
+    referenced = refdescr->get_referenced_type( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = referenced->absolute_name
+      exp = '\CLASS-POOL=CL_ABAP_TYPEDESCR\CLASS=LCL_TEST' ).
   ENDMETHOD.
 
   METHOD is_ddic_type_true2.
