@@ -40,6 +40,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS empty_object_to_xml FOR TESTING RAISING cx_static_check.
     METHODS attr_object_to_xml FOR TESTING RAISING cx_static_check.
     METHODS empty_obj_in_structure FOR TESTING RAISING cx_static_check.
+    METHODS obj_to_xml_to_obj FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
@@ -252,7 +253,7 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
 
   METHOD empty_input.
     DATA ls_message TYPE i.
-    DATA lv_input TYPE string.
+    DATA lv_input   TYPE string.
     lv_input = ''.
     TRY.
         CALL TRANSFORMATION id SOURCE XML lv_input RESULT data = ls_message.
@@ -262,7 +263,7 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
 
   METHOD invalid_input.
     DATA ls_message TYPE i.
-    DATA lv_json TYPE string.
+    DATA lv_json    TYPE string.
     lv_json = 'invalid'.
     TRY.
         CALL TRANSFORMATION id SOURCE XML lv_json RESULT data = ls_message.
@@ -304,9 +305,9 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     DATA li_version        TYPE REF TO if_ixml_node.
     DATA li_parser         TYPE REF TO if_ixml_parser.
     DATA lv_xml            TYPE string.
-    DATA mi_ixml     TYPE REF TO if_ixml.
-    DATA mi_xml_doc  TYPE REF TO if_ixml_document.
-    DATA lt_rtab  TYPE abap_trans_resbind_tab.
+    DATA mi_ixml           TYPE REF TO if_ixml.
+    DATA mi_xml_doc        TYPE REF TO if_ixml_document.
+    DATA lt_rtab           TYPE abap_trans_resbind_tab.
     FIELD-SYMBOLS <ls_rtab> LIKE LINE OF lt_rtab.
 
     DATA: BEGIN OF ls_data,
@@ -448,6 +449,30 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     cl_abap_unit_assert=>assert_text_matches(
       pattern = |<DATA><BAR/></DATA>|
       text    = lv_xml ).
+
+  ENDMETHOD.
+
+  METHOD obj_to_xml_to_obj.
+
+    DATA lo     TYPE REF TO lcl_attribute.
+    DATA lv_xml TYPE string.
+
+    CREATE OBJECT lo.
+    lo->foo = 5.
+
+    CALL TRANSFORMATION id
+       SOURCE data = lo
+       RESULT XML lv_xml.
+
+    CLEAR lo.
+
+    CALL TRANSFORMATION id
+       SOURCE XML lv_xml
+       RESULT data = lo.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo->foo
+      exp = 5 ).
 
   ENDMETHOD.
 
