@@ -174,10 +174,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->kind = kind_class.
         type->relative_name = to_upper( p_name ).
         IF p_name CP 'CLAS-*'.
-          type->absolute_name = p_name.
-          REPLACE FIRST OCCURRENCE OF 'CLAS-' IN type->absolute_name WITH '\CLASS#POOL='.
-          REPLACE FIRST OCCURRENCE OF '-' IN type->absolute_name WITH '\CLASS='.
-          REPLACE FIRST OCCURRENCE OF '#' IN type->absolute_name WITH '-'.
+          type->absolute_name = kernel_internal_name=>internal_to_rtti( p_name ).
         ELSE.
           type->absolute_name = '\CLASS=' && to_upper( p_name ).
         ENDIF.

@@ -16,9 +16,9 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
 
   METHOD build.
 
-    DATA li_first TYPE REF TO if_ixml_element.
-    DATA li_node TYPE REF TO if_ixml_node.
-    DATA lv_name TYPE string.
+    DATA li_first    TYPE REF TO if_ixml_element.
+    DATA li_node     TYPE REF TO if_ixml_node.
+    DATA lv_name     TYPE string.
     DATA li_iterator TYPE REF TO if_ixml_node_iterator.
 
     li_first ?= ii_doc->get_root( )->get_first_child( ).
@@ -39,11 +39,15 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
 
   METHOD traverse.
 
-    DATA lo_type     TYPE REF TO cl_abap_typedescr.
-    DATA li_child    TYPE REF TO if_ixml_node.
-    DATA lv_name     TYPE string.
-    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
-    DATA lv_ref      TYPE REF TO data.
+    DATA lo_type      TYPE REF TO cl_abap_typedescr.
+    DATA lo_clasdescr TYPE REF TO cl_abap_classdescr.
+    DATA li_child     TYPE REF TO if_ixml_node.
+    DATA lv_name      TYPE string.
+    DATA li_iterator  TYPE REF TO if_ixml_node_iterator.
+    DATA lv_ref       TYPE REF TO data.
+    DATA lv_rtti_name TYPE string.
+    DATA lv_internal  TYPE string.
+    DATA ls_attribute TYPE abap_attrdescr.
 
     FIELD-SYMBOLS <any>   TYPE any.
     FIELD-SYMBOLS <field> TYPE any.
@@ -87,6 +91,22 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
                   iv_ref  = lv_ref ).
           INSERT <any> INTO TABLE <tab>.
         ENDDO.
+      WHEN cl_abap_typedescr=>kind_ref.
+        ASSIGN iv_ref->* TO <any>.
+        IF <any> IS INITIAL.
+          WRITE '@KERNEL lv_rtti_name.set(fs_any_.getPointer().RTTIName);'.
+          lv_internal = kernel_internal_name=>rtti_to_internal( lv_rtti_name ).
+          WRITE '@KERNEL fs_any_.pointer.value = new abap.Classes[lv_internal.get()]();'.
+
+          lo_clasdescr ?= cl_abap_typedescr=>describe_by_object_ref( <any> ).
+          LOOP AT lo_clasdescr->attributes INTO ls_attribute.
+            WRITE '@KERNEL console.dir(ls_attribute);'.
+          ENDLOOP.
+
+          ASSERT 1 = 'todo_ref1'.
+        ELSE.
+          ASSERT 1 = 'todo_ref2'.
+        ENDIF.
       WHEN OTHERS.
         WRITE '@KERNEL console.dir(lo_type.get().kind.get());'.
         ASSERT 1 = 'todo'.
