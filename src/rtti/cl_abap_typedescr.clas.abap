@@ -17,10 +17,16 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
       describe_by_data_ref
         IMPORTING p_data_ref TYPE REF TO data
         RETURNING VALUE(type) TYPE REF TO cl_abap_typedescr.
+
     CLASS-METHODS
       describe_by_object_ref
-        IMPORTING p_object_ref TYPE REF TO object
-        RETURNING VALUE(p_descr_ref) TYPE REF TO cl_abap_typedescr.
+        IMPORTING
+          p_object_ref TYPE REF TO object
+        RETURNING
+          VALUE(p_descr_ref) TYPE REF TO cl_abap_typedescr
+        EXCEPTIONS
+          reference_is_initial.
+
     METHODS get_ddic_header
       RETURNING
         VALUE(p_header) TYPE abap_bool. " hmm, todo
@@ -198,6 +204,10 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     DATA lv_name   TYPE string.
     DATA lo_cdescr TYPE REF TO cl_abap_classdescr.
     DATA lv_any    TYPE string.
+
+    IF p_object_ref IS INITIAL.
+      RAISE reference_is_initial.
+    ENDIF.
 
     WRITE '@KERNEL lv_any = p_object_ref.get().constructor;'.
 
