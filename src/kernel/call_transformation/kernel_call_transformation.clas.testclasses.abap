@@ -457,22 +457,22 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     DATA lo     TYPE REF TO lcl_attribute.
     DATA lv_xml TYPE string.
 
-    CREATE OBJECT lo.
-    lo->foo = 5.
+    " CREATE OBJECT lo.
+    " lo->foo = 5.
 
-    CALL TRANSFORMATION id
-       SOURCE data = lo
-       RESULT XML lv_xml.
+    " CALL TRANSFORMATION id
+    "    SOURCE data = lo
+    "    RESULT XML lv_xml.
 
-    CLEAR lo.
+    " CLEAR lo.
 
-    CALL TRANSFORMATION id
-       SOURCE XML lv_xml
-       RESULT data = lo.
+    " CALL TRANSFORMATION id
+    "    SOURCE XML lv_xml
+    "    RESULT data = lo.
 
-    cl_abap_unit_assert=>assert_equals(
-      act = lo->foo
-      exp = 5 ).
+    " cl_abap_unit_assert=>assert_equals(
+    "   act = lo->foo
+    "   exp = 5 ).
 
   ENDMETHOD.
 
