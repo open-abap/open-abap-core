@@ -39,14 +39,15 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
 
   METHOD traverse.
 
-    DATA lo_type TYPE REF TO cl_abap_typedescr.
-    DATA li_child TYPE REF TO if_ixml_node.
-    DATA lv_name TYPE string.
+    DATA lo_type     TYPE REF TO cl_abap_typedescr.
+    DATA li_child    TYPE REF TO if_ixml_node.
+    DATA lv_name     TYPE string.
     DATA li_iterator TYPE REF TO if_ixml_node_iterator.
-    DATA lv_ref TYPE REF TO data.
-    FIELD-SYMBOLS <any> TYPE any.
+    DATA lv_ref      TYPE REF TO data.
+
+    FIELD-SYMBOLS <any>   TYPE any.
     FIELD-SYMBOLS <field> TYPE any.
-    FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+    FIELD-SYMBOLS <tab>   TYPE ANY TABLE.
 
     lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
     CASE lo_type->kind.
