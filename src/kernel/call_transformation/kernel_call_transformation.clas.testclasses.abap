@@ -24,6 +24,15 @@ ENDCLASS.
 CLASS lcl_impl IMPLEMENTATION.
 ENDCLASS.
 
+CLASS lcl_multi DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_serializable_object.
+    DATA foo TYPE i.
+    DATA bar TYPE i.
+ENDCLASS.
+CLASS lcl_multi IMPLEMENTATION.
+ENDCLASS.
+
 CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
@@ -56,6 +65,8 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS obj_to_xml_to_obj FOR TESTING RAISING cx_static_check.
     METHODS obj_to_xml_to_obj_nested FOR TESTING RAISING cx_static_check.
     METHODS obj_to_xml_to_obj_intf FOR TESTING RAISING cx_static_check.
+    METHODS structure_and_field FOR TESTING RAISING cx_static_check.
+    METHODS obj_to_xml_multi FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
@@ -533,11 +544,16 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
 
     CREATE OBJECT ref.
     ref->bar = 5.
+    ref->lif_intf~id = 'moo'.
     nested-lo = ref.
 
     CALL TRANSFORMATION id
       SOURCE data = nested
       RESULT XML lv_xml.
+
+    cl_abap_unit_assert=>assert_char_cp(
+      exp = |*<LIF_INTF.ID>moo</LIF_INTF.ID>*|
+      act = lv_xml ).
 
     CLEAR nested.
     CLEAR ref.
@@ -554,6 +570,78 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
       act = ref->bar
       exp = 5 ).
 
+    cl_abap_unit_assert=>assert_equals(
+      act = ref->lif_intf~id
+      exp = 'moo' ).
+
+  ENDMETHOD.
+
+  METHOD structure_and_field.
+
+    DATA: BEGIN OF nested,
+            BEGIN OF empty,
+              blah TYPE string,
+            END OF empty,
+            view TYPE string,
+            BEGIN OF home,
+              is_init TYPE abap_bool,
+              btn_text TYPE string,
+            END OF home,
+            after1 TYPE string,
+            after2 TYPE string,
+          END OF nested.
+    DATA lv_xml TYPE string.
+
+    nested-view = 'hello'.
+    nested-home-is_init = abap_true.
+    nested-after1 = 'wor'.
+    nested-after2 = 'ld'.
+
+    CALL TRANSFORMATION id
+      SOURCE data = nested
+      RESULT XML lv_xml.
+
+    CLEAR nested.
+
+    CALL TRANSFORMATION id
+      SOURCE XML lv_xml
+      RESULT data = nested.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = nested-after2
+      exp = 'ld' ).
+
+  ENDMETHOD.
+
+  METHOD obj_to_xml_multi.
+    DATA lo     TYPE REF TO lcl_multi.
+    DATA lv_xml TYPE string.
+
+    CREATE OBJECT lo.
+    lo->foo = 1.
+    lo->bar = 2.
+
+    CALL TRANSFORMATION id
+      SOURCE data = lo
+      RESULT XML lv_xml.
+
+    CLEAR lo.
+
+    CALL TRANSFORMATION id
+      SOURCE XML lv_xml
+      RESULT data = lo.
+
+    cl_abap_unit_assert=>assert_not_initial( lo ).
+
+*    WRITE '@KERNEL console.dir(lo);'.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo->foo
+      exp = 1 ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo->bar
+      exp = 2 ).
   ENDMETHOD.
 
 ENDCLASS.

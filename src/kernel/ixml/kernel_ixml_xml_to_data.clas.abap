@@ -77,6 +77,7 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
     DATA lo_type      TYPE REF TO cl_abap_typedescr.
     DATA lo_clasdescr TYPE REF TO cl_abap_classdescr.
     DATA li_child     TYPE REF TO if_ixml_node.
+    DATA li_heap      TYPE REF TO if_ixml_node.
     DATA lv_name      TYPE string.
     DATA li_iterator  TYPE REF TO if_ixml_node_iterator.
     DATA lv_ref       TYPE REF TO data.
@@ -136,8 +137,8 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
 
           lv_value = ii_node->get_attributes( )->get_named_item_ns( 'href' )->get_value( ).
           ASSERT lv_value IS NOT INITIAL.
-          li_child = find_href_in_heap( lv_value ).
-          lv_value = li_child->get_attributes( )->get_named_item_ns( 'internalName' )->get_value( ).
+          li_heap = find_href_in_heap( lv_value ).
+          lv_value = li_heap->get_attributes( )->get_named_item_ns( 'internalName' )->get_value( ).
           ASSERT lv_value IS NOT INITIAL.
 *          WRITE '@KERNEL console.dir(lv_value);'.
           WRITE '@KERNEL fs_any_.pointer.value = new abap.Classes[lv_value.get()]();'.
@@ -145,15 +146,33 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
           " li_child = ii_node->get_attributes( )->get_named_item_ns( 'href' ).
           " WRITE '@KERNEL console.dir(ii_node.get());'.
 
-          lo_clasdescr ?= cl_abap_typedescr=>describe_by_object_ref( <any> ).
-          LOOP AT lo_clasdescr->attributes INTO ls_attribute.
-*            WRITE '@KERNEL console.dir(ls_attribute.get().name.get());'.
-            ASSIGN <any>->(ls_attribute-name) TO <field>.
-            ASSERT sy-subrc = 0.
-            GET REFERENCE OF <field> INTO lv_ref.
-            traverse( ii_node = li_child
-                      iv_ref  = lv_ref ).
-          ENDLOOP.
+          li_iterator = li_heap->get_first_child( )->get_children( )->create_iterator( ).
+          DO.
+            li_child = li_iterator->get_next( ).
+            IF li_child IS INITIAL.
+              EXIT. " current loop
+            ENDIF.
+            lv_name = li_child->get_name( ).
+            REPLACE FIRST OCCURRENCE OF '.' IN lv_name WITH '~'.
+
+            ASSIGN <any>->(lv_name) TO <field>.
+            IF sy-subrc = 0.
+              GET REFERENCE OF <field> INTO lv_ref.
+              traverse( ii_node = li_child
+                        iv_ref  = lv_ref ).
+            ENDIF.
+            WRITE '@KERNEL console.dir(lv_name);'.
+          ENDDO.
+
+"           lo_clasdescr ?= cl_abap_typedescr=>describe_by_object_ref( <any> ).
+"           LOOP AT lo_clasdescr->attributes INTO ls_attribute.
+" *            WRITE '@KERNEL console.dir(ls_attribute.get().name.get());'.
+"             ASSIGN <any>->(ls_attribute-name) TO <field>.
+"             ASSERT sy-subrc = 0.
+"             GET REFERENCE OF <field> INTO lv_ref.
+"             traverse( ii_node = li_heap->get_first_child( )
+"                       iv_ref  = lv_ref ).
+"           ENDLOOP.
         ELSE.
           ASSERT 1 = 'todo_ref2'.
         ENDIF.

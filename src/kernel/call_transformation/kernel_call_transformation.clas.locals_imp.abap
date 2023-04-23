@@ -80,6 +80,7 @@ CLASS lcl_heap IMPLEMENTATION.
       LOOP AT lo_descr->attributes INTO ls_attribute.
         ASSIGN iv_ref->(ls_attribute-name) TO <any>.
         ASSERT sy-subrc = 0.
+        REPLACE FIRST OCCURRENCE OF '~' IN ls_attribute-name WITH '.'.
         GET REFERENCE OF <any> INTO lv_ref.
         mv_data = mv_data && lo_data_to_xml->run(
           iv_name = ls_attribute-name
