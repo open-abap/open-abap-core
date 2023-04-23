@@ -56,6 +56,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS obj_to_xml_to_obj FOR TESTING RAISING cx_static_check.
     METHODS obj_to_xml_to_obj_nested FOR TESTING RAISING cx_static_check.
     METHODS obj_to_xml_to_obj_intf FOR TESTING RAISING cx_static_check.
+    METHODS structure_and_field FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
@@ -553,6 +554,40 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = ref->bar
       exp = 5 ).
+
+  ENDMETHOD.
+
+  METHOD structure_and_field.
+
+    DATA: BEGIN OF nested,
+            view TYPE string,
+            BEGIN OF home,
+              is_init TYPE abap_bool,
+              btn_text TYPE string,
+            END OF home,
+            after1 TYPE string,
+            after2 TYPE string,
+          END OF nested.
+    DATA lv_xml TYPE string.
+
+    nested-view = 'hello'.
+    nested-home-is_init = abap_true.
+    nested-after1 = 'wor'.
+    nested-after2 = 'ld'.
+
+    CALL TRANSFORMATION id
+      SOURCE data = nested
+      RESULT XML lv_xml.
+
+    CLEAR nested.
+
+    CALL TRANSFORMATION id
+      SOURCE XML lv_xml
+      RESULT data = nested.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = nested-after2
+      exp = 'ld' ).
 
   ENDMETHOD.
 
