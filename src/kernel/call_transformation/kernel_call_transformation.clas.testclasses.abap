@@ -544,11 +544,16 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
 
     CREATE OBJECT ref.
     ref->bar = 5.
+    ref->lif_intf~id = 'moo'.
     nested-lo = ref.
 
     CALL TRANSFORMATION id
       SOURCE data = nested
       RESULT XML lv_xml.
+
+    " cl_abap_unit_assert=>assert_char_cp(
+    "   exp = |*<LIF_INTF.ID>moo</LIF_INTF.ID>*|
+    "   act = lv_xml ).
 
     CLEAR nested.
     CLEAR ref.
@@ -564,6 +569,10 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = ref->bar
       exp = 5 ).
+
+    " cl_abap_unit_assert=>assert_equals(
+    "   act = ref->lif_intf~id
+    "   exp = 'moo' ).
 
   ENDMETHOD.
 
