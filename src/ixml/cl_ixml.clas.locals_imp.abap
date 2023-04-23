@@ -861,6 +861,7 @@ CLASS lcl_parser IMPLEMENTATION.
     DATA lv_value     TYPE string.
     DATA lv_name      TYPE string.
     DATA lv_namespace TYPE string.
+    DATA lv_tag       TYPE string.
     DATA ls_match     TYPE match_result.
     DATA ls_submatch  LIKE LINE OF ls_match-submatches.
 
@@ -887,6 +888,7 @@ CLASS lcl_parser IMPLEMENTATION.
 * start or close tag
         FIND FIRST OCCURRENCE OF REGEX lc_regex_tag IN lv_xml RESULTS ls_match.
         ASSERT ls_match-offset = 0.
+        lv_tag = lv_xml(ls_match-length).
 
         READ TABLE ls_match-submatches INDEX 1 INTO ls_submatch.
         ASSERT sy-subrc = 0.
@@ -902,7 +904,10 @@ CLASS lcl_parser IMPLEMENTATION.
             lo_node->if_ixml_node~set_namespace_prefix( lv_namespace ).
           ENDIF.
           lo_node->if_ixml_node~set_name( lv_name ).
-          lo_parent = lo_node.
+
+          IF lv_tag NP '*/>'.
+            lo_parent = lo_node.
+          ENDIF.
         ENDIF.
 
         parse_attributes(
@@ -912,9 +917,9 @@ CLASS lcl_parser IMPLEMENTATION.
 
         lv_offset = ls_match-length.
 
-        IF lv_xml CP '*/>'.
-          lo_parent ?= lo_parent->if_ixml_node~get_parent( ).
-        ENDIF.
+        " IF lv_xml CP '*/>'.
+        "   lo_parent ?= lo_parent->if_ixml_node~get_parent( ).
+        " ENDIF.
       ELSE.
 * value
         FIND FIRST OCCURRENCE OF '<' IN lv_xml MATCH OFFSET lv_offset.

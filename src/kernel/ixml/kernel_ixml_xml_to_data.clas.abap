@@ -147,7 +147,7 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
 
           lo_clasdescr ?= cl_abap_typedescr=>describe_by_object_ref( <any> ).
           LOOP AT lo_clasdescr->attributes INTO ls_attribute.
-            WRITE '@KERNEL console.dir(ls_attribute.get().name.get());'.
+*            WRITE '@KERNEL console.dir(ls_attribute.get().name.get());'.
             ASSIGN <any>->(ls_attribute-name) TO <field>.
             ASSERT sy-subrc = 0.
             GET REFERENCE OF <field> INTO lv_ref.

@@ -29,6 +29,7 @@ CLASS kernel_internal_name IMPLEMENTATION.
     ELSEIF rv_internal CP '\CLASS-POOL=*'.
       REPLACE FIRST OCCURRENCE OF '\CLASS-POOL=' IN rv_internal WITH 'CLAS-'.
       REPLACE FIRST OCCURRENCE OF '\CLASS=' IN rv_internal WITH '-'.
+      REPLACE FIRST OCCURRENCE OF '\INTERFACE=' IN rv_internal WITH '-'.
     ENDIF.
   ENDMETHOD.
 

@@ -31,6 +31,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS create FOR TESTING RAISING cx_static_check.
     METHODS create_set_attributes FOR TESTING RAISING cx_static_check.
     METHODS parse_and_render FOR TESTING RAISING cx_static_check.
+    METHODS parse_close_tag FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -657,6 +658,42 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_rendered
       exp = lv_xml ).
+
+  ENDMETHOD.
+
+  METHOD parse_close_tag.
+
+    DATA lv_xml      TYPE string.
+    DATA lv_name     TYPE string.
+    DATA li_doc      TYPE REF TO if_ixml_document.
+    DATA li_element  TYPE REF TO if_ixml_element.
+    DATA li_child    TYPE REF TO if_ixml_node.
+    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+
+
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?><DATA><FOO1>2</FOO1><FOO2/><FOO3/></DATA>|.
+    li_doc = parse( lv_xml ).
+
+    li_element ?= li_doc->find_from_name_ns(
+      depth = 0
+      name = 'DATA' ).
+    cl_abap_unit_assert=>assert_not_initial( li_element ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_element->get_children( )->get_length( )
+      exp = 3 ).
+
+    li_iterator = li_element->get_children( )->create_iterator( ).
+    DO.
+      li_child = li_iterator->get_next( ).
+      IF li_child IS INITIAL.
+        EXIT. " current loop
+      ENDIF.
+      lv_name = li_child->get_name( ).
+      IF lv_name <> 'FOO1' AND lv_name <> 'FOO2' AND lv_name <> 'FOO3'.
+        cl_abap_unit_assert=>fail( ).
+      ENDIF.
+    ENDDO.
 
   ENDMETHOD.
 
