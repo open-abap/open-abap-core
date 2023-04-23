@@ -624,6 +624,8 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
 
     cl_abap_unit_assert=>assert_not_initial( lo ).
 
+*    WRITE '@KERNEL console.dir(lo);'.
+
     cl_abap_unit_assert=>assert_equals(
       act = lo->foo
       exp = 1 ).
