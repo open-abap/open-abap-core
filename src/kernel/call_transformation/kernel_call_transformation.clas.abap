@@ -167,8 +167,6 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     DATA lo_type TYPE REF TO cl_abap_typedescr.
     DATA lo_struc TYPE REF TO cl_abap_structdescr.
     DATA lt_comps TYPE cl_abap_structdescr=>component_table.
-    DATA li_element TYPE REF TO if_ixml_element.
-    DATA li_sub TYPE REF TO if_ixml_element.
     DATA ls_compo LIKE LINE OF lt_comps.
     DATA lv_ref TYPE REF TO data.
     FIELD-SYMBOLS <any> TYPE any.

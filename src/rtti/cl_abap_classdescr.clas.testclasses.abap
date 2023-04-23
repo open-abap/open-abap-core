@@ -27,7 +27,6 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD get_class_name.
 
     DATA obj  TYPE REF TO cl_abap_codepage.
-    DATA type TYPE REF TO cl_abap_classdescr.
 
     CREATE OBJECT obj.
 

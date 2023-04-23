@@ -287,7 +287,6 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
     DATA ls_component  LIKE LINE OF lt_components.
     DATA lo_struct     TYPE REF TO cl_abap_structdescr.
-    FIELD-SYMBOLS <any> TYPE any.
 
     CLEAR ls_component.
     ls_component-name = 'ID'.
