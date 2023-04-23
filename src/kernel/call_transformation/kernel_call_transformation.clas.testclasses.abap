@@ -560,6 +560,9 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
   METHOD structure_and_field.
 
     DATA: BEGIN OF nested,
+            BEGIN OF empty,
+              blah TYPE string,
+            END OF empty,
             view TYPE string,
             BEGIN OF home,
               is_init TYPE abap_bool,
