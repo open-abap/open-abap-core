@@ -37,6 +37,7 @@
     "unused_types": false,
     "unused_methods": false,
     "unused_ddic": false,
+    "unused_variables": false,
     "unnecessary_pragma": true,
     "types_naming": false,
     "type_form_parameters": true,
@@ -92,7 +93,6 @@
     "line_break_style": false,
     "msag_consistency": true,
     "nesting": true,
-    "unused_variables": false,
     "try_without_catch": true,
     "identical_descriptions": {
       "exclude": ["funcname", "sxco_fm_name", "sysuuid"]

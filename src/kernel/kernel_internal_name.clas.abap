@@ -17,9 +17,13 @@ CLASS kernel_internal_name IMPLEMENTATION.
 
   METHOD internal_to_rtti.
     rv_rtti = iv_internal.
-    REPLACE FIRST OCCURRENCE OF 'CLAS-' IN rv_rtti WITH '\CLASS#POOL='.
-    REPLACE FIRST OCCURRENCE OF '-' IN rv_rtti WITH '\CLASS='.
-    REPLACE FIRST OCCURRENCE OF '#' IN rv_rtti WITH '-'.
+    IF rv_rtti CP '*CLAS-*'.
+      REPLACE FIRST OCCURRENCE OF 'CLAS-' IN rv_rtti WITH '\CLASS#POOL='.
+      REPLACE FIRST OCCURRENCE OF '-' IN rv_rtti WITH '\CLASS='.
+      REPLACE FIRST OCCURRENCE OF '#' IN rv_rtti WITH '-'.
+    ELSE.
+      rv_rtti = '\CLASS=' && rv_rtti.
+    ENDIF.
   ENDMETHOD.
 
   METHOD rtti_to_internal.

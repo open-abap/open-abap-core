@@ -374,7 +374,6 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD default_user_agent.
 
     DATA li_client TYPE REF TO if_http_client.
-    DATA lv_agent TYPE string.
     cl_http_client=>create_by_url(
       EXPORTING
         url    = 'https://api.github.com'
@@ -439,7 +438,6 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD decode_gzip.
 
     DATA li_client TYPE REF TO if_http_client.
-    DATA lv_code   TYPE i.
     DATA lv_cdata  TYPE string.
 
     cl_http_client=>create_by_url(
@@ -464,7 +462,6 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD accepts_gzip.
 
     DATA li_client TYPE REF TO if_http_client.
-    DATA lv_code   TYPE i.
     DATA lv_cdata  TYPE string.
 
     cl_http_client=>create_by_url(
