@@ -153,6 +153,7 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
               EXIT. " current loop
             ENDIF.
             lv_name = li_child->get_name( ).
+            REPLACE FIRST OCCURRENCE OF '.' IN lv_name WITH '~'.
 
             ASSIGN <any>->(lv_name) TO <field>.
             IF sy-subrc = 0.
@@ -160,7 +161,7 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
               traverse( ii_node = li_child
                         iv_ref  = lv_ref ).
             ENDIF.
-*            WRITE '@KERNEL console.dir(lv_name);'.
+            WRITE '@KERNEL console.dir(lv_name);'.
           ENDDO.
 
 "           lo_clasdescr ?= cl_abap_typedescr=>describe_by_object_ref( <any> ).
