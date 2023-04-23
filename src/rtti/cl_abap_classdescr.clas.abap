@@ -23,7 +23,9 @@ CLASS cl_abap_classdescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_class_name.
-    ASSERT 1 = 'todo'.
+    DATA lv_name TYPE string.
+    WRITE '@KERNEL lv_name.set(p_object.get().constructor.INTERNAL_NAME);'.
+    p_name = kernel_internal_name=>internal_to_rtti( lv_name ).
   ENDMETHOD.
 
   METHOD get_super_class_type.
