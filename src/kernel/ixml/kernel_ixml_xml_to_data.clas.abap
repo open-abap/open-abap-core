@@ -84,6 +84,7 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
     DATA lv_rtti_name TYPE string.
     DATA lv_internal  TYPE string.
     DATA lv_value     TYPE string.
+    DATA li_href      TYPE REF TO if_ixml_node.
     DATA ls_attribute TYPE abap_attrdescr.
 
     FIELD-SYMBOLS <any>   TYPE any.
@@ -135,7 +136,11 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
           " lv_internal = kernel_internal_name=>rtti_to_internal( lv_rtti_name ).
           " WRITE '@KERNEL fs_any_.pointer.value = new abap.Classes[lv_internal.get()]();'.
 
-          lv_value = ii_node->get_attributes( )->get_named_item_ns( 'href' )->get_value( ).
+          li_href = ii_node->get_attributes( )->get_named_item_ns( 'href' ).
+          IF li_href IS INITIAL.
+            RETURN.
+          ENDIF.
+          lv_value = li_href->get_value( ).
           ASSERT lv_value IS NOT INITIAL.
           li_heap = find_href_in_heap( lv_value ).
           lv_value = li_heap->get_attributes( )->get_named_item_ns( 'internalName' )->get_value( ).
@@ -161,7 +166,7 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
               traverse( ii_node = li_child
                         iv_ref  = lv_ref ).
             ENDIF.
-            WRITE '@KERNEL console.dir(lv_name);'.
+*            WRITE '@KERNEL console.dir(lv_name);'.
           ENDDO.
 
 "           lo_clasdescr ?= cl_abap_typedescr=>describe_by_object_ref( <any> ).
