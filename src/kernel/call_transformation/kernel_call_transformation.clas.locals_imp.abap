@@ -54,10 +54,13 @@ CLASS lcl_heap IMPLEMENTATION.
     DATA lo_data_to_xml  TYPE REF TO lcl_data_to_xml.
     DATA lv_ref          TYPE REF TO data.
     DATA lv_internal     TYPE string.
+    DATA lv_data         TYPE string.
+    DATA lv_counter      LIKE mv_counter.
 
     FIELD-SYMBOLS <any> TYPE REF TO any.
 
     mv_counter = mv_counter + 1.
+    lv_counter = mv_counter.
 
     lo_descr ?= cl_abap_typedescr=>describe_by_object_ref( iv_ref ).
     lv_name = lo_descr->relative_name.
@@ -74,7 +77,7 @@ CLASS lcl_heap IMPLEMENTATION.
       CREATE OBJECT lo_data_to_xml
         EXPORTING
           io_heap = me.
-      mv_data = mv_data &&
+      lv_data = lv_data &&
         |<prg:{ lv_name } xmlns:prg="http://www.sap.com/abapxml/classes/class-pool/TODO" id="o{ mv_counter }" internalName="{ lv_internal }">| &&
         |<local.{ lv_name }>|.
       LOOP AT lo_descr->attributes INTO ls_attribute.
@@ -82,19 +85,20 @@ CLASS lcl_heap IMPLEMENTATION.
         ASSERT sy-subrc = 0.
         REPLACE FIRST OCCURRENCE OF '~' IN ls_attribute-name WITH '.'.
         GET REFERENCE OF <any> INTO lv_ref.
-        mv_data = mv_data && lo_data_to_xml->run(
+        lv_data = lv_data && lo_data_to_xml->run(
           iv_name = ls_attribute-name
           iv_ref  = lv_ref ).
       ENDLOOP.
-      mv_data = mv_data &&
+      lv_data = lv_data &&
         |</local.{ lv_name }>| &&
         |</prg:{ lv_name }>|.
     ELSE.
-      mv_data = mv_data &&
+      lv_data = lv_data &&
         |<prg:{ lv_name } xmlns:prg="http://www.sap.com/abapxml/classes/class-pool/TODO" id="o{ mv_counter }"/>|.
     ENDIF.
 
-    rv_id = |{ mv_counter }|.
+    mv_data = mv_data && lv_data.
+    rv_id = |{ lv_counter }|.
   ENDMETHOD.
 ENDCLASS.
 

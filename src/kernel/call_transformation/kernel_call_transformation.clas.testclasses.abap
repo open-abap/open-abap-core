@@ -33,6 +33,15 @@ ENDCLASS.
 CLASS lcl_multi IMPLEMENTATION.
 ENDCLASS.
 
+CLASS lcl_nested DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_serializable_object.
+    DATA moo TYPE i.
+    DATA bar TYPE REF TO lcl_attribute.
+ENDCLASS.
+CLASS lcl_nested IMPLEMENTATION.
+ENDCLASS.
+
 CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
@@ -68,6 +77,8 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS obj_to_xml_to_obj_empty FOR TESTING RAISING cx_static_check.
     METHODS structure_and_field FOR TESTING RAISING cx_static_check.
     METHODS obj_to_xml_multi FOR TESTING RAISING cx_static_check.
+    METHODS two_obj FOR TESTING RAISING cx_static_check.
+    METHODS nested_obj FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
@@ -664,6 +675,73 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo->bar
       exp = 2 ).
+  ENDMETHOD.
+
+  METHOD two_obj.
+
+    DATA: BEGIN OF data,
+            ref1 TYPE REF TO lcl_attribute,
+            ref2 TYPE REF TO lcl_attribute,
+          END OF data.
+    DATA lv_xml TYPE string.
+
+    CREATE OBJECT data-ref1.
+    data-ref1->foo = 1.
+    CREATE OBJECT data-ref2.
+    data-ref2->foo = 2.
+
+    CALL TRANSFORMATION id
+      SOURCE data = data
+      RESULT XML lv_xml.
+
+    CLEAR data.
+
+    CALL TRANSFORMATION id
+      SOURCE XML lv_xml
+      RESULT data = data.
+
+    cl_abap_unit_assert=>assert_not_initial( data ).
+
+    cl_abap_unit_assert=>assert_equals(
+      exp = 1
+      act = data-ref1->foo ).
+
+    cl_abap_unit_assert=>assert_equals(
+      exp = 2
+      act = data-ref2->foo ).
+
+  ENDMETHOD.
+
+  METHOD nested_obj.
+
+    DATA lo_nested TYPE REF TO lcl_nested.
+    DATA lv_xml TYPE string.
+
+    CREATE OBJECT lo_nested.
+    lo_nested->moo = 5.
+    CREATE OBJECT lo_nested->bar.
+    lo_nested->bar->foo = 10.
+
+    CALL TRANSFORMATION id
+      SOURCE data = lo_nested
+      RESULT XML lv_xml.
+
+    CLEAR lo_nested.
+
+    CALL TRANSFORMATION id
+      SOURCE XML lv_xml
+      RESULT data = lo_nested.
+
+    cl_abap_unit_assert=>assert_not_initial( lo_nested ).
+
+    cl_abap_unit_assert=>assert_equals(
+      exp = 5
+      act = lo_nested->moo ).
+
+    cl_abap_unit_assert=>assert_equals(
+      exp = 10
+      act = lo_nested->bar->foo ).
+
   ENDMETHOD.
 
 ENDCLASS.
