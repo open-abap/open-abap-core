@@ -36,7 +36,7 @@ ENDCLASS.
 CLASS lcl_nested DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_serializable_object.
-    DATA foo TYPE i.
+    DATA moo TYPE i.
     DATA bar TYPE REF TO lcl_attribute.
 ENDCLASS.
 CLASS lcl_nested IMPLEMENTATION.
@@ -718,7 +718,7 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     DATA lv_xml TYPE string.
 
     CREATE OBJECT lo_nested.
-    lo_nested->foo = 5.
+    lo_nested->moo = 5.
     CREATE OBJECT lo_nested->bar.
     lo_nested->bar->foo = 10.
 
@@ -736,7 +736,7 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
 
     cl_abap_unit_assert=>assert_equals(
       exp = 5
-      act = lo_nested->foo ).
+      act = lo_nested->moo ).
 
     cl_abap_unit_assert=>assert_equals(
       exp = 10
