@@ -42,6 +42,18 @@ ENDCLASS.
 CLASS lcl_nested IMPLEMENTATION.
 ENDCLASS.
 
+CLASS lcl_table DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_serializable_object.
+    TYPES: BEGIN OF ty_msg,
+             title       TYPE string,
+             description TYPE string,
+           END OF ty_msg.
+    DATA itab TYPE STANDARD TABLE OF ty_msg WITH DEFAULT KEY.
+ENDCLASS.
+CLASS lcl_table IMPLEMENTATION.
+ENDCLASS.
+
 CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
@@ -80,6 +92,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS two_obj FOR TESTING RAISING cx_static_check.
     METHODS nested_obj FOR TESTING RAISING cx_static_check.
     METHODS empty_back_to_data FOR TESTING RAISING cx_static_check.
+    METHODS obj_with_table FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
@@ -763,6 +776,35 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
       RESULT data = lo_empty.
 
     cl_abap_unit_assert=>assert_initial( lo_empty ).
+
+  ENDMETHOD.
+
+  METHOD obj_with_table.
+
+    DATA lo_table TYPE REF TO lcl_table.
+    DATA lv_xml   TYPE string.
+    DATA ls_row   LIKE LINE OF lo_table->itab.
+
+    CREATE OBJECT lo_table.
+
+    APPEND INITIAL LINE TO lo_table->itab.
+
+    CALL TRANSFORMATION id
+      SOURCE data = lo_table
+      RESULT XML lv_xml.
+
+    CLEAR lo_table.
+
+    CALL TRANSFORMATION id
+      SOURCE XML lv_xml
+      RESULT data = lo_table.
+
+    cl_abap_unit_assert=>assert_not_initial( lo_table ).
+    cl_abap_unit_assert=>assert_not_initial( lo_table->itab ).
+
+    LOOP AT lo_table->itab INTO ls_row.
+      cl_abap_unit_assert=>assert_initial( ls_row ).
+    ENDLOOP.
 
   ENDMETHOD.
 
