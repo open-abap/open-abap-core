@@ -762,7 +762,7 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
       SOURCE XML lv_xml
       RESULT data = lo_empty.
 
-    cl_abap_unit_assert=>assert_not_initial( lo_empty ).
+    cl_abap_unit_assert=>assert_initial( lo_empty ).
 
   ENDMETHOD.
 

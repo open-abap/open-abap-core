@@ -77,6 +77,7 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
     DATA lo_type     TYPE REF TO cl_abap_typedescr.
     DATA li_child    TYPE REF TO if_ixml_node.
     DATA li_heap     TYPE REF TO if_ixml_node.
+    DATA li_iname    TYPE REF TO if_ixml_node.
     DATA lv_name     TYPE string.
     DATA li_iterator TYPE REF TO if_ixml_node_iterator.
     DATA lv_ref      TYPE REF TO data.
@@ -139,7 +140,12 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
           lv_value = li_href->get_value( ).
           ASSERT lv_value IS NOT INITIAL.
           li_heap = find_href_in_heap( lv_value ).
-          lv_value = li_heap->get_attributes( )->get_named_item_ns( 'internalName' )->get_value( ).
+          li_iname = li_heap->get_attributes( )->get_named_item_ns( 'internalName' ).
+          IF li_iname IS INITIAL.
+* then its a non serializable object, not to be instantiated
+            RETURN.
+          ENDIF.
+          lv_value = li_iname->get_value( ).
           ASSERT lv_value IS NOT INITIAL.
 *          WRITE '@KERNEL console.dir(lv_value);'.
           WRITE '@KERNEL fs_any_.pointer.value = new abap.Classes[lv_value.get()]();'.
