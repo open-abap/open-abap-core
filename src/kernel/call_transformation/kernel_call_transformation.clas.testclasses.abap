@@ -33,6 +33,15 @@ ENDCLASS.
 CLASS lcl_multi IMPLEMENTATION.
 ENDCLASS.
 
+CLASS lcl_nested DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_serializable_object.
+    DATA foo TYPE i.
+    DATA bar TYPE REF TO lcl_attribute.
+ENDCLASS.
+CLASS lcl_nested IMPLEMENTATION.
+ENDCLASS.
+
 CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
@@ -69,6 +78,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS structure_and_field FOR TESTING RAISING cx_static_check.
     METHODS obj_to_xml_multi FOR TESTING RAISING cx_static_check.
     METHODS two_obj FOR TESTING RAISING cx_static_check.
+    METHODS nested_obj FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
@@ -699,6 +709,38 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       exp = 2
       act = data-ref2->foo ).
+
+  ENDMETHOD.
+
+  METHOD nested_obj.
+
+    DATA lo_nested TYPE REF TO lcl_nested.
+    DATA lv_xml TYPE string.
+
+    CREATE OBJECT lo_nested.
+    lo_nested->foo = 5.
+    CREATE OBJECT lo_nested->bar.
+    lo_nested->bar->foo = 10.
+
+    CALL TRANSFORMATION id
+      SOURCE data = lo_nested
+      RESULT XML lv_xml.
+
+    CLEAR lo_nested.
+
+    CALL TRANSFORMATION id
+      SOURCE XML lv_xml
+      RESULT data = lo_nested.
+
+    cl_abap_unit_assert=>assert_not_initial( lo_nested ).
+
+    cl_abap_unit_assert=>assert_equals(
+      exp = 5
+      act = lo_nested->foo ).
+
+    cl_abap_unit_assert=>assert_equals(
+      exp = 10
+      act = lo_nested->bar->foo ).
 
   ENDMETHOD.
 
