@@ -28,6 +28,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_hash FOR TESTING RAISING cx_static_check.
     METHODS parse_attr_dash FOR TESTING RAISING cx_static_check.
     METHODS parse_tag_dot FOR TESTING RAISING cx_static_check.
+    METHODS parse_href FOR TESTING RAISING cx_static_check.
     METHODS create FOR TESTING RAISING cx_static_check.
     METHODS create_set_attributes FOR TESTING RAISING cx_static_check.
     METHODS parse_and_render FOR TESTING RAISING cx_static_check.
@@ -640,6 +641,18 @@ CLASS ltcl_xml IMPLEMENTATION.
 
 
     lv_xml = |<?xml version="1.0" encoding="utf-16"?><foo.bar.moo></foo.bar.moo>|.
+    li_doc = parse( lv_xml ).
+
+  ENDMETHOD.
+
+  METHOD parse_href.
+
+    DATA lv_xml     TYPE string.
+    DATA li_doc     TYPE REF TO if_ixml_document.
+    DATA li_element TYPE REF TO if_ixml_element.
+
+
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?><a href="https://www.foo.com" style="color:green; font-weight:600;">link to foo.com</a>|.
     li_doc = parse( lv_xml ).
 
   ENDMETHOD.
