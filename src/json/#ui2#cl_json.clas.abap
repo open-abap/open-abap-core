@@ -157,6 +157,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
   METHOD _deserialize.
     DATA lo_type       TYPE REF TO cl_abap_typedescr.
     DATA lo_struct     TYPE REF TO cl_abap_structdescr.
+    DATA lo_table      TYPE REF TO cl_abap_tabledescr.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
     DATA ls_component  LIKE LINE OF lt_components.
     DATA lt_members    TYPE string_table.
@@ -253,7 +254,8 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             lo_struct = cl_abap_structdescr=>create( lt_components ).
             CREATE DATA data TYPE HANDLE lo_struct.
           ELSEIF lines( lt_members ) > 0 AND lv_type = 'array'.
-            ASSERT 1 = 'todo'.
+            lo_table = cl_abap_tabledescr=>create( cl_abap_refdescr=>get_ref_to_data( ) ).
+            CREATE DATA data TYPE HANDLE lo_table.
           ELSE.
             CASE lv_type.
               WHEN 'num'.
