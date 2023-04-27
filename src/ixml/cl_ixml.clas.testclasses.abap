@@ -35,6 +35,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS create_set_attributes FOR TESTING RAISING cx_static_check.
     METHODS parse_and_render FOR TESTING RAISING cx_static_check.
     METHODS parse_close_tag FOR TESTING RAISING cx_static_check.
+    METHODS parse_more FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -697,6 +698,16 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_rendered
       exp = lv_xml ).
+
+  ENDMETHOD.
+
+  METHOD parse_more.
+
+    DATA lv_xml TYPE string.
+
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?><Page title="sdf (sdf)" showNavButton="true" navButtonPress="onEvent( \{ &apos;EVENT&apos; : &apos;BACK&apos; \} )" id="id_page" ></Page>|.
+
+    parse( lv_xml ).
 
   ENDMETHOD.
 
