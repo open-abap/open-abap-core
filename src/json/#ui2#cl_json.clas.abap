@@ -232,7 +232,14 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           IF lines( lt_members ) = 0 AND prefix = ''.
             RETURN.
           ENDIF.
-          IF lines( lt_members ) > 0.
+
+          lv_type = mo_parsed->get_type( prefix && '/' ).
+          IF lv_type IS INITIAL.
+            lv_type = mo_parsed->get_type( prefix ).
+          ENDIF.
+*          WRITE '@KERNEL console.dir("type: " + lv_type.get());'.
+
+          IF lines( lt_members ) > 0 AND lv_type = 'object'.
             CLEAR lt_components.
             LOOP AT lt_members INTO lv_member.
 *              WRITE '@KERNEL console.dir("component: " + lv_member.get());'.
@@ -245,10 +252,9 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             ENDLOOP.
             lo_struct = cl_abap_structdescr=>create( lt_components ).
             CREATE DATA data TYPE HANDLE lo_struct.
+          ELSEIF lines( lt_members ) > 0 AND lv_type = 'array'.
+            ASSERT 1 = 'todo'.
           ELSE.
-* todo, handling array?
-            lv_type = mo_parsed->get_type( prefix ).
-*            WRITE '@KERNEL console.dir("type: " + lv_type.get());'.
             CASE lv_type.
               WHEN 'num'.
                 lv_value = mo_parsed->value_string( prefix ).
