@@ -81,6 +81,7 @@ CLASS lcl_parser DEFINITION.
   PUBLIC SECTION.
     METHODS parse
       IMPORTING iv_json TYPE string.
+    METHODS adjust_names.
     METHODS value_boolean
       IMPORTING
         iv_path         TYPE string
@@ -134,6 +135,15 @@ CLASS lcl_parser DEFINITION.
 ENDCLASS.
 
 CLASS lcl_parser IMPLEMENTATION.
+
+  METHOD adjust_names.
+    FIELD-SYMBOLS <ls_data> LIKE LINE OF mt_data.
+    LOOP AT mt_data ASSIGNING <ls_data>.
+      REPLACE ALL OCCURRENCES OF '-' IN <ls_data>-parent WITH '_'.
+      REPLACE ALL OCCURRENCES OF '-' IN <ls_data>-name WITH '_'.
+      REPLACE ALL OCCURRENCES OF '-' IN <ls_data>-full_name WITH '_'.
+    ENDLOOP.
+  ENDMETHOD.
 
   METHOD find_ignore_case.
     DATA ls_data LIKE LINE OF mt_data.

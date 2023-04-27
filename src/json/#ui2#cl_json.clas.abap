@@ -146,6 +146,9 @@ CLASS /ui2/cl_json IMPLEMENTATION.
       mo_parsed->parse( json ).
     ENDIF.
 
+* todo, this should take the "pretty_name" into account
+    mo_parsed->adjust_names( ).
+
     _deserialize(
       EXPORTING
         prefix      = ''
