@@ -21,6 +21,7 @@ CLASS ltcl_deserialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
     METHODS deserialize_to_ref_bool FOR TESTING RAISING cx_static_check.
     METHODS deserialize_str FOR TESTING RAISING cx_static_check.
     METHODS deserialize_int FOR TESTING RAISING cx_static_check.
+    METHODS deserialize_array FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -392,6 +393,36 @@ CLASS ltcl_deserialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_type
       exp = 'I' ).
+  ENDMETHOD.
+
+  METHOD deserialize_array.
+
+    DATA ref TYPE REF TO data.
+    DATA lv_type TYPE c LENGTH 1.
+    FIELD-SYMBOLS <tab> TYPE STANDARD TABLE.
+    FIELD-SYMBOLS <fs> TYPE any.
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = '{"T_TAB": [{"TITLE": "Peter1"},{"TITLE": "Peter2"}]}'
+      CHANGING
+        data = ref ).
+
+    ASSIGN ref->('T_TAB->*') TO <tab>.
+    ASSERT sy-subrc = 0.
+
+    READ TABLE <tab> INDEX 1 ASSIGNING <fs>.
+    ASSERT sy-subrc = 0.
+
+    ASSIGN <fs>->* TO <fs>.
+    ASSIGN COMPONENT 'TITLE' OF STRUCTURE <fs> TO <fs>.
+    ASSERT sy-subrc = 0.
+
+    ASSIGN <fs>->* TO <fs>.
+    cl_abap_unit_assert=>assert_equals(
+      act = <fs>
+      exp = 'Peter1' ).
+
   ENDMETHOD.
 
 ENDCLASS.

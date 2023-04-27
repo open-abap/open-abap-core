@@ -31,9 +31,10 @@ CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
 
     CLASS-METHODS get_with_keys
       IMPORTING
-        p_line_type TYPE REF TO cl_abap_datadescr
-        p_keys      TYPE abap_table_keydescr_tab
-      RETURNING VALUE(p_result) TYPE REF TO cl_abap_tabledescr.
+        p_line_type     TYPE REF TO cl_abap_datadescr
+        p_keys          TYPE abap_table_keydescr_tab
+      RETURNING
+        VALUE(p_result) TYPE REF TO cl_abap_tabledescr.
 
     CLASS-METHODS create
       IMPORTING

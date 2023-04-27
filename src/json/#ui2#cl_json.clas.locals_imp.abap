@@ -4,10 +4,22 @@ CLASS lcl_stack DEFINITION.
       IMPORTING
         iv_name TYPE string
         iv_type TYPE string.
-    METHODS pop RETURNING VALUE(rv_name) TYPE string.
-    METHODS is_array RETURNING VALUE(rv_array) TYPE abap_bool.
-    METHODS get_and_increase_index RETURNING VALUE(rv_index) TYPE string.
-    METHODS get_full_name RETURNING VALUE(rv_path) TYPE string.
+
+    METHODS pop
+      RETURNING
+        VALUE(rv_name) TYPE string.
+
+    METHODS is_array
+      RETURNING
+        VALUE(rv_array) TYPE abap_bool.
+
+    METHODS get_and_increase_index
+      RETURNING
+        VALUE(rv_index) TYPE string.
+
+    METHODS get_full_name
+      RETURNING
+        VALUE(rv_path) TYPE string.
   PRIVATE SECTION.
     TYPES: BEGIN OF ty_data,
              name        TYPE string,
@@ -213,7 +225,7 @@ CLASS lcl_parser IMPLEMENTATION.
       CASE li_node->type.
         WHEN if_sxml_node=>co_nt_element_open.
           li_open ?= li_node.
-*          WRITE: / 'open node, type:', li_open->qname-name.
+          " WRITE: / 'open node, type:', li_open->qname-name.
 
           lt_attributes = li_open->get_attributes( ).
 *          WRITE '@KERNEL console.dir(lt_attributes.array().length);'.
@@ -250,6 +262,7 @@ CLASS lcl_parser IMPLEMENTATION.
             ls_data-parent = lo_stack->get_full_name( ).
             ls_data-name = '/'.
             ls_data-full_name = ls_data-parent && ls_data-name.
+            ls_data-type = li_open->qname-name.
             APPEND ls_data TO mt_data.
 
             lo_stack->push(
