@@ -122,7 +122,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD describe_by_dashes.
-    DATA lt_parts   TYPE STANDARD TABLE OF string.
+    DATA lt_parts   TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
     DATA lv_part    LIKE LINE OF lt_parts.
     DATA lo_current TYPE REF TO cl_abap_typedescr.
     DATA lo_struct  TYPE REF TO cl_abap_structdescr.
