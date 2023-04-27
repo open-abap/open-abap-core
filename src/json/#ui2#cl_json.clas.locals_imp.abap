@@ -68,7 +68,7 @@ ENDCLASS.
 CLASS lcl_parser DEFINITION.
   PUBLIC SECTION.
     METHODS parse
-      IMPORTING iv_json        TYPE string.
+      IMPORTING iv_json TYPE string.
     METHODS value_boolean
       IMPORTING
         iv_path         TYPE string
@@ -89,6 +89,11 @@ CLASS lcl_parser DEFINITION.
         iv_path             TYPE string
       RETURNING
         VALUE(rv_value) TYPE string.
+    METHODS get_type
+      IMPORTING
+        iv_path        TYPE string
+      RETURNING
+        VALUE(rv_type) TYPE string.
     METHODS exists
       IMPORTING
         iv_path          TYPE string
@@ -110,6 +115,7 @@ CLASS lcl_parser DEFINITION.
          name      TYPE string,
          full_name TYPE string,
          value     TYPE string,
+         type      TYPE string,
        END OF ty_data.
     TYPES ty_data_tt TYPE STANDARD TABLE OF ty_data WITH DEFAULT KEY.
     DATA mt_data TYPE ty_data_tt.
@@ -131,6 +137,12 @@ CLASS lcl_parser IMPLEMENTATION.
   METHOD exists.
     READ TABLE mt_data WITH KEY full_name = iv_path TRANSPORTING NO FIELDS.
     rv_exists = boolc( sy-subrc = 0 ).
+  ENDMETHOD.
+
+  METHOD get_type.
+    DATA ls_data LIKE LINE OF mt_data.
+    READ TABLE mt_data WITH KEY full_name = iv_path INTO ls_data.
+    rv_type = ls_data-type.
   ENDMETHOD.
 
   METHOD members.
@@ -163,20 +175,20 @@ CLASS lcl_parser IMPLEMENTATION.
 
   METHOD parse.
 
-    DATA li_node TYPE REF TO if_sxml_node.
-    DATA li_next TYPE REF TO if_sxml_node.
-    DATA li_reader TYPE REF TO if_sxml_reader.
-    DATA li_close TYPE REF TO if_sxml_close_element.
-    DATA li_open TYPE REF TO if_sxml_open_element.
+    DATA li_node       TYPE REF TO if_sxml_node.
+    DATA li_next       TYPE REF TO if_sxml_node.
+    DATA li_reader     TYPE REF TO if_sxml_reader.
+    DATA li_close      TYPE REF TO if_sxml_close_element.
+    DATA li_open       TYPE REF TO if_sxml_open_element.
     DATA lt_attributes TYPE if_sxml_attribute=>attributes.
-    DATA li_attribute TYPE REF TO if_sxml_attribute.
-    DATA li_value TYPE REF TO if_sxml_value_node.
-    DATA lv_push TYPE string.
-    DATA lv_name TYPE string.
-    DATA lo_stack TYPE REF TO lcl_stack.
-    DATA ls_data LIKE LINE OF mt_data.
-    DATA lv_index TYPE i.
-    DATA lt_nodes TYPE STANDARD TABLE OF REF TO if_sxml_node WITH DEFAULT KEY.
+    DATA li_attribute  TYPE REF TO if_sxml_attribute.
+    DATA li_value      TYPE REF TO if_sxml_value_node.
+    DATA lv_push       TYPE string.
+    DATA lv_name       TYPE string.
+    DATA lo_stack      TYPE REF TO lcl_stack.
+    DATA ls_data       LIKE LINE OF mt_data.
+    DATA lv_index      TYPE i.
+    DATA lt_nodes      TYPE STANDARD TABLE OF REF TO if_sxml_node WITH DEFAULT KEY.
 
 *    FIELD-SYMBOLS <ls_data> LIKE LINE OF rt_data.
 
@@ -213,11 +225,11 @@ CLASS lcl_parser IMPLEMENTATION.
           ENDIF.
 
           IF lv_push IS NOT INITIAL.
-
             CLEAR ls_data.
             ls_data-parent = lo_stack->get_full_name( ).
             ls_data-name = lv_push.
             ls_data-full_name = ls_data-parent && ls_data-name.
+            ls_data-type = li_open->qname-name.
 
             lv_index = lv_index + 1.
             READ TABLE lt_nodes INDEX lv_index INTO li_next.
