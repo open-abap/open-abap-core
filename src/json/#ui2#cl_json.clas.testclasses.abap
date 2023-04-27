@@ -19,6 +19,8 @@ CLASS ltcl_deserialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
     METHODS deserialize_to_ref_nested FOR TESTING RAISING cx_static_check.
     METHODS deserialize_to_esc FOR TESTING RAISING cx_static_check.
     METHODS deserialize_to_ref_bool FOR TESTING RAISING cx_static_check.
+    METHODS deserialize_str FOR TESTING RAISING cx_static_check.
+    METHODS deserialize_int FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -356,6 +358,40 @@ CLASS ltcl_deserialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = <any>
       exp = abap_true ).
+  ENDMETHOD.
+
+  METHOD deserialize_str.
+    DATA ref TYPE REF TO data.
+    DATA lv_type TYPE c LENGTH 1.
+    FIELD-SYMBOLS <fs> TYPE any.
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = '{"foo":"600"}'
+      CHANGING
+        data = ref ).
+    ASSIGN ref->('FOO->*') TO <fs>.
+    DESCRIBE FIELD <fs> TYPE lv_type.
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_type
+      exp = 'g' ).
+  ENDMETHOD.
+
+  METHOD deserialize_int.
+    DATA ref TYPE REF TO data.
+    DATA lv_type TYPE c LENGTH 1.
+    FIELD-SYMBOLS <fs> TYPE any.
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = '{"foo":600}'
+      CHANGING
+        data = ref ).
+    ASSIGN ref->('FOO->*') TO <fs>.
+    DESCRIBE FIELD <fs> TYPE lv_type.
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_type
+      exp = 'I' ).
   ENDMETHOD.
 
 ENDCLASS.

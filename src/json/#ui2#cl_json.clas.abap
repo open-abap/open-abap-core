@@ -162,6 +162,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     DATA lt_members    TYPE string_table.
     DATA ref           TYPE REF TO data.
     DATA lv_name       TYPE string.
+    DATA lv_type       TYPE string.
     DATA lv_value      TYPE string.
     DATA lv_member     LIKE LINE OF lt_members.
 
@@ -246,15 +247,23 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             CREATE DATA data TYPE HANDLE lo_struct.
           ELSE.
 * todo, handling array?
-            lv_value = mo_parsed->value_string( prefix ).
-            " WRITE '@KERNEL console.dir("value: " + lv_value.get());'.
-            IF lv_value CO '-0123456789'.
-              CREATE DATA data TYPE i.
-            ELSEIF lv_value = 'true' OR lv_value = 'false'.
-              CREATE DATA data TYPE HANDLE cl_abap_typedescr=>describe_by_name( 'ABAP_BOOL' ).
-            ELSE.
-              CREATE DATA data TYPE HANDLE cl_abap_elemdescr=>get_string( ).
-            ENDIF.
+            lv_type = mo_parsed->get_type( prefix ).
+*            WRITE '@KERNEL console.dir("type: " + lv_type.get());'.
+            CASE lv_type.
+              WHEN 'num'.
+                lv_value = mo_parsed->value_string( prefix ).
+                IF lv_value CO '-0123456789'.
+                  CREATE DATA data TYPE i.
+                ELSE.
+                  ASSERT 1 = 'todo'.
+                ENDIF.
+              WHEN 'bool'.
+                CREATE DATA data TYPE HANDLE cl_abap_typedescr=>describe_by_name( 'ABAP_BOOL' ).
+              WHEN 'str'.
+                CREATE DATA data TYPE HANDLE cl_abap_elemdescr=>get_string( ).
+              " WHEN OTHERS.
+              "   ASSERT 1 = 'todo'.
+            ENDCASE.
           ENDIF.
         ENDIF.
         ASSIGN data->* TO <any>.
