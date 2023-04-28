@@ -54,6 +54,16 @@ ENDCLASS.
 CLASS lcl_table IMPLEMENTATION.
 ENDCLASS.
 
+CLASS lcl_static DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_serializable_object.
+    CLASS-DATA foo TYPE string.
+ENDCLASS.
+CLASS lcl_static IMPLEMENTATION.
+ENDCLASS.
+
+***********************************************
+
 CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
@@ -93,6 +103,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS nested_obj FOR TESTING RAISING cx_static_check.
     METHODS empty_back_to_data FOR TESTING RAISING cx_static_check.
     METHODS obj_with_table FOR TESTING RAISING cx_static_check.
+    METHODS obj_static_attr FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
@@ -806,6 +817,20 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
       cl_abap_unit_assert=>assert_initial( ls_row ).
     ENDLOOP.
 
+  ENDMETHOD.
+
+  METHOD obj_static_attr.
+    DATA lv_xml TYPE string.
+    DATA lo_ref TYPE REF TO lcl_static.
+
+    CREATE OBJECT lo_ref.
+    CALL TRANSFORMATION id
+      SOURCE data = lo_ref
+      RESULT XML lv_xml.
+* static attributes are not serialized
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_xml
+      exp = '*<local.LCL_STATIC/>*' ).
   ENDMETHOD.
 
 ENDCLASS.

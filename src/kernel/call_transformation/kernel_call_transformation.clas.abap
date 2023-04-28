@@ -6,13 +6,19 @@ CLASS kernel_call_transformation DEFINITION PUBLIC.
     CLASS-DATA mi_doc TYPE REF TO if_ixml_document.
     CLASS-DATA mi_writer TYPE REF TO if_sxml_writer.
 
-    CLASS-METHODS parse_xml IMPORTING iv_xml TYPE string.
+    CLASS-METHODS parse_xml
+      IMPORTING
+        iv_xml TYPE string.
 
     CLASS-METHODS traverse_write
-      IMPORTING iv_ref TYPE REF TO data.
+      IMPORTING
+        iv_ref TYPE REF TO data.
+
     CLASS-METHODS traverse_write_type
-      IMPORTING iv_ref TYPE REF TO data
-      RETURNING VALUE(rv_type) TYPE string.
+      IMPORTING
+        iv_ref TYPE REF TO data
+      RETURNING
+        VALUE(rv_type) TYPE string.
 ENDCLASS.
 
 CLASS kernel_call_transformation IMPLEMENTATION.
