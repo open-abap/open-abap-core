@@ -11,6 +11,8 @@ CLASS ltcl_fugr DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS generate_sec_random FOR TESTING RAISING cx_static_check.
     METHODS text_split1 FOR TESTING RAISING cx_static_check.
     METHODS text_split2 FOR TESTING RAISING cx_static_check.
+    METHODS function_exists_yes FOR TESTING RAISING cx_static_check.
+    METHODS function_exists_no FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -197,6 +199,30 @@ CLASS ltcl_fugr IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       exp = 'FR'
       act = lv_lang ).
+  ENDMETHOD.
+
+  METHOD function_exists_yes.
+
+    CALL FUNCTION 'FUNCTION_EXISTS'
+      EXPORTING
+        funcname           = 'CONVERSION_EXIT_ISOLA_OUTPUT'
+      EXCEPTIONS
+        function_not_exist = 1
+        OTHERS             = 2.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+  ENDMETHOD.
+
+  METHOD function_exists_no.
+
+    CALL FUNCTION 'FUNCTION_EXISTS'
+      EXPORTING
+        funcname           = 'SDFSDFSD'
+      EXCEPTIONS
+        function_not_exist = 1
+        OTHERS             = 2.
+    cl_abap_unit_assert=>assert_subrc( 1 ).
+
   ENDMETHOD.
 
 ENDCLASS.
