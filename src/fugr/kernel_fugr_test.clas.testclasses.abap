@@ -221,7 +221,9 @@ CLASS ltcl_fugr IMPLEMENTATION.
       EXCEPTIONS
         function_not_exist = 1
         OTHERS             = 2.
-    cl_abap_unit_assert=>assert_subrc( 1 ).
+    cl_abap_unit_assert=>assert_equals(
+      exp = 1
+      act = sy-subrc ).
 
   ENDMETHOD.
 

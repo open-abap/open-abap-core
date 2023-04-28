@@ -1,6 +1,6 @@
 FUNCTION function_exists.
 
-  DATA lv_name TYPE string.
+  DATA lv_name   TYPE string.
   DATA lv_exists TYPE abap_bool.
 
   lv_name = funcname.
