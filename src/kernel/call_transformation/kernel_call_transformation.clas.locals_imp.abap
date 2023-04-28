@@ -80,7 +80,7 @@ CLASS lcl_heap IMPLEMENTATION.
       lv_data = lv_data &&
         |<prg:{ lv_name } xmlns:prg="http://www.sap.com/abapxml/classes/class-pool/TODO" id="o{ mv_counter }" internalName="{ lv_internal }">| &&
         |<local.{ lv_name }>|.
-      LOOP AT lo_descr->attributes INTO ls_attribute.
+      LOOP AT lo_descr->attributes INTO ls_attribute WHERE is_class = abap_false.
         ASSIGN iv_ref->(ls_attribute-name) TO <any>.
         ASSERT sy-subrc = 0.
         REPLACE FIRST OCCURRENCE OF '~' IN ls_attribute-name WITH '.'.
