@@ -57,7 +57,7 @@ ENDCLASS.
 CLASS lcl_static DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_serializable_object.
-    CLASS-DATA foo TYPE string.
+    CLASS-DATA static_foo TYPE string.
 ENDCLASS.
 CLASS lcl_static IMPLEMENTATION.
 ENDCLASS.
@@ -824,13 +824,15 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     DATA lo_ref TYPE REF TO lcl_static.
 
     CREATE OBJECT lo_ref.
+
     CALL TRANSFORMATION id
       SOURCE data = lo_ref
       RESULT XML lv_xml.
+
 * static attributes are not serialized
-    cl_abap_unit_assert=>assert_char_cp(
+    cl_abap_unit_assert=>assert_char_np(
       act = lv_xml
-      exp = '*<local.LCL_STATIC/>*' ).
+      exp = '*STATIC_FOO*' ).
   ENDMETHOD.
 
 ENDCLASS.
