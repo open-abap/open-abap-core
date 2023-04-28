@@ -13,6 +13,13 @@
   "rules": {
     "check_include": false, // todo
     "uncaught_exception": false, // todo
+    "cds_comment_style": true,
+    "change_if_to_case": false,
+    "expand_macros": true,
+    "fully_type_itabs": true,
+    "select_single_full_key": true,
+    "strict_sql": true,
+    "unnecessary_return": false,
     "cds_legacy_view": true,
     "no_external_form_calls": true,
     "superfluous_value": true,
@@ -85,7 +92,7 @@
       "ignoreExceptions": false
     },
     "unreachable_code": true,
-    "use_line_exists": false,
+    "use_line_exists": true,
     "inline_data_old_versions": false,
     "intf_referencing_clas": false,
     "keep_single_parameter_on_one_line": true,
@@ -130,7 +137,7 @@
     "dangerous_statement": false,
     "db_operation_in_loop": true,
     "abapdoc": false,
-    "allowed_object_naming": false,
+    "allowed_object_naming": true,
     "allowed_object_types": false,
     "ambiguous_statement": true,
     "begin_single_include": true,

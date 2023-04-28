@@ -173,6 +173,8 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     FIELD-SYMBOLS <any> TYPE any.
 
     lo_type = cl_abap_typedescr=>describe_by_data( data ).
+    prefix = mo_parsed->find_ignore_case( prefix ).
+
 *    WRITE '@KERNEL console.dir(lo_type.get());'.
     CASE lo_type->kind.
       WHEN cl_abap_typedescr=>kind_elem.
@@ -229,7 +231,6 @@ CLASS /ui2/cl_json IMPLEMENTATION.
         ENDLOOP.
       WHEN cl_abap_typedescr=>kind_ref.
         IF data IS INITIAL.
-          prefix = mo_parsed->find_ignore_case( prefix ).
           lt_members = mo_parsed->members( prefix && '/' ).
 
 *          WRITE '@KERNEL console.dir(prefix.get());'.

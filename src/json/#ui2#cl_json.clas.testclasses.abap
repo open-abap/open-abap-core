@@ -21,7 +21,8 @@ CLASS ltcl_deserialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
     METHODS deserialize_to_ref_bool FOR TESTING RAISING cx_static_check.
     METHODS deserialize_str FOR TESTING RAISING cx_static_check.
     METHODS deserialize_int FOR TESTING RAISING cx_static_check.
-    METHODS deserialize_array FOR TESTING RAISING cx_static_check.
+    METHODS deserialize_array_ref FOR TESTING RAISING cx_static_check.
+    METHODS more_array FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -395,7 +396,7 @@ CLASS ltcl_deserialize IMPLEMENTATION.
       exp = 'I' ).
   ENDMETHOD.
 
-  METHOD deserialize_array.
+  METHOD deserialize_array_ref.
 
     DATA ref TYPE REF TO data.
     DATA lv_type TYPE c LENGTH 1.
@@ -422,6 +423,39 @@ CLASS ltcl_deserialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = <fs>
       exp = 'Peter1' ).
+
+  ENDMETHOD.
+
+  METHOD more_array.
+
+    TYPES:
+      BEGIN OF ty_row,
+        title    TYPE string,
+        value    TYPE string,
+        selected TYPE abap_bool,
+      END OF ty_row.
+
+    TYPES ty_t_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+
+    DATA lt_tab2 TYPE ty_t_tab.
+    DATA row LIKE LINE OF lt_tab2.
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = '[{"TITLE":"Test","VALUE":"this is a description","SELECTED":true}]'
+      CHANGING
+        data = lt_tab2 ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( lt_tab2 )
+      exp = 1 ).
+
+    READ TABLE lt_tab2 INTO row INDEX 1.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = row-title
+      exp = 'Test' ).
 
   ENDMETHOD.
 

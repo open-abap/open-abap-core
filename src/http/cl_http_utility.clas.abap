@@ -76,7 +76,7 @@ CLASS cl_http_utility IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_utility~string_to_fields.
-    DATA tab TYPE STANDARD TABLE OF string.
+    DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
     DATA str LIKE LINE OF tab.
     DATA ls_field LIKE LINE OF fields.
 
@@ -92,7 +92,7 @@ CLASS cl_http_utility IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_utility~fields_to_string.
-    DATA tab TYPE STANDARD TABLE OF string.
+    DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
     DATA str TYPE string.
     DATA ls_field LIKE LINE OF fields.
 

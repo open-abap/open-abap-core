@@ -64,7 +64,7 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
              name      TYPE string,
              ref       TYPE REF TO cl_abap_datadescr,
            END OF ty_refs.
-    DATA mt_refs TYPE STANDARD TABLE OF ty_refs.
+    DATA mt_refs TYPE STANDARD TABLE OF ty_refs WITH DEFAULT KEY.
 ENDCLASS.
 
 CLASS cl_abap_structdescr IMPLEMENTATION.

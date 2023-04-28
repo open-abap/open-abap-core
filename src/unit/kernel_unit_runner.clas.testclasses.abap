@@ -61,7 +61,6 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lt_input  TYPE kernel_unit_runner=>ty_input.
     DATA ls_input  LIKE LINE OF lt_input.
     DATA ls_result TYPE kernel_unit_runner=>ty_result.
-    DATA ls_list   LIKE LINE OF ls_result-list.
 
     ls_input-class_name     = 'KERNEL_UNIT_RUNNER'.
     ls_input-testclass_name = 'LTCL_TEST'.
@@ -79,7 +78,6 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lt_input  TYPE kernel_unit_runner=>ty_input.
     DATA ls_input  LIKE LINE OF lt_input.
     DATA ls_result TYPE kernel_unit_runner=>ty_result.
-    DATA ls_list   LIKE LINE OF ls_result-list.
 
     ls_input-class_name     = 'KERNEL_UNIT_RUNNER'.
     ls_input-testclass_name = 'LTCL_TEST'.
