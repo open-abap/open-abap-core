@@ -26,6 +26,13 @@ ENDCLASS.
 CLASS lcl_impl IMPLEMENTATION.
 ENDCLASS.
 
+CLASS lcl_static DEFINITION.
+  PUBLIC SECTION.
+    CLASS-DATA foo TYPE string.
+ENDCLASS.
+CLASS lcl_static IMPLEMENTATION.
+ENDCLASS.
+
 ************************************************************************************
 
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
@@ -34,6 +41,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS basic_attributes FOR TESTING RAISING cx_static_check.
     METHODS visibility_protected FOR TESTING RAISING cx_static_check.
     METHODS attr_from_intf FOR TESTING RAISING cx_static_check.
+    METHODS is_class FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -109,6 +117,28 @@ CLASS ltcl_test IMPLEMENTATION.
 
     cl_abap_unit_assert=>assert_equals(
       act = ls_attr-is_interface
+      exp = abap_true ).
+
+  ENDMETHOD.
+
+  METHOD is_class.
+
+    DATA lo_foo TYPE REF TO lcl_static.
+    DATA lo_obj TYPE REF TO cl_abap_objectdescr.
+    DATA ls_attr TYPE abap_attrdescr.
+
+    CREATE OBJECT lo_foo.
+
+    lo_obj ?= cl_abap_typedescr=>describe_by_object_ref( lo_foo ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( lo_obj->attributes )
+      exp = 1 ).
+
+    READ TABLE lo_obj->attributes INDEX 1 INTO ls_attr.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_attr-is_class
       exp = abap_true ).
 
   ENDMETHOD.

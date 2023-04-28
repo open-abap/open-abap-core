@@ -74,6 +74,8 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     <fs>-is_interface = boolc( lv_name CA '~' ).
     WRITE '@KERNEL   lv_char1.set(p_object.ATTRIBUTES[a].is_constant);'.
     <fs>-is_constant = lv_char1.
+    WRITE '@KERNEL   lv_char1.set(p_object.ATTRIBUTES[a].is_class);'.
+    <fs>-is_class = lv_char1.
     WRITE '@KERNEL   lv_char1.set(p_object.ATTRIBUTES[a].visibility);'.
     <fs>-visibility = lv_char1.
     WRITE '@KERNEL   lv_any = p_object.ATTRIBUTES[a].type();'.
