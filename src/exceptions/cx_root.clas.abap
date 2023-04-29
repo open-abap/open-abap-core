@@ -13,7 +13,7 @@ CLASS cx_root DEFINITION ABSTRACT PUBLIC.
       EXPORTING
         program_name TYPE string
         include_name TYPE string
-        source_line  TYPE string.
+        source_line  TYPE i.
 
     INTERFACES if_message.
     ALIASES get_longtext FOR if_message~get_longtext.
