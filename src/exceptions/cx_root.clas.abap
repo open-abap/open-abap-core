@@ -1,5 +1,4 @@
 CLASS cx_root DEFINITION ABSTRACT PUBLIC.
-
   PUBLIC SECTION.
     DATA previous TYPE REF TO cx_root.
     DATA textid   TYPE c LENGTH 32.
@@ -13,7 +12,7 @@ CLASS cx_root DEFINITION ABSTRACT PUBLIC.
       EXPORTING
         program_name TYPE string
         include_name TYPE string
-        source_line  TYPE string.
+        source_line  TYPE i.
 
     INTERFACES if_message.
     ALIASES get_longtext FOR if_message~get_longtext.
@@ -29,7 +28,12 @@ CLASS cx_root IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_source_position.
-    ASSERT 'todo' = 1.
+    CLEAR program_name.
+    CLEAR include_name.
+    CLEAR source_line.
+
+    WRITE '@KERNEL source_line.set(this.EXTRA_CX.INTERNAL_LINE || 1);'.
+    WRITE '@KERNEL program_name.set(this.EXTRA_CX.INTERNAL_FILENAME || "error");'.
   ENDMETHOD.
 
   METHOD if_message~get_longtext.
