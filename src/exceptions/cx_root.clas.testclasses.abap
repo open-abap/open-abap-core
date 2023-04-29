@@ -9,8 +9,8 @@ CLASS lcx_error DEFINITION INHERITING FROM cx_root.
 
     METHODS constructor
       IMPORTING
-        textid   LIKE if_t100_message=>t100key OPTIONAL
-        msgv1    TYPE symsgv OPTIONAL.
+        textid LIKE if_t100_message=>t100key OPTIONAL
+        msgv1  TYPE symsgv OPTIONAL.
 ENDCLASS.
 
 CLASS lcx_error IMPLEMENTATION.
@@ -37,6 +37,8 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lx_error    TYPE REF TO cx_root.
     DATA lv_act      TYPE string.
     DATA ls_t100_key TYPE scx_t100key.
+    DATA lv_program_name TYPE string.
+    DATA lv_line TYPE i.
 
     ls_t100_key-msgid = '00'.
     ls_t100_key-msgno = '001'.
@@ -52,6 +54,13 @@ CLASS ltcl_test IMPLEMENTATION.
         cl_abap_unit_assert=>assert_equals(
           act = lv_act
           exp = 'hello' ).
+
+        lx_error->get_source_position(
+          IMPORTING
+            program_name = lv_program_name
+            source_line  = lv_line ).
+        cl_abap_unit_assert=>assert_not_initial( lv_program_name ).
+        cl_abap_unit_assert=>assert_not_initial( lv_line ).
     ENDTRY.
 
   ENDMETHOD.
