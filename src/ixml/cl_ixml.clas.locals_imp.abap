@@ -677,8 +677,10 @@ CLASS lcl_document IMPLEMENTATION.
 
   METHOD if_ixml_document~create_simple_element.
     CREATE OBJECT val TYPE lcl_node
-      EXPORTING ii_parent = parent.
+      EXPORTING
+        ii_parent = parent.
     val->if_ixml_node~set_name( name ).
+    val->if_ixml_node~set_value( value ).
   ENDMETHOD.
 
   METHOD if_ixml_document~find_from_name.

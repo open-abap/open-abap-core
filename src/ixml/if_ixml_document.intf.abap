@@ -56,17 +56,20 @@ INTERFACE if_ixml_document PUBLIC.
       RETURNING
         VALUE(val) TYPE REF TO if_ixml_element,
     create_filter_attribute
-      IMPORTING name TYPE string
-      RETURNING VALUE(val) TYPE REF TO if_ixml_node_filter,
+      IMPORTING
+        name       TYPE string
+      RETURNING
+        VALUE(val) TYPE REF TO if_ixml_node_filter,
     create_simple_element
       IMPORTING
         name       TYPE string
         parent     TYPE REF TO if_ixml_node
+        value      TYPE string OPTIONAL
       RETURNING
         VALUE(val) TYPE REF TO if_ixml_element,
     find_from_name
       IMPORTING
-        name TYPE string
+        name      TYPE string
         namespace TYPE string OPTIONAL
       RETURNING
         VALUE(element) TYPE REF TO if_ixml_element,
