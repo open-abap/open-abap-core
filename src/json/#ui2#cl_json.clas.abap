@@ -27,6 +27,13 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
       RETURNING
         VALUE(r_json) TYPE string.
 
+    CLASS-METHODS generate
+      IMPORTING
+        json        TYPE string
+        pretty_name TYPE string
+      RETURNING
+        VALUE(rr_data) TYPE REF TO data.
+
   PRIVATE SECTION.
     CLASS-DATA mo_parsed TYPE REF TO lcl_parser.
     CLASS-METHODS _deserialize
@@ -38,6 +45,10 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS /ui2/cl_json IMPLEMENTATION.
+
+  METHOD generate.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD serialize.
     DATA lo_type       TYPE REF TO cl_abap_typedescr.
