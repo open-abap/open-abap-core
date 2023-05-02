@@ -83,9 +83,11 @@ INTERFACE if_ixml_element PUBLIC.
         attr TYPE any,
     set_attribute
       IMPORTING
-        name      TYPE string
-        namespace TYPE string OPTIONAL
-        value     TYPE string OPTIONAL,
+        name        TYPE string
+        namespace   TYPE string OPTIONAL
+        value       TYPE string OPTIONAL
+      RETURNING
+        VALUE(rval) TYPE i,
     set_attribute_ns
       IMPORTING
         name   TYPE string
