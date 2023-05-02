@@ -30,7 +30,7 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
     CLASS-METHODS generate
       IMPORTING
         json        TYPE string
-        pretty_name TYPE string
+        pretty_name TYPE string OPTIONAL
       RETURNING
         VALUE(rr_data) TYPE REF TO data.
 
