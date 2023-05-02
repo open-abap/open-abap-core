@@ -8,7 +8,13 @@ CLASS cl_gui_cfw DEFINITION PUBLIC.
         RETURNING
           VALUE(val) TYPE i.
 
-    CLASS-METHODS flush.
+    CLASS-METHODS
+      flush.
+
+    CLASS-METHODS
+      set_new_ok_code
+        IMPORTING new_code
+          TYPE clike.
 ENDCLASS.
 
 CLASS cl_gui_cfw IMPLEMENTATION.
@@ -18,5 +24,9 @@ CLASS cl_gui_cfw IMPLEMENTATION.
 
   METHOD flush.
     RETURN.
+  ENDMETHOD.
+
+  METHOD set_new_ok_code.
+    ASSERT 1 = 'not implemented'.
   ENDMETHOD.
 ENDCLASS.
