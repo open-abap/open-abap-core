@@ -63,6 +63,7 @@ CLASS lcl_json_parser IMPLEMENTATION.
     WRITE '@KERNEL   lv_error.set("X")'.
     WRITE '@KERNEL }'.
     IF lv_error = abap_true.
+* NodeJS 16 will set the postion, but NodeJS 20 does not
       FIND REGEX ' position (\d+)' IN lv_error_message SUBMATCHES lv_xml_offset.
       RAISE EXCEPTION TYPE cx_sxml_parse_error
         EXPORTING
