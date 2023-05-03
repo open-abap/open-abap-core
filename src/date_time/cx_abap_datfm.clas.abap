@@ -1,0 +1,7 @@
+CLASS cx_abap_datfm DEFINITION PUBLIC INHERITING FROM cx_static_check.
+
+ENDCLASS.
+
+CLASS cx_abap_datfm IMPLEMENTATION.
+
+ENDCLASS.
