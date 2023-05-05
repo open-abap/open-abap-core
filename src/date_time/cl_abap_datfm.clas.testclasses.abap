@@ -4,6 +4,7 @@ CLASS ltcl_test_datfm DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT 
     METHODS convert_external_to_internal FOR TESTING RAISING cx_static_check.
     METHODS fails_not_gregorian_dot_sep FOR TESTING RAISING cx_static_check.
     METHODS fails_initial_date_provided FOR TESTING RAISING cx_static_check.
+    METHODS fails_date_too_long FOR TESTING RAISING cx_static_check.
 
 
     CONSTANTS christmas_external TYPE string VALUE '24.12.2023'.
@@ -42,6 +43,17 @@ CLASS ltcl_test_datfm IMPLEMENTATION.
 
     TRY.
         cl_abap_datfm=>conv_date_ext_to_int( im_datext = initial im_datfmdes = gregorian_dot_seperated ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_abap_datfm INTO exception.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD fails_date_too_long.
+    DATA this_is_too_long TYPE string VALUE '  01.01.2022  '.
+    DATA exception TYPE REF TO cx_abap_datfm.
+
+    TRY.
+        cl_abap_datfm=>conv_date_ext_to_int( im_datext = this_is_too_long im_datfmdes = gregorian_dot_seperated ).
         cl_abap_unit_assert=>fail( ).
       CATCH cx_abap_datfm INTO exception.
     ENDTRY.
