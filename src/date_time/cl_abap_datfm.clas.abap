@@ -17,6 +17,10 @@ CLASS cl_abap_datfm IMPLEMENTATION.
     IF im_datfmdes <> 1.
       RAISE EXCEPTION TYPE cx_abap_datfm.
     ENDIF.
+
+    IF im_datext IS INITIAL.
+      RAISE EXCEPTION TYPE cx_abap_datfm.
+    ENDIF.
   ENDMETHOD.
 
 ENDCLASS.
