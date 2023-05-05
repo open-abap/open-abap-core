@@ -17,7 +17,7 @@ ENDCLASS.
 CLASS cl_abap_datfm IMPLEMENTATION.
 
   METHOD conv_date_ext_to_int.
-    DATA is_it_ddmmyyyy_dot_seperated TYPE string VALUE '^(0[1-9]|[12][0-9]|3[01])[- \..](0[1-9]|1[012])[- \..](19|20)\d\d$'.
+    DATA is_it_ddmmyyyy_dot_seperated TYPE string VALUE '^(0[1-9]|[12][0-9]|3[01])[- \..](0[1-9]|1[012])[- \..]\d\d\d\d$'.
     IF im_datfmdes <> gregorian_dot_seperated.
       RAISE EXCEPTION TYPE cx_abap_datfm.
     ENDIF.
