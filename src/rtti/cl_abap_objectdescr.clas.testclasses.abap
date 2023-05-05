@@ -33,6 +33,13 @@ ENDCLASS.
 CLASS lcl_static IMPLEMENTATION.
 ENDCLASS.
 
+CLASS lcl_str DEFINITION.
+  PUBLIC SECTION.
+    DATA foo TYPE string.
+ENDCLASS.
+CLASS lcl_str IMPLEMENTATION.
+ENDCLASS.
+
 ************************************************************************************
 
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
@@ -42,6 +49,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS visibility_protected FOR TESTING RAISING cx_static_check.
     METHODS attr_from_intf FOR TESTING RAISING cx_static_check.
     METHODS is_class FOR TESTING RAISING cx_static_check.
+    METHODS relative_name FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -140,6 +148,36 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = ls_attr-is_class
       exp = abap_true ).
+
+  ENDMETHOD.
+
+  METHOD relative_name.
+
+    DATA io_app    TYPE REF TO lcl_str.
+    DATA lv_assign TYPE string.
+    DATA lo_tdescr TYPE REF TO cl_abap_typedescr.
+    DATA lo_odescr TYPE REF TO cl_abap_objectdescr.
+    DATA lt_attri  TYPE abap_attrdescr_tab.
+    DATA ls_attri  LIKE LINE OF lt_attri.
+
+    FIELD-SYMBOLS <any> TYPE any.
+
+    CREATE OBJECT io_app.
+    lo_odescr ?= cl_abap_objectdescr=>describe_by_object_ref( io_app ).
+    lt_attri = lo_odescr->attributes.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( lt_attri )
+      exp = 1 ).
+
+    LOOP AT lt_attri INTO ls_attri.
+      lv_assign = `IO_APP->` && ls_attri-name.
+      ASSIGN (lv_assign) TO <any>.
+      lo_tdescr = cl_abap_datadescr=>describe_by_data( <any> ).
+      cl_abap_unit_assert=>assert_equals(
+        act = lo_tdescr->get_relative_name( )
+        exp = 'STRING' ).
+    ENDLOOP.
 
   ENDMETHOD.
 
