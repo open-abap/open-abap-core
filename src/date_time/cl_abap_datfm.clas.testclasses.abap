@@ -18,12 +18,14 @@ CLASS ltcl_test_datfm IMPLEMENTATION.
 
   METHOD acc_convert_external_to_internal.
     DATA date_internal_actual TYPE d.
+    DATA format_used_actual TYPE c.
 
     cl_abap_datfm=>conv_date_ext_to_int( EXPORTING im_datext = christmas_external im_datfmdes = gregorian_dot_seperated
-                                         IMPORTING ex_datint = date_internal_actual ).
+                                         IMPORTING ex_datint = date_internal_actual
+                                                   ex_datfmused = format_used_actual ).
 
     cl_abap_unit_assert=>assert_equals( exp = christmas act = date_internal_actual ).
-
+    cl_abap_unit_assert=>assert_equals( exp = gregorian_dot_seperated act = format_used_actual ).
   ENDMETHOD.
 
   METHOD fails_not_gregorian_dot_sep.
