@@ -12,6 +12,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS nested_boolean1 FOR TESTING RAISING cx_static_check.
     METHODS nested_boolean2 FOR TESTING RAISING cx_static_check.
     METHODS long_name FOR TESTING RAISING cx_static_check.
+    METHODS namespaced_name FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -217,6 +218,28 @@ CLASS ltcl_test IMPLEMENTATION.
         cl_abap_unit_assert=>fail( ).
       CATCH cx_sy_struct_comp_name.
     ENDTRY.
+  ENDMETHOD.
+
+  METHOD namespaced_name.
+    DATA: BEGIN OF foo,
+            /foo/bar TYPE i,
+          END OF foo.
+    DATA struct_descr TYPE REF TO cl_abap_structdescr.
+    DATA components TYPE abap_component_tab.
+    DATA row LIKE LINE OF components.
+
+    struct_descr ?= cl_abap_typedescr=>describe_by_data( foo ).
+    components = struct_descr->get_components( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( components )
+      exp = 1 ).
+    READ TABLE components INDEX 1 INTO row.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = row-name
+      exp = '/FOO/BAR' ).
   ENDMETHOD.
 
 ENDCLASS.

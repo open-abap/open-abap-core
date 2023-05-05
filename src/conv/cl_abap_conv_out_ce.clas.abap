@@ -9,12 +9,25 @@ CLASS cl_abap_conv_out_ce DEFINITION PUBLIC.
           replacement TYPE string OPTIONAL
         RETURNING
           VALUE(ret)  TYPE REF TO cl_abap_conv_out_ce.
+
     CLASS-METHODS
       uccpi
         IMPORTING
           value TYPE string
         RETURNING
           VALUE(ret) TYPE i.
+
+    TYPES hex02 TYPE x LENGTH 2.
+    CLASS-METHODS uccp
+      IMPORTING
+        char TYPE clike
+      RETURNING
+        VALUE(uccp) TYPE hex02
+      RAISING
+        cx_sy_conversion_codepage
+        cx_sy_codepage_converter_init
+        cx_parameter_invalid_range.
+
     METHODS
       convert
         IMPORTING
@@ -70,6 +83,10 @@ CLASS cl_abap_conv_out_ce IMPLEMENTATION.
 
   METHOD get_buffer.
     buffer = mv_buffer.
+  ENDMETHOD.
+
+  METHOD uccp.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD reset.
