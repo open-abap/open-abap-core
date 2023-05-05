@@ -9,13 +9,16 @@ CLASS cl_abap_datfm DEFINITION PUBLIC.
         ex_datfmused TYPE char1
       RAISING
         cx_abap_datfm.
+
+  PRIVATE SECTION.
+    CONSTANTS gregorian_dot_seperated TYPE c VALUE '1'.
 ENDCLASS.
 
 CLASS cl_abap_datfm IMPLEMENTATION.
 
   METHOD conv_date_ext_to_int.
     DATA is_it_ddmmyyyy_dot_seperated TYPE string VALUE '^(0[1-9]|[12][0-9]|3[01])[- \..](0[1-9]|1[012])[- \..](19|20)\d\d$'.
-    IF im_datfmdes <> 1.
+    IF im_datfmdes <> gregorian_dot_seperated.
       RAISE EXCEPTION TYPE cx_abap_datfm.
     ENDIF.
 
@@ -25,7 +28,7 @@ CLASS cl_abap_datfm IMPLEMENTATION.
     ENDIF.
 
     ex_datint = im_datext+6(8) && im_datext+3(2) && im_datext(2).
-    ex_datfmused = 1.
+    ex_datfmused = gregorian_dot_seperated.
   ENDMETHOD.
 
 ENDCLASS.
