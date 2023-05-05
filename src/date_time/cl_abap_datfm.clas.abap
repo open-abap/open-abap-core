@@ -14,7 +14,9 @@ ENDCLASS.
 CLASS cl_abap_datfm IMPLEMENTATION.
 
   METHOD conv_date_ext_to_int.
-    sy-subrc = sy-subrc.
+    IF im_datfmdes <> 1.
+      RAISE EXCEPTION TYPE cx_abap_datfm.
+    ENDIF.
   ENDMETHOD.
 
 ENDCLASS.
