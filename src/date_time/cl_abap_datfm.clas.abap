@@ -25,6 +25,7 @@ CLASS cl_abap_datfm IMPLEMENTATION.
     ENDIF.
 
     ex_datint = im_datext+6(8) && im_datext+3(2) && im_datext(2).
+    ex_datfmused = 1.
   ENDMETHOD.
 
 ENDCLASS.
