@@ -12,6 +12,8 @@ CLASS ltcl_test_datfm DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT 
     CONSTANTS gregorian_dot_seperated TYPE c VALUE '1'.
     CONSTANTS gregorian_slash_seperated TYPE c VALUE '2'.
 
+    DATA exception TYPE REF TO cx_abap_datfm.
+
 ENDCLASS.
 
 CLASS ltcl_test_datfm IMPLEMENTATION.
@@ -30,7 +32,6 @@ CLASS ltcl_test_datfm IMPLEMENTATION.
 
   METHOD fails_not_gregorian_dot_sep.
     DATA date_internal TYPE d.
-    DATA exception TYPE REF TO cx_abap_datfm.
 
     TRY.
         cl_abap_datfm=>conv_date_ext_to_int( im_datext = christmas_external im_datfmdes = gregorian_slash_seperated ).
@@ -41,7 +42,6 @@ CLASS ltcl_test_datfm IMPLEMENTATION.
 
   METHOD fails_initial_date_provided.
     DATA initial TYPE string.
-    DATA exception TYPE REF TO cx_abap_datfm.
 
     TRY.
         cl_abap_datfm=>conv_date_ext_to_int( im_datext = initial im_datfmdes = gregorian_dot_seperated ).
@@ -52,7 +52,6 @@ CLASS ltcl_test_datfm IMPLEMENTATION.
 
   METHOD fails_date_too_long.
     DATA this_is_too_long TYPE string VALUE '  01.01.20222  '.
-    DATA exception TYPE REF TO cx_abap_datfm.
 
     TRY.
         cl_abap_datfm=>conv_date_ext_to_int( im_datext = this_is_too_long im_datfmdes = gregorian_dot_seperated ).
@@ -63,7 +62,6 @@ CLASS ltcl_test_datfm IMPLEMENTATION.
 
   METHOD fails_gregorian_but_no_dots.
     DATA date_seperated_by_slashes TYPE string VALUE '01/01/2022'.
-    DATA exception TYPE REF TO cx_abap_datfm.
 
     TRY.
         cl_abap_datfm=>conv_date_ext_to_int( im_datext = date_seperated_by_slashes im_datfmdes = gregorian_dot_seperated ).
