@@ -1,14 +1,14 @@
 CLASS ltcl_test_datfm DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
-    METHODS convert_external_to_internal FOR TESTING RAISING cx_static_check.
+    METHODS acc_convert_external_to_internal FOR TESTING RAISING cx_static_check.
     METHODS fails_not_gregorian_dot_sep FOR TESTING RAISING cx_static_check.
     METHODS fails_initial_date_provided FOR TESTING RAISING cx_static_check.
     METHODS fails_date_too_long FOR TESTING RAISING cx_static_check.
     METHODS fails_gregorian_but_no_dots FOR TESTING RAISING cx_static_check.
 
     CONSTANTS christmas_external TYPE string VALUE '24.12.2023'.
-    CONSTANTS christmas TYPE d VALUE '99991231'.
+    CONSTANTS christmas TYPE d VALUE '20231224'.
     CONSTANTS gregorian_dot_seperated TYPE c VALUE '1'.
     CONSTANTS gregorian_slash_seperated TYPE c VALUE '2'.
 
@@ -16,13 +16,13 @@ ENDCLASS.
 
 CLASS ltcl_test_datfm IMPLEMENTATION.
 
-  METHOD convert_external_to_internal.
+  METHOD acc_convert_external_to_internal.
     DATA date_internal_actual TYPE d.
 
     cl_abap_datfm=>conv_date_ext_to_int( EXPORTING im_datext = christmas_external im_datfmdes = gregorian_dot_seperated
                                          IMPORTING ex_datint = date_internal_actual ).
 
-   " cl_abap_unit_assert=>assert_equals( exp = christmas act = date_internal_actual ).
+    cl_abap_unit_assert=>assert_equals( exp = christmas act = date_internal_actual ).
 
   ENDMETHOD.
 

@@ -23,6 +23,8 @@ CLASS cl_abap_datfm IMPLEMENTATION.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE cx_abap_datfm.
     ENDIF.
+
+    ex_datint = im_datext+6(8) && im_datext+3(2) && im_datext(2).
   ENDMETHOD.
 
 ENDCLASS.
