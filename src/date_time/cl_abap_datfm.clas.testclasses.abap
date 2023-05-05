@@ -2,6 +2,7 @@ CLASS ltcl_test_datfm DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT 
 
   PRIVATE SECTION.
     METHODS acc_convert_external_to_internal FOR TESTING RAISING cx_static_check.
+    METHODS acc_conv_ext_to_int_infinity FOR TESTING RAISING cx_static_check.
     METHODS fails_not_gregorian_dot_sep FOR TESTING RAISING cx_static_check.
     METHODS fails_initial_date_provided FOR TESTING RAISING cx_static_check.
     METHODS fails_date_too_long FOR TESTING RAISING cx_static_check.
@@ -29,6 +30,21 @@ CLASS ltcl_test_datfm IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals( exp = christmas act = date_internal_actual ).
     cl_abap_unit_assert=>assert_equals( exp = gregorian_dot_seperated act = format_used_actual ).
   ENDMETHOD.
+
+  METHOD acc_conv_ext_to_int_infinity.
+    DATA infinity_external TYPE string VALUE '31.12.9999'.
+    DATA infinity TYPE d VALUE '99991231'.
+    DATA date_internal_actual TYPE d.
+    DATA format_used_actual TYPE c.
+
+    cl_abap_datfm=>conv_date_ext_to_int( EXPORTING im_datext = infinity_external im_datfmdes = gregorian_dot_seperated
+                                       IMPORTING ex_datint = date_internal_actual
+                                                 ex_datfmused = format_used_actual ).
+
+    cl_abap_unit_assert=>assert_equals( exp = infinity act = date_internal_actual ).
+    cl_abap_unit_assert=>assert_equals( exp = gregorian_dot_seperated act = format_used_actual ).
+  ENDMETHOD.
+
 
   METHOD fails_not_gregorian_dot_sep.
     DATA date_internal TYPE d.
