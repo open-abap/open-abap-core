@@ -19,15 +19,6 @@ CLASS cl_abap_datfm IMPLEMENTATION.
       RAISE EXCEPTION TYPE cx_abap_datfm.
     ENDIF.
 
-    IF im_datext IS INITIAL.
-      RAISE EXCEPTION TYPE cx_abap_datfm.
-    ENDIF.
-
-    CONDENSE im_datext.
-    IF strlen( im_datext ) > 10.
-      RAISE EXCEPTION TYPE cx_abap_datfm.
-    ENDIF.
-
     FIND ALL OCCURRENCES OF REGEX is_it_ddmmyyyy_dot_seperated IN im_datext.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE cx_abap_datfm.
