@@ -39,22 +39,22 @@ CLASS ltcl_test_datfm IMPLEMENTATION.
     DATA format_used_actual TYPE c.
 
     cl_abap_datfm=>conv_date_ext_to_int( EXPORTING im_datext = infinity_external im_datfmdes = gregorian_dot_seperated
-                                       IMPORTING ex_datint = date_internal_actual
-                                                 ex_datfmused = format_used_actual ).
+                                        IMPORTING ex_datint = date_internal_actual
+                                                  ex_datfmused = format_used_actual ).
 
     cl_abap_unit_assert=>assert_equals( exp = infinity act = date_internal_actual ).
     cl_abap_unit_assert=>assert_equals( exp = gregorian_dot_seperated act = format_used_actual ).
   ENDMETHOD.
 
   METHOD acc_conv_ext_to_int_initial.
-    DATA initial_external TYPE string VALUE '00.00.000'.
+    DATA initial_external TYPE string VALUE '00.00.0000'.
     DATA initial TYPE d VALUE '00000000'.
     DATA date_internal_actual TYPE d.
     DATA format_used_actual TYPE c.
 
     cl_abap_datfm=>conv_date_ext_to_int( EXPORTING im_datext = initial_external im_datfmdes = gregorian_dot_seperated
                                          IMPORTING ex_datint = date_internal_actual
-                                                 ex_datfmused = format_used_actual ).
+                                                   ex_datfmused = format_used_actual ).
 
     cl_abap_unit_assert=>assert_equals( exp = initial act = date_internal_actual ).
     cl_abap_unit_assert=>assert_equals( exp = gregorian_dot_seperated act = format_used_actual ).
