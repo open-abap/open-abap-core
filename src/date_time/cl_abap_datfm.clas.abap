@@ -21,6 +21,11 @@ CLASS cl_abap_datfm IMPLEMENTATION.
     IF im_datext IS INITIAL.
       RAISE EXCEPTION TYPE cx_abap_datfm.
     ENDIF.
+
+    CONDENSE im_datext.
+    IF strlen( im_datext ) > 10.
+      RAISE EXCEPTION TYPE cx_abap_datfm.
+    ENDIF.
   ENDMETHOD.
 
 ENDCLASS.

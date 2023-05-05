@@ -49,7 +49,7 @@ CLASS ltcl_test_datfm IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD fails_date_too_long.
-    DATA this_is_too_long TYPE string VALUE '  01.01.2022  '.
+    DATA this_is_too_long TYPE string VALUE '  01.01.20222  '.
     DATA exception TYPE REF TO cx_abap_datfm.
 
     TRY.
