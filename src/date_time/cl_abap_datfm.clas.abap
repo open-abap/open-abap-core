@@ -11,7 +11,7 @@ CLASS cl_abap_datfm DEFINITION PUBLIC.
         cx_abap_datfm.
 
     CLASS-METHODS get_date_format_des
-        IMPORTING
+      IMPORTING
         im_datfm      TYPE char1 OPTIONAL
         im_langu      TYPE spras DEFAULT sy-langu
         im_plain      TYPE abap_bool DEFAULT abap_false
