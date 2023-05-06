@@ -106,10 +106,16 @@ CLASS cl_abap_conv_out_ce IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD convert.
-* todo, input parameter "N" not handled
-    ASSERT n = 0.
+    DATA lv_str TYPE string.
 
-    WRITE '@KERNEL let result = Buffer.from(data.get(), this.mv_js_encoding.get()).toString("hex");'.
+    WRITE '@KERNEL let result = "";'.
+    IF n > 0.
+      lv_str = data.
+      lv_str = lv_str(n).
+      WRITE '@KERNEL result = Buffer.from(lv_str.get(), this.mv_js_encoding.get()).toString("hex");'.
+    ELSE.
+      WRITE '@KERNEL result = Buffer.from(data.get(), this.mv_js_encoding.get()).toString("hex");'.
+    ENDIF.
     WRITE '@KERNEL buffer.set(result.toUpperCase());'.
   ENDMETHOD.
 ENDCLASS.

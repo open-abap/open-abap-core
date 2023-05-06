@@ -4,6 +4,7 @@ CLASS ltcl_conv_out DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FI
     METHODS convert1 FOR TESTING RAISING cx_static_check.
     METHODS convert_space FOR TESTING RAISING cx_static_check.
     METHODS convert_empty FOR TESTING RAISING cx_static_check.
+    METHODS convert_n FOR TESTING RAISING cx_static_check.
     METHODS upper FOR TESTING RAISING cx_static_check.
     METHODS empty FOR TESTING RAISING cx_static_check.
     METHODS utf16le FOR TESTING RAISING cx_static_check.
@@ -62,6 +63,26 @@ CLASS ltcl_conv_out IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = xstr
       exp = '' ).
+  ENDMETHOD.
+
+  METHOD convert_n.
+    DATA str    TYPE string.
+    DATA xstr   TYPE xstring.
+    DATA lo_obj TYPE REF TO cl_abap_conv_out_ce.
+    lo_obj = cl_abap_conv_out_ce=>create( encoding = '4103' ).
+
+    str = 'abc'.
+
+    lo_obj->convert(
+      EXPORTING
+        data   = str
+        n      = 1
+      IMPORTING
+        buffer = xstr ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = xstr
+      exp = '6100' ).
   ENDMETHOD.
 
   METHOD upper.
