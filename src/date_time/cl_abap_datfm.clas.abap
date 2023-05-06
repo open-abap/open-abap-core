@@ -10,6 +10,17 @@ CLASS cl_abap_datfm DEFINITION PUBLIC.
       RAISING
         cx_abap_datfm.
 
+    CLASS-METHODS get_date_format_des
+        IMPORTING
+        im_datfm      TYPE char1 OPTIONAL
+        im_langu      TYPE spras DEFAULT sy-langu
+        im_plain      TYPE abap_bool DEFAULT abap_false
+        im_long       TYPE abap_bool DEFAULT abap_false
+      EXPORTING
+        ex_dateformat TYPE csequence
+      RAISING
+        cx_abap_datfm.
+
   PRIVATE SECTION.
     CONSTANTS gregorian_dot_seperated TYPE c VALUE '1'.
 ENDCLASS.
@@ -29,6 +40,10 @@ CLASS cl_abap_datfm IMPLEMENTATION.
 
     ex_datint = im_datext+6(8) && im_datext+3(2) && im_datext(2).
     ex_datfmused = gregorian_dot_seperated.
+  ENDMETHOD.
+
+  METHOD get_date_format_des.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
 ENDCLASS.
