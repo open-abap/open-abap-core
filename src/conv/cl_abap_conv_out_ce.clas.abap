@@ -13,14 +13,14 @@ CLASS cl_abap_conv_out_ce DEFINITION PUBLIC.
     CLASS-METHODS
       uccpi
         IMPORTING
-          value TYPE string
+          value      TYPE string
         RETURNING
           VALUE(ret) TYPE i.
 
     TYPES hex02 TYPE x LENGTH 2.
     CLASS-METHODS uccp
       IMPORTING
-        char TYPE clike
+        char        TYPE clike
       RETURNING
         VALUE(uccp) TYPE hex02
       RAISING
@@ -31,16 +31,19 @@ CLASS cl_abap_conv_out_ce DEFINITION PUBLIC.
     METHODS
       convert
         IMPORTING
-          data   TYPE string
+          data   TYPE simple
           n      TYPE i OPTIONAL
         EXPORTING
           buffer TYPE xstring.
+
     METHODS write
       IMPORTING
         data TYPE string.
+
     METHODS get_buffer
       RETURNING
         VALUE(buffer) TYPE xstring.
+
     METHODS reset.
   PRIVATE SECTION.
     DATA mv_js_encoding TYPE string.
@@ -86,7 +89,16 @@ CLASS cl_abap_conv_out_ce IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD uccp.
-    ASSERT 1 = 'todo'.
+    DATA lv_char TYPE c LENGTH 1.
+    DATA lo_obj  TYPE REF TO cl_abap_conv_out_ce.
+
+    lv_char = char(1).
+    lo_obj = create( encoding = '4103' ).
+
+    lo_obj->convert( EXPORTING data = lv_char
+                     IMPORTING buffer = uccp ).
+
+    SHIFT uccp LEFT CIRCULAR IN BYTE MODE.
   ENDMETHOD.
 
   METHOD reset.
@@ -95,6 +107,7 @@ CLASS cl_abap_conv_out_ce IMPLEMENTATION.
 
   METHOD convert.
 * todo, input parameter "N" not handled
+    ASSERT n = 0.
 
     WRITE '@KERNEL let result = Buffer.from(data.get(), this.mv_js_encoding.get()).toString("hex");'.
     WRITE '@KERNEL buffer.set(result.toUpperCase());'.
