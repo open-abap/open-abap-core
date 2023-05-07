@@ -1,12 +1,19 @@
 CLASS ltcl_conv_out DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
-    METHODS test1 FOR TESTING RAISING cx_static_check.
+    METHODS convert1 FOR TESTING RAISING cx_static_check.
+    METHODS convert_space FOR TESTING RAISING cx_static_check.
+    METHODS convert_empty FOR TESTING RAISING cx_static_check.
+    METHODS convert_n FOR TESTING RAISING cx_static_check.
+    METHODS convert_n_char FOR TESTING RAISING cx_static_check.
     METHODS upper FOR TESTING RAISING cx_static_check.
     METHODS empty FOR TESTING RAISING cx_static_check.
     METHODS utf16le FOR TESTING RAISING cx_static_check.
     METHODS uccpi_2 FOR TESTING RAISING cx_static_check.
     METHODS buffer FOR TESTING RAISING cx_static_check.
+    METHODS uccp1 FOR TESTING RAISING cx_static_check.
+    METHODS uccp2 FOR TESTING RAISING cx_static_check.
+    METHODS uccp3 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -20,7 +27,7 @@ CLASS ltcl_conv_out IMPLEMENTATION.
       exp = 50 ).
   ENDMETHOD.
 
-  METHOD test1.
+  METHOD convert1.
     DATA conv TYPE REF TO cl_abap_conv_out_ce.
     DATA data TYPE string.
     conv = cl_abap_conv_out_ce=>create( encoding = 'UTF-8' ).
@@ -29,6 +36,72 @@ CLASS ltcl_conv_out IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = data
       exp = '616263' ).
+  ENDMETHOD.
+
+  METHOD convert_space.
+    DATA lv_char TYPE c LENGTH 1.
+    DATA xstr    TYPE xstring.
+    DATA lo_obj  TYPE REF TO cl_abap_conv_out_ce.
+    lo_obj = cl_abap_conv_out_ce=>create( encoding = '4103' ).
+
+    lo_obj->convert( EXPORTING data = lv_char
+                     IMPORTING buffer = xstr ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = xstr
+      exp = '2000' ).
+  ENDMETHOD.
+
+  METHOD convert_empty.
+    DATA lv_empty TYPE string.
+    DATA xstr     TYPE xstring.
+    DATA lo_obj   TYPE REF TO cl_abap_conv_out_ce.
+    lo_obj = cl_abap_conv_out_ce=>create( encoding = '4103' ).
+
+    lo_obj->convert( EXPORTING data = lv_empty
+                     IMPORTING buffer = xstr ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = xstr
+      exp = '' ).
+  ENDMETHOD.
+
+  METHOD convert_n.
+    DATA str    TYPE string.
+    DATA xstr   TYPE xstring.
+    DATA lo_obj TYPE REF TO cl_abap_conv_out_ce.
+    lo_obj = cl_abap_conv_out_ce=>create( encoding = '4103' ).
+
+    str = 'abc'.
+
+    lo_obj->convert(
+      EXPORTING
+        data   = str
+        n      = 1
+      IMPORTING
+        buffer = xstr ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = xstr
+      exp = '6100' ).
+  ENDMETHOD.
+
+  METHOD convert_n_char.
+    DATA lv_char TYPE c LENGTH 1.
+    DATA xstr    TYPE xstring.
+    DATA lo_obj  TYPE REF TO cl_abap_conv_out_ce.
+    lo_obj = cl_abap_conv_out_ce=>create( ).
+
+    lo_obj->convert(
+      EXPORTING
+        data   = lv_char
+        n      = strlen( lv_char )
+      IMPORTING
+        buffer = xstr ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = xstr
+      exp = '' ).
   ENDMETHOD.
 
   METHOD upper.
@@ -80,6 +153,30 @@ CLASS ltcl_conv_out IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = buffer
       exp = '' ).
+  ENDMETHOD.
+
+  METHOD uccp1.
+    DATA lv_hex TYPE x LENGTH 2.
+    lv_hex = cl_abap_conv_out_ce=>uccp( 'a' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_hex
+      exp = '0061' ).
+  ENDMETHOD.
+
+  METHOD uccp2.
+    DATA lv_hex TYPE x LENGTH 2.
+    lv_hex = cl_abap_conv_out_ce=>uccp( 'ab' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_hex
+      exp = '0061' ).
+  ENDMETHOD.
+
+  METHOD uccp3.
+    DATA lv_hex TYPE x LENGTH 2.
+    lv_hex = cl_abap_conv_out_ce=>uccp( '' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_hex
+      exp = '0020' ).
   ENDMETHOD.
 
 ENDCLASS.
