@@ -2,22 +2,22 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
   PUBLIC SECTION.
     CLASS-METHODS subtract
       IMPORTING
-        tstmp1 TYPE p
-        tstmp2 TYPE p
+        tstmp1        TYPE p
+        tstmp2        TYPE p
       RETURNING
         VALUE(r_secs) TYPE i.
 
     CLASS-METHODS add
       IMPORTING
-        tstmp   TYPE p
-        secs    TYPE i
+        tstmp       TYPE p
+        secs        TYPE i
       RETURNING
         VALUE(time) TYPE timestamp.
 
     CLASS-METHODS subtractsecs
       IMPORTING
-        tstmp   TYPE p
-        secs    TYPE i
+        tstmp       TYPE p
+        secs        TYPE i
       RETURNING
         VALUE(time) TYPE timestamp.
 
@@ -32,7 +32,7 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
 
     CLASS-METHODS move
       IMPORTING
-        tstmp_src   TYPE p
+        tstmp_src TYPE p
       EXPORTING
         tstmp_tgt TYPE p.
 
@@ -45,7 +45,7 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
 
     CLASS-METHODS move_to_short
       IMPORTING
-        tstmp_src TYPE tzntstmpl
+        tstmp_src        TYPE tzntstmpl
       RETURNING
         VALUE(tstmp_out) TYPE tzntstmps
       RAISING
