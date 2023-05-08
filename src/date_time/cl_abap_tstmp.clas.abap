@@ -96,6 +96,10 @@ CLASS cl_abap_tstmp IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD move_to_short.
-    ASSERT 1 = 'todo'.
+    move(
+      EXPORTING
+        tstmp_src = tstmp_src
+      IMPORTING
+        tstmp_tgt = tstmp_out ).
   ENDMETHOD.
 ENDCLASS.
