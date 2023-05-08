@@ -61,8 +61,8 @@ CLASS cl_abap_tstmp IMPLEMENTATION.
 
   METHOD move.
 * todo, this is most likely wrong, but will also work in some cases
+* todo, input is generic packed? which is unknown to abaplint
     tstmp_tgt = tstmp_src.
-
   ENDMETHOD.
 
   METHOD systemtstmp_syst2utc.
