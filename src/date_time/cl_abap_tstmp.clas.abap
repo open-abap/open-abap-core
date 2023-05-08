@@ -42,6 +42,15 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
         syst_time TYPE t
       EXPORTING
         utc_tstmp TYPE p.
+
+    CLASS-METHODS move_to_short
+      IMPORTING
+        tstmp_src TYPE tzntstmpl
+      RETURNING
+        VALUE(tstmp_out) TYPE tzntstmps
+      RAISING
+        cx_parameter_invalid_type
+        cx_parameter_invalid_range.
 ENDCLASS.
 
 CLASS cl_abap_tstmp IMPLEMENTATION.
@@ -84,5 +93,9 @@ CLASS cl_abap_tstmp IMPLEMENTATION.
     time = add(
       tstmp = tstmp
       secs  = lv_secs ).
+  ENDMETHOD.
+
+  METHOD move_to_short.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 ENDCLASS.
