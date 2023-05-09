@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>TZNTSTMPS</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DOMNAME>TZNTSTMPS</DOMNAME>
+    <DATATYPE>DEC</DATATYPE>
+    <HEADLEN>55</HEADLEN>
+    <SCRLEN1>10</SCRLEN1>
+    <SCRLEN2>15</SCRLEN2>
+    <SCRLEN3>20</SCRLEN3>
+    <DDTEXT>TZNTSTMPS</DDTEXT>
+    <REPTEXT>TZNTSTMPS</REPTEXT>
+    <SCRTEXT_S>TZNTSTMPS</SCRTEXT_S>
+    <SCRTEXT_M>TZNTSTMPS</SCRTEXT_M>
+    <SCRTEXT_L>TZNTSTMPS</SCRTEXT_L>
+    <DTELMASTER>E</DTELMASTER>
+    <LENG>000015</LENG>
+    <DECIMALS>000000</DECIMALS>
+    <REFKIND>D</REFKIND>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>

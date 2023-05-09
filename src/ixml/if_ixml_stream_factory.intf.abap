@@ -23,4 +23,10 @@ INTERFACE if_ixml_stream_factory PUBLIC.
     RETURNING
       VALUE(stream) TYPE REF TO if_ixml_istream.
 
+  METHODS create_ostream_itable
+    IMPORTING
+      table TYPE table
+    RETURNING
+      VALUE(rval) TYPE REF TO if_ixml_ostream.
+
 ENDINTERFACE.
