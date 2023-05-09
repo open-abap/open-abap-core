@@ -2,22 +2,22 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
   PUBLIC SECTION.
     CLASS-METHODS subtract
       IMPORTING
-        tstmp1 TYPE p
-        tstmp2 TYPE p
+        tstmp1        TYPE p
+        tstmp2        TYPE p
       RETURNING
         VALUE(r_secs) TYPE i.
 
     CLASS-METHODS add
       IMPORTING
-        tstmp   TYPE p
-        secs    TYPE i
+        tstmp       TYPE p
+        secs        TYPE i
       RETURNING
         VALUE(time) TYPE timestamp.
 
     CLASS-METHODS subtractsecs
       IMPORTING
-        tstmp   TYPE p
-        secs    TYPE i
+        tstmp       TYPE p
+        secs        TYPE i
       RETURNING
         VALUE(time) TYPE timestamp.
 
@@ -32,7 +32,7 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
 
     CLASS-METHODS move
       IMPORTING
-        tstmp_src   TYPE p
+        tstmp_src TYPE p
       EXPORTING
         tstmp_tgt TYPE p.
 
@@ -42,6 +42,27 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
         syst_time TYPE t
       EXPORTING
         utc_tstmp TYPE p.
+
+    CLASS-METHODS move_to_short
+      IMPORTING
+        tstmp_src        TYPE tzntstmpl
+      RETURNING
+        VALUE(tstmp_out) TYPE tzntstmps
+      RAISING
+        cx_parameter_invalid_type
+        cx_parameter_invalid_range.
+
+    CLASS-METHODS td_subtract
+      IMPORTING
+        date1 TYPE d
+        time1 TYPE t
+        date2 TYPE d
+        time2 TYPE t
+      EXPORTING
+        res_secs TYPE numeric
+      RAISING
+        cx_parameter_invalid_type
+        cx_parameter_invalid_range.
 ENDCLASS.
 
 CLASS cl_abap_tstmp IMPLEMENTATION.
@@ -52,8 +73,8 @@ CLASS cl_abap_tstmp IMPLEMENTATION.
 
   METHOD move.
 * todo, this is most likely wrong, but will also work in some cases
+* todo, input is generic packed? which is unknown to abaplint
     tstmp_tgt = tstmp_src.
-
   ENDMETHOD.
 
   METHOD systemtstmp_syst2utc.
@@ -84,5 +105,25 @@ CLASS cl_abap_tstmp IMPLEMENTATION.
     time = add(
       tstmp = tstmp
       secs  = lv_secs ).
+  ENDMETHOD.
+
+  METHOD move_to_short.
+    move(
+      EXPORTING
+        tstmp_src = tstmp_src
+      IMPORTING
+        tstmp_tgt = tstmp_out ).
+  ENDMETHOD.
+
+  METHOD td_subtract.
+    DATA lv_stamp1 TYPE timestamp.
+    DATA lv_stamp2 TYPE timestamp.
+
+    CONVERT DATE date1 TIME time1 INTO TIME STAMP lv_stamp1.
+    CONVERT DATE date2 TIME time2 INTO TIME STAMP lv_stamp2.
+
+    res_secs = subtract(
+      tstmp1 = lv_stamp1
+      tstmp2 = lv_stamp2 ).
   ENDMETHOD.
 ENDCLASS.
