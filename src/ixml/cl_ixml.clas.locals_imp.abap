@@ -187,6 +187,10 @@ CLASS lcl_node IMPLEMENTATION.
     ENDIF.
   ENDMETHOD.
 
+  METHOD if_ixml_node~get_height.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_element~get_attribute_node_ns.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
@@ -518,6 +522,10 @@ CLASS lcl_document IMPLEMENTATION.
     mi_node->if_ixml_node~set_name( '#document' ).
   ENDMETHOD.
 
+  METHOD if_ixml_node~get_height.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_node~get_namespace_prefix.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
@@ -772,6 +780,10 @@ CLASS lcl_ostream IMPLEMENTATION.
   METHOD if_ixml_ostream~write_string.
     mv_string = mv_string && string.
   ENDMETHOD.
+
+  METHOD if_ixml_ostream~get_num_written_raw.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 ENDCLASS.
 
 ****************************************************************
@@ -801,6 +813,10 @@ CLASS lcl_stream_factory DEFINITION.
 ENDCLASS.
 
 CLASS lcl_stream_factory IMPLEMENTATION.
+  METHOD if_ixml_stream_factory~create_ostream_itable.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_stream_factory~create_ostream_cstring.
     CREATE OBJECT stream TYPE lcl_ostream.
 * hack, this method doesnt really follow normal ABAP semantics

@@ -33,7 +33,12 @@ INTERFACE if_ixml_node PUBLIC.
   METHODS get_namespace_prefix
     RETURNING
       VALUE(rv_prefix) TYPE string.
+
   METHODS get_namespace_uri
     RETURNING
       VALUE(rval) TYPE string.
+
+  METHODS get_height
+    RETURNING
+      VALUE(rval) TYPE i.
 ENDINTERFACE.
