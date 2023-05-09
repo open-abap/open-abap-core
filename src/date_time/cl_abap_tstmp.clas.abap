@@ -51,6 +51,18 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
       RAISING
         cx_parameter_invalid_type
         cx_parameter_invalid_range.
+
+    CLASS-METHODS td_subtract
+      IMPORTING
+        date1 TYPE d
+        time1 TYPE t
+        date2 TYPE d
+        time2 TYPE t
+      EXPORTING
+        res_secs TYPE numeric
+      RAISING
+        cx_parameter_invalid_type
+        cx_parameter_invalid_range.
 ENDCLASS.
 
 CLASS cl_abap_tstmp IMPLEMENTATION.
@@ -101,5 +113,17 @@ CLASS cl_abap_tstmp IMPLEMENTATION.
         tstmp_src = tstmp_src
       IMPORTING
         tstmp_tgt = tstmp_out ).
+  ENDMETHOD.
+
+  METHOD td_subtract.
+    DATA lv_stamp1 TYPE timestamp.
+    DATA lv_stamp2 TYPE timestamp.
+
+    CONVERT DATE date1 TIME time1 INTO TIME STAMP lv_stamp1.
+    CONVERT DATE date2 TIME time2 INTO TIME STAMP lv_stamp2.
+
+    res_secs = subtract(
+      tstmp1 = lv_stamp1
+      tstmp2 = lv_stamp2 ).
   ENDMETHOD.
 ENDCLASS.
