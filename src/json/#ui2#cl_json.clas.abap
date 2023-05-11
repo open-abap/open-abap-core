@@ -82,7 +82,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             r_json = '"' && data && '"'.
           WHEN cl_abap_typedescr=>typekind_int.
             r_json = |{ data }|.
-          WHEN OTHERS.
+          WHEN cl_abap_typedescr=>typekind_packed.
             IF ts_as_iso8601 = abap_true
                 AND ( lo_type->absolute_name = `\TYPE=TIMESTAMP`
                 OR lo_type->absolute_name = `\TYPE=TIMESTAMPL` ).
@@ -92,8 +92,10 @@ CLASS /ui2/cl_json IMPLEMENTATION.
                 r_json = |"{ data TIMESTAMP = ISO }.0000000Z"|.
               ENDIF.
             ELSE.
-              r_json = data.
+              r_json = |{ data }|.
             ENDIF.
+          WHEN OTHERS.
+            r_json = data.
         ENDCASE.
       WHEN cl_abap_typedescr=>kind_table.
         r_json = '['.
