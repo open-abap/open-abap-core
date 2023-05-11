@@ -21,7 +21,7 @@ CLASS lcl_data_to_xml DEFINITION.
 
     METHODS run
       IMPORTING
-        iv_name       TYPE string
+        iv_name       TYPE clike
         iv_ref        TYPE REF TO data
       RETURNING
         VALUE(rv_xml) TYPE string.
