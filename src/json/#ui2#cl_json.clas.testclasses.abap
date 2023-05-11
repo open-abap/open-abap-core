@@ -483,7 +483,9 @@ CLASS ltcl_serialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT F
     METHODS bool_true FOR TESTING RAISING cx_static_check.
     METHODS empty_reference FOR TESTING RAISING cx_static_check.
     METHODS basic_ref FOR TESTING RAISING cx_static_check.
-
+    METHODS compress_structure1 FOR TESTING RAISING cx_static_check.
+    METHODS compress_structure2 FOR TESTING RAISING cx_static_check.
+    METHODS compress_structure3 FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_serialize IMPLEMENTATION.
@@ -690,6 +692,50 @@ CLASS ltcl_serialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_json
       exp = '{"FIELD":0}' ).
+  ENDMETHOD.
+
+  METHOD compress_structure1.
+    DATA: BEGIN OF ls_data,
+        foo TYPE i,
+        bar TYPE i,
+      END OF ls_data.
+    DATA lv_json TYPE string.
+    ls_data-foo = 1.
+    lv_json = /ui2/cl_json=>serialize(
+      data     = ls_data
+      compress = abap_true ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = '{"FOO":1}' ).
+  ENDMETHOD.
+
+  METHOD compress_structure2.
+    DATA: BEGIN OF ls_data,
+            foo TYPE i,
+            bar TYPE i,
+          END OF ls_data.
+    DATA lv_json TYPE string.
+    ls_data-bar = 1.
+    lv_json = /ui2/cl_json=>serialize(
+      data     = ls_data
+      compress = abap_true ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = '{"BAR":1}' ).
+  ENDMETHOD.
+
+  METHOD compress_structure3.
+    DATA: BEGIN OF ls_data,
+            foo TYPE i,
+            bar TYPE i,
+          END OF ls_data.
+    DATA lv_json TYPE string.
+    lv_json = /ui2/cl_json=>serialize(
+      data     = ls_data
+      compress = abap_true ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = '{}' ).
   ENDMETHOD.
 
 ENDCLASS.
