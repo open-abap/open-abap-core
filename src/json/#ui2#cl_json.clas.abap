@@ -103,6 +103,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           r_json = r_json && serialize(
             data          = <any>
             pretty_name   = pretty_name
+            compress      = compress
             ts_as_iso8601 = ts_as_iso8601 ).
           IF lines( data ) <> lv_index.
             r_json = r_json && ','.
@@ -114,9 +115,11 @@ CLASS /ui2/cl_json IMPLEMENTATION.
         lt_components = lo_struct->get_components( ).
         r_json = '{'.
         LOOP AT lt_components INTO ls_component.
-          lv_index = sy-tabix.
           ASSIGN COMPONENT ls_component-name OF STRUCTURE data TO <any>.
           ASSERT sy-subrc = 0.
+          IF compress = abap_true AND <any> IS INITIAL.
+            CONTINUE.
+          ENDIF.
           IF pretty_name = pretty_mode-camel_case.
             r_json = r_json && |"{ to_mixed( to_lower( ls_component-name ) ) }":|.
           ELSEIF pretty_name = pretty_mode-low_case.
@@ -127,11 +130,13 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           r_json = r_json && serialize(
             data          = <any>
             pretty_name   = pretty_name
+            compress      = compress
             ts_as_iso8601 = ts_as_iso8601 ).
-          IF lines( lt_components ) <> lv_index.
-            r_json = r_json && ','.
-          ENDIF.
+          r_json = r_json && ','.
         ENDLOOP.
+        IF r_json CP '*,'.
+          r_json = substring( val = r_json off = 0 len = strlen( r_json ) - 1 ).
+        ENDIF.
         r_json = r_json && '}'.
       WHEN cl_abap_typedescr=>kind_ref.
         IF data IS INITIAL.
@@ -142,6 +147,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
         r_json = serialize(
           data          = <any>
           pretty_name   = pretty_name
+          compress      = compress
           ts_as_iso8601 = ts_as_iso8601 ).
       WHEN OTHERS.
         ASSERT 1 = 'cl_json, unknown kind'.
