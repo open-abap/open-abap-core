@@ -18,7 +18,7 @@ CLASS cl_i18n_languages DEFINITION PUBLIC.
 
     CLASS-METHODS sap2_to_iso639_1
       IMPORTING
-        im_lang_sap2   TYPE string
+        im_lang_sap2   TYPE laiso
       EXPORTING
         ex_lang_iso639 TYPE string
         ex_country     TYPE land1
