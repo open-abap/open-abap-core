@@ -50,6 +50,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS attr_from_intf FOR TESTING RAISING cx_static_check.
     METHODS is_class FOR TESTING RAISING cx_static_check.
     METHODS relative_name FOR TESTING RAISING cx_static_check.
+    METHODS method_and_parameter FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -178,6 +179,34 @@ CLASS ltcl_test IMPLEMENTATION.
         act = lo_tdescr->get_relative_name( )
         exp = 'STRING' ).
     ENDLOOP.
+
+  ENDMETHOD.
+
+  METHOD method_and_parameter.
+
+    DATA lo_objdescr  TYPE REF TO cl_abap_objectdescr.
+    DATA lo_datadescr TYPE REF TO cl_abap_datadescr.
+    DATA ls_method    TYPE abap_methdescr.
+
+    lo_objdescr ?= cl_abap_typedescr=>describe_by_name( 'CL_ABAP_OBJECTDESCR' ).
+
+    READ TABLE lo_objdescr->methods INTO ls_method WITH KEY name = 'GET_METHOD_PARAMETER_TYPE'.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_method-visibility
+      exp = cl_abap_objectdescr=>public ).
+
+    READ TABLE ls_method-parameters WITH KEY name = 'P_METHOD_NAME' TRANSPORTING NO FIELDS.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    lo_datadescr = lo_objdescr->get_method_parameter_type(
+      p_method_name    = ls_method-name
+      p_parameter_name = 'P_METHOD_NAME' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_datadescr->kind
+      exp = cl_abap_typedescr=>kind_elem ).
 
   ENDMETHOD.
 
