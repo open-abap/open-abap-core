@@ -57,41 +57,68 @@ ENDCLASS.
 CLASS cl_abap_objectdescr IMPLEMENTATION.
 
   METHOD constructor.
-    DATA lv_name  TYPE abap_attrname.
-    DATA lv_char1 TYPE c LENGTH 1.
-    DATA lv_any   TYPE string.
+    DATA lv_name      TYPE abap_attrname.
+    DATA lv_char1     TYPE c LENGTH 1.
+    DATA lo_typedescr TYPE REF TO cl_abap_typedescr.
+    DATA lv_any       TYPE string.
 
-    FIELD-SYMBOLS <fs>   TYPE abap_attrdescr.
-    FIELD-SYMBOLS <intf> TYPE abap_intfdescr.
-    FIELD-SYMBOLS <type> LIKE LINE OF mt_types.
+    FIELD-SYMBOLS <attr>      TYPE abap_attrdescr.
+    FIELD-SYMBOLS <intf>      TYPE abap_intfdescr.
+    FIELD-SYMBOLS <method>    TYPE abap_methdescr.
+    FIELD-SYMBOLS <parameter> TYPE abap_parmdescr.
+    FIELD-SYMBOLS <type>      LIKE LINE OF mt_types.
 
+* set attributes
     WRITE '@KERNEL for (const a in p_object.ATTRIBUTES || []) {'.
     WRITE '@KERNEL   lv_name.set(a);'.
-    APPEND INITIAL LINE TO attributes ASSIGNING <fs>.
+    APPEND INITIAL LINE TO attributes ASSIGNING <attr>.
     APPEND INITIAL LINE TO mt_types ASSIGNING <type>.
-    <fs>-name = lv_name.
+    <attr>-name = lv_name.
     <type>-name = lv_name.
-    <fs>-is_interface = boolc( lv_name CA '~' ).
+    <attr>-is_interface = boolc( lv_name CA '~' ).
     WRITE '@KERNEL   lv_char1.set(p_object.ATTRIBUTES[a].is_constant);'.
-    <fs>-is_constant = lv_char1.
+    <attr>-is_constant = lv_char1.
     WRITE '@KERNEL   lv_char1.set(p_object.ATTRIBUTES[a].is_class || "");'.
-    <fs>-is_class = lv_char1.
+    <attr>-is_class = lv_char1.
     WRITE '@KERNEL   lv_char1.set(p_object.ATTRIBUTES[a].visibility);'.
-    <fs>-visibility = lv_char1.
+    <attr>-visibility = lv_char1.
     WRITE '@KERNEL   lv_any = p_object.ATTRIBUTES[a].type();'.
     <type>-type ?= describe_by_data( lv_any ).
-    <fs>-type_kind = <type>-type->type_kind.
-    <fs>-length = <type>-type->length.
-    <fs>-decimals = <type>-type->decimals.
+    <attr>-type_kind = <type>-type->type_kind.
+    <attr>-length = <type>-type->length.
+    <attr>-decimals = <type>-type->decimals.
     WRITE '@KERNEL }'.
     SORT attributes BY name ASCENDING.
 
+* set interfaces
     WRITE '@KERNEL for (const a of p_object.IMPLEMENTED_INTERFACES || []) {'.
     WRITE '@KERNEL   lv_name.set(a);'.
     APPEND INITIAL LINE TO interfaces ASSIGNING <intf>.
     <intf>-name = lv_name.
     WRITE '@KERNEL }'.
     SORT interfaces BY name ASCENDING.
+
+* set methods
+    WRITE '@KERNEL for (const a in p_object.METHODS || []) {'.
+    WRITE '@KERNEL   lv_name.set(a);'.
+    APPEND INITIAL LINE TO methods ASSIGNING <method>.
+    <method>-name = lv_name.
+    WRITE '@KERNEL   lv_char1.set(p_object.METHODS[a].visibility);'.
+    <method>-visibility = lv_char1.
+* set parameters of methods
+    WRITE '@KERNEL for (const p in p_object.METHODS[a].parameters || []) {'.
+    APPEND INITIAL LINE TO <method>-parameters ASSIGNING <parameter>.
+    WRITE '@KERNEL   lv_name.set(p);'.
+    <parameter>-name = lv_name.
+    WRITE '@KERNEL   lv_any = p_object.METHODS[a].parameters[p].type();'.
+* todo, set PARAM_KIND
+    lo_typedescr ?= describe_by_data( lv_any ).
+    <parameter>-type_kind = lo_typedescr->type_kind.
+    <parameter>-length = lo_typedescr->length.
+    <parameter>-decimals = lo_typedescr->decimals.
+    WRITE '@KERNEL }'.
+    WRITE '@KERNEL }'.
+    SORT methods BY name ASCENDING.
 
     super->constructor( ).
   ENDMETHOD.
