@@ -50,6 +50,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS attr_from_intf FOR TESTING RAISING cx_static_check.
     METHODS is_class FOR TESTING RAISING cx_static_check.
     METHODS relative_name FOR TESTING RAISING cx_static_check.
+    METHODS method_and_parameter FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -153,7 +154,7 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD relative_name.
 
-    DATA io_app    TYPE REF TO lcl_str.
+    DATA lo_app    TYPE REF TO lcl_str.
     DATA lv_assign TYPE string.
     DATA lo_tdescr TYPE REF TO cl_abap_typedescr.
     DATA lo_odescr TYPE REF TO cl_abap_objectdescr.
@@ -162,8 +163,8 @@ CLASS ltcl_test IMPLEMENTATION.
 
     FIELD-SYMBOLS <any> TYPE any.
 
-    CREATE OBJECT io_app.
-    lo_odescr ?= cl_abap_objectdescr=>describe_by_object_ref( io_app ).
+    CREATE OBJECT lo_app.
+    lo_odescr ?= cl_abap_objectdescr=>describe_by_object_ref( lo_app ).
     lt_attri = lo_odescr->attributes.
 
     cl_abap_unit_assert=>assert_equals(
@@ -171,13 +172,43 @@ CLASS ltcl_test IMPLEMENTATION.
       exp = 1 ).
 
     LOOP AT lt_attri INTO ls_attri.
-      lv_assign = `IO_APP->` && ls_attri-name.
+      lv_assign = `LO_APP->` && ls_attri-name.
       ASSIGN (lv_assign) TO <any>.
       lo_tdescr = cl_abap_datadescr=>describe_by_data( <any> ).
       cl_abap_unit_assert=>assert_equals(
         act = lo_tdescr->get_relative_name( )
         exp = 'STRING' ).
     ENDLOOP.
+
+  ENDMETHOD.
+
+  METHOD method_and_parameter.
+
+    DATA lo_objdescr  TYPE REF TO cl_abap_objectdescr.
+    DATA lo_datadescr TYPE REF TO cl_abap_datadescr.
+    DATA ls_method    TYPE abap_methdescr.
+    DATA lo_app       TYPE REF TO cl_abap_objectdescr.
+
+    CREATE OBJECT lo_app.
+    lo_objdescr ?= cl_abap_typedescr=>describe_by_object_ref( lo_app ).
+
+    READ TABLE lo_objdescr->methods INTO ls_method WITH KEY name = 'GET_METHOD_PARAMETER_TYPE'.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_method-visibility
+      exp = cl_abap_objectdescr=>public ).
+
+    READ TABLE ls_method-parameters WITH KEY name = 'P_METHOD_NAME' TRANSPORTING NO FIELDS.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    lo_datadescr = lo_objdescr->get_method_parameter_type(
+      p_method_name    = ls_method-name
+      p_parameter_name = 'P_METHOD_NAME' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_datadescr->kind
+      exp = cl_abap_typedescr=>kind_elem ).
 
   ENDMETHOD.
 
