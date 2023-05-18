@@ -40,6 +40,15 @@ ENDCLASS.
 CLASS lcl_str IMPLEMENTATION.
 ENDCLASS.
 
+CLASS lcl_pchar30 DEFINITION.
+  PUBLIC SECTION.
+    METHODS foo IMPORTING bar TYPE char30.
+ENDCLASS.
+CLASS lcl_pchar30 IMPLEMENTATION.
+  METHOD foo.
+  ENDMETHOD.
+ENDCLASS.
+
 ************************************************************************************
 
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
@@ -51,6 +60,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS is_class FOR TESTING RAISING cx_static_check.
     METHODS relative_name FOR TESTING RAISING cx_static_check.
     METHODS method_and_parameter FOR TESTING RAISING cx_static_check.
+    METHODS method_and_parameter_char30 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -209,6 +219,25 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_datadescr->kind
       exp = cl_abap_typedescr=>kind_elem ).
+
+  ENDMETHOD.
+
+  METHOD method_and_parameter_char30.
+
+    DATA lo_objdescr  TYPE REF TO cl_abap_objectdescr.
+    DATA lo_datadescr TYPE REF TO cl_abap_datadescr.
+    DATA lo_app       TYPE REF TO lcl_pchar30.
+
+    CREATE OBJECT lo_app.
+    lo_objdescr ?= cl_abap_typedescr=>describe_by_object_ref( lo_app ).
+
+    lo_datadescr = lo_objdescr->get_method_parameter_type(
+      p_method_name    = 'FOO'
+      p_parameter_name = 'BAR' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_datadescr->absolute_name
+      exp = '\TYPE=CHAR30' ).
 
   ENDMETHOD.
 

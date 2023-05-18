@@ -57,7 +57,7 @@ CLASS cl_abap_objectdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
     TYPES: BEGIN OF ty_parameter_types,
              method    TYPE string,
              parameter TYPE string,
-             type      TYPE any,
+             type      TYPE REF TO data,
            END OF ty_parameter_types.
     DATA mt_parameter_types TYPE STANDARD TABLE OF ty_parameter_types WITH DEFAULT KEY.
 ENDCLASS.
@@ -123,7 +123,7 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     <ptype>-parameter = lv_name.
     WRITE '@KERNEL   lv_any = p_object.METHODS[a].parameters[p].type();'.
 * hmm, cannot call describe_by_data() here, as it can cause inifnite recursion
-    <ptype>-type = lv_any.
+    GET REFERENCE OF lv_any INTO <ptype>-type.
 "     <parameter>-type_kind = <ptype>-type->type_kind.
 "     <parameter>-length = <ptype>-type->length.
 "     <parameter>-decimals = <ptype>-type->decimals.
@@ -140,7 +140,7 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
 *    WRITE '@KERNEL   this.mt_parameter_types.array().map(e => console.dir(e.get()));'.
     READ TABLE mt_parameter_types INTO ls_row WITH KEY method = p_method_name parameter = p_parameter_name.
     IF sy-subrc = 0.
-      p_descr_ref ?= describe_by_data( ls_row-type ).
+      p_descr_ref ?= describe_by_data( ls_row-type->* ).
     ELSE.
       RAISE parameter_not_found.
     ENDIF.

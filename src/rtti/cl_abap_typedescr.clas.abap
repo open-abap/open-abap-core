@@ -375,6 +375,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         ASSERT 1 = 'todo_cl_abap_typedescr'.
     ENDCASE.
 
+*    WRITE '@KERNEL console.dir(p_data);'.
 
     WRITE '@KERNEL lv_ddicname.set(p_data.getDDICName ? p_data.getDDICName() || "" : "");'.
     WRITE '@KERNEL lv_convexit.set(p_data.getConversionExit ? p_data.getConversionExit() || "" : "");'.
