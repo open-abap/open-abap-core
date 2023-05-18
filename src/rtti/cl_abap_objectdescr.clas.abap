@@ -57,7 +57,7 @@ CLASS cl_abap_objectdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
     TYPES: BEGIN OF ty_parameter_types,
              method    TYPE string,
              parameter TYPE string,
-             type      TYPE REF TO cl_abap_datadescr,
+             type      TYPE any,
            END OF ty_parameter_types.
     DATA mt_parameter_types TYPE STANDARD TABLE OF ty_parameter_types WITH DEFAULT KEY.
 ENDCLASS.
@@ -65,16 +65,16 @@ ENDCLASS.
 CLASS cl_abap_objectdescr IMPLEMENTATION.
 
   METHOD constructor.
-    DATA lv_name      TYPE abap_attrname.
-    DATA lv_char1     TYPE c LENGTH 1.
-    DATA lo_typedescr TYPE REF TO cl_abap_typedescr.
-    DATA lv_any       TYPE string.
+    DATA lv_name  TYPE abap_attrname.
+    DATA lv_char1 TYPE c LENGTH 1.
+    DATA lv_any   TYPE string.
 
     FIELD-SYMBOLS <attr>      TYPE abap_attrdescr.
     FIELD-SYMBOLS <intf>      TYPE abap_intfdescr.
     FIELD-SYMBOLS <method>    TYPE abap_methdescr.
     FIELD-SYMBOLS <parameter> TYPE abap_parmdescr.
     FIELD-SYMBOLS <atype>     LIKE LINE OF mt_attribute_types.
+    FIELD-SYMBOLS <ptype>     LIKE LINE OF mt_parameter_types.
 
 * set attributes
     WRITE '@KERNEL for (const a in p_object.ATTRIBUTES || []) {'.
@@ -115,15 +115,19 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     <method>-visibility = lv_char1.
 * set parameters of methods
     WRITE '@KERNEL for (const p in p_object.METHODS[a].parameters || []) {'.
+    APPEND INITIAL LINE TO mt_parameter_types ASSIGNING <ptype>.
     APPEND INITIAL LINE TO <method>-parameters ASSIGNING <parameter>.
+    <ptype>-method = <method>-name.
     WRITE '@KERNEL   lv_name.set(p);'.
     <parameter>-name = lv_name.
+    <ptype>-parameter = lv_name.
     WRITE '@KERNEL   lv_any = p_object.METHODS[a].parameters[p].type();'.
-* todo, set PARAM_KIND
-    lo_typedescr ?= describe_by_data( lv_any ).
-    <parameter>-type_kind = lo_typedescr->type_kind.
-    <parameter>-length = lo_typedescr->length.
-    <parameter>-decimals = lo_typedescr->decimals.
+* hmm, cannot call describe_by_data() here, as it can cause inifnite recursion
+    <ptype>-type = lv_any.
+"     <parameter>-type_kind = <ptype>-type->type_kind.
+"     <parameter>-length = <ptype>-type->length.
+"     <parameter>-decimals = <ptype>-type->decimals.
+" * todo, set PARAM_KIND
     WRITE '@KERNEL }'.
     WRITE '@KERNEL }'.
     SORT methods BY name ASCENDING.
@@ -132,7 +136,14 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_method_parameter_type.
-    ASSERT 1 = 'todo'.
+    DATA ls_row LIKE LINE OF mt_parameter_types.
+*    WRITE '@KERNEL   this.mt_parameter_types.array().map(e => console.dir(e.get()));'.
+    READ TABLE mt_parameter_types INTO ls_row WITH KEY method = p_method_name parameter = p_parameter_name.
+    IF sy-subrc = 0.
+      p_descr_ref ?= describe_by_data( ls_row-type ).
+    ELSE.
+      RAISE parameter_not_found.
+    ENDIF.
   ENDMETHOD.
 
   METHOD get_interface_type.
