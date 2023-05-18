@@ -8,6 +8,7 @@ CLASS ltcl_fugr DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS conversion_exit_alpha_output_string FOR TESTING RAISING cx_static_check.
     METHODS conversion_exit_alpha_output_char FOR TESTING RAISING cx_static_check.
     METHODS conversion_exit_alpha_input FOR TESTING RAISING cx_static_check.
+    METHODS conversion_exit_alpha_input_st FOR TESTING RAISING cx_static_check.
     METHODS generate_sec_random FOR TESTING RAISING cx_static_check.
     METHODS text_split1 FOR TESTING RAISING cx_static_check.
     METHODS text_split2 FOR TESTING RAISING cx_static_check.
@@ -225,6 +226,20 @@ CLASS ltcl_fugr IMPLEMENTATION.
       exp = 1
       act = sy-subrc ).
 
+  ENDMETHOD.
+
+  METHOD conversion_exit_alpha_input_st.
+    DATA str TYPE string.
+    DATA res TYPE string.
+    str = '1'.
+    CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
+      EXPORTING
+        input  = str
+      IMPORTING
+      output = res.
+    cl_abap_unit_assert=>assert_equals(
+      act = res
+      exp = '1' ).
   ENDMETHOD.
 
 ENDCLASS.
