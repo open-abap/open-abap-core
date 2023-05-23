@@ -5,7 +5,7 @@ CLASS cl_document_bcs DEFINITION PUBLIC.
     CLASS-METHODS create_document
       IMPORTING
         i_type    TYPE string
-        i_subject TYPE string
+        i_subject TYPE clike
         i_text    TYPE any OPTIONAL
         i_length  TYPE i OPTIONAL
       RETURNING
