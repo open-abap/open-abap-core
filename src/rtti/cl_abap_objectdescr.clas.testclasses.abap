@@ -160,6 +160,10 @@ CLASS ltcl_test IMPLEMENTATION.
       act = ls_attr-is_class
       exp = abap_true ).
 
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_attr-length
+      exp = 8 ).
+
   ENDMETHOD.
 
   METHOD relative_name.
