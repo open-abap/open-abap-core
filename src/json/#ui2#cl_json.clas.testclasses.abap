@@ -488,6 +488,8 @@ CLASS ltcl_serialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT F
     METHODS compress_structure3 FOR TESTING RAISING cx_static_check.
     METHODS packed FOR TESTING RAISING cx_static_check.
     METHODS packed_negative FOR TESTING RAISING cx_static_check.
+    METHODS escape_quote FOR TESTING RAISING cx_static_check.
+    METHODS escape_newline FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_serialize IMPLEMENTATION.
@@ -762,6 +764,30 @@ CLASS ltcl_serialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_json
       exp = '{"FOO":-2.000}' ).
+  ENDMETHOD.
+
+  METHOD escape_quote.
+    DATA: BEGIN OF ls_data,
+            foo TYPE string,
+          END OF ls_data.
+    DATA lv_json TYPE string.
+    ls_data-foo = |"|.
+    lv_json = /ui2/cl_json=>serialize( ls_data ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = '{"FOO":"\""}' ).
+  ENDMETHOD.
+
+  METHOD escape_newline.
+    DATA: BEGIN OF ls_data,
+            foo TYPE string,
+          END OF ls_data.
+    DATA lv_json TYPE string.
+    ls_data-foo = |\n|.
+    lv_json = /ui2/cl_json=>serialize( ls_data ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = '{"FOO":"\n"}' ).
   ENDMETHOD.
 
 ENDCLASS.
