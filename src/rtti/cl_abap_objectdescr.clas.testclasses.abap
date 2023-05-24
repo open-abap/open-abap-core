@@ -49,6 +49,18 @@ CLASS lcl_pchar30 IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.
 
+INTERFACE lif.
+  DATA bar TYPE i.
+ENDINTERFACE.
+
+CLASS lcl_from_intf DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif.
+    DATA foo TYPE string.
+ENDCLASS.
+CLASS lcl_from_intf IMPLEMENTATION.
+ENDCLASS.
+
 ************************************************************************************
 
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
@@ -61,6 +73,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS relative_name FOR TESTING RAISING cx_static_check.
     METHODS method_and_parameter FOR TESTING RAISING cx_static_check.
     METHODS method_and_parameter_char30 FOR TESTING RAISING cx_static_check.
+    METHODS from_interface FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -112,8 +125,8 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD attr_from_intf.
 
-    DATA lo_foo TYPE REF TO lcl_impl.
-    DATA lo_obj TYPE REF TO cl_abap_objectdescr.
+    DATA lo_foo  TYPE REF TO lcl_impl.
+    DATA lo_obj  TYPE REF TO cl_abap_objectdescr.
     DATA ls_attr TYPE abap_attrdescr.
 
     CREATE OBJECT lo_foo.
@@ -159,6 +172,10 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = ls_attr-is_class
       exp = abap_true ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_attr-length
+      exp = 8 ).
 
   ENDMETHOD.
 
@@ -238,6 +255,30 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_datadescr->absolute_name
       exp = '\TYPE=CHAR30' ).
+
+  ENDMETHOD.
+
+  METHOD from_interface.
+
+    DATA lo_ref  TYPE REF TO lcl_from_intf.
+    DATA lo_obj  TYPE REF TO cl_abap_objectdescr.
+    DATA ls_attr TYPE abap_attrdescr.
+
+    CREATE OBJECT lo_ref.
+    lo_obj ?= cl_abap_typedescr=>describe_by_object_ref( lo_ref ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( lo_obj->attributes )
+      exp = 2 ).
+
+    READ TABLE lo_obj->attributes INDEX 1 INTO ls_attr.
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_attr-name
+      exp = 'LIF~BAR' ).
+
+    READ TABLE lo_obj->attributes INDEX 2 INTO ls_attr.
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_attr-name
+      exp = 'FOO' ).
 
   ENDMETHOD.
 
