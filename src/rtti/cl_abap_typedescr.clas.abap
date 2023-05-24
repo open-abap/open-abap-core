@@ -315,6 +315,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type ?= cl_abap_tabledescr=>construct_from_data( p_data ).
         type->type_kind = typekind_table.
         type->kind = kind_table.
+        type->length = 8. " yea, well, because it is. Pointer size?
       WHEN 'XString'.
         CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_xstring.

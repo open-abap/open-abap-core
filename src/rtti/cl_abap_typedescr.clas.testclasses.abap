@@ -65,6 +65,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS describe_by_dashed FOR TESTING.
     METHODS structure_absolute FOR TESTING.
 
+    METHODS tab_length FOR TESTING.
+
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
@@ -593,6 +595,19 @@ CLASS ltcl_test IMPLEMENTATION.
       act = elemdescr->type_kind
       exp = cl_abap_typedescr=>typekind_string ).
 
+  ENDMETHOD.
+
+  METHOD tab_length.
+    TYPES: BEGIN OF ty_row,
+             title TYPE string,
+             value TYPE string,
+             descr TYPE string,
+           END OF ty_row.
+    DATA t_tab TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_typedescr=>describe_by_data( t_tab )->length
+      exp = 8 ).
   ENDMETHOD.
 
 ENDCLASS.
