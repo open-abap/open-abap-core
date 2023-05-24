@@ -96,7 +96,7 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     <attr>-length = <atype>-type->length.
     <attr>-decimals = <atype>-type->decimals.
     WRITE '@KERNEL }'.
-    SORT attributes BY name ASCENDING.
+    SORT attributes BY is_interface DESCENDING name ASCENDING.
 
 * set interfaces
     WRITE '@KERNEL for (const a of p_object.IMPLEMENTED_INTERFACES || []) {'.
