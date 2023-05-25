@@ -274,9 +274,9 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
           exp = exp ).
         RAISE EXCEPTION TYPE kernel_cx_assert
           EXPORTING
-            msg = |Expected different values|
-            act = act
-            exp = exp.
+            msg      = |Expected different values|
+            actual   = act
+            expected = exp.
       CATCH kernel_cx_assert.
         RETURN.
     ENDTRY.
