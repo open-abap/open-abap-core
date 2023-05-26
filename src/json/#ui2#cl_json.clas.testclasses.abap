@@ -491,6 +491,7 @@ CLASS ltcl_serialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT F
     METHODS escape_quote FOR TESTING RAISING cx_static_check.
     METHODS escape_newline FOR TESTING RAISING cx_static_check.
     METHODS date_field FOR TESTING RAISING cx_static_check.
+    METHODS time_field FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_serialize IMPLEMENTATION.
@@ -802,6 +803,19 @@ CLASS ltcl_serialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_json
       exp = '{"DATS":"2023-05-26"}' ).
+  ENDMETHOD.
+
+  METHOD time_field.
+    DATA lv_json TYPE string.
+    DATA: BEGIN OF ls_message,
+          tims TYPE t,
+        END OF ls_message.
+    ls_message-tims = '112233'.
+    lv_json = /ui2/cl_json=>serialize( ls_message ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = '{"TIMS":"11:22:33"}' ).
   ENDMETHOD.
 
 ENDCLASS.
