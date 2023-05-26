@@ -808,8 +808,8 @@ CLASS ltcl_serialize IMPLEMENTATION.
   METHOD time_field.
     DATA lv_json TYPE string.
     DATA: BEGIN OF ls_message,
-          tims TYPE t,
-        END OF ls_message.
+            tims TYPE t,
+          END OF ls_message.
     ls_message-tims = '112233'.
     lv_json = /ui2/cl_json=>serialize( ls_message ).
 
