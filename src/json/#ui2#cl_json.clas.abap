@@ -94,6 +94,10 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             ELSE.
               r_json = |{ data }|.
             ENDIF.
+          WHEN cl_abap_typedescr=>typekind_date.
+            r_json = |"{ data DATE = ISO }"|.
+          WHEN cl_abap_typedescr=>typekind_time.
+            r_json = |"{ data TIME = ISO }"|.
           WHEN OTHERS.
             r_json = data.
         ENDCASE.
