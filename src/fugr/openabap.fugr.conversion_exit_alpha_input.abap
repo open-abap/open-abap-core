@@ -15,7 +15,7 @@ FUNCTION conversion_exit_alpha_input.
   CONDENSE lv_tmp.
 
   DESCRIBE FIELD output TYPE lv_type.
-  IF lv_type = 'g'.
+  IF lv_type = 'g' OR lv_type = 'D'.
     output = input.
     RETURN.
   ENDIF.
