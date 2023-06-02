@@ -262,6 +262,14 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         lo_elem ?= type.
         lo_elem->output_length = 11.
         type->absolute_name = 'I'.
+      WHEN 'Integer8'.
+        CREATE OBJECT type TYPE cl_abap_elemdescr.
+        type->type_kind = typekind_int8.
+        type->kind = kind_elem.
+        type->length = 8.
+        lo_elem ?= type.
+        lo_elem->output_length = 20.
+        type->absolute_name = 'INT8'.
       WHEN 'Numc'.
         CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_num.
