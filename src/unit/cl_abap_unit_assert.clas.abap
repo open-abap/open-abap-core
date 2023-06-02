@@ -310,9 +310,9 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
     DESCRIBE FIELD exp TYPE type2.
 *    WRITE '@KERNEL console.dir(type1.get());'.
 *    WRITE '@KERNEL console.dir(type2.get());'.
-    IF type1 CA 'CgyIFPDTXN'. " basic types
+    IF type1 CA 'CgyIFPDTXN8'. " basic types
       IF type2 IS NOT INITIAL.
-        IF type2 NA 'CgyIFPDTXN'.
+        IF type2 NA 'CgyIFPDTXN8'.
           RAISE EXCEPTION TYPE kernel_cx_assert
             EXPORTING
               msg = |Unexpected types|.
