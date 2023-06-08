@@ -15,6 +15,9 @@ CLASS ltcl_fugr DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS text_split2 FOR TESTING RAISING cx_static_check.
     METHODS function_exists_yes FOR TESTING RAISING cx_static_check.
     METHODS function_exists_no FOR TESTING RAISING cx_static_check.
+    METHODS unit_kg_to_kg FOR TESTING RAISING cx_static_check.
+    METHODS unit_g_to_kg FOR TESTING RAISING cx_static_check.
+    METHODS unit_m3_to_cdm FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -257,6 +260,69 @@ CLASS ltcl_fugr IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_dats
       exp = '20230529' ).
+  ENDMETHOD.
+
+  METHOD unit_kg_to_kg.
+
+    DATA lv_result TYPE menge_d.
+
+    CALL FUNCTION 'UNIT_CONVERSION_SIMPLE'
+      EXPORTING
+        input                = 1
+        unit_in              = 'KG'
+        unit_out             = 'KG'
+      IMPORTING
+        output               = lv_result
+      EXCEPTIONS
+        OTHERS               = 1.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_result
+      exp = 1 ).
+
+  ENDMETHOD.
+
+  METHOD unit_g_to_kg.
+
+    DATA lv_result TYPE menge_d.
+
+    CALL FUNCTION 'UNIT_CONVERSION_SIMPLE'
+      EXPORTING
+        input    = 1000
+        unit_in  = 'G'
+        unit_out = 'KG'
+      IMPORTING
+        output   = lv_result
+      EXCEPTIONS
+        OTHERS   = 1.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_result
+      exp = 1 ).
+
+  ENDMETHOD.
+
+  METHOD unit_m3_to_cdm.
+
+    DATA lv_result TYPE menge_d.
+
+    CALL FUNCTION 'UNIT_CONVERSION_SIMPLE'
+      EXPORTING
+        input    = 1
+        unit_in  = 'M3'
+        unit_out = 'CDM'
+      IMPORTING
+        output   = lv_result
+      EXCEPTIONS
+        OTHERS   = 1.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_result
+      exp = 1000 ).
+
   ENDMETHOD.
 
 ENDCLASS.
