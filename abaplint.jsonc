@@ -27,7 +27,7 @@
     "unnecessary_chaining": true,
     "parser_702_chaining": false,
     "omit_receiving": true,
-    "align_parameters": false,
+    "align_parameters": true,
     "cds_parser_error": true,
     "classic_exceptions_overlap": true,
     "constant_classes": true,
