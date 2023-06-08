@@ -18,7 +18,7 @@ CLASS cl_gdt_conversion DEFINITION PUBLIC.
     CLASS-METHODS amount_outbound
       IMPORTING
         im_value         TYPE p
-        im_currency_code TYPE string
+        im_currency_code TYPE clike
       EXPORTING
         ex_value         TYPE p
       RAISING
@@ -26,7 +26,7 @@ CLASS cl_gdt_conversion DEFINITION PUBLIC.
 
     CLASS-METHODS country_code_outbound
       IMPORTING
-        im_value TYPE string
+        im_value TYPE land1
       EXPORTING
         ex_value TYPE csequence
       RAISING
