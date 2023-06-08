@@ -20,6 +20,11 @@ FUNCTION conversion_exit_alpha_input.
     RETURN.
   ENDIF.
 
+  IF lv_tmp IS INITIAL.
+    CLEAR output.
+    RETURN.
+  ENDIF.
+
   DESCRIBE FIELD output LENGTH lv_len IN CHARACTER MODE.
 
   DO lv_len - strlen( lv_tmp ) TIMES.
