@@ -10,14 +10,14 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
     CLASS-METHODS add
       IMPORTING
         tstmp       TYPE p
-        secs        TYPE i
+        secs        TYPE numeric
       RETURNING
         VALUE(time) TYPE timestamp.
 
     CLASS-METHODS subtractsecs
       IMPORTING
         tstmp       TYPE p
-        secs        TYPE i
+        secs        TYPE numeric
       RETURNING
         VALUE(time) TYPE timestamp.
 
