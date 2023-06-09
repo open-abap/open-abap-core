@@ -13,7 +13,7 @@ CLASS cl_abap_conv_out_ce DEFINITION PUBLIC.
     CLASS-METHODS
       uccpi
         IMPORTING
-          value      TYPE string
+          char       TYPE clike
         RETURNING
           VALUE(ret) TYPE i.
 
@@ -66,10 +66,11 @@ CLASS cl_abap_conv_out_ce IMPLEMENTATION.
   METHOD uccpi.
     DATA lo_out TYPE REF TO cl_abap_conv_out_ce.
     DATA lv_hex TYPE xstring.
+
     lo_out = create( encoding = '4103' ).
     lo_out->convert(
       EXPORTING
-        data = value
+        data   = char
       IMPORTING
         buffer = lv_hex ).
     ASSERT xstrlen( lv_hex ) = 2.
