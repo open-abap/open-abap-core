@@ -42,6 +42,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
           filename TYPE string
           filetype TYPE string OPTIONAL
           codepage TYPE abap_encoding DEFAULT space
+          read_by_line TYPE abap_bool OPTIONAL
         EXPORTING
           filelength TYPE i
         CHANGING
