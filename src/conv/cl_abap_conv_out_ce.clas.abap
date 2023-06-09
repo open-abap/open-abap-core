@@ -38,7 +38,7 @@ CLASS cl_abap_conv_out_ce DEFINITION PUBLIC.
 
     METHODS write
       IMPORTING
-        data TYPE string.
+        data TYPE any.
 
     METHODS get_buffer
       RETURNING
