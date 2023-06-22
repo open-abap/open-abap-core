@@ -14,7 +14,7 @@ FUNCTION conversion_exit_alpha_input.
   lv_tmp = input.
   CONDENSE lv_tmp.
 
-  DESCRIBE FIELD output TYPE lv_type.
+  DESCRIBE FIELD input TYPE lv_type.
   IF lv_type = 'g' OR lv_type = 'D'.
     output = input.
     RETURN.
@@ -25,7 +25,7 @@ FUNCTION conversion_exit_alpha_input.
     RETURN.
   ENDIF.
 
-  DESCRIBE FIELD output LENGTH lv_len IN CHARACTER MODE.
+  DESCRIBE FIELD input LENGTH lv_len IN CHARACTER MODE.
 
   DO lv_len - strlen( lv_tmp ) TIMES.
     lv_tmp = |0| && lv_tmp.
