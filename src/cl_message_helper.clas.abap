@@ -18,7 +18,7 @@ CLASS cl_message_helper DEFINITION PUBLIC.
 
     CLASS-METHODS check_msg_kind
       IMPORTING
-        msg     TYPE REF TO if_message
+        msg     TYPE REF TO object
       EXPORTING
         t100key TYPE scx_t100key
         textid  TYPE sotr_conc.
@@ -87,7 +87,16 @@ CLASS cl_message_helper IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD check_msg_kind.
-    ASSERT 1 = 'todo'.
+
+    DATA li_t100_message TYPE REF TO if_t100_message.
+
+    TRY.
+        li_t100_message ?= msg.
+        t100key = li_t100_message->t100key.
+      CATCH cx_sy_move_cast_error.
+        ASSERT 1 = 'todo'.
+    ENDTRY.
+
   ENDMETHOD.
 
 ENDCLASS.

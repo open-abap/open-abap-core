@@ -24,16 +24,35 @@ CLASS lcx_test1 IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.
 
+CLASS lcx_test2 DEFINITION INHERITING FROM cx_static_check.
+  PUBLIC SECTION.
+    INTERFACES if_t100_dyn_msg.
+    INTERFACES if_t100_message.
+
+    METHODS constructor.
+ENDCLASS.
+
+CLASS lcx_test2 IMPLEMENTATION.
+  METHOD constructor.
+    super->constructor( previous = previous ).
+    if_t100_message~t100key-msgid = '00'.
+    if_t100_message~t100key-msgno = '001'.
+  ENDMETHOD.
+ENDCLASS.
+
+*****************************
+
 CLASS ltcl_message_helper DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PUBLIC SECTION.
     INTERFACES if_message.
 
   PRIVATE SECTION.
-    METHODS set_msg_vars_for_clike FOR TESTING RAISING cx_root.
-    METHODS set_msg_vars_for_if_msg_initial FOR TESTING RAISING cx_root.
-    METHODS set_msg_vars_for_if_msg_text FOR TESTING RAISING cx_root.
-    METHODS set_msg_vars_for_if_msg_dyn FOR TESTING RAISING cx_root.
+    METHODS set_msg_vars_for_clike FOR TESTING RAISING cx_static_check.
+    METHODS set_msg_vars_for_if_msg_initial FOR TESTING RAISING cx_static_check.
+    METHODS set_msg_vars_for_if_msg_text FOR TESTING RAISING cx_static_check.
+    METHODS set_msg_vars_for_if_msg_dyn FOR TESTING RAISING cx_static_check.
+    METHODS check_msg_kind FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -109,6 +128,31 @@ CLASS ltcl_message_helper IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = sy-msgv1
       exp = 'hello world' ).
+  ENDMETHOD.
+
+  METHOD check_msg_kind.
+
+    DATA ls_t100key TYPE scx_t100key.
+    DATA lx_error   TYPE REF TO lcx_test2.
+
+    CREATE OBJECT lx_error.
+
+    cl_message_helper=>check_msg_kind(
+      EXPORTING
+        msg     = lx_error
+      IMPORTING
+        t100key = ls_t100key ).
+
+    cl_abap_unit_assert=>assert_not_initial( ls_t100key ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_t100key-msgid
+      exp = '00' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_t100key-msgno
+      exp = '001' ).
+
   ENDMETHOD.
 
 ENDCLASS.
