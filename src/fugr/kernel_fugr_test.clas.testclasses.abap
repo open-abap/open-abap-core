@@ -357,7 +357,7 @@ CLASS ltcl_fugr IMPLEMENTATION.
         output = str.
 
     cl_abap_unit_assert=>assert_equals(
-      act = val
+      act = str
       exp = '0000000010' ).
 
   ENDMETHOD.
