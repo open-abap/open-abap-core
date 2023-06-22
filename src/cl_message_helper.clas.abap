@@ -15,6 +15,13 @@ CLASS cl_message_helper DEFINITION PUBLIC.
         text TYPE REF TO if_message
       RETURNING
         VALUE(result) TYPE string.
+
+    CLASS-METHODS check_msg_kind
+      IMPORTING
+        msg     TYPE REF TO if_message
+      EXPORTING
+        t100key TYPE scx_t100key
+        textid  TYPE sotr_conc.
   PRIVATE SECTION.
     CONSTANTS gc_fallback TYPE string VALUE 'An exception was raised.'.
 ENDCLASS.
@@ -77,6 +84,10 @@ CLASS cl_message_helper IMPLEMENTATION.
     IF strlen( text ) > 150.
       sy-msgv4 = text+150.
     ENDIF.
+  ENDMETHOD.
+
+  METHOD check_msg_kind.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
 ENDCLASS.
