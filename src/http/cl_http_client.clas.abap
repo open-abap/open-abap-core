@@ -14,7 +14,7 @@ CLASS cl_http_client DEFINITION PUBLIC CREATE PRIVATE.
 
     CLASS-METHODS create_by_destination
       IMPORTING
-        destination   TYPE string
+        destination   TYPE clike
       EXPORTING
         VALUE(client) TYPE REF TO if_http_client.
 * todo, add classic exceptions
