@@ -25,19 +25,18 @@ CLASS cl_abap_conv_in_ce DEFINITION PUBLIC.
       RETURNING
         VALUE(char) TYPE ty_char2.
 
-    METHODS
-      convert
-        IMPORTING
-          input TYPE xstring
-          n     TYPE i OPTIONAL
-        EXPORTING
-          data  TYPE string.
-    METHODS
-      read
-        IMPORTING
-          n     TYPE i OPTIONAL
-        EXPORTING
-          data  TYPE string.
+    METHODS convert
+      IMPORTING
+        input TYPE xsequence
+        n     TYPE i OPTIONAL
+      EXPORTING
+        data  TYPE string.
+
+    METHODS read
+      IMPORTING
+        n     TYPE i OPTIONAL
+      EXPORTING
+        data  TYPE string.
   PRIVATE SECTION.
     DATA mv_input TYPE xstring.
     DATA mv_js_encoding TYPE string.
@@ -78,7 +77,7 @@ CLASS cl_abap_conv_in_ce IMPLEMENTATION.
 
   METHOD uccpi.
     DATA lv_hex TYPE x LENGTH 2.
-    DATA lo_in TYPE REF TO cl_abap_conv_in_ce.
+    DATA lo_in  TYPE REF TO cl_abap_conv_in_ce.
 
     lv_hex(1) = value MOD 255.
     lv_hex+1(1) = value DIV 255.
