@@ -63,11 +63,24 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
       RAISING
         cx_parameter_invalid_type
         cx_parameter_invalid_range.
+
+    CLASS-METHODS systemtstmp_utc2syst
+      IMPORTING
+        utc_tstmp TYPE timestamp
+      EXPORTING
+        syst_date TYPE d
+        syst_time TYPE t
+      RAISING
+        cx_parameter_invalid_range.
 ENDCLASS.
 
 CLASS cl_abap_tstmp IMPLEMENTATION.
 
   METHOD td_add.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD systemtstmp_utc2syst.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
