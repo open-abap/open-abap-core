@@ -1,4 +1,4 @@
-CLASS ltcl_sha1 DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
     METHODS sha1 FOR TESTING RAISING cx_static_check.
@@ -8,11 +8,11 @@ CLASS ltcl_sha1 DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
 ENDCLASS.
 
-CLASS ltcl_sha1 IMPLEMENTATION.
+CLASS ltcl_test IMPLEMENTATION.
 
   METHOD sha1.
 
-    DATA lv_key TYPE xstring.
+    DATA lv_key  TYPE xstring.
     DATA lv_data TYPE xstring.
     DATA lv_hash TYPE string.
 
@@ -36,7 +36,7 @@ CLASS ltcl_sha1 IMPLEMENTATION.
   METHOD md5.
 
     DATA lv_empty TYPE xstring.
-    DATA lv_hash TYPE xstring.
+    DATA lv_hash  TYPE xstring.
 
     cl_abap_hmac=>calculate_hmac_for_raw(
       EXPORTING
@@ -55,7 +55,7 @@ CLASS ltcl_sha1 IMPLEMENTATION.
   METHOD sha256.
 
     DATA lv_empty TYPE xstring.
-    DATA lv_hash TYPE xstring.
+    DATA lv_hash  TYPE xstring.
 
     cl_abap_hmac=>calculate_hmac_for_raw(
       EXPORTING
@@ -73,7 +73,7 @@ CLASS ltcl_sha1 IMPLEMENTATION.
 
   METHOD hmac_md5.
 
-    DATA lv_key TYPE xstring.
+    DATA lv_key  TYPE xstring.
     DATA lv_hash TYPE xstring.
     DATA lv_data TYPE xstring.
 
