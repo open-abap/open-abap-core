@@ -14,17 +14,22 @@ INTERFACE if_http_client PUBLIC.
       password             TYPE string.
 
   METHODS close.
+
   METHODS send
+    IMPORTING
+      timeout TYPE i DEFAULT 0
     EXCEPTIONS
       http_communication_failure
       http_invalid_state
       http_processing_failed
       http_invalid_timeout.
+
   METHODS receive
     EXCEPTIONS
       http_communication_failure
       http_invalid_state
       http_processing_failed.
+
   METHODS send_sap_logon_ticket.
 
   METHODS get_last_error
