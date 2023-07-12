@@ -14,6 +14,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS fields_identity01 FOR TESTING RAISING cx_static_check.
     METHODS fields_identity02 FOR TESTING RAISING cx_static_check.
     METHODS fields_escaping FOR TESTING RAISING cx_static_check.
+    METHODS decode_base64 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -172,6 +173,18 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_output
       exp = 'sdf=api%3a%2f%2f119d38c1-fe84-5520-b1e0-7e277a0c67bb%2f.default' ).
+
+  ENDMETHOD.
+
+  METHOD decode_base64.
+
+    DATA decoded TYPE string.
+
+    decoded = cl_http_utility=>decode_base64( 'b3BlbiBzZXNhbWU=' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = decoded
+      exp = 'open sesame' ).
 
   ENDMETHOD.
 
