@@ -94,9 +94,6 @@ CLASS cl_abap_conv_in_ce IMPLEMENTATION.
   METHOD convert.
     DATA lv_error TYPE abap_bool.
 
-    IF input IS INITIAL.
-      RETURN.
-    ENDIF.
     ASSERT mv_js_encoding IS NOT INITIAL.
     WRITE '@KERNEL let buf = Buffer.from(input.get(), "hex");'.
 
