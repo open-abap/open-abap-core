@@ -10,6 +10,7 @@ CLASS ltcl_conv_in DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FIN
     METHODS uccp_31 FOR TESTING RAISING cx_static_check.
     METHODS uccp_ok FOR TESTING RAISING cx_static_check.
     METHODS uccp_identity FOR TESTING RAISING cx_static_check.
+    METHODS uccp_ca FOR TESTING RAISING cx_static_check.
     METHODS invalid_utf8 FOR TESTING RAISING cx_static_check.
     METHODS invalid_utf8_ignore FOR TESTING RAISING cx_static_check.
 
@@ -44,6 +45,20 @@ CLASS ltcl_conv_in IMPLEMENTATION.
     val1 = cl_abap_conv_in_ce=>uccp( '0000' ).
     val2 = cl_abap_conv_in_ce=>uccpi( 0 ).
     ASSERT val1 = val2.
+  ENDMETHOD.
+
+  METHOD uccp_ca.
+    DATA val1 TYPE c LENGTH 2.
+    DATA str1 TYPE string.
+    DATA val2 TYPE c LENGTH 2.
+    DATA str2 TYPE string.
+
+    val1 = cl_abap_conv_in_ce=>uccp( '0000' ).
+    str1 = 'hello' && val1 && 'world'.
+
+    val2 = cl_abap_conv_in_ce=>uccpi( 0 ).
+    str2 = 'A' && val2.
+    ASSERT str1 CA str2.
   ENDMETHOD.
 
   METHOD invalid_utf8.
