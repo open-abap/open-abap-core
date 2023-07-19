@@ -135,6 +135,8 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
         CREATE DATA dref TYPE n LENGTH lv_half.
       WHEN cl_abap_typedescr=>typekind_time.
         CREATE DATA dref TYPE t.
+      WHEN cl_abap_typedescr=>typekind_int8.
+        CREATE DATA dref TYPE int8.
       WHEN OTHERS.
         WRITE '@KERNEL console.dir(handle);'.
         ASSERT 1 = 'todo'.
