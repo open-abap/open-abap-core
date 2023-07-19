@@ -21,7 +21,7 @@ CLASS cl_abap_conv_in_ce DEFINITION PUBLIC.
     TYPES ty_char2 TYPE c LENGTH 2.
     CLASS-METHODS uccp
       IMPORTING
-        uccp TYPE simple
+        uccp        TYPE simple
       RETURNING
         VALUE(char) TYPE ty_char2.
 
