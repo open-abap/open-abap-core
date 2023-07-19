@@ -79,8 +79,9 @@ CLASS cl_abap_conv_in_ce IMPLEMENTATION.
     DATA lv_hex TYPE x LENGTH 2.
     DATA lo_in  TYPE REF TO cl_abap_conv_in_ce.
 
-    lv_hex(1) = value MOD 255.
-    lv_hex+1(1) = value DIV 255.
+    lv_hex = value.
+    " switch to little endian
+    CONCATENATE lv_hex+1(1) lv_hex(1) INTO lv_hex IN BYTE MODE.
 
     lo_in = create( encoding = '4103' ).
 
