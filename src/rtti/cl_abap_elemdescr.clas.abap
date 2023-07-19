@@ -28,6 +28,7 @@ CLASS cl_abap_elemdescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
         no_ddic_type.
 
     CLASS-METHODS get_i RETURNING VALUE(r_result) TYPE REF TO cl_abap_elemdescr.
+    CLASS-METHODS get_int8 RETURNING VALUE(r_result) TYPE REF TO cl_abap_elemdescr.
     CLASS-METHODS get_f RETURNING VALUE(r_result) TYPE REF TO cl_abap_elemdescr.
     CLASS-METHODS get_d RETURNING VALUE(r_result) TYPE REF TO cl_abap_elemdescr.
     CLASS-METHODS get_t RETURNING VALUE(r_result) TYPE REF TO cl_abap_elemdescr.
@@ -94,6 +95,11 @@ CLASS cl_abap_elemdescr IMPLEMENTATION.
 
   METHOD get_i.
     DATA foo TYPE i.
+    r_result ?= cl_abap_typedescr=>describe_by_data( foo ).
+  ENDMETHOD.
+
+  METHOD get_int8.
+    DATA foo TYPE int8.
     r_result ?= cl_abap_typedescr=>describe_by_data( foo ).
   ENDMETHOD.
 
