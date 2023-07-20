@@ -14,6 +14,7 @@ CLASS ltcl_conv_out DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FI
     METHODS uccp1 FOR TESTING RAISING cx_static_check.
     METHODS uccp2 FOR TESTING RAISING cx_static_check.
     METHODS uccp3 FOR TESTING RAISING cx_static_check.
+    METHODS uccp_ffff_identity FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -177,6 +178,14 @@ CLASS ltcl_conv_out IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_hex
       exp = '0020' ).
+  ENDMETHOD.
+
+  METHOD uccp_ffff_identity.
+    DATA lv_hex TYPE x LENGTH 2.
+    lv_hex = cl_abap_conv_out_ce=>uccp( cl_abap_conv_in_ce=>uccp( 'FFFF' ) ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_hex
+      exp = 'FFFF' ).
   ENDMETHOD.
 
 ENDCLASS.
