@@ -103,11 +103,6 @@ CLASS cl_message_helper IMPLEMENTATION.
     ENDIF.
 
     sy-msgv4 = lv_char200.
-    IF lv_char200+49(1) = space.
-      lv_char200 = lv_char200+49.
-    ELSE.
-      lv_char200 = lv_char200+50.
-    ENDIF.
 
   ENDMETHOD.
 

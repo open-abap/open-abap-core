@@ -14,6 +14,18 @@
      <MSGNR>001</MSGNR>
      <TEXT>&amp;1&amp;2&amp;3&amp;4</TEXT>
     </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>00</ARBGB>
+     <MSGNR>002</MSGNR>
+     <TEXT>needed by abapGit unit test</TEXT>
+    </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>00</ARBGB>
+     <MSGNR>003</MSGNR>
+     <TEXT>needed by abapGit unit test</TEXT>
+    </T100>
    </T100>
   </asx:values>
  </asx:abap>
