@@ -49,6 +49,7 @@ CLASS ltcl_message_helper DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SH
 
   PRIVATE SECTION.
     METHODS set_msg_vars_for_clike FOR TESTING RAISING cx_static_check.
+    METHODS set_msg_vars_for_clike_space FOR TESTING RAISING cx_static_check.
     METHODS set_msg_vars_for_if_msg_initial FOR TESTING RAISING cx_static_check.
     METHODS set_msg_vars_for_if_msg_text FOR TESTING RAISING cx_static_check.
     METHODS set_msg_vars_for_if_msg_dyn FOR TESTING RAISING cx_static_check.
@@ -106,6 +107,16 @@ CLASS ltcl_message_helper IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = sy-msgv1
       exp = 'hello' ).
+  ENDMETHOD.
+
+  METHOD set_msg_vars_for_clike_space.
+    cl_message_helper=>set_msg_vars_for_clike( '0123456789012345678901234567890123456789012345678 0123456789' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = sy-msgv1
+      exp = '0123456789012345678901234567890123456789012345678' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = sy-msgv2
+      exp = ' 0123456789' ).
   ENDMETHOD.
 
   METHOD set_msg_vars_for_if_msg_dyn.

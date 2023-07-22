@@ -72,24 +72,43 @@ CLASS cl_message_helper IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD set_msg_vars_for_clike.
+
+    DATA lv_char200 TYPE c LENGTH 200.
+
+    " move to char200 to avoid checking out of bound
+    lv_char200 = text.
+
     sy-msgid = '00'.
     sy-msgno = '001'.
-    sy-msgv1 = text.
 
-    CLEAR sy-msgv2.
-    IF strlen( text ) > 50.
-      sy-msgv2 = text+50.
+    sy-msgv1 = lv_char200.
+    IF lv_char200+49(1) = space.
+      lv_char200 = lv_char200+49.
+    ELSE.
+      lv_char200 = text+50.
     ENDIF.
 
-    CLEAR sy-msgv3.
-    IF strlen( text ) > 100.
-      sy-msgv3 = text+100.
+    sy-msgv2 = lv_char200.
+    IF lv_char200+49(1) = space.
+      lv_char200 = lv_char200+49.
+    ELSE.
+      lv_char200 = lv_char200+50.
     ENDIF.
 
-    CLEAR sy-msgv4.
-    IF strlen( text ) > 150.
-      sy-msgv4 = text+150.
+    sy-msgv3 = lv_char200.
+    IF lv_char200+49(1) = space.
+      lv_char200 = lv_char200+49.
+    ELSE.
+      lv_char200 = lv_char200+50.
     ENDIF.
+
+    sy-msgv4 = lv_char200.
+    IF lv_char200+49(1) = space.
+      lv_char200 = lv_char200+49.
+    ELSE.
+      lv_char200 = lv_char200+50.
+    ENDIF.
+
   ENDMETHOD.
 
   METHOD check_msg_kind.
