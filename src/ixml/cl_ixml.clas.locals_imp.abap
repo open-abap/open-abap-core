@@ -510,6 +510,7 @@ ENDCLASS.
 CLASS lcl_document DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_document.
+
     METHODS constructor.
   PRIVATE SECTION.
     DATA mi_node TYPE REF TO lcl_node.
@@ -636,7 +637,7 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~get_first_child.
-    ASSERT 1 = 'todo'.
+    child = mi_node->if_ixml_node~get_first_child( ).
   ENDMETHOD.
 
   METHOD if_ixml_document~create_attribute_ns.
