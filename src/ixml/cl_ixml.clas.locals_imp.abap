@@ -775,11 +775,25 @@ CLASS lcl_ostream DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_ostream.
     DATA mv_string TYPE string.
+    DATA mv_hex TYPE abap_bool.
 ENDCLASS.
 
 CLASS lcl_ostream IMPLEMENTATION.
   METHOD if_ixml_ostream~write_string.
-    mv_string = mv_string && string.
+    DATA lo_obj  TYPE REF TO cl_abap_conv_out_ce.
+    DATA lv_xstr TYPE xstring.
+
+    IF mv_hex = abap_true.
+      cl_abap_conv_out_ce=>create( )->convert(
+        EXPORTING
+          data   = string
+          n      = strlen( string )
+        IMPORTING
+          buffer = lv_xstr ).
+      mv_string = mv_string && lv_xstr.
+    ELSE.
+      mv_string = mv_string && string.
+    ENDIF.
   ENDMETHOD.
 
   METHOD if_ixml_ostream~get_num_written_raw.
@@ -796,6 +810,7 @@ CLASS lcl_istream DEFINITION.
   PRIVATE SECTION.
     DATA mv_xml TYPE string.
 ENDCLASS.
+
 CLASS lcl_istream IMPLEMENTATION.
   METHOD constructor.
     mv_xml = iv_xml.
@@ -826,7 +841,13 @@ CLASS lcl_stream_factory IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_stream_factory~create_ostream_xstring.
-    ASSERT 1 = 'todo'.
+    DATA lo_stream TYPE REF TO lcl_ostream.
+    CREATE OBJECT lo_stream TYPE lcl_ostream.
+    stream = lo_stream.
+    lo_stream->mv_hex = abap_true.
+* hack, this method doesnt really follow normal ABAP semantics
+    WRITE '@KERNEL stream.get().mv_string = INPUT.string;'.
+    stream->write_string( '<?xml version="1.0" encoding="utf-8"?>' ).
   ENDMETHOD.
 
   METHOD if_ixml_stream_factory~create_istream_xstring.
