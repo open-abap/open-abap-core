@@ -37,6 +37,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_close_tag FOR TESTING RAISING cx_static_check.
     METHODS parse_more FOR TESTING RAISING cx_static_check.
     METHODS get_first_child FOR TESTING RAISING cx_static_check.
+    METHODS create_ostream_xstring FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -763,6 +764,28 @@ CLASS ltcl_xml IMPLEMENTATION.
       act = li_node->get_name( )
       exp = 'DATA' ).
 
+  ENDMETHOD.
+
+  METHOD create_ostream_xstring.
+    DATA li_ostream  TYPE REF TO if_ixml_ostream.
+    DATA li_renderer TYPE REF TO if_ixml_renderer.
+    DATA lv_xml      TYPE string.
+    DATA lv_xstr     TYPE xstring.
+    DATA li_doc      TYPE REF TO if_ixml_document.
+
+
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?><DATA><FOO1>2</FOO1></DATA>|.
+    li_doc = parse( lv_xml ).
+
+    li_ostream = mi_ixml->create_stream_factory( )->create_ostream_xstring( lv_xstr ).
+    li_renderer = mi_ixml->create_renderer(
+      ostream  = li_ostream
+      document = li_doc ).
+    li_renderer->render( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_xstr
+      exp = '3C3F786D6C2076657273696F6E3D22312E302220656E636F64696E673D227574662D38223F3E3C444154413E3C464F4F313E323C2F464F4F313E3C2F444154413E' ).
   ENDMETHOD.
 
 ENDCLASS.
