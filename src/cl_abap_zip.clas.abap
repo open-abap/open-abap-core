@@ -171,7 +171,7 @@ CLASS cl_abap_zip IMPLEMENTATION.
 * 36, 2, Internal file attributes
       lo_central->append_int2( 0 ).
 * 38, 4, External file attributes
-      lo_central->append_int2( 0 ).
+      lo_central->append_int4( 0 ).
 * 42, 4, Relative offset of local file header (or 0xffffffff for ZIP64). This is the number of bytes between the start of the first disk on which the file occurs, and the start of the local file header. This allows software reading the central directory to locate the position of the file inside the ZIP file.
       lo_central->append_int4( xstrlen( lo_total->get( ) ) ).
 * 46, n, File name
