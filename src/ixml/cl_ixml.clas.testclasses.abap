@@ -791,16 +791,15 @@ CLASS ltcl_xml IMPLEMENTATION.
 
   METHOD fix_children.
 
-    DATA lo_streamfactory TYPE REF TO if_ixml_stream_factory.
+    DATA lo_document      TYPE REF TO if_ixml_document.
+    DATA lo_element       TYPE REF TO if_ixml_element.
+    DATA lo_encoding      TYPE REF TO if_ixml_encoding.
+    DATA lo_ixml          TYPE REF TO if_ixml.
     DATA lo_ostream       TYPE REF TO if_ixml_ostream.
     DATA lo_renderer      TYPE REF TO if_ixml_renderer.
+    DATA lo_root          TYPE REF TO if_ixml_element.
+    DATA lo_streamfactory TYPE REF TO if_ixml_stream_factory.
     DATA lv_string        TYPE string.
-
-    DATA lo_encoding TYPE REF TO if_ixml_encoding.
-    DATA lo_document TYPE REF TO if_ixml_document.
-    DATA lo_root     TYPE REF TO if_ixml_element.
-    DATA lo_element  TYPE REF TO if_ixml_element.
-    DATA lo_ixml     TYPE REF TO if_ixml.
 
     lo_ixml = cl_ixml=>create( ).
 
