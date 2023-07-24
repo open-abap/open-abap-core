@@ -38,6 +38,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_more FOR TESTING RAISING cx_static_check.
     METHODS get_first_child FOR TESTING RAISING cx_static_check.
     METHODS create_ostream_xstring FOR TESTING RAISING cx_static_check.
+    METHODS fix_children FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -786,6 +787,55 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_xstr
       exp = '3C3F786D6C2076657273696F6E3D22312E302220656E636F64696E673D227574662D38223F3E3C444154413E3C464F4F313E323C2F464F4F313E3C2F444154413E' ).
+  ENDMETHOD.
+
+  METHOD fix_children.
+
+    DATA lo_document      TYPE REF TO if_ixml_document.
+    DATA lo_element       TYPE REF TO if_ixml_element.
+    DATA lo_encoding      TYPE REF TO if_ixml_encoding.
+    DATA lo_ixml          TYPE REF TO if_ixml.
+    DATA lo_ostream       TYPE REF TO if_ixml_ostream.
+    DATA lo_renderer      TYPE REF TO if_ixml_renderer.
+    DATA lo_root          TYPE REF TO if_ixml_element.
+    DATA lo_streamfactory TYPE REF TO if_ixml_stream_factory.
+    DATA lv_string        TYPE string.
+
+    lo_ixml = cl_ixml=>create( ).
+
+    lo_encoding = lo_ixml->create_encoding(
+      byte_order    = if_ixml_encoding=>co_platform_endian
+      character_set = 'utf-8' ).
+    lo_document = lo_ixml->create_document( ).
+    lo_document->set_encoding( lo_encoding ).
+    lo_document->set_standalone( abap_true ).
+
+    lo_root = lo_document->create_simple_element(
+      name   = 'TopName'
+      parent = lo_document ).
+    lo_root->set_attribute_ns(
+      name  = 'xmlns'
+      value = 'Namespace' ).
+
+    lo_element = lo_document->create_simple_element(
+      name   = 'Hello'
+      parent = lo_document ).
+    lo_element->set_attribute_ns(
+      name  = 'Namespace'
+      value = 'World' ).
+    lo_root->append_child( lo_element ).
+
+    lo_streamfactory = lo_ixml->create_stream_factory( ).
+    lo_ostream = lo_streamfactory->create_ostream_cstring( lv_string ).
+    lo_renderer = lo_ixml->create_renderer(
+      ostream  = lo_ostream
+      document = lo_document ).
+    lo_renderer->render( ).
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_string
+      exp = '*<TopName xmlns="Namespace"><Hello Namespace="World"/></TopName>' ).
+
   ENDMETHOD.
 
 ENDCLASS.

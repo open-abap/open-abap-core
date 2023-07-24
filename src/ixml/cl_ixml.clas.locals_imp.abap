@@ -222,6 +222,8 @@ CLASS lcl_node IMPLEMENTATION.
   METHOD if_ixml_element~append_child.
     DATA lo_node TYPE REF TO lcl_node.
     lo_node ?= new_child.
+
+    lo_node->mi_parent->remove_child( lo_node ).
     lo_node->mi_parent = me.
 
     mo_children->append( new_child ).
