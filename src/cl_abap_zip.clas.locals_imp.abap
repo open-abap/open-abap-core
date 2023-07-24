@@ -32,14 +32,18 @@ CLASS lcl_stream IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD append_int2.
-    DATA lv_hex TYPE x LENGTH 1.
+    DATA lv_hex TYPE x LENGTH 2.
     lv_hex = iv_int.
+    SHIFT lv_hex LEFT CIRCULAR IN BYTE MODE.
     append( lv_hex ).
   ENDMETHOD.
 
   METHOD append_int4.
-    DATA lv_hex TYPE x LENGTH 2.
+    DATA lv_hex TYPE x LENGTH 4.
     lv_hex = iv_int.
+    SHIFT lv_hex LEFT CIRCULAR IN BYTE MODE.
+    SHIFT lv_hex LEFT CIRCULAR IN BYTE MODE.
+    SHIFT lv_hex LEFT CIRCULAR IN BYTE MODE.
     append( lv_hex ).
   ENDMETHOD.
 
