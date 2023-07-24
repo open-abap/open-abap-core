@@ -24,11 +24,11 @@ CLASS lcl_stream IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD append_date.
-* todo
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD append_time.
-* todo
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD append_int2.

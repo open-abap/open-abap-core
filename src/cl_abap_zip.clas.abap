@@ -6,13 +6,19 @@ CLASS cl_abap_zip DEFINITION PUBLIC.
         name TYPE string
         content TYPE xstring.
 
-    METHODS save RETURNING VALUE(val) TYPE xstring.
+    METHODS save
+      RETURNING
+        VALUE(val) TYPE xstring.
 
-    METHODS load IMPORTING zip TYPE xstring.
+    METHODS load
+      IMPORTING
+        zip TYPE xstring.
 
     METHODS get
-      IMPORTING name TYPE string
-      EXPORTING content TYPE xstring.
+      IMPORTING
+        name TYPE string
+      EXPORTING
+        content TYPE xstring.
 
     METHODS delete
       IMPORTING
@@ -35,7 +41,6 @@ CLASS cl_abap_zip DEFINITION PUBLIC.
   PRIVATE SECTION.
     TYPES: BEGIN OF ty_contents,
              name          TYPE string,
-             original_size TYPE i,
 * todo, optimize memory usage, dont store both compressed and original,
              content       TYPE xstring,
              compressed    TYPE xstring,
@@ -57,20 +62,22 @@ CLASS cl_abap_zip IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get.
-    DATA:
-      ls_length TYPE i,
-      ls_contents LIKE LINE OF mt_contents.
+    DATA ls_length   TYPE i.
+    DATA ls_contents LIKE LINE OF mt_contents.
+
     READ TABLE mt_contents WITH KEY name = name INTO ls_contents.
     cl_abap_gzip=>decompress_binary(
-        EXPORTING gzip_in = ls_contents-compressed
-        IMPORTING raw_out = content
-                  raw_out_len = ls_length ).
+      EXPORTING
+        gzip_in = ls_contents-compressed
+      IMPORTING
+        raw_out = content
+        raw_out_len = ls_length ).
   ENDMETHOD.
 
   METHOD add.
     DATA ls_contents LIKE LINE OF mt_contents.
+
     ls_contents-name = name.
-    ls_contents-original_size = xstrlen( content ).
     ls_contents-content = content.
     cl_abap_gzip=>compress_binary(
       EXPORTING
@@ -86,49 +93,118 @@ CLASS cl_abap_zip IMPLEMENTATION.
 
   METHOD save.
 * https://en.wikipedia.org/wiki/ZIP_(file_format)
+* https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT
 
-    DATA lo_stream TYPE REF TO lcl_stream.
+    DATA lo_total    TYPE REF TO lcl_stream.
+    DATA lo_file     TYPE REF TO lcl_stream.
+    DATA lo_central  TYPE REF TO lcl_stream.
     DATA ls_contents LIKE LINE OF mt_contents.
-    DATA lv_buffer TYPE xstring.
-    DATA lo_conv TYPE REF TO cl_abap_conv_out_ce.
+    DATA lv_buffer   TYPE xstring.
+    DATA lv_start    TYPE i.
+    DATA lo_conv     TYPE REF TO cl_abap_conv_out_ce.
 
-    CREATE OBJECT lo_stream.
+    CREATE OBJECT lo_central.
+    CREATE OBJECT lo_total.
     lo_conv = cl_abap_conv_out_ce=>create( ).
 
     LOOP AT mt_contents INTO ls_contents.
+****************************************
+* LOCAL FILE RECORD
+      CREATE OBJECT lo_file.
 * 0, 4, Local file header signature
-      lo_stream->append( '504B0304' ).
+      lo_file->append( '504B0304' ).
 * 4, 2, Version needed to extract (minimum)
-      lo_stream->append( '1400' ).
+      lo_file->append( '1400' ).
 * 6, 2, General purpose bit flag
-      lo_stream->append( '0000' ).
+      lo_file->append( '0000' ).
 * 8, 2, Compression method; e.g. none = 0, DEFLATE = 8 (or "0x08 0x00")
-      lo_stream->append( '0800' ).
+      lo_file->append( '0800' ).
 * 10, 2, File last modification time
-      lo_stream->append( '0000' ). "lo_stream->append_time( sy-uzeit ).
+      lo_file->append( '0000' ). "lo_stream->append_time( sy-uzeit ).
 * 12, 2, File last modification date
-      lo_stream->append( '0000' ). "lo_stream->append_date( sy-datum ).
+      lo_file->append( '0000' ). "lo_stream->append_date( sy-datum ).
 * 14, 4, CRC-32 of uncompressed data
-      lo_stream->append_crc( ls_contents-content ).
+      lo_file->append_crc( ls_contents-content ).
 * 18, 4, Compressed size (or 0xffffffff for ZIP64)
-      lo_stream->append_int4( xstrlen( ls_contents-compressed ) ).
+      lo_file->append_int4( xstrlen( ls_contents-compressed ) ).
 * 22, 4, Uncompressed size (or 0xffffffff for ZIP64)
-      lo_stream->append_int4( xstrlen( ls_contents-content ) ).
+      lo_file->append_int4( xstrlen( ls_contents-content ) ).
 * 26, 2, File name length (n)
-      lo_stream->append_int2( strlen( ls_contents-name ) ).
+      lo_file->append_int2( strlen( ls_contents-name ) ).
 * 28, 2, Extra field length (m)
-      lo_stream->append( '0000' ).
+      lo_file->append( '0000' ).
 * 30, n, File name
       lo_conv->convert( EXPORTING data = ls_contents-name
                         IMPORTING buffer = lv_buffer ).
-      lo_stream->append( lv_buffer ).
+      lo_file->append( lv_buffer ).
 * 30+n, m, Extra field
-* empty, no extra field
+* empty
 * compressed data,
-      lo_stream->append( ls_contents-compressed ).
+      lo_file->append( ls_contents-compressed ).
+
+****************************************
+* CENTRAL DIRECTORY FILE RECORD
+* 0, 4, Central directory file header signature = 0x02014b50
+      lo_central->append( '504B0102' ).
+* 4, 2, Version made by
+      lo_central->append( '1400' ).
+
+* 6, 2, Version needed to extract (minimum)
+* 8, 2, General purpose bit flag
+* 10, 2, Compression method
+* 12, 2, File last modification time
+* 14, 2, File last modification date
+* 16, 4, CRC-32 of uncompressed data
+* 20, 4, Compressed size (or 0xffffffff for ZIP64)
+* 24, 4, Uncompressed size (or 0xffffffff for ZIP64)
+* 28, 2, File name length (n)
+* 30, 2, Extra field length (m)
+      lv_buffer = lo_file->get( ).
+      lo_central->append( lv_buffer+4(26) ).
+
+* 32, 2, File comment length (k)
+      lo_file->append_int2( 0 ).
+* 34, 2, Disk number where file starts (or 0xffff for ZIP64)
+      lo_file->append_int2( 0 ).
+* 36, 2, Internal file attributes
+      lo_file->append_int2( 0 ).
+* 38, 4, External file attributes
+      lo_file->append_int2( 0 ).
+* 42, 4, Relative offset of local file header (or 0xffffffff for ZIP64). This is the number of bytes between the start of the first disk on which the file occurs, and the start of the local file header. This allows software reading the central directory to locate the position of the file inside the ZIP file.
+      lo_file->append_int4( xstrlen( lo_total->get( ) ) ).
+* 46, n, File name
+      lo_conv->convert( EXPORTING data = ls_contents-name
+                        IMPORTING buffer = lv_buffer ).
+      lo_file->append( lv_buffer ).
+
+      lo_total->append( lo_file->get( ) ).
     ENDLOOP.
 
-    val = lo_stream->get( ).
+    lv_start = xstrlen( lo_total->get( ) ).
+    lo_total->append( lo_central->get( ) ).
+
+****************************************
+* END OF CENTRAL DIRECTORY
+* 0, 4, End of central directory signature = 0x06054b50
+    lo_central->append( '504B0506' ).
+* 4, 2, Number of this disk (or 0xffff for ZIP64)
+    lo_total->append_int2( 0 ).
+* 6, 2, Disk where central directory starts (or 0xffff for ZIP64)
+    lo_total->append_int2( 0 ).
+* 8, 2, Number of central directory records on this disk (or 0xffff for ZIP64)
+    lo_total->append_int2( lines( mt_contents ) ).
+* 10, 2, Total number of central directory records (or 0xffff for ZIP64)
+    lo_total->append_int2( lines( mt_contents ) ).
+* 12, 4, Size of central directory (bytes) (or 0xffffffff for ZIP64)
+    lo_total->append_int4( xstrlen( lo_central->get( ) ) ).
+* 16, 4, Offset of start of central directory, relative to start of archive (or 0xffffffff for ZIP64)
+    lo_total->append_int4( lv_start ).
+* 20, 2, Comment length (n)
+    lo_total->append_int2( 0 ).
+* 22, n, Comment
+* empty
+
+    val = lo_total->get( ).
   ENDMETHOD.
 
 ENDCLASS.
