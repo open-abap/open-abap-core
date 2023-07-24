@@ -54,7 +54,9 @@ CLASS cl_abap_zip IMPLEMENTATION.
   METHOD crc32.
     DATA lo_stream TYPE REF TO lcl_stream.
     CREATE OBJECT lo_stream.
-    crc = lo_stream->append_crc( content ).
+    crc = lo_stream->append_crc(
+      iv_little_endian = abap_false
+      iv_xstring       = content ).
   ENDMETHOD.
 
   METHOD delete.
@@ -128,7 +130,9 @@ CLASS cl_abap_zip IMPLEMENTATION.
 * 12, 2, File last modification date
       lo_file->append( 'F856' ). "lo_stream->append_date( sy-datum ).
 * 14, 4, CRC-32 of uncompressed data
-      lo_file->append_crc( ls_contents-content ).
+      lo_file->append_crc(
+        iv_little_endian = abap_true
+        iv_xstring       = ls_contents-content ).
 * 18, 4, Compressed size (or 0xffffffff for ZIP64)
       lo_file->append_int4( xstrlen( ls_contents-compressed ) ).
 * 22, 4, Uncompressed size (or 0xffffffff for ZIP64)

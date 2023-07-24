@@ -7,8 +7,11 @@ CLASS lcl_stream DEFINITION.
     METHODS append_int4 IMPORTING iv_int TYPE i.
     METHODS append_int2 IMPORTING iv_int TYPE i.
     METHODS append_crc
-      IMPORTING iv_xstring TYPE xstring
-      RETURNING VALUE(rv_crc) TYPE xstring.
+      IMPORTING
+        iv_little_endian TYPE abap_bool
+        iv_xstring       TYPE xstring
+      RETURNING
+        VALUE(rv_crc)    TYPE xstring.
   PRIVATE SECTION.
     CLASS-DATA crc32_map TYPE xstring.
     DATA mv_xstr TYPE xstring.
@@ -43,9 +46,7 @@ CLASS lcl_stream IMPLEMENTATION.
     DATA lv_hex TYPE x LENGTH 4.
     lv_hex = iv_int.
 * convert to little endian
-    SHIFT lv_hex LEFT CIRCULAR IN BYTE MODE.
-    SHIFT lv_hex LEFT CIRCULAR IN BYTE MODE.
-    SHIFT lv_hex LEFT CIRCULAR IN BYTE MODE.
+    CONCATENATE lv_hex+3(1) lv_hex+2(1) lv_hex+1(1) lv_hex(1) INTO lv_hex IN BYTE MODE.
     append( lv_hex ).
   ENDMETHOD.
 
@@ -95,6 +96,11 @@ CLASS lcl_stream IMPLEMENTATION.
       crc = x4 BIT-XOR crc.
     ENDDO.
     crc = crc BIT-XOR mffffffff.
+
+    IF iv_little_endian = abap_true.
+* convert to little endian
+      CONCATENATE crc+3(1) crc+2(1) crc+1(1) crc(1) INTO crc IN BYTE MODE.
+    ENDIF.
 
     rv_crc = crc.
 

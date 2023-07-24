@@ -64,8 +64,8 @@ CLASS ltcl_test IMPLEMENTATION.
                  content = lv_content ).
     lv_save = lo_zip->save( ).
 
-    WRITE '@KERNEL const fs = await import("fs");'.
-    WRITE '@KERNEL fs.writeFileSync("foo.zip", Buffer.from(lv_save.get().toLowerCase(), "hex"));'.
+    " WRITE '@KERNEL const fs = await import("fs");'.
+    " WRITE '@KERNEL fs.writeFileSync("foo.zip", Buffer.from(lv_save.get().toLowerCase(), "hex"));'.
 
   ENDMETHOD.
 
