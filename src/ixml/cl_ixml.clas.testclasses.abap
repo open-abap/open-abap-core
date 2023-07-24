@@ -804,7 +804,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     lo_ixml = cl_ixml=>create( ).
 
     lo_encoding = lo_ixml->create_encoding(
-      byte_order = if_ixml_encoding=>co_platform_endian
+      byte_order    = if_ixml_encoding=>co_platform_endian
       character_set = 'utf-8' ).
     lo_document = lo_ixml->create_document( ).
     lo_document->set_encoding( lo_encoding ).
