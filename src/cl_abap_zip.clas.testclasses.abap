@@ -4,6 +4,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS test1 FOR TESTING RAISING cx_static_check.
     METHODS get FOR TESTING RAISING cx_static_check.
     METHODS crc FOR TESTING RAISING cx_static_check.
+    METHODS save FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -50,6 +51,22 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_act
       exp = lv_content ).
+  ENDMETHOD.
+
+  METHOD save.
+    DATA lo_zip     TYPE REF TO cl_abap_zip.
+    DATA lv_content TYPE xstring.
+    DATA lv_save    TYPE xstring.
+
+    lv_content = '1122334455667788AABBCCDDEEFF'.
+    CREATE OBJECT lo_zip.
+    lo_zip->add( name    = 'foobar'
+                 content = lv_content ).
+    lv_save = lo_zip->save( ).
+
+    " WRITE '@KERNEL const fs = await import("fs");'.
+    " WRITE '@KERNEL fs.writeFileSync("foo.zip", Buffer.from(lv_save.get().toLowerCase(), "hex"));'.
+
   ENDMETHOD.
 
 ENDCLASS.
