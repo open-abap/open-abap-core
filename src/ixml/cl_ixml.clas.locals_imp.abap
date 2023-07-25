@@ -216,7 +216,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~get_name.
-    ASSERT 1 = 'todo'.
+    name = mv_name.
   ENDMETHOD.
 
   METHOD if_ixml_element~append_child.
@@ -722,7 +722,7 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~get_root_element.
-    root = mi_node.
+    root ?= mi_node->if_ixml_element~get_first_child( ).
   ENDMETHOD.
 
 ENDCLASS.
@@ -748,22 +748,14 @@ CLASS lcl_renderer IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_renderer~render.
-    DATA li_root     TYPE REF TO if_ixml_element.
-    DATA li_element  TYPE REF TO if_ixml_element.
-    DATA li_children TYPE REF TO if_ixml_node_list.
-    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+    DATA li_root TYPE REF TO if_ixml_element.
 
     li_root = mi_document->get_root_element( ).
+    IF li_root IS INITIAL.
+      RETURN.
+    ENDIF.
 
-    li_children = li_root->get_children( ).
-    li_iterator = li_children->create_iterator( ).
-    DO.
-      li_element ?= li_iterator->get_next( ).
-      IF li_element IS INITIAL.
-        EXIT. " current loop
-      ENDIF.
-      li_element->render( mi_ostream ).
-    ENDDO.
+    li_root->render( mi_ostream ).
   ENDMETHOD.
 
   METHOD if_ixml_renderer~set_normalizing.
