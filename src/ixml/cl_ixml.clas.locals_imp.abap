@@ -200,7 +200,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_namespace_prefix.
-    ASSERT 1 = 'todo'.
+    rv_prefix = mv_namespace.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_namespace_uri.
@@ -338,10 +338,15 @@ CLASS lcl_node IMPLEMENTATION.
       IF li_node IS INITIAL.
         EXIT. " current loop
       ENDIF.
-      lv_attributes = lv_attributes && | | && li_node->get_name( ) && '="' && li_node->get_value( ) && '"'.
+      lv_ns = li_node->get_namespace_prefix( ).
+      IF lv_ns IS NOT INITIAL.
+        lv_ns = lv_ns && ':'.
+      ENDIF.
+      lv_attributes = lv_attributes && | | && lv_ns && li_node->get_name( ) && '="' && li_node->get_value( ) && '"'.
     ENDDO.
 
 *    WRITE '@KERNEL console.dir(mv_namespace);'.
+    CLEAR lv_ns.
     IF mv_namespace IS NOT INITIAL.
       lv_ns = mv_namespace && ':'.
     ENDIF.
@@ -387,6 +392,7 @@ CLASS lcl_node IMPLEMENTATION.
     CREATE OBJECT lo_node TYPE lcl_node.
     lo_node->set_name( name ).
     lo_node->set_value( value ).
+    lo_node->set_namespace_prefix( prefix ).
     mi_attributes->set_named_item_ns( lo_node ).
   ENDMETHOD.
 

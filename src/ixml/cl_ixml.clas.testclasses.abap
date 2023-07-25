@@ -41,6 +41,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS empty_root_element FOR TESTING RAISING cx_static_check.
     METHODS another_children FOR TESTING RAISING cx_static_check.
     METHODS render_standalone FOR TESTING RAISING cx_static_check.
+    METHODS render_namespaced_attr FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -934,6 +935,42 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = lv_string
       exp = '* standalone="yes"*' ).
+
+  ENDMETHOD.
+
+  METHOD render_namespaced_attr.
+
+    DATA lo_document      TYPE REF TO if_ixml_document.
+    DATA lo_ixml          TYPE REF TO if_ixml.
+    DATA lo_ostream       TYPE REF TO if_ixml_ostream.
+    DATA lo_renderer      TYPE REF TO if_ixml_renderer.
+    DATA lo_streamfactory TYPE REF TO if_ixml_stream_factory.
+    DATA lo_root          TYPE REF TO if_ixml_element.
+    DATA lv_string        TYPE string.
+
+    lo_ixml = cl_ixml=>create( ).
+
+    lo_document = lo_ixml->create_document( ).
+    lo_document->set_standalone( abap_true ).
+
+    lo_root = lo_document->create_simple_element(
+      name   = 'TopName'
+      parent = lo_document ).
+    lo_root->set_attribute_ns(
+      name   = 'name'
+      prefix = 'prefix'
+      value  = 'Namespace' ).
+
+    lo_streamfactory = lo_ixml->create_stream_factory( ).
+    lo_ostream = lo_streamfactory->create_ostream_cstring( lv_string ).
+    lo_renderer = lo_ixml->create_renderer(
+      ostream  = lo_ostream
+      document = lo_document ).
+    lo_renderer->render( ).
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_string
+      exp = '*prefix:name="Namespace"*' ).
 
   ENDMETHOD.
 
