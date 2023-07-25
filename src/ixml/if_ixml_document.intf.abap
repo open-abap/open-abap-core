@@ -8,6 +8,9 @@ INTERFACE if_ixml_document PUBLIC.
     set_standalone
       IMPORTING
         standalone TYPE abap_bool,
+    get_standalone
+      RETURNING
+        VALUE(rval) TYPE abap_bool,
     set_namespace_prefix
       IMPORTING
         prefix TYPE string,

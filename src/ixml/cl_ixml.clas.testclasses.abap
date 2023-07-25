@@ -13,7 +13,6 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS render_escape FOR TESTING RAISING cx_static_check.
     METHODS render_nested FOR TESTING RAISING cx_static_check.
     METHODS render_document_namespace_pref FOR TESTING RAISING cx_static_check.
-
     METHODS parse_basic FOR TESTING RAISING cx_static_check.
     METHODS parse_empty FOR TESTING RAISING cx_static_check.
     METHODS parse_namespace FOR TESTING RAISING cx_static_check.
@@ -41,6 +40,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS fix_children FOR TESTING RAISING cx_static_check.
     METHODS empty_root_element FOR TESTING RAISING cx_static_check.
     METHODS another_children FOR TESTING RAISING cx_static_check.
+    METHODS render_standalone FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -908,6 +908,33 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = lv_string
       exp = '*<TopName xmlns="Namespace"><ThemeElements/></TopName>' ).
+  ENDMETHOD.
+
+  METHOD render_standalone.
+
+    DATA lo_document      TYPE REF TO if_ixml_document.
+    DATA lo_ixml          TYPE REF TO if_ixml.
+    DATA lo_ostream       TYPE REF TO if_ixml_ostream.
+    DATA lo_renderer      TYPE REF TO if_ixml_renderer.
+    DATA lo_streamfactory TYPE REF TO if_ixml_stream_factory.
+    DATA lv_string        TYPE string.
+
+    lo_ixml = cl_ixml=>create( ).
+
+    lo_document = lo_ixml->create_document( ).
+    lo_document->set_standalone( abap_true ).
+
+    lo_streamfactory = lo_ixml->create_stream_factory( ).
+    lo_ostream = lo_streamfactory->create_ostream_cstring( lv_string ).
+    lo_renderer = lo_ixml->create_renderer(
+      ostream  = lo_ostream
+      document = lo_document ).
+    lo_renderer->render( ).
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_string
+      exp = '* standalone="yes"*' ).
+
   ENDMETHOD.
 
 ENDCLASS.
