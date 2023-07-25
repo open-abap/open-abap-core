@@ -515,7 +515,8 @@ CLASS lcl_document DEFINITION.
 
     METHODS constructor.
   PRIVATE SECTION.
-    DATA mi_node TYPE REF TO lcl_node.
+    DATA mi_node       TYPE REF TO lcl_node.
+    DATA mv_standalone TYPE abap_bool.
 ENDCLASS.
 
 CLASS lcl_document IMPLEMENTATION.
@@ -625,8 +626,11 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~set_standalone.
-* todo, something here?
-    RETURN.
+    mv_standalone = standalone.
+  ENDMETHOD.
+
+  METHOD if_ixml_document~get_standalone.
+    rval = mv_standalone.
   ENDMETHOD.
 
   METHOD if_ixml_document~set_namespace_prefix.
@@ -729,6 +733,15 @@ ENDCLASS.
 
 ****************************************************************
 
+CLASS lcl_ostream DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_ixml_ostream.
+    DATA mv_string TYPE string.
+    DATA mv_hex TYPE abap_bool.
+ENDCLASS.
+
+****************************************************************
+
 CLASS lcl_renderer DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_renderer.
@@ -737,7 +750,7 @@ CLASS lcl_renderer DEFINITION.
         ostream  TYPE REF TO if_ixml_ostream
         document TYPE REF TO if_ixml_document.
   PRIVATE SECTION.
-    DATA mi_ostream TYPE REF TO if_ixml_ostream.
+    DATA mi_ostream  TYPE REF TO if_ixml_ostream.
     DATA mi_document TYPE REF TO if_ixml_document.
 ENDCLASS.
 
@@ -748,7 +761,20 @@ CLASS lcl_renderer IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_renderer~render.
-    DATA li_root TYPE REF TO if_ixml_element.
+    DATA li_root       TYPE REF TO if_ixml_element.
+    DATA lv_standalone TYPE string.
+    DATA lo_stream     TYPE REF TO lcl_ostream.
+
+    IF mi_document->get_standalone( ) = abap_true.
+      lv_standalone = | standalone="yes"|.
+    ENDIF.
+
+    lo_stream ?= mi_ostream.
+    IF lo_stream->mv_hex = abap_true.
+      mi_ostream->write_string( |<?xml version="1.0" encoding="utf-8"{ lv_standalone }?>| ).
+    ELSE.
+      mi_ostream->write_string( |<?xml version="1.0" encoding="utf-16"{ lv_standalone }?>| ).
+    ENDIF.
 
     li_root = mi_document->get_root_element( ).
     IF li_root IS INITIAL.
@@ -764,13 +790,6 @@ CLASS lcl_renderer IMPLEMENTATION.
 ENDCLASS.
 
 ****************************************************************
-
-CLASS lcl_ostream DEFINITION.
-  PUBLIC SECTION.
-    INTERFACES if_ixml_ostream.
-    DATA mv_string TYPE string.
-    DATA mv_hex TYPE abap_bool.
-ENDCLASS.
 
 CLASS lcl_ostream IMPLEMENTATION.
   METHOD if_ixml_ostream~write_string.
@@ -831,7 +850,6 @@ CLASS lcl_stream_factory IMPLEMENTATION.
     CREATE OBJECT stream TYPE lcl_ostream.
 * hack, this method doesnt really follow normal ABAP semantics
     WRITE '@KERNEL stream.get().mv_string = INPUT.string;'.
-    stream->write_string( '<?xml version="1.0" encoding="utf-16"?>' ).
   ENDMETHOD.
 
   METHOD if_ixml_stream_factory~create_ostream_xstring.
@@ -841,7 +859,6 @@ CLASS lcl_stream_factory IMPLEMENTATION.
     lo_stream->mv_hex = abap_true.
 * hack, this method doesnt really follow normal ABAP semantics
     WRITE '@KERNEL stream.get().mv_string = INPUT.string;'.
-    stream->write_string( '<?xml version="1.0" encoding="utf-8"?>' ).
   ENDMETHOD.
 
   METHOD if_ixml_stream_factory~create_istream_xstring.
