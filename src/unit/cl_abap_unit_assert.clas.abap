@@ -5,7 +5,7 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
         IMPORTING
           act   TYPE any
           exp   TYPE any
-          msg   TYPE string OPTIONAL
+          msg   TYPE csequence OPTIONAL
           tol   TYPE f OPTIONAL
           quit  TYPE i OPTIONAL
           level TYPE i OPTIONAL.
@@ -21,7 +21,7 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
         IMPORTING
           act   TYPE any
           exp   TYPE any
-          msg   TYPE string OPTIONAL
+          msg   TYPE csequence OPTIONAL
           quit  TYPE i OPTIONAL
           level TYPE i OPTIONAL.
 
@@ -31,7 +31,7 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
           lower  TYPE i
           upper  TYPE i
           number TYPE i
-          msg    TYPE string OPTIONAL
+          msg    TYPE csequence OPTIONAL
           quit   TYPE i OPTIONAL
           level  TYPE i OPTIONAL.
 
@@ -39,7 +39,7 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
       assert_not_initial
         IMPORTING
           act   TYPE any
-          msg   TYPE string OPTIONAL
+          msg   TYPE csequence OPTIONAL
           quit  TYPE i OPTIONAL
           level TYPE i OPTIONAL.
 
@@ -47,7 +47,7 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
       assert_initial
         IMPORTING
           act   TYPE any
-          msg   TYPE string OPTIONAL
+          msg   TYPE csequence OPTIONAL
           quit  TYPE i OPTIONAL
           level TYPE i OPTIONAL.
 
@@ -71,7 +71,7 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
         IMPORTING
           exp   TYPE i DEFAULT 0
           act   TYPE i DEFAULT sy-subrc
-          msg   TYPE string OPTIONAL
+          msg   TYPE csequence OPTIONAL
           quit  TYPE i OPTIONAL
           level TYPE i OPTIONAL
         PREFERRED PARAMETER act.
@@ -79,16 +79,16 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
     CLASS-METHODS
       assert_true
         IMPORTING
-          act TYPE abap_bool
-          msg TYPE string OPTIONAL
-          quit TYPE i OPTIONAL
+          act   TYPE abap_bool
+          msg   TYPE csequence OPTIONAL
+          quit  TYPE i OPTIONAL
           level TYPE i OPTIONAL.
 
     CLASS-METHODS
       assert_false
         IMPORTING
           act TYPE abap_bool
-          msg TYPE string OPTIONAL
+          msg TYPE csequence OPTIONAL
           quit TYPE i OPTIONAL
           level TYPE i OPTIONAL.
 
@@ -106,7 +106,7 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
         IMPORTING
           act   TYPE clike
           exp   TYPE clike
-          msg   TYPE string OPTIONAL
+          msg   TYPE csequence OPTIONAL
           quit  TYPE i OPTIONAL
           level TYPE i OPTIONAL.
 
@@ -114,7 +114,7 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
       assert_bound
         IMPORTING
           act   TYPE any
-          msg   TYPE string OPTIONAL
+          msg   TYPE csequence OPTIONAL
           quit  TYPE i OPTIONAL
           level TYPE i OPTIONAL.
 
@@ -122,7 +122,7 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
       assert_not_bound
         IMPORTING
           act   TYPE any
-          msg   TYPE string OPTIONAL
+          msg   TYPE csequence OPTIONAL
           quit  TYPE i OPTIONAL
           level TYPE i OPTIONAL.
 
