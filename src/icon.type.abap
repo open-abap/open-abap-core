@@ -39,6 +39,7 @@ CONSTANTS icon_list TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_message_critical TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_message_information TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_message_question TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_no_status TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_object_list TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_okay TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_outgoing_object TYPE c LENGTH 4 VALUE 'ICON'.

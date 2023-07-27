@@ -18,6 +18,12 @@ CLASS cl_abap_dyn_prg DEFINITION PUBLIC.
         VALUE(val_str) TYPE string
       RAISING
         cx_abap_not_in_whitelist.
+
+    CLASS-METHODS quote
+      IMPORTING
+        val        TYPE csequence
+      RETURNING
+        VALUE(out) TYPE string.
 ENDCLASS.
 
 CLASS cl_abap_dyn_prg IMPLEMENTATION.
@@ -30,6 +36,10 @@ CLASS cl_abap_dyn_prg IMPLEMENTATION.
   METHOD check_whitelist_str.
 * allow everything
     val_str = val.
+  ENDMETHOD.
+
+  METHOD quote.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
 ENDCLASS.
