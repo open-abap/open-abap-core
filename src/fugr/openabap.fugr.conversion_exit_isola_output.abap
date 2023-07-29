@@ -7,6 +7,13 @@ FUNCTION conversion_exit_isola_output.
 *"     VALUE(OUTPUT)
 *"----------------------------------------------------------------------
 
-  output = cl_i18n_languages=>sap1_to_sap2( input ).
+  cl_i18n_languages=>sap1_to_sap2(
+    EXPORTING
+      im_lang_sap1  = input
+    RECEIVING
+      re_lang_sap2  = output
+    EXCEPTIONS
+      no_assignment = 1
+      OTHERS        = 2 ).
 
 ENDFUNCTION.

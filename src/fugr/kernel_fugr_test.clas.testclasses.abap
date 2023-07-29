@@ -3,6 +3,7 @@ CLASS ltcl_fugr DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
   PRIVATE SECTION.
     METHODS system_installed_languages FOR TESTING RAISING cx_static_check.
     METHODS conversion_exit_isola_output FOR TESTING RAISING cx_static_check.
+    METHODS conversion_exit_isola_output_empty FOR TESTING RAISING cx_static_check.
     METHODS conversion_exit_isola_input FOR TESTING RAISING cx_static_check.
     METHODS conversion_exit_isola_input_fr FOR TESTING RAISING cx_static_check.
     METHODS conversion_exit_alpha_output_string FOR TESTING RAISING cx_static_check.
@@ -379,6 +380,22 @@ CLASS ltcl_fugr IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_ret
       exp = '0000000002' ).
+
+  ENDMETHOD.
+
+  METHOD conversion_exit_isola_output_empty.
+
+    DATA lv_lang TYPE laiso.
+
+    CALL FUNCTION 'CONVERSION_EXIT_ISOLA_OUTPUT'
+      EXPORTING
+        input  = space
+      IMPORTING
+        output = lv_lang.
+
+    cl_abap_unit_assert=>assert_equals(
+      exp = ''
+      act = lv_lang ).
 
   ENDMETHOD.
 
