@@ -119,18 +119,18 @@ CLASS cl_gdt_conversion IMPLEMENTATION.
 
   METHOD language_code_outbound.
 
-* todo, first look up in database, if there is no database connected, fallback to below
-
-    CASE im_value.
-      WHEN 'E'.
-        ex_value = 'en'.
-      WHEN 'K'.
-        ex_value = 'da'.
-      WHEN 'D'.
-        ex_value = 'de'.
-      WHEN OTHERS.
-        ASSERT 0 = 1.
-    ENDCASE.
+    cl_i18n_languages=>sap1_to_sap2(
+      EXPORTING
+        im_lang_sap1  = im_value
+      RECEIVING
+        re_lang_sap2  = ex_value
+      EXCEPTIONS
+        no_assignment = 1
+        OTHERS        = 2 ).
+    TRANSLATE ex_value TO LOWER CASE.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_gdt_conversion.
+    ENDIF.
 
   ENDMETHOD.
 
