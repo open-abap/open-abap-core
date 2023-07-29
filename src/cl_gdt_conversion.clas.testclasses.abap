@@ -3,6 +3,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS date_time_inbound FOR TESTING RAISING cx_static_check.
     METHODS amount_outbound_dkk FOR TESTING RAISING cx_static_check.
     METHODS amount_outbound_vnd FOR TESTING RAISING cx_static_check.
+    METHODS language_code_outbound1 FOR TESTING RAISING cx_static_check.
+    METHODS language_code_outbound2 FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
@@ -58,6 +60,38 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_date
       exp = '20210224' ).
+
+  ENDMETHOD.
+
+  METHOD language_code_outbound1.
+
+    DATA lv_laiso TYPE laiso.
+
+    cl_gdt_conversion=>language_code_outbound(
+      EXPORTING
+        im_value = 'E'
+      IMPORTING
+        ex_value = lv_laiso ).
+
+    cl_abap_unit_assert=>assert_equals(
+      exp = 'en'
+      act = lv_laiso ).
+
+  ENDMETHOD.
+
+  METHOD language_code_outbound2.
+
+    DATA lv_laiso TYPE laiso.
+
+    TRY.
+        cl_gdt_conversion=>language_code_outbound(
+          EXPORTING
+            im_value = space
+          IMPORTING
+            ex_value = lv_laiso ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_gdt_conversion.
+    ENDTRY.
 
   ENDMETHOD.
 
