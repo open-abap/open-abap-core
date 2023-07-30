@@ -105,7 +105,9 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
       CHANGING
         dref   = field ).
 
-    WRITE '@KERNEL dref.assign(new abap.types.Table(field.getPointer()));'.
+* todo, this part should pass the Sorted/Hashed type + key fields to table options
+
+    WRITE '@KERNEL dref.assign(abap.types.TableFactory.construct(field.getPointer()));'.
   ENDMETHOD.
 
   METHOD elem.
