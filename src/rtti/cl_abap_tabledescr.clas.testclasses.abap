@@ -152,9 +152,12 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lo_type  TYPE REF TO cl_abap_datadescr.
     DATA lo_table TYPE REF TO cl_abap_tabledescr.
     DATA lt_keys  TYPE abap_table_keydescr_tab.
+    DATA ls_row   TYPE t100.
 
     FIELD-SYMBOLS <ls_key>       LIKE LINE OF lt_keys.
     FIELD-SYMBOLS <ls_component> LIKE LINE OF <ls_key>-components.
+    FIELD-SYMBOLS <lt_tab>       TYPE ANY TABLE.
+    FIELD-SYMBOLS <ls_row>       TYPE any.
 
     APPEND INITIAL LINE TO lt_keys ASSIGNING <ls_key>.
     <ls_key>-access_kind = cl_abap_tabledescr=>tablekind_sorted.
@@ -172,6 +175,13 @@ CLASS ltcl_test IMPLEMENTATION.
       p_keys      = lt_keys ).
 
     CREATE DATA lr_data TYPE HANDLE lo_table.
+    ASSIGN lr_data->* TO <lt_tab>.
+
+    INSERT ls_row INTO TABLE <lt_tab>.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    READ TABLE <lt_tab> ASSIGNING <ls_row> FROM ls_row.
+    cl_abap_unit_assert=>assert_subrc( ).
 
   ENDMETHOD.
 
