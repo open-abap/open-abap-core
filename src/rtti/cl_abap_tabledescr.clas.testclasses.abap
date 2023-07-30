@@ -10,6 +10,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS keydefkind_default FOR TESTING RAISING cx_static_check.
     METHODS keydefkind_tableline FOR TESTING RAISING cx_static_check.
     METHODS tablekind_hashed FOR TESTING RAISING cx_static_check.
+    METHODS get_with_keys_prim FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -143,6 +144,35 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = table_descr->table_kind
       exp = cl_abap_tabledescr=>tablekind_hashed ).
+  ENDMETHOD.
+
+  METHOD get_with_keys_prim.
+
+    DATA lr_data  TYPE REF TO data.
+    DATA lo_type  TYPE REF TO cl_abap_datadescr.
+    DATA lo_table TYPE REF TO cl_abap_tabledescr.
+    DATA lt_keys  TYPE abap_table_keydescr_tab.
+
+    FIELD-SYMBOLS <ls_key>       LIKE LINE OF lt_keys.
+    FIELD-SYMBOLS <ls_component> LIKE LINE OF <ls_key>-components.
+
+    APPEND INITIAL LINE TO lt_keys ASSIGNING <ls_key>.
+    <ls_key>-access_kind = cl_abap_tabledescr=>tablekind_sorted.
+    <ls_key>-key_kind    = cl_abap_tabledescr=>keydefkind_user.
+    <ls_key>-is_primary  = abap_true.
+    <ls_key>-is_unique   = abap_true.
+
+    APPEND INITIAL LINE TO <ls_key>-components ASSIGNING <ls_component>.
+    <ls_component>-name = 'SPRSL'.
+
+    lo_type ?= cl_abap_structdescr=>describe_by_name( 'T100' ).
+
+    lo_table = cl_abap_tabledescr=>get_with_keys(
+      p_line_type = lo_type
+      p_keys      = lt_keys ).
+
+    CREATE DATA lr_data TYPE HANDLE lo_table.
+
   ENDMETHOD.
 
 ENDCLASS.
