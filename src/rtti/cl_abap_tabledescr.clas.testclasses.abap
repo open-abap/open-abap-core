@@ -183,6 +183,10 @@ CLASS ltcl_test IMPLEMENTATION.
     READ TABLE <lt_tab> ASSIGNING <ls_row> FROM ls_row.
     cl_abap_unit_assert=>assert_subrc( ).
 
+    ls_row-sprsl = 'E'.
+    READ TABLE <lt_tab> ASSIGNING <ls_row> FROM ls_row.
+    cl_abap_unit_assert=>assert_not_initial( sy-subrc ).
+
   ENDMETHOD.
 
 ENDCLASS.
