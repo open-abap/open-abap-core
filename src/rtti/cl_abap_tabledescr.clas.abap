@@ -46,8 +46,13 @@ CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
       RETURNING
         VALUE(ref) TYPE REF TO cl_abap_tabledescr.
 
+    METHODS get_keys
+      RETURNING
+        VALUE(p_keys) TYPE abap_table_keydescr_tab.
+
   PRIVATE SECTION.
     DATA mo_line_type TYPE REF TO cl_abap_typedescr.
+    DATA mt_keys      TYPE abap_table_keydescr_tab.
 ENDCLASS.
 
 CLASS cl_abap_tabledescr IMPLEMENTATION.
@@ -67,6 +72,10 @@ CLASS cl_abap_tabledescr IMPLEMENTATION.
 
   ENDMETHOD.
 
+  METHOD get_keys.
+    p_keys = mt_keys.
+  ENDMETHOD.
+
   METHOD get_with_keys.
 
     DATA ls_key LIKE LINE OF p_keys.
@@ -82,6 +91,7 @@ CLASS cl_abap_tabledescr IMPLEMENTATION.
     p_result->mo_line_type   = p_line_type.
     p_result->key_defkind    = ls_key-key_kind.
     p_result->table_kind     = ls_key-access_kind.
+    p_result->mt_keys        = p_keys.
 
     " cl_abap_typedescr
     p_result->type_kind      = typekind_table.
