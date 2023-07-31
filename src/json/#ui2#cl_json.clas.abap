@@ -223,10 +223,11 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           ENDIF.
         ELSEIF lo_type->type_kind = cl_abap_typedescr=>typekind_time.
           lv_value = mo_parsed->value_string( prefix ).
+          REPLACE ALL OCCURRENCES OF ':' IN lv_value WITH ''.
           IF lv_value CO space.
             CLEAR data.
           ELSE.
-            data = mo_parsed->value_string( prefix ).
+            data = lv_value.
           ENDIF.
         ELSE.
           data = mo_parsed->value_string( prefix ).
