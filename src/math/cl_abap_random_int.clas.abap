@@ -14,14 +14,22 @@ CLASS cl_abap_random_int DEFINITION PUBLIC FINAL CREATE PRIVATE.
     METHODS get_next
       RETURNING
         VALUE(value) TYPE i.
+
+  PRIVATE SECTION.
+    DATA mv_min TYPE i.
+    DATA mv_max TYPE i.
 ENDCLASS.
 
 CLASS cl_abap_random_int IMPLEMENTATION.
   METHOD create.
-    ASSERT 1 = 'todo'.
+    CREATE OBJECT prng.
+    prng->mv_min = min.
+    prng->mv_max = max.
   ENDMETHOD.
 
   METHOD get_next.
-    ASSERT 1 = 'todo'.
+    value = cl_abap_random=>create( )->intinrange(
+      low  = mv_min
+      high = mv_max ).
   ENDMETHOD.
 ENDCLASS.
