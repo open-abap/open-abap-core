@@ -133,7 +133,7 @@
     "cloud_types": false,
     "commented_code": false,
     "constructor_visibility_public": false,
-    "cyclomatic_complexity": true,
+    "cyclomatic_complexity": false,
     "dangerous_statement": false,
     "db_operation_in_loop": true,
     "abapdoc": false,
@@ -168,6 +168,8 @@
       "describeLines": true,
       "testSeams": true,
       "break": true,
+      "exportToMemory": true,
+      "exportToDatabase": true,
       "statics": true,
       "defaultKey": false
     },
