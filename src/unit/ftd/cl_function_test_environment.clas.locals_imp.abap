@@ -11,29 +11,34 @@ ENDCLASS.
 
 *************************************************************
 
-CLASS lcl_output_configuration DEFINITION.
-  PUBLIC SECTION.
-    INTERFACES if_ftd_output_configuration.
-ENDCLASS.
-
-CLASS lcl_output_configuration IMPLEMENTATION.
-  METHOD if_ftd_output_configuration~set_exporting_parameter.
-* todo
-
-    self = me.
-  ENDMETHOD.
-ENDCLASS.
-
-*************************************************************
-
 CLASS lcl_invocation_result DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ftd_invocation_result.
+    INTERFACES if_ftd_output_configuration.
+
+    TYPES: BEGIN OF ty_name_value,
+             name  TYPE abap_parmname,
+             value TYPE REF TO data,
+           END OF ty_name_value.
+
+    DATA mt_exporting TYPE STANDARD TABLE OF ty_name_value WITH DEFAULT KEY.
 ENDCLASS.
 
 CLASS lcl_invocation_result IMPLEMENTATION.
   METHOD if_ftd_invocation_result~get_output_configuration.
-    CREATE OBJECT result TYPE lcl_output_configuration.
+    result = me.
+  ENDMETHOD.
+
+  METHOD if_ftd_output_configuration~set_exporting_parameter.
+    DATA ls_row LIKE LINE OF mt_exporting.
+
+    ls_row-name = name.
+* note: in javascript the referenced data will not be deallocated,
+* todo: actually want to copy the data,
+    GET REFERENCE OF value INTO ls_row-value.
+    INSERT ls_row INTO TABLE mt_exporting.
+
+    self = me.
   ENDMETHOD.
 ENDCLASS.
 
