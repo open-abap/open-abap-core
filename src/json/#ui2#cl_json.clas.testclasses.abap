@@ -21,12 +21,47 @@ CLASS ltcl_deserialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
     METHODS deserialize_to_ref_bool FOR TESTING RAISING cx_static_check.
     METHODS deserialize_str FOR TESTING RAISING cx_static_check.
     METHODS deserialize_int FOR TESTING RAISING cx_static_check.
+    METHODS deserialize_empty_date FOR TESTING RAISING cx_static_check.
+    METHODS deserialize_empty_time FOR TESTING RAISING cx_static_check.
     METHODS deserialize_array_ref FOR TESTING RAISING cx_static_check.
     METHODS more_array FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_deserialize IMPLEMENTATION.
+
+  METHOD deserialize_empty_date.
+
+    DATA: BEGIN OF ls_data,
+            date TYPE d,
+          END OF ls_data.
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = '{}'
+      CHANGING
+        data = ls_data ).
+
+    cl_abap_unit_assert=>assert_initial( ls_data-date ).
+
+  ENDMETHOD.
+
+  METHOD deserialize_empty_time.
+
+    DATA: BEGIN OF ls_data,
+            time TYPE t,
+          END OF ls_data.
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = '{}'
+      CHANGING
+        data = ls_data ).
+
+    cl_abap_unit_assert=>assert_initial( ls_data-time ).
+
+  ENDMETHOD.
+
 
   METHOD parse_abap_true.
     DATA: BEGIN OF stru,
