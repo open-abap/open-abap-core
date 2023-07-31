@@ -23,6 +23,7 @@ CLASS cl_function_test_environment IMPLEMENTATION.
     DATA lv_module LIKE LINE OF function_modules.
     DATA ls_row    LIKE LINE OF gt_backup.
 
+    ASSERT lines( function_modules ) > 0.
     LOOP AT function_modules INTO lv_module.
       ls_row-name = lv_module.
       WRITE '@KERNEL ls_row.get().backup = abap.FunctionModules[lv_module.get().trimEnd()];'.
@@ -37,10 +38,10 @@ CLASS cl_function_test_environment IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_function_test_environment~clear_doubles.
-    DATA ls_row LIKE LINE OF gt_backup.
+    FIELD-SYMBOLS <ls_row> LIKE LINE OF gt_backup.
 
-    LOOP AT gt_backup INTO ls_row.
-      WRITE '@KERNEL abap.FunctionModules[ls_row.get().name.get().trimEnd()] = ls_row.get().backup;'.
+    LOOP AT gt_backup ASSIGNING <ls_row>.
+      WRITE '@KERNEL abap.FunctionModules[fs_ls_row_.get().name.get().trimEnd()] = fs_ls_row_.get().backup;'.
     ENDLOOP.
     CLEAR gt_backup.
   ENDMETHOD.

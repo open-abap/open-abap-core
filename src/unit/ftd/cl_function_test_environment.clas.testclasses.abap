@@ -3,7 +3,10 @@ CLASS ltcl_test DEFINITION FINAL FOR TESTING DURATION SHORT RISK LEVEL HARMLESS.
     INTERFACES if_ftd_invocation_answer.
   PRIVATE SECTION.
     CONSTANTS gc_hello_world TYPE string VALUE 'Hello World'.
+
     METHODS test FOR TESTING RAISING cx_static_check.
+
+    METHODS test_throws.
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
@@ -14,9 +17,11 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA li_env     TYPE REF TO if_function_test_environment.
     DATA lv_message TYPE string.
 
-    li_env = cl_function_test_environment=>create( lt_deps ).
+    test_throws( ).
 
     INSERT 'ABC' INTO TABLE lt_deps.
+    li_env = cl_function_test_environment=>create( lt_deps ).
+
     li_env->get_double( 'ABC' )->configure_call( )->ignore_all_parameters( )->then_answer( me ).
 
     CALL FUNCTION 'ABC'
@@ -28,6 +33,17 @@ CLASS ltcl_test IMPLEMENTATION.
       exp = gc_hello_world ).
 
     li_env->clear_doubles( ).
+    test_throws( ).
+
+  ENDMETHOD.
+
+  METHOD test_throws.
+
+    TRY.
+        CALL FUNCTION 'ABC'.
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_sy_dyn_call_illegal_func.
+    ENDTRY.
 
   ENDMETHOD.
 
