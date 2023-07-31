@@ -57,6 +57,7 @@ CLASS lcl_invoker IMPLEMENTATION.
     DATA lo_result    TYPE REF TO lcl_invocation_result.
     DATA li_result    TYPE REF TO if_ftd_invocation_result.
     DATA li_arguments TYPE REF TO if_ftd_input_arguments.
+    DATA ls_exporting LIKE LINE OF lo_result->mt_exporting.
 
     CREATE OBJECT lo_result.
     li_result = lo_result.
@@ -70,8 +71,9 @@ CLASS lcl_invoker IMPLEMENTATION.
       CHANGING
         result    = li_result ).
 
-* todo, set result
-    WRITE '@KERNEL fminput.importing.message.set("Hello World");'.
+    LOOP AT lo_result->mt_exporting INTO ls_exporting.
+      WRITE '@KERNEL fminput.importing[ls_exporting.get().name.get().toLowerCase().trimEnd()].set("Hello World");'.
+    ENDLOOP.
 
   ENDMETHOD.
 ENDCLASS.
