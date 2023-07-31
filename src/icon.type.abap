@@ -15,6 +15,7 @@ CONSTANTS icon_copy_object TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_create TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_database_table TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_delete TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_delete_favorites TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_delete_row TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_delete_template TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_delivery_inbound TYPE c LENGTH 4 VALUE 'ICON'.
