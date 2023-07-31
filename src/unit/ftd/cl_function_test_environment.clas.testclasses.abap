@@ -11,11 +11,13 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD test.
 
     DATA lt_deps    TYPE if_function_test_environment=>tt_function_dependencies.
+    DATA li_env     TYPE REF TO if_function_test_environment.
     DATA lv_message TYPE string.
 
+    li_env = cl_function_test_environment=>create( lt_deps ).
+
     INSERT 'ABC' INTO TABLE lt_deps.
-    cl_function_test_environment=>create( lt_deps )->get_double( 'ABC'
-      )->configure_call( )->ignore_all_parameters( )->then_answer( me ).
+    li_env->get_double( 'ABC' )->configure_call( )->ignore_all_parameters( )->then_answer( me ).
 
     CALL FUNCTION 'ABC'
       IMPORTING
@@ -24,6 +26,8 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_message
       exp = gc_hello_world ).
+
+    li_env->clear_doubles( ).
 
   ENDMETHOD.
 

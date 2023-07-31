@@ -8,4 +8,6 @@ INTERFACE if_function_test_environment PUBLIC.
     RETURNING
       VALUE(result) TYPE REF TO if_function_testdouble.
 
+  METHODS clear_doubles.
+
 ENDINTERFACE.
