@@ -1,11 +1,23 @@
 CLASS lcl_input_arguments DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ftd_input_arguments.
+
+    TYPES: BEGIN OF ty_name_value,
+             name  TYPE abap_parmname,
+             value TYPE REF TO data,
+           END OF ty_name_value.
+
+    DATA mt_importing TYPE STANDARD TABLE OF ty_name_value WITH DEFAULT KEY.
 ENDCLASS.
 
 CLASS lcl_input_arguments IMPLEMENTATION.
   METHOD if_ftd_input_arguments~get_importing_parameter.
-    ASSERT 1 = 'todo'.
+    DATA ls_row LIKE LINE OF mt_importing.
+    READ TABLE mt_importing INTO ls_row WITH KEY name = name.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_ftd_parameter_not_found.
+    ENDIF.
+    result = ls_row-value.
   ENDMETHOD.
 ENDCLASS.
 
@@ -56,14 +68,25 @@ CLASS lcl_invoker IMPLEMENTATION.
   METHOD invoke.
     DATA lo_result    TYPE REF TO lcl_invocation_result.
     DATA li_result    TYPE REF TO if_ftd_invocation_result.
+    DATA lo_arguments TYPE REF TO lcl_input_arguments.
     DATA li_arguments TYPE REF TO if_ftd_input_arguments.
     DATA ls_exporting LIKE LINE OF lo_result->mt_exporting.
+    DATA ls_importing LIKE LINE OF lo_arguments->mt_importing.
 
     CREATE OBJECT lo_result.
     li_result = lo_result.
 
+    CREATE OBJECT lo_arguments.
+    li_arguments = lo_arguments.
+
 * todo, set arguments
-*    WRITE '@KERNEL console.dir(fminput);'.
+    WRITE '@KERNEL for (const importing in fminput.exporting) {'.
+*    WRITE '@KERNEL   console.dir(importing);'.
+    WRITE '@KERNEL   ls_importing.get().name.set(importing.toUpperCase());'.
+    WRITE '@KERNEL   console.dir(ls_importing.get().value);'.
+    WRITE '@KERNEL   ls_importing.get().value.pointer = fminput.exporting[importing];'.
+    INSERT ls_importing INTO TABLE lo_arguments->mt_importing.
+    WRITE '@KERNEL }'.
 
     answer->answer(
       EXPORTING

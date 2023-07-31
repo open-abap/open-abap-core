@@ -52,6 +52,17 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD if_ftd_invocation_answer~answer.
 
+    DATA ref TYPE REF TO data.
+
+    FIELD-SYMBOLS <fs> TYPE any.
+
+    ref = arguments->get_importing_parameter( 'INTEGER' ).
+    ASSIGN ref->* TO <fs>.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = <fs>
+      exp = 2 ).
+
     result->get_output_configuration( )->set_exporting_parameter(
       name  = 'MESSAGE'
       value = gc_hello_world ).
