@@ -1,3 +1,43 @@
+CLASS lcl_input_arguments DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_ftd_input_arguments.
+ENDCLASS.
+
+CLASS lcl_input_arguments IMPLEMENTATION.
+  METHOD if_ftd_input_arguments~get_importing_parameter.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+ENDCLASS.
+
+*************************************************************
+
+CLASS lcl_output_configuration DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_ftd_output_configuration.
+ENDCLASS.
+
+CLASS lcl_output_configuration IMPLEMENTATION.
+  METHOD if_ftd_output_configuration~set_exporting_parameter.
+* todo
+    self = me.
+  ENDMETHOD.
+ENDCLASS.
+
+*************************************************************
+
+CLASS lcl_invocation_result DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_ftd_invocation_result.
+ENDCLASS.
+
+CLASS lcl_invocation_result IMPLEMENTATION.
+  METHOD if_ftd_invocation_result~get_output_configuration.
+    CREATE OBJECT result TYPE lcl_output_configuration.
+  ENDMETHOD.
+ENDCLASS.
+
+*************************************************************
+
 CLASS lcl_invoker DEFINITION.
   PUBLIC SECTION.
     CLASS-METHODS invoke
@@ -8,8 +48,23 @@ ENDCLASS.
 
 CLASS lcl_invoker IMPLEMENTATION.
   METHOD invoke.
-    WRITE '@KERNEL console.dir("hello from invoker");'.
-    WRITE '@KERNEL answer.get().if_ftd_invocation_answer$answer();'.
+    DATA li_result    TYPE REF TO if_ftd_invocation_result.
+    DATA li_arguments TYPE REF TO if_ftd_input_arguments.
+
+    CREATE OBJECT li_result TYPE lcl_invocation_result.
+
+* todo, set arguments
+*    WRITE '@KERNEL console.dir(fminput);'.
+
+    answer->answer(
+      EXPORTING
+        arguments = li_arguments
+      CHANGING
+        result    = li_result ).
+
+* todo, set result
+    WRITE '@KERNEL fminput.importing.message.set("Hello World");'.
+
   ENDMETHOD.
 ENDCLASS.
 
