@@ -13,6 +13,7 @@ CLASS cl_function_test_environment DEFINITION PUBLIC.
     TYPES: BEGIN OF ty_backup,
              name   TYPE sxco_fm_name,
              backup TYPE i,
+             double TYPE REF TO if_function_testdouble,
            END OF ty_backup.
     CLASS-DATA gt_backup TYPE SORTED TABLE OF ty_backup WITH UNIQUE KEY name.
 ENDCLASS.
@@ -24,8 +25,10 @@ CLASS cl_function_test_environment IMPLEMENTATION.
     DATA ls_row    LIKE LINE OF gt_backup.
 
     ASSERT lines( function_modules ) > 0.
+
     LOOP AT function_modules INTO lv_module.
       ls_row-name = lv_module.
+      CREATE OBJECT ls_row-double TYPE lcl_double.
       WRITE '@KERNEL ls_row.get().backup = abap.FunctionModules[lv_module.get().trimEnd()];'.
       INSERT ls_row INTO gt_backup.
     ENDLOOP.
@@ -34,7 +37,12 @@ CLASS cl_function_test_environment IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_function_test_environment~get_double.
-    CREATE OBJECT result TYPE lcl_double.
+    FIELD-SYMBOLS <ls_row> LIKE LINE OF gt_backup.
+
+    READ TABLE gt_backup ASSIGNING <ls_row> WITH KEY name = function_name.
+    ASSERT sy-subrc = 0.
+
+    result = <ls_row>-double.
   ENDMETHOD.
 
   METHOD if_function_test_environment~clear_doubles.

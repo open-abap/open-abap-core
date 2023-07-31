@@ -19,6 +19,7 @@ ENDCLASS.
 CLASS lcl_output_configuration IMPLEMENTATION.
   METHOD if_ftd_output_configuration~set_exporting_parameter.
 * todo
+
     self = me.
   ENDMETHOD.
 ENDCLASS.
