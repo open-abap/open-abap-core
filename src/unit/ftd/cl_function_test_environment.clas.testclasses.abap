@@ -25,6 +25,8 @@ CLASS ltcl_test IMPLEMENTATION.
     li_env->get_double( 'ABC' )->configure_call( )->ignore_all_parameters( )->then_answer( me ).
 
     CALL FUNCTION 'ABC'
+      EXPORTING
+        integer = 2
       IMPORTING
         message = lv_message.
 
