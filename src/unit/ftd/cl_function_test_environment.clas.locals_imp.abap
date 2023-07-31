@@ -54,10 +54,12 @@ ENDCLASS.
 
 CLASS lcl_invoker IMPLEMENTATION.
   METHOD invoke.
+    DATA lo_result    TYPE REF TO lcl_invocation_result.
     DATA li_result    TYPE REF TO if_ftd_invocation_result.
     DATA li_arguments TYPE REF TO if_ftd_input_arguments.
 
-    CREATE OBJECT li_result TYPE lcl_invocation_result.
+    CREATE OBJECT lo_result.
+    li_result = lo_result.
 
 * todo, set arguments
 *    WRITE '@KERNEL console.dir(fminput);'.

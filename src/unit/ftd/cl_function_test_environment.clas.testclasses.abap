@@ -33,6 +33,7 @@ CLASS ltcl_test IMPLEMENTATION.
       exp = gc_hello_world ).
 
     li_env->clear_doubles( ).
+
     test_throws( ).
 
   ENDMETHOD.
