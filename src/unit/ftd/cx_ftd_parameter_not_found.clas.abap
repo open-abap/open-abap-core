@@ -1,0 +1,7 @@
+CLASS cx_ftd_parameter_not_found DEFINITION PUBLIC FINAL CREATE PUBLIC INHERITING FROM cx_no_check.
+
+ENDCLASS.
+
+CLASS cx_ftd_parameter_not_found IMPLEMENTATION.
+
+ENDCLASS.
