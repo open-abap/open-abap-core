@@ -2,7 +2,8 @@ CLASS lcl_invoker DEFINITION.
   PUBLIC SECTION.
     CLASS-METHODS invoke
       IMPORTING
-        answer TYPE REF TO if_ftd_invocation_answer.
+        fminput TYPE any
+        answer  TYPE REF TO if_ftd_invocation_answer.
 ENDCLASS.
 
 CLASS lcl_invoker IMPLEMENTATION.
@@ -21,7 +22,8 @@ ENDCLASS.
 
 CLASS lcl_output_config_setter IMPLEMENTATION.
   METHOD if_ftd_output_config_setter~then_answer.
-    WRITE '@KERNEL abap.FunctionModules["ABC"] = (INPUT) => lcl_invoker.invoke({...INPUT, answer});'.
+    " todo, dont hardcode "ABC",
+    WRITE '@KERNEL abap.FunctionModules["ABC"] = (INPUT) => lcl_invoker.invoke({fminput: INPUT, answer});'.
   ENDMETHOD.
 ENDCLASS.
 
