@@ -71,40 +71,32 @@ ENDCLASS.
 
 *************************************************************
 
-CLASS lcl_output_config_setter DEFINITION.
-  PUBLIC SECTION.
-    INTERFACES if_ftd_output_config_setter.
-ENDCLASS.
-
-CLASS lcl_output_config_setter IMPLEMENTATION.
-  METHOD if_ftd_output_config_setter~then_answer.
-    " todo, dont hardcode "ABC",
-    WRITE '@KERNEL abap.FunctionModules["ABC"] = (INPUT) => lcl_invoker.invoke({fminput: INPUT, answer});'.
-  ENDMETHOD.
-ENDCLASS.
-
-*************************************************************
-
-CLASS lcl_input_config_setter DEFINITION.
-  PUBLIC SECTION.
-    INTERFACES if_ftd_input_config_setter.
-ENDCLASS.
-
-CLASS lcl_input_config_setter IMPLEMENTATION.
-  METHOD if_ftd_input_config_setter~ignore_all_parameters.
-    CREATE OBJECT output_configuration_setter TYPE lcl_output_config_setter.
-  ENDMETHOD.
-ENDCLASS.
-
-*************************************************************
-
 CLASS lcl_double DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_function_testdouble.
+    INTERFACES if_ftd_input_config_setter.
+    INTERFACES if_ftd_output_config_setter.
+
+    METHODS constructor IMPORTING iv_name TYPE sxco_fm_name.
+  PRIVATE SECTION.
+    DATA mv_name TYPE sxco_fm_name.
 ENDCLASS.
 
 CLASS lcl_double IMPLEMENTATION.
+  METHOD constructor.
+    ASSERT iv_name IS NOT INITIAL.
+    mv_name = iv_name.
+  ENDMETHOD.
+
   METHOD if_function_testdouble~configure_call.
-    CREATE OBJECT input_configuration_setter TYPE lcl_input_config_setter.
+    input_configuration_setter = me.
+  ENDMETHOD.
+
+  METHOD if_ftd_input_config_setter~ignore_all_parameters.
+    output_configuration_setter = me.
+  ENDMETHOD.
+
+  METHOD if_ftd_output_config_setter~then_answer.
+    WRITE '@KERNEL abap.FunctionModules[this.mv_name.get().trimEnd()] = (INPUT) => lcl_invoker.invoke({fminput: INPUT, answer});'.
   ENDMETHOD.
 ENDCLASS.

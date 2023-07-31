@@ -28,7 +28,9 @@ CLASS cl_function_test_environment IMPLEMENTATION.
 
     LOOP AT function_modules INTO lv_module.
       ls_row-name = lv_module.
-      CREATE OBJECT ls_row-double TYPE lcl_double.
+      CREATE OBJECT ls_row-double TYPE lcl_double
+        EXPORTING
+          iv_name = lv_module.
       WRITE '@KERNEL ls_row.get().backup = abap.FunctionModules[lv_module.get().trimEnd()];'.
       INSERT ls_row INTO gt_backup.
     ENDLOOP.
