@@ -1,11 +1,9 @@
 CLASS ltcl_test DEFINITION FINAL FOR TESTING DURATION SHORT RISK LEVEL HARMLESS.
   PUBLIC SECTION.
     INTERFACES if_ftd_invocation_answer.
-
   PRIVATE SECTION.
     METHODS test FOR TESTING RAISING cx_static_check.
 ENDCLASS.
-
 
 CLASS ltcl_test IMPLEMENTATION.
 
@@ -27,9 +25,11 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD if_ftd_invocation_answer~answer.
 
-    result->get_output_configuration( )->set_exporting_parameter(
-      name  = 'MESSAGE'
-      value = 'Hello World' ).
+    WRITE '@KERNEL console.dir("hello from mock");'.
+
+    " result->get_output_configuration( )->set_exporting_parameter(
+    "   name  = 'MESSAGE'
+    "   value = 'Hello World' ).
 
   ENDMETHOD.
 
