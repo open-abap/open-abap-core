@@ -72,7 +72,7 @@ CLASS lcl_invoker IMPLEMENTATION.
         result    = li_result ).
 
     LOOP AT lo_result->mt_exporting INTO ls_exporting.
-      WRITE '@KERNEL fminput.importing[ls_exporting.get().name.get().toLowerCase().trimEnd()].set("Hello World");'.
+      WRITE '@KERNEL fminput.importing[ls_exporting.get().name.get().toLowerCase().trimEnd()].set(ls_exporting.get().value.dereference());'.
     ENDLOOP.
 
   ENDMETHOD.
