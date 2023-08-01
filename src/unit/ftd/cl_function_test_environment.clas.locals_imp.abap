@@ -83,7 +83,7 @@ CLASS lcl_invoker IMPLEMENTATION.
     WRITE '@KERNEL for (const importing in fminput.exporting) {'.
 *    WRITE '@KERNEL   console.dir(importing);'.
     WRITE '@KERNEL   ls_importing.get().name.set(importing.toUpperCase());'.
-    WRITE '@KERNEL   console.dir(ls_importing.get().value);'.
+*    WRITE '@KERNEL   console.dir(ls_importing.get().value);'.
     WRITE '@KERNEL   ls_importing.get().value.pointer = fminput.exporting[importing];'.
     INSERT ls_importing INTO TABLE lo_arguments->mt_importing.
     WRITE '@KERNEL }'.
