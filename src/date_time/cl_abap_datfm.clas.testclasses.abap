@@ -22,11 +22,15 @@ CLASS ltcl_test_datfm IMPLEMENTATION.
 
   METHOD acc_convert_external_to_internal.
     DATA date_internal_actual TYPE d.
-    DATA format_used_actual TYPE c.
+    DATA format_used_actual   TYPE c.
 
-    cl_abap_datfm=>conv_date_ext_to_int( EXPORTING im_datext = christmas_external im_datfmdes = gregorian_dot_seperated
-                                         IMPORTING ex_datint = date_internal_actual
-                                                   ex_datfmused = format_used_actual ).
+    cl_abap_datfm=>conv_date_ext_to_int(
+      EXPORTING
+        im_datext    = christmas_external
+        im_datfmdes  = gregorian_dot_seperated
+      IMPORTING
+        ex_datint    = date_internal_actual
+        ex_datfmused = format_used_actual ).
 
     cl_abap_unit_assert=>assert_equals( exp = christmas act = date_internal_actual ).
     cl_abap_unit_assert=>assert_equals( exp = gregorian_dot_seperated act = format_used_actual ).
@@ -38,9 +42,13 @@ CLASS ltcl_test_datfm IMPLEMENTATION.
     DATA date_internal_actual TYPE d.
     DATA format_used_actual TYPE c.
 
-    cl_abap_datfm=>conv_date_ext_to_int( EXPORTING im_datext = infinity_external im_datfmdes = gregorian_dot_seperated
-                                        IMPORTING ex_datint = date_internal_actual
-                                                  ex_datfmused = format_used_actual ).
+    cl_abap_datfm=>conv_date_ext_to_int(
+      EXPORTING
+        im_datext    = infinity_external
+        im_datfmdes  = gregorian_dot_seperated
+      IMPORTING
+        ex_datint    = date_internal_actual
+        ex_datfmused = format_used_actual ).
 
     cl_abap_unit_assert=>assert_equals( exp = infinity act = date_internal_actual ).
     cl_abap_unit_assert=>assert_equals( exp = gregorian_dot_seperated act = format_used_actual ).
@@ -52,9 +60,13 @@ CLASS ltcl_test_datfm IMPLEMENTATION.
     DATA date_internal_actual TYPE d.
     DATA format_used_actual TYPE c.
 
-    cl_abap_datfm=>conv_date_ext_to_int( EXPORTING im_datext = initial_external im_datfmdes = gregorian_dot_seperated
-                                         IMPORTING ex_datint = date_internal_actual
-                                                   ex_datfmused = format_used_actual ).
+    cl_abap_datfm=>conv_date_ext_to_int(
+      EXPORTING
+        im_datext    = initial_external
+        im_datfmdes  = gregorian_dot_seperated
+      IMPORTING
+        ex_datint    = date_internal_actual
+        ex_datfmused = format_used_actual ).
 
     cl_abap_unit_assert=>assert_equals( exp = initial act = date_internal_actual ).
     cl_abap_unit_assert=>assert_equals( exp = gregorian_dot_seperated act = format_used_actual ).
@@ -65,7 +77,9 @@ CLASS ltcl_test_datfm IMPLEMENTATION.
     DATA date_internal TYPE d.
 
     TRY.
-        cl_abap_datfm=>conv_date_ext_to_int( im_datext = christmas_external im_datfmdes = gregorian_slash_seperated ).
+        cl_abap_datfm=>conv_date_ext_to_int(
+          im_datext   = christmas_external
+          im_datfmdes = gregorian_slash_seperated ).
         cl_abap_unit_assert=>fail( ).
       CATCH cx_abap_datfm INTO exception.
     ENDTRY.
@@ -75,7 +89,9 @@ CLASS ltcl_test_datfm IMPLEMENTATION.
     DATA initial TYPE string.
 
     TRY.
-        cl_abap_datfm=>conv_date_ext_to_int( im_datext = initial im_datfmdes = gregorian_dot_seperated ).
+        cl_abap_datfm=>conv_date_ext_to_int(
+          im_datext   = initial
+          im_datfmdes = gregorian_dot_seperated ).
         cl_abap_unit_assert=>fail( ).
       CATCH cx_abap_datfm INTO exception.
     ENDTRY.
@@ -85,7 +101,9 @@ CLASS ltcl_test_datfm IMPLEMENTATION.
     DATA this_is_too_long TYPE string VALUE '  01.01.20222  '.
 
     TRY.
-        cl_abap_datfm=>conv_date_ext_to_int( im_datext = this_is_too_long im_datfmdes = gregorian_dot_seperated ).
+        cl_abap_datfm=>conv_date_ext_to_int(
+          im_datext   = this_is_too_long
+          im_datfmdes = gregorian_dot_seperated ).
         cl_abap_unit_assert=>fail( ).
       CATCH cx_abap_datfm INTO exception.
     ENDTRY.
@@ -95,7 +113,9 @@ CLASS ltcl_test_datfm IMPLEMENTATION.
     DATA date_seperated_by_slashes TYPE string VALUE '01/01/2022'.
 
     TRY.
-        cl_abap_datfm=>conv_date_ext_to_int( im_datext = date_seperated_by_slashes im_datfmdes = gregorian_dot_seperated ).
+        cl_abap_datfm=>conv_date_ext_to_int(
+          im_datext   = date_seperated_by_slashes
+          im_datfmdes = gregorian_dot_seperated ).
         cl_abap_unit_assert=>fail( ).
       CATCH cx_abap_datfm INTO exception.
     ENDTRY.
