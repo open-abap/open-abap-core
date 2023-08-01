@@ -23,6 +23,7 @@ CLASS cl_abap_datfm DEFINITION PUBLIC.
 
   PRIVATE SECTION.
     CONSTANTS ddmmyyyy_dot_seperated TYPE c VALUE '1'.
+    CONSTANTS yyyymmdd_dot_seperated TYPE c VALUE '4'.
 ENDCLASS.
 
 CLASS cl_abap_datfm IMPLEMENTATION.
@@ -35,12 +36,12 @@ CLASS cl_abap_datfm IMPLEMENTATION.
     ENDIF.
 
     FIND ALL OCCURRENCES OF REGEX regex_ddmmyyyy_dot_seperated IN im_datext.
-    IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE cx_abap_datfm.
+    IF sy-subrc = 0.
+      ex_datint = im_datext+6(8) && im_datext+3(2) && im_datext(2).
+      ex_datfmused = ddmmyyyy_dot_seperated.
     ENDIF.
 
-    ex_datint = im_datext+6(8) && im_datext+3(2) && im_datext(2).
-    ex_datfmused = ddmmyyyy_dot_seperated.
+    RAISE EXCEPTION TYPE cx_abap_datfm.
   ENDMETHOD.
 
   METHOD get_date_format_des.
