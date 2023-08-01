@@ -22,24 +22,36 @@ CLASS cl_abap_datfm DEFINITION PUBLIC.
         cx_abap_datfm.
 
   PRIVATE SECTION.
-    CONSTANTS gregorian_dot_seperated TYPE c VALUE '1'.
+    CONSTANTS ddmmyyyy_dot_seperated TYPE c VALUE '1'.
+    CONSTANTS yyyymmdd_dot_seperated TYPE c VALUE '4'.
 ENDCLASS.
 
 CLASS cl_abap_datfm IMPLEMENTATION.
 
   METHOD conv_date_ext_to_int.
-    DATA is_it_ddmmyyyy_dot_seperated TYPE string VALUE '^(0[0-9]|[12][0-9]|3[01])[- \..](0[0-9]|1[012])[- \..]\d\d\d\d$'.
-    IF im_datfmdes <> gregorian_dot_seperated.
+    DATA regex_ddmmyyyy_dot_seperated TYPE string VALUE '^(0[0-9]|[12][0-9]|3[01])[- \..](0[0-9]|1[012])[- \..]\d\d\d\d$'.
+    DATA regex_yyyymmdd_dot_seperated TYPE string VALUE '^\d\d\d\d[- \..](0[0-9]|1[012])[- \..](0[0-9]|[12][0-9]|3[01])$'.
+
+    IF im_datfmdes <> ddmmyyyy_dot_seperated
+        AND im_datfmdes <> yyyymmdd_dot_seperated.
       RAISE EXCEPTION TYPE cx_abap_datfm.
     ENDIF.
 
-    FIND ALL OCCURRENCES OF REGEX is_it_ddmmyyyy_dot_seperated IN im_datext.
-    IF sy-subrc <> 0.
-      RAISE EXCEPTION TYPE cx_abap_datfm.
+    FIND ALL OCCURRENCES OF REGEX regex_ddmmyyyy_dot_seperated IN im_datext.
+    IF sy-subrc = 0.
+      ex_datint = im_datext+6(8) && im_datext+3(2) && im_datext(2).
+      ex_datfmused = ddmmyyyy_dot_seperated.
+      RETURN.
     ENDIF.
 
-    ex_datint = im_datext+6(8) && im_datext+3(2) && im_datext(2).
-    ex_datfmused = gregorian_dot_seperated.
+    FIND ALL OCCURRENCES OF REGEX regex_yyyymmdd_dot_seperated IN im_datext.
+    IF sy-subrc = 0.
+      ex_datint = im_datext(4) && im_datext+5(2) && im_datext+8(2).
+      ex_datfmused = yyyymmdd_dot_seperated.
+      RETURN.
+    ENDIF.
+
+    RAISE EXCEPTION TYPE cx_abap_datfm.
   ENDMETHOD.
 
   METHOD get_date_format_des.
