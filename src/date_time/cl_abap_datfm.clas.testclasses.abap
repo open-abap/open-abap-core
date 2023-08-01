@@ -10,6 +10,7 @@ CLASS ltcl_test_datfm DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT 
     METHODS fails_gregorian_but_no_dots FOR TESTING RAISING cx_static_check.
 
     METHODS yyyymmdd_dot_ok FOR TESTING RAISING cx_static_check.
+    METHODS yyyymmdd_no_dot FOR TESTING RAISING cx_static_check.
     METHODS yyyymmdd_dot_fail FOR TESTING RAISING cx_static_check.
 
     CONSTANTS christmas_external TYPE string VALUE '24.12.2023'.
@@ -132,6 +133,23 @@ CLASS ltcl_test_datfm IMPLEMENTATION.
     cl_abap_datfm=>conv_date_ext_to_int(
       EXPORTING
         im_datext   = '2015.02.01'
+        im_datfmdes = yyyymmdd_dot_seperated
+      IMPORTING
+        ex_datint   = lv_date ).
+
+    cl_abap_unit_assert=>assert_equals(
+      exp = '20150201'
+      act = lv_date ).
+
+  ENDMETHOD.
+
+  METHOD yyyymmdd_no_dot.
+
+    DATA lv_date TYPE d.
+
+    cl_abap_datfm=>conv_date_ext_to_int(
+      EXPORTING
+        im_datext   = '20150201'
         im_datfmdes = yyyymmdd_dot_seperated
       IMPORTING
         ex_datint   = lv_date ).
