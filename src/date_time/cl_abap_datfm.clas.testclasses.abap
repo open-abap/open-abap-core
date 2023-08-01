@@ -9,10 +9,14 @@ CLASS ltcl_test_datfm DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT 
     METHODS fails_date_too_long FOR TESTING RAISING cx_static_check.
     METHODS fails_gregorian_but_no_dots FOR TESTING RAISING cx_static_check.
 
+    METHODS yyyymmdd_dot_ok FOR TESTING RAISING cx_static_check.
+    METHODS yyyymmdd_dot_fail FOR TESTING RAISING cx_static_check.
+
     CONSTANTS christmas_external TYPE string VALUE '24.12.2023'.
     CONSTANTS christmas TYPE d VALUE '20231224'.
     CONSTANTS gregorian_dot_seperated TYPE c VALUE '1'.
     CONSTANTS gregorian_slash_seperated TYPE c VALUE '2'.
+    CONSTANTS yyyymmdd_dot_seperated TYPE c VALUE '4'.
 
     DATA exception TYPE REF TO cx_abap_datfm.
 
@@ -119,6 +123,35 @@ CLASS ltcl_test_datfm IMPLEMENTATION.
         cl_abap_unit_assert=>fail( ).
       CATCH cx_abap_datfm INTO exception.
     ENDTRY.
+  ENDMETHOD.
+
+  METHOD yyyymmdd_dot_ok.
+
+    DATA lv_date TYPE d.
+
+    cl_abap_datfm=>conv_date_ext_to_int(
+      EXPORTING
+        im_datext   = '2015.02.01'
+        im_datfmdes = yyyymmdd_dot_seperated
+      IMPORTING
+        ex_datint   = lv_date ).
+
+    cl_abap_unit_assert=>assert_equals(
+      exp = '20150201'
+      act = lv_date ).
+
+  ENDMETHOD.
+
+  METHOD yyyymmdd_dot_fail.
+
+    TRY.
+        cl_abap_datfm=>conv_date_ext_to_int(
+          im_datext   = '1.2.2015'
+          im_datfmdes = yyyymmdd_dot_seperated ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_abap_datfm INTO exception.
+    ENDTRY.
+
   ENDMETHOD.
 
 ENDCLASS.
