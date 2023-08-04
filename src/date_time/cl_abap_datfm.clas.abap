@@ -31,6 +31,7 @@ CLASS cl_abap_datfm IMPLEMENTATION.
   METHOD conv_date_ext_to_int.
     DATA regex_ddmmyyyy_dot_seperated TYPE string VALUE '^(0[0-9]|[12][0-9]|3[01])[- \..](0[0-9]|1[012])[- \..]\d\d\d\d$'.
     DATA regex_yyyymmdd_dot_seperated TYPE string VALUE '^\d\d\d\d[- \..](0[0-9]|1[012])[- \..](0[0-9]|[12][0-9]|3[01])$'.
+    DATA regex_yyyymmdd_no_dot TYPE string VALUE '^(\d{4})(0[0-9]|1[012])(0[0-9]|[12][0-9]|3[01])$'.
 
     IF im_datfmdes <> ddmmyyyy_dot_seperated
         AND im_datfmdes <> yyyymmdd_dot_seperated.
@@ -47,6 +48,13 @@ CLASS cl_abap_datfm IMPLEMENTATION.
     FIND ALL OCCURRENCES OF REGEX regex_yyyymmdd_dot_seperated IN im_datext.
     IF sy-subrc = 0.
       ex_datint = im_datext(4) && im_datext+5(2) && im_datext+8(2).
+      ex_datfmused = yyyymmdd_dot_seperated.
+      RETURN.
+    ENDIF.
+
+    FIND ALL OCCURRENCES OF REGEX regex_yyyymmdd_no_dot IN im_datext.
+    IF sy-subrc = 0.
+      ex_datint = im_datext.
       ex_datfmused = yyyymmdd_dot_seperated.
       RETURN.
     ENDIF.
