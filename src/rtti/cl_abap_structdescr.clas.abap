@@ -130,6 +130,11 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
       READ TABLE mt_refs WITH KEY name = ls_component-name INTO ls_ref.
       IF sy-subrc = 0.
         ls_view-type = ls_ref-ref.
+
+        IF ls_view-type->kind <> cl_abap_typedescr=>kind_elem.
+* todo, this is wrong, need more type information in abaplint plus transpiler
+          CONTINUE.
+        ENDIF.
       ENDIF.
 
       INSERT ls_view INTO TABLE p_result.
