@@ -26,11 +26,13 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
           not_found
           no_ddic_type.
 
-    METHODS is_ddic_type RETURNING VALUE(bool) TYPE abap_bool.
+    METHODS is_ddic_type
+      RETURNING
+        VALUE(bool) TYPE abap_bool.
 
     METHODS get_component_type
       IMPORTING
-        p_name TYPE any
+        p_name             TYPE any
       RETURNING
         VALUE(p_descr_ref) TYPE REF TO cl_abap_datadescr
       EXCEPTIONS
@@ -39,7 +41,7 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
 
     METHODS get_included_view
       IMPORTING
-        p_level TYPE i OPTIONAL
+        p_level         TYPE i OPTIONAL
       RETURNING
         VALUE(p_result) TYPE included_view.
 
@@ -62,7 +64,7 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
       RETURNING
         VALUE(p_result) TYPE symbol_table.
 
-    DATA components TYPE abap_compdescr_tab.
+    DATA components  TYPE abap_compdescr_tab.
     DATA struct_kind TYPE abap_structkind READ-ONLY.
 
   PRIVATE SECTION.
@@ -117,7 +119,21 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_included_view.
-    ASSERT 1 = 'todo'.
+    DATA ls_component LIKE LINE OF components.
+    DATA ls_view      LIKE LINE OF p_result.
+    DATA ls_ref       LIKE LINE OF mt_refs.
+
+    LOOP AT components INTO ls_component.
+      CLEAR ls_view.
+
+      ls_view-name = ls_component-name.
+      READ TABLE mt_refs WITH KEY name = ls_component-name INTO ls_ref.
+      IF sy-subrc = 0.
+        ls_view-type = ls_ref-ref.
+      ENDIF.
+
+      INSERT ls_view INTO TABLE p_result.
+    ENDLOOP.
   ENDMETHOD.
 
   METHOD get_ddic_field_list.
