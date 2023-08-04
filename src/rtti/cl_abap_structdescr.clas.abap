@@ -43,6 +43,14 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
       RETURNING
         VALUE(p_result) TYPE included_view.
 
+    CLASS-METHODS get
+      IMPORTING
+        p_components    TYPE component_table
+      RETURNING
+        VALUE(p_result) TYPE REF TO cl_abap_structdescr
+      RAISING
+        cx_sy_struct_creation.
+
     CLASS-METHODS create
       IMPORTING
         p_components TYPE component_table
@@ -70,6 +78,10 @@ ENDCLASS.
 CLASS cl_abap_structdescr IMPLEMENTATION.
 
   METHOD get_symbols.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
