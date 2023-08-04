@@ -266,6 +266,10 @@ CLASS ltcl_test IMPLEMENTATION.
     READ TABLE lt_comps WITH KEY name = 'EL' TRANSPORTING NO FIELDS.
     cl_abap_unit_assert=>assert_subrc( ).
 
+    cl_abap_unit_assert=>assert_equals(
+      exp = 2
+      act = lines( lt_comps ) ).
+
   ENDMETHOD.
 
 ENDCLASS.
