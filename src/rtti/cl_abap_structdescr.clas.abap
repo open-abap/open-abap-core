@@ -217,6 +217,8 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
       CLEAR ls_component.
       ls_component-name = ls_ref-name.
       ls_component-type_kind = ls_ref-ref->type_kind.
+      ls_component-length = ls_ref-ref->length.
+      ls_component-decimals = ls_ref-ref->decimals.
       APPEND ls_component TO components.
     ENDLOOP.
   ENDMETHOD.
