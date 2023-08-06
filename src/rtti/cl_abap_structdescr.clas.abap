@@ -71,8 +71,9 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
     METHODS update_components.
 
     TYPES: BEGIN OF ty_refs,
-             name      TYPE string,
-             ref       TYPE REF TO cl_abap_datadescr,
+             name            TYPE string,
+             ref             TYPE REF TO cl_abap_datadescr,
+             renaming_suffix TYPE string,
            END OF ty_refs.
     DATA mt_refs TYPE STANDARD TABLE OF ty_refs WITH DEFAULT KEY.
 ENDCLASS.
@@ -130,11 +131,9 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
       READ TABLE mt_refs WITH KEY name = ls_component-name INTO ls_ref.
       IF sy-subrc = 0.
         ls_view-type = ls_ref-ref.
-
-        IF ls_view-type->kind <> cl_abap_typedescr=>kind_elem.
-* todo, this is wrong, need more type information in abaplint plus transpiler
-          CONTINUE.
-        ENDIF.
+      ENDIF.
+      IF ls_ref-renaming_suffix IS NOT INITIAL.
+        CONTINUE.
       ENDIF.
 
       INSERT ls_view INTO TABLE p_result.
@@ -187,6 +186,7 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
 * todo, this method should be private
     DATA lv_name      TYPE string.
     DATA ls_ref       LIKE LINE OF mt_refs.
+    DATA lv_suffix    TYPE string.
     DATA lo_datadescr TYPE REF TO cl_abap_datadescr.
 
     FIELD-SYMBOLS <fs> TYPE any.
@@ -200,6 +200,8 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     lo_datadescr ?= cl_abap_typedescr=>describe_by_data( <fs> ).
     ls_ref-name = lv_name.
     ls_ref-ref  = lo_datadescr.
+    WRITE '@KERNEL lv_suffix.set(INPUT.data?.getRenamingSuffix()?.[name.toLowerCase()] || "");'.
+    ls_ref-renaming_suffix = lv_suffix.
     APPEND ls_ref TO descr->mt_refs.
     WRITE '@KERNEL }'.
 
@@ -215,6 +217,8 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
       CLEAR ls_component.
       ls_component-name = ls_ref-name.
       ls_component-type_kind = ls_ref-ref->type_kind.
+      ls_component-length = ls_ref-ref->length.
+      ls_component-decimals = ls_ref-ref->decimals.
       APPEND ls_component TO components.
     ENDLOOP.
   ENDMETHOD.
