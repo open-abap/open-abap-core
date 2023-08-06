@@ -13,7 +13,9 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS nested_boolean2 FOR TESTING RAISING cx_static_check.
     METHODS long_name FOR TESTING RAISING cx_static_check.
     METHODS namespaced_name FOR TESTING RAISING cx_static_check.
-    METHODS get_included_view FOR TESTING RAISING cx_static_check.
+    METHODS get_included_view1 FOR TESTING RAISING cx_static_check.
+    METHODS get_included_view2 FOR TESTING RAISING cx_static_check.
+    METHODS get_included_view3 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -243,7 +245,7 @@ CLASS ltcl_test IMPLEMENTATION.
       exp = '/FOO/BAR' ).
   ENDMETHOD.
 
-  METHOD get_included_view.
+  METHOD get_included_view1.
 
     TYPES: BEGIN OF ty_struc,
              a TYPE string,
@@ -262,6 +264,64 @@ CLASS ltcl_test IMPLEMENTATION.
     lt_comps = lo_struct->get_included_view( ).
 
     READ TABLE lt_comps WITH KEY name = 'A_SUF' TRANSPORTING NO FIELDS.
+    cl_abap_unit_assert=>assert_subrc( ).
+    READ TABLE lt_comps WITH KEY name = 'EL' TRANSPORTING NO FIELDS.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      exp = 2
+      act = lines( lt_comps ) ).
+
+  ENDMETHOD.
+
+  METHOD get_included_view2.
+
+    TYPES: BEGIN OF ty_struc,
+         a TYPE string,
+       END OF ty_struc.
+
+    TYPES BEGIN OF ty_named_include.
+    INCLUDE TYPE ty_struc AS named_with_suffix.
+    TYPES el TYPE string.
+    TYPES END OF ty_named_include.
+
+    DATA ls_data   TYPE ty_named_include.
+    DATA lt_comps  TYPE cl_abap_structdescr=>included_view.
+    DATA lo_struct TYPE REF TO cl_abap_structdescr.
+
+    lo_struct ?= cl_abap_structdescr=>describe_by_data( ls_data ).
+    lt_comps = lo_struct->get_included_view( ).
+
+    READ TABLE lt_comps WITH KEY name = 'A' TRANSPORTING NO FIELDS.
+    cl_abap_unit_assert=>assert_subrc( ).
+    READ TABLE lt_comps WITH KEY name = 'EL' TRANSPORTING NO FIELDS.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      exp = 2
+      act = lines( lt_comps ) ).
+
+  ENDMETHOD.
+
+  METHOD get_included_view3.
+
+    TYPES: BEGIN OF ty_struc,
+             a TYPE string,
+           END OF ty_struc.
+
+    TYPES BEGIN OF ty_named_include.
+    INCLUDE TYPE ty_struc.
+    TYPES el TYPE string.
+    TYPES END OF ty_named_include.
+
+    DATA ls_data   TYPE ty_named_include.
+    DATA lt_comps  TYPE cl_abap_structdescr=>included_view.
+    DATA lo_struct TYPE REF TO cl_abap_structdescr.
+
+    lo_struct ?= cl_abap_structdescr=>describe_by_data( ls_data ).
+    lt_comps = lo_struct->get_included_view( ).
+
+    READ TABLE lt_comps WITH KEY name = 'A' TRANSPORTING NO FIELDS.
     cl_abap_unit_assert=>assert_subrc( ).
     READ TABLE lt_comps WITH KEY name = 'EL' TRANSPORTING NO FIELDS.
     cl_abap_unit_assert=>assert_subrc( ).
