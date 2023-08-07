@@ -200,7 +200,10 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     lo_datadescr ?= cl_abap_typedescr=>describe_by_data( <fs> ).
     ls_ref-name = lv_name.
     ls_ref-ref  = lo_datadescr.
-    WRITE '@KERNEL lv_suffix.set(INPUT.data?.getRenamingSuffix()?.[name.toLowerCase()] || "");'.
+    CLEAR lv_suffix.
+    WRITE '@KERNEL if (INPUT.data?.getRenamingSuffix) {'.
+    WRITE '@KERNEL   lv_suffix.set(INPUT.data?.getRenamingSuffix()?.[name.toLowerCase()] || "");'.
+    WRITE '@KERNEL }'.
     ls_ref-renaming_suffix = lv_suffix.
     APPEND ls_ref TO descr->mt_refs.
     WRITE '@KERNEL }'.
