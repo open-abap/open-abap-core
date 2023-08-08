@@ -1,19 +1,19 @@
 CLASS cl_abap_char_utilities DEFINITION PUBLIC.
   PUBLIC SECTION.
-    CONSTANTS:
 * https://en.wikipedia.org/wiki/Byte_order_mark, 0xEF,0xBB,0xBF
-      byte_order_mark_utf8   TYPE x LENGTH 3 VALUE 'EFBBBF',
-      byte_order_mark_big    TYPE x LENGTH 2 VALUE 'FEFF',
-      byte_order_mark_little TYPE x LENGTH 2 VALUE 'FFFE',
-      cr_lf                  TYPE c LENGTH 2 VALUE '__',
-      charsize               TYPE i VALUE 2,
-      horizontal_tab         TYPE c LENGTH 1 VALUE '_',
-      vertical_tab           TYPE c LENGTH 1 VALUE '_',
-      form_feed              TYPE c LENGTH 1 VALUE '_',
-      backspace              TYPE c LENGTH 1 VALUE '_',
-      minchar                TYPE c LENGTH 1 VALUE '_',
-      maxchar                TYPE c LENGTH 1 VALUE '_',
-      newline                TYPE c LENGTH 1 VALUE '_'.
+    CONSTANTS byte_order_mark_utf8   TYPE x LENGTH 3 VALUE 'EFBBBF'.
+    CONSTANTS byte_order_mark_big    TYPE x LENGTH 2 VALUE 'FEFF'.
+    CONSTANTS byte_order_mark_little TYPE x LENGTH 2 VALUE 'FFFE'.
+    CONSTANTS charsize               TYPE i VALUE 2.
+
+    CONSTANTS backspace      TYPE abap_char1 VALUE %_backspace.
+    CONSTANTS cr_lf          TYPE abap_cr_lf VALUE %_cr_lf.
+    CONSTANTS form_feed      TYPE abap_char1 VALUE %_formfeed.
+    CONSTANTS horizontal_tab TYPE abap_char1 VALUE %_horizontal_tab.
+    CONSTANTS maxchar        TYPE abap_char1 VALUE %_maxchar.
+    CONSTANTS minchar        TYPE abap_char1 VALUE %_minchar.
+    CONSTANTS newline        TYPE abap_char1 VALUE %_newline.
+    CONSTANTS vertical_tab   TYPE abap_char1 VALUE %_vertical_tab.
 
     CLASS-METHODS class_constructor.
 

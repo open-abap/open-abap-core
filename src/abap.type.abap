@@ -26,6 +26,10 @@ TYPES abap_structkind        TYPE c LENGTH 1.
 TYPES abap_typekind          TYPE c LENGTH 1.
 TYPES abap_visibility        TYPE c LENGTH 1.
 TYPES abap_tablekind         TYPE c LENGTH 1.
+TYPES abap_char1             TYPE c LENGTH 1.
+TYPES abap_cr_lf             TYPE c LENGTH 2.
+TYPES abap_byte_order_mark   TYPE x LENGTH 2.
+TYPES abap_byte_order_utf8   TYPE x LENGTH 3.
 
 CONSTANTS abap_max_comp_name_ln TYPE i VALUE 30.
 
