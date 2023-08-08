@@ -11,6 +11,15 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
 
   METHOD create.
     ASSERT 1 = 'todo'.
+    ASSERT sy-dbsys = 'sqlite'.
+
+* https://www.sqlite.org/lang_attach.html
+* https://www.sqlite.org/lang_detach.html
+
+* table prefix map in runtime options?
+
+    " EXEC SQL.
+    " ENDEXEC.
   ENDMETHOD.
 
 ENDCLASS.
