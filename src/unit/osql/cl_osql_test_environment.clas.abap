@@ -7,17 +7,25 @@ CLASS cl_osql_test_environment DEFINITION PUBLIC.
         i_dependency_list TYPE if_osql_test_environment=>ty_t_sobjnames
       RETURNING
         VALUE(r_result)   TYPE REF TO if_osql_test_environment.
+
+  PRIVATE SECTION.
+    DATA mt_tables TYPE if_osql_test_environment=>ty_t_sobjnames.
 ENDCLASS.
 
 CLASS cl_osql_test_environment IMPLEMENTATION.
 
   METHOD create.
+    DATA lo_env TYPE REF TO cl_osql_test_environment.
+
     ASSERT sy-dbsys = 'sqlite'.
 
-    CREATE OBJECT r_result TYPE cl_osql_test_environment.
+    CREATE OBJECT lo_env.
+    lo_env->mt_tables = i_dependency_list.
 
 * https://www.sqlite.org/lang_attach.html
 * https://www.sqlite.org/lang_detach.html
+
+    r_result = lo_env.
 
   ENDMETHOD.
 
