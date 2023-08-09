@@ -37,6 +37,8 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
 
     DATA lv_table LIKE LINE OF mt_tables.
 
+    WRITE '@KERNEL if (abap.dbo.schemaPrefix !== "") throw new Error("already prefixed");'.
+
 * https://www.sqlite.org/lang_attach.html
     mo_sql->execute_update( |ATTACH DATABASE ':memory:' AS { mv_schema };| ).
 
@@ -47,7 +49,7 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
 
     if_osql_test_environment~clear_doubles( ).
 
-* TODODOOOOO, set runtime options
+    WRITE '@KERNEL abap.dbo.schemaPrefix = this.mv_schema.get() + ".";'.
 
   ENDMETHOD.
 
