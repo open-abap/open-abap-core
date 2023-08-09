@@ -35,7 +35,10 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
 
   METHOD initialize.
 
-    DATA lv_table LIKE LINE OF mt_tables.
+    DATA lv_table  LIKE LINE OF mt_tables.
+    DATA lv_sql    TYPE string.
+    DATA lo_result TYPE REF TO cl_sql_result_set.
+    DATA lr_ref    TYPE REF TO data.
 
     WRITE '@KERNEL if (abap.dbo.schemaPrefix !== "") throw new Error("already prefixed");'.
 
@@ -44,10 +47,19 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
 
     LOOP AT mt_tables INTO lv_table.
       lv_table = to_lower( lv_table ).
-      mo_sql->execute_update( |CREATE TABLE { mv_schema }.{ lv_table } AS SELECT * FROM { lv_table } WHERE 0;| ).
-    ENDLOOP.
 
-    if_osql_test_environment~clear_doubles( ).
+      lo_result = mo_sql->execute_query( |SELECT sql FROM main.sqlite_master WHERE type='table' AND name='{ lv_table }';| ).
+      GET REFERENCE OF lv_sql INTO lr_ref.
+      lo_result->set_param( lr_ref ).
+      lo_result->next( ).
+      lo_result->close( ).
+
+*      WRITE / lv_sql.
+      REPLACE FIRST OCCURRENCE OF lv_table IN lv_sql WITH |{ mv_schema }.{ lv_table }|.
+      ASSERT sy-subrc = 0.
+
+      mo_sql->execute_update( lv_sql ).
+    ENDLOOP.
 
     WRITE '@KERNEL abap.dbo.schemaPrefix = this.mv_schema.get() + ".";'.
 
