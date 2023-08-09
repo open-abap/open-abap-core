@@ -14,6 +14,9 @@ CLASS cl_abap_timefm IMPLEMENTATION.
   METHOD conv_time_ext_to_int.
     DATA lv_text TYPE string.
 
+* todo,
+    ASSERT is_24_allowed = abap_true.
+
     FIND REGEX '^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$' IN time_ext.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE cx_abap_timefm_invalid.
