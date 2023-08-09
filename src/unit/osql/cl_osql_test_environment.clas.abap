@@ -15,6 +15,7 @@ CLASS cl_osql_test_environment DEFINITION PUBLIC.
     DATA mo_sql    TYPE REF TO cl_sql_statement.
 
     METHODS initialize.
+    METHODS set_runtime_prefix.
 ENDCLASS.
 
 CLASS cl_osql_test_environment IMPLEMENTATION.
@@ -39,7 +40,6 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
     DATA lv_sql    TYPE string.
     DATA lo_result TYPE REF TO cl_sql_result_set.
     DATA lr_ref    TYPE REF TO data.
-    DATA lv_extra  TYPE string.
 
     WRITE '@KERNEL if (abap.dbo.schemaPrefix !== "") throw new Error("already prefixed");'.
 
@@ -63,6 +63,13 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
       mo_sql->execute_update( lv_sql ).
     ENDLOOP.
 
+    set_runtime_prefix( ).
+
+  ENDMETHOD.
+
+  METHOD set_runtime_prefix.
+
+    DATA lv_extra TYPE string.
     lv_extra = |'.'|.
     WRITE '@KERNEL abap.dbo.schemaPrefix = this.mv_schema.get() + lv_extra.get();'.
 
@@ -90,6 +97,8 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
     DATA lo_table_descr  TYPE REF TO cl_abap_tabledescr.
     DATA lo_struct_descr TYPE REF TO cl_abap_structdescr.
     DATA lv_table        TYPE string.
+
+    set_runtime_prefix( ).
 
     lo_table_descr ?= cl_abap_typedescr=>describe_by_data( i_data ).
     lo_struct_descr ?= lo_table_descr->get_table_line_type( ).
