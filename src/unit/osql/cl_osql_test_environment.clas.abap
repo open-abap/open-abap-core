@@ -67,6 +67,8 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
 * https://www.sqlite.org/lang_detach.html
     mo_sql->execute_update( |DETACH DATABASE { mv_schema };| ).
 
+    WRITE '@KERNEL abap.dbo.schemaPrefix = "";'.
+
   ENDMETHOD.
 
   METHOD if_osql_test_environment~insert_test_data.
