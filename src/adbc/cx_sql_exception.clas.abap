@@ -1,0 +1,7 @@
+CLASS cx_sql_exception DEFINITION PUBLIC INHERITING FROM cx_static_check.
+
+ENDCLASS.
+
+CLASS cx_sql_exception IMPLEMENTATION.
+
+ENDCLASS.
