@@ -39,6 +39,7 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
     DATA lv_sql    TYPE string.
     DATA lo_result TYPE REF TO cl_sql_result_set.
     DATA lr_ref    TYPE REF TO data.
+    DATA lv_extra  TYPE string.
 
     WRITE '@KERNEL if (abap.dbo.schemaPrefix !== "") throw new Error("already prefixed");'.
 
@@ -54,14 +55,16 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
       lo_result->next( ).
       lo_result->close( ).
 
-*      WRITE / lv_sql.
-      REPLACE FIRST OCCURRENCE OF lv_table IN lv_sql WITH |{ mv_schema }.{ lv_table }|.
+      REPLACE FIRST OCCURRENCE OF lv_table IN lv_sql WITH |{ mv_schema }'.'{ lv_table }|.
       ASSERT sy-subrc = 0.
+
+*      WRITE / lv_sql.
 
       mo_sql->execute_update( lv_sql ).
     ENDLOOP.
 
-    WRITE '@KERNEL abap.dbo.schemaPrefix = this.mv_schema.get() + ".";'.
+    lv_extra = |'.'|.
+    WRITE '@KERNEL abap.dbo.schemaPrefix = this.mv_schema.get() + lv_extra.get();'.
 
   ENDMETHOD.
 
@@ -99,6 +102,8 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
 
     INSERT (lv_table) FROM TABLE i_data.
     ASSERT sy-subrc = 0.
+
+    WRITE '@KERNEL abap.dbo.schemaPrefix = this.mv_schema.get() + ".";'.
 
   ENDMETHOD.
 
