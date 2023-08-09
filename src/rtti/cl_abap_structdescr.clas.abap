@@ -71,9 +71,10 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
     METHODS update_components.
 
     TYPES: BEGIN OF ty_refs,
-             name            TYPE string,
-             ref             TYPE REF TO cl_abap_datadescr,
-             renaming_suffix TYPE string,
+             name       TYPE string,
+             ref        TYPE REF TO cl_abap_datadescr,
+             suffix     TYPE string,
+             as_include TYPE abap_bool,
            END OF ty_refs.
     DATA mt_refs TYPE STANDARD TABLE OF ty_refs WITH DEFAULT KEY.
 ENDCLASS.
@@ -132,7 +133,7 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
       IF sy-subrc = 0.
         ls_view-type = ls_ref-ref.
       ENDIF.
-      IF ls_ref-renaming_suffix IS NOT INITIAL.
+      IF ls_ref-as_include = abap_true.
         CONTINUE.
       ENDIF.
 
@@ -184,10 +185,11 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
 
   METHOD construct_from_data.
 * todo, this method should be private
-    DATA lv_name      TYPE string.
-    DATA ls_ref       LIKE LINE OF mt_refs.
-    DATA lv_suffix    TYPE string.
-    DATA lo_datadescr TYPE REF TO cl_abap_datadescr.
+    DATA lv_name       TYPE string.
+    DATA ls_ref        LIKE LINE OF mt_refs.
+    DATA lv_suffix     TYPE string.
+    DATA lv_as_include TYPE abap_bool.
+    DATA lo_datadescr  TYPE REF TO cl_abap_datadescr.
 
     FIELD-SYMBOLS <fs> TYPE any.
 
@@ -200,11 +202,19 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     lo_datadescr ?= cl_abap_typedescr=>describe_by_data( <fs> ).
     ls_ref-name = lv_name.
     ls_ref-ref  = lo_datadescr.
-    CLEAR lv_suffix.
-    WRITE '@KERNEL if (INPUT.data?.getRenamingSuffix) {'.
-    WRITE '@KERNEL   lv_suffix.set(INPUT.data?.getRenamingSuffix()?.[name.toLowerCase()] || "");'.
+
+    CLEAR lv_as_include.
+    WRITE '@KERNEL if (INPUT.data?.getAsInclude) {'.
+    WRITE '@KERNEL   lv_as_include.set(INPUT.data?.getAsInclude()?.[name.toLowerCase()] ? "X" : " ");'.
     WRITE '@KERNEL }'.
-    ls_ref-renaming_suffix = lv_suffix.
+    ls_ref-as_include = lv_as_include.
+
+    CLEAR lv_suffix.
+    WRITE '@KERNEL if (INPUT.data?.getSuffix) {'.
+    WRITE '@KERNEL   lv_as_include.set(INPUT.data?.getSuffix()?.[name.toLowerCase()] || "");'.
+    WRITE '@KERNEL }'.
+    ls_ref-suffix = lv_suffix.
+
     APPEND ls_ref TO descr->mt_refs.
     WRITE '@KERNEL }'.
 
