@@ -1,5 +1,4 @@
-* Note: dont reuse RTTI here, would like to keep it
-* possible to run unit tests without RTTI if possible
+* Note: dont reuse RTTI here, would like to keep it possible to run unit tests without RTTI
 CLASS lcl_dump DEFINITION.
   PUBLIC SECTION.
     CLASS-METHODS to_string
@@ -14,6 +13,7 @@ ENDCLASS.
 CLASS lcl_dump IMPLEMENTATION.
   METHOD to_string.
     DATA lv_type TYPE c LENGTH 1.
+    DATA lv_name TYPE string.
 
     DESCRIBE FIELD iv_val TYPE lv_type.
     CASE lv_type.
@@ -22,6 +22,9 @@ CLASS lcl_dump IMPLEMENTATION.
         rv_str = dump_structure( iv_val ).
       WHEN 'h'.
         rv_str = |[itab]|.
+      WHEN 'r'.
+        WRITE '@KERNEL lv_name.set(iv_val.get().constructor.name);'.
+        rv_str = |[object, { lv_name }]|.
       WHEN OTHERS.
         rv_str = |{ iv_val }|.
     ENDCASE.
