@@ -13,8 +13,8 @@ ENDCLASS.
 
 CLASS cl_abap_weak_reference IMPLEMENTATION.
   METHOD constructor.
-* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakRef
     ASSERT oref IS NOT INITIAL.
+* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakRef
     WRITE '@KERNEL this.mv_ref = new WeakRef(oref);'.
   ENDMETHOD.
 
