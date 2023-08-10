@@ -5,7 +5,7 @@
   "description": "test",
   "scripts": {
     "lint": "abaplint",
-    "unit": "rm -rf output && abap_transpile && echo RUNNING && node output/index.mjs && echo OK",
+    "unit": "rm -rf output && abap_transpile && echo RUNNING && node --expose-gc output/index.mjs && echo OK",
     "integration": "rm -rf output_test && abap_transpile ./abap_transpile_test.json && node output_test/index.mjs",
     "test": "npm run lint && npm run unit"
   },
