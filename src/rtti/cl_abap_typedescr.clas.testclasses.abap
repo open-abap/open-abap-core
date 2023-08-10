@@ -67,7 +67,9 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS structure_absolute FOR TESTING.
 
     METHODS tab_length FOR TESTING.
-    METHODS identical_refs FOR TESTING.
+    METHODS identical_refs1 FOR TESTING.
+    METHODS identical_refs2 FOR TESTING.
+    METHODS identical_refs3 FOR TESTING.
 
 ENDCLASS.
 
@@ -624,15 +626,40 @@ CLASS ltcl_test IMPLEMENTATION.
       exp = 8 ).
   ENDMETHOD.
 
-  METHOD identical_refs.
-    " DATA t    TYPE timestamp.
-    " DATA ref1 TYPE REF TO cl_abap_typedescr.
-    " DATA ref2 TYPE REF TO cl_abap_typedescr.
-    " ref1 = cl_abap_typedescr=>describe_by_data( t ).
-    " ref2 = cl_abap_typedescr=>describe_by_data( t ).
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = ref1
-    "   exp = ref2 ).
+  METHOD identical_refs1.
+    DATA t    TYPE timestamp.
+    DATA ref1 TYPE REF TO cl_abap_typedescr.
+    DATA ref2 TYPE REF TO cl_abap_typedescr.
+    ref1 = cl_abap_typedescr=>describe_by_data( t ).
+    ref2 = cl_abap_typedescr=>describe_by_data( t ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ref1
+      exp = ref2 ).
+  ENDMETHOD.
+
+  METHOD identical_refs2.
+    TYPES ty TYPE c LENGTH 2.
+    DATA t1 TYPE ty.
+    DATA t2 TYPE ty.
+    DATA ref1 TYPE REF TO cl_abap_typedescr.
+    DATA ref2 TYPE REF TO cl_abap_typedescr.
+    ref1 = cl_abap_typedescr=>describe_by_data( t1 ).
+    ref2 = cl_abap_typedescr=>describe_by_data( t2 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ref1
+      exp = ref2 ).
+  ENDMETHOD.
+
+  METHOD identical_refs3.
+    DATA t1 TYPE c LENGTH 2.
+    DATA t2 TYPE c LENGTH 2.
+    DATA ref1 TYPE REF TO cl_abap_typedescr.
+    DATA ref2 TYPE REF TO cl_abap_typedescr.
+    ref1 = cl_abap_typedescr=>describe_by_data( t1 ).
+    ref2 = cl_abap_typedescr=>describe_by_data( t2 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ref1
+      exp = ref2 ).
   ENDMETHOD.
 
 ENDCLASS.
