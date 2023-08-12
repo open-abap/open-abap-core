@@ -838,25 +838,25 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
 
   METHOD dynamic_source.
 
-    " DATA li_doc  TYPE REF TO if_ixml_document.
-    " DATA lt_stab TYPE abap_trans_srcbind_tab.
-    " DATA lv_xml TYPE string.
+    DATA li_doc  TYPE REF TO if_ixml_document.
+    DATA lt_stab TYPE abap_trans_srcbind_tab.
+    DATA lv_xml TYPE string.
 
-    " FIELD-SYMBOLS <ls_stab> LIKE LINE OF lt_stab.
+    FIELD-SYMBOLS <ls_stab> LIKE LINE OF lt_stab.
 
-    " APPEND INITIAL LINE TO lt_stab ASSIGNING <ls_stab>.
-    " <ls_stab>-name = 'HELLO'.
-    " GET REFERENCE OF 2 INTO <ls_stab>-value.
+    APPEND INITIAL LINE TO lt_stab ASSIGNING <ls_stab>.
+    <ls_stab>-name = 'HELLO'.
+    GET REFERENCE OF 2 INTO <ls_stab>-value.
 
-    " li_doc = cl_ixml=>create( )->create_document( ).
+    li_doc = cl_ixml=>create( )->create_document( ).
 
-    " CALL TRANSFORMATION id
-    "   SOURCE (lt_stab)
-    "   RESULT XML lv_xml.
+    CALL TRANSFORMATION id
+      SOURCE (lt_stab)
+      RESULT XML lv_xml.
 
-    " cl_abap_unit_assert=>assert_char_cp(
-    "   act = lv_xml
-    "   exp = '*<HELLO>2</HELLO>*' ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_xml
+      exp = '*<HELLO>2</HELLO>*' ).
 
   ENDMETHOD.
 
