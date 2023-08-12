@@ -36,6 +36,6 @@ CLASS cl_abap_timefm IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD conv_time_int_to_ext.
-
+    time_ext = |{ time_int TIME = ISO }|.
   ENDMETHOD.
 ENDCLASS.
