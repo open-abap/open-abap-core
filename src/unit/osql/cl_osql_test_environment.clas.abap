@@ -58,8 +58,6 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
       REPLACE FIRST OCCURRENCE OF lv_table IN lv_sql WITH |{ mv_schema }'.'{ lv_table }|.
       ASSERT sy-subrc = 0.
 
-*      WRITE / lv_sql.
-
       mo_sql->execute_update( lv_sql ).
     ENDLOOP.
 
@@ -69,9 +67,7 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
 
   METHOD set_runtime_prefix.
 
-    DATA lv_extra TYPE string.
-    lv_extra = |'.'|.
-    WRITE '@KERNEL abap.dbo.schemaPrefix = this.mv_schema.get() + lv_extra.get();'.
+    WRITE '@KERNEL abap.dbo.schemaPrefix = this.mv_schema.get();'.
 
   ENDMETHOD.
 
@@ -80,7 +76,7 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
 
     LOOP AT mt_tables INTO lv_table.
       lv_table = to_lower( lv_table ).
-      mo_sql->execute_update( |DELETE FROM { mv_schema }.{ lv_table };| ).
+      mo_sql->execute_update( |DELETE FROM { mv_schema }."{ lv_table }";| ).
     ENDLOOP.
   ENDMETHOD.
 
@@ -98,8 +94,6 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
     DATA lo_struct_descr TYPE REF TO cl_abap_structdescr.
     DATA lv_table        TYPE string.
 
-    set_runtime_prefix( ).
-
     lo_table_descr ?= cl_abap_typedescr=>describe_by_data( i_data ).
     lo_struct_descr ?= lo_table_descr->get_table_line_type( ).
     lv_table = lo_struct_descr->get_relative_name( ).
@@ -111,8 +105,6 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
 
     INSERT (lv_table) FROM TABLE i_data.
     ASSERT sy-subrc = 0.
-
-    WRITE '@KERNEL abap.dbo.schemaPrefix = this.mv_schema.get() + ".";'.
 
   ENDMETHOD.
 
