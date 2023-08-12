@@ -8,6 +8,14 @@ CLASS cl_abap_timefm DEFINITION PUBLIC.
         time_int        TYPE t
       RAISING
         cx_abap_timefm_invalid.
+
+    CLASS-METHODS conv_time_int_to_ext
+      IMPORTING
+        time_int TYPE t
+      EXPORTING
+        time_ext TYPE string
+      RAISING
+        cx_parameter_invalid_range.
 ENDCLASS.
 
 CLASS cl_abap_timefm IMPLEMENTATION.
@@ -25,5 +33,9 @@ CLASS cl_abap_timefm IMPLEMENTATION.
     lv_text = time_ext.
     REPLACE ALL OCCURRENCES OF ':' IN lv_text WITH ''.
     time_int = lv_text.
+  ENDMETHOD.
+
+  METHOD conv_time_int_to_ext.
+    time_ext = |{ time_int TIME = ISO }|.
   ENDMETHOD.
 ENDCLASS.
