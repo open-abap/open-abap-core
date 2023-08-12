@@ -43,6 +43,8 @@ CLASS ltcl_weak_reference IMPLEMENTATION.
 
     weak = method( ).
 
+    WRITE '@KERNEL if (global.gc === undefined) return;'.
+
 * https://github.com/orgs/nodejs/discussions/36467
     WRITE '@KERNEL await new Promise(resolve => setTimeout(resolve, 0));;'.
 * works only on NodeJS, with --expose-gc
