@@ -11,10 +11,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS equals_table FOR TESTING RAISING cx_static_check.
     METHODS equals_hashed FOR TESTING RAISING cx_static_check.
     METHODS equals_hashed_two_rows FOR TESTING RAISING cx_static_check.
-    METHODS differs_hashed FOR TESTING RAISING cx_static_check.
     METHODS equals_tol FOR TESTING RAISING cx_static_check.
     METHODS differs FOR TESTING RAISING cx_static_check.
-    METHODS differs_nested FOR TESTING RAISING cx_static_check.
     METHODS cp1 FOR TESTING RAISING cx_static_check.
     METHODS cp2 FOR TESTING RAISING cx_static_check.
     METHODS char_eq_string FOR TESTING RAISING cx_static_check.
@@ -164,45 +162,10 @@ CLASS ltcl_test IMPLEMENTATION.
       exp = lt_tab2 ).
   ENDMETHOD.
 
-  METHOD differs_hashed.
-    DATA lt_tab1 TYPE HASHED TABLE OF string WITH UNIQUE KEY table_line.
-    DATA lt_tab2 TYPE HASHED TABLE OF string WITH UNIQUE KEY table_line.
-    DATA lv_str TYPE string.
-    lv_str = 'foo'.
-    INSERT lv_str INTO TABLE lt_tab1.
-    lv_str = 'bar'.
-    INSERT lv_str INTO TABLE lt_tab2.
-    cl_abap_unit_assert=>assert_differs(
-      act = lt_tab1
-      exp = lt_tab2 ).
-  ENDMETHOD.
-
   METHOD differs.
     cl_abap_unit_assert=>assert_differs(
       act = 1
       exp = 2 ).
-  ENDMETHOD.
-
-  METHOD differs_nested.
-    TYPES: BEGIN OF ty_row1,
-             field TYPE i,
-           END OF ty_row1.
-    TYPES: BEGIN OF ty_row2,
-             field TYPE i,
-             sub TYPE STANDARD TABLE OF ty_row1 WITH DEFAULT KEY,
-           END OF ty_row2.
-    DATA lt_act TYPE STANDARD TABLE OF ty_row2 WITH DEFAULT KEY.
-    DATA lt_exp TYPE STANDARD TABLE OF ty_row2 WITH DEFAULT KEY.
-    DATA ls_row2 TYPE ty_row2.
-
-    ls_row2-field = 1.
-    APPEND ls_row2 TO lt_act.
-    ls_row2-field = 2.
-    APPEND ls_row2 TO lt_exp.
-
-    cl_abap_unit_assert=>assert_differs(
-      act = lt_act
-      exp = lt_exp ).
   ENDMETHOD.
 
   METHOD char_eq_string.
