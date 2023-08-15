@@ -36,4 +36,6 @@ INTERFACE if_http_client PUBLIC.
     EXPORTING
       code    TYPE i
       message TYPE string.
+
+  METHODS refresh_request.
 ENDINTERFACE.
