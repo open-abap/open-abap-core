@@ -5,6 +5,7 @@ INTERFACE if_http_entity PUBLIC.
   CONSTANTS co_body_before_query_string TYPE i VALUE 3.
   CONSTANTS co_protocol_version_1_0 TYPE i VALUE 1000.
   CONSTANTS co_protocol_version_1_1 TYPE i VALUE 1001.
+  CONSTANTS co_compress_based_on_mime_type TYPE i VALUE 2.
 
   METHODS set_cdata
     IMPORTING
@@ -31,7 +32,11 @@ INTERFACE if_http_entity PUBLIC.
     CHANGING
       fields TYPE tihttpnvp.
 
-  METHODS set_compression.
+  METHODS set_compression
+    IMPORTING
+      disable_extended_checks TYPE abap_bool DEFAULT abap_false
+      options                 TYPE i DEFAULT co_compress_based_on_mime_type
+      PREFERRED PARAMETER options.
 
   METHODS add_multipart
     IMPORTING
