@@ -221,4 +221,8 @@ CLASS cl_http_client IMPLEMENTATION.
     ASSERT 2 = 'not supported'.
   ENDMETHOD.
 
+  METHOD if_http_client~refresh_request.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
 ENDCLASS.
