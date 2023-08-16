@@ -36,6 +36,7 @@ INTERFACE if_http_response PUBLIC.
     IMPORTING
       url                TYPE string
       permanently        TYPE i OPTIONAL
+      explanation        TYPE string OPTIONAL
       protocol_dependent TYPE i OPTIONAL.
 
   METHODS copy
