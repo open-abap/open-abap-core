@@ -154,7 +154,13 @@ CLASS cl_http_entity IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_entity~set_header_fields.
-    ASSERT 1 = 'todo'.
+* todo, does this method clear the existing fields?
+    DATA ls_field LIKE LINE OF fields.
+    LOOP AT fields INTO ls_field.
+      if_http_entity~set_header_field(
+        name  = ls_field-name
+        value = ls_field-value ).
+    ENDLOOP.
   ENDMETHOD.
 
   METHOD if_http_entity~suppress_content_type.
