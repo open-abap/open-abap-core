@@ -5,6 +5,7 @@ CLASS cl_http_server DEFINITION PUBLIC CREATE PRIVATE.
     ALIASES co_enabled FOR if_http_server~co_enabled.
 
     CLASS-DATA c_compression_supported TYPE i.
+    DATA m_protocol_version TYPE string READ-ONLY.
 
     CLASS-METHODS get_location
       IMPORTING
