@@ -218,7 +218,7 @@ CLASS cl_http_entity IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_entity~get_content_type.
-    val = if_http_entity~get_header_field( 'content-type' ).
+    content_type = if_http_entity~get_header_field( 'content-type' ).
   ENDMETHOD.
 
   METHOD if_http_entity~set_content_type.

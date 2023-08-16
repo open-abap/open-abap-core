@@ -44,7 +44,8 @@ INTERFACE if_http_entity PUBLIC.
   METHODS get_cdata RETURNING VALUE(data) TYPE string.
 
   METHODS get_content_type
-    RETURNING VALUE(val) TYPE string.
+    RETURNING
+      VALUE(content_type) TYPE string.
 
   METHODS get_serialized_message_length
     EXPORTING
