@@ -7,8 +7,9 @@ CLASS cl_abap_hmac DEFINITION PUBLIC.
         if_data        TYPE xstring
         if_length      TYPE i OPTIONAL
       EXPORTING
-        ef_hmacstring  TYPE string
-        ef_hmacxstring TYPE xstring
+        ef_hmacstring     TYPE string
+        ef_hmacxstring    TYPE xstring
+        ef_hmacb64string  TYPE string
       RAISING
         cx_abap_message_digest.
 
@@ -49,6 +50,8 @@ CLASS cl_abap_hmac IMPLEMENTATION.
       WRITE '@KERNEL let hmac = crypto.createHmac(lv_algorithm.get(), Buffer.from(if_key.get(), "hex")).update(if_data.get(), "hex").digest("hex").toUpperCase();'.
       WRITE '@KERNEL ef_hmacstring.set(hmac);'.
     ENDIF.
+
+    WRITE '@KERNEL ef_hmacb64string.set(Buffer.from(ef_hmacstring.get(), "hex").toString("base64"));'.
 
     ef_hmacxstring = ef_hmacstring.
 
