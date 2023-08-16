@@ -1,14 +1,12 @@
 INTERFACE if_http_request PUBLIC.
 
-  CONSTANTS:
-    co_protocol_version_1_1 TYPE string VALUE 'VER11',
-    co_protocol_version_1_0 TYPE string VALUE 'VER10',
-    co_request_method_get TYPE string VALUE 'GET',
-    co_request_method_post TYPE string VALUE 'POST'.
-
   INTERFACES if_http_entity.
 
   ALIASES add_multipart FOR if_http_entity~add_multipart.
+  ALIASES co_protocol_version_1_0 FOR if_http_entity~co_protocol_version_1_0.
+  ALIASES co_protocol_version_1_1 FOR if_http_entity~co_protocol_version_1_1.
+  ALIASES co_request_method_get FOR if_http_entity~co_request_method_get.
+  ALIASES co_request_method_post FOR if_http_entity~co_request_method_post.
   ALIASES get_cdata FOR if_http_entity~get_cdata.
   ALIASES get_content_type FOR if_http_entity~get_content_type.
   ALIASES get_cookie_field FOR if_http_entity~get_cookie_field.
