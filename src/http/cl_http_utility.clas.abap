@@ -9,6 +9,7 @@ CLASS cl_http_utility DEFINITION PUBLIC.
     ALIASES get_last_error FOR if_http_utility~get_last_error.
     ALIASES string_to_fields FOR if_http_utility~string_to_fields.
     ALIASES unescape_url FOR if_http_utility~unescape_url.
+    ALIASES normalize_url FOR if_http_utility~normalize_url.
 
     CLASS-METHODS decode_x_base64
       IMPORTING
@@ -90,6 +91,10 @@ CLASS cl_http_utility IMPLEMENTATION.
 
   METHOD set_query.
     request->set_form_fields( string_to_fields( query ) ).
+  ENDMETHOD.
+
+  METHOD if_http_utility~normalize_url.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_http_utility~fields_to_string.
