@@ -4,6 +4,8 @@ CLASS cl_http_entity DEFINITION PUBLIC CREATE PRIVATE.
     INTERFACES if_http_request.
 
     ALIASES set_header_field FOR if_http_entity~set_header_field.
+  PROTECTED SECTION.
+    DATA m_last_error TYPE i.
   PRIVATE SECTION.
     DATA mv_status       TYPE i.
     DATA mv_reason       TYPE string.
