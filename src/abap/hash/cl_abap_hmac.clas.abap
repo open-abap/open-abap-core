@@ -5,6 +5,7 @@ CLASS cl_abap_hmac DEFINITION PUBLIC.
         if_algorithm   TYPE string DEFAULT 'SHA1'
         if_key         TYPE xstring
         if_data        TYPE xstring
+        if_length      TYPE i OPTIONAL
       EXPORTING
         ef_hmacstring  TYPE string
         ef_hmacxstring TYPE xstring
@@ -31,6 +32,9 @@ CLASS cl_abap_hmac IMPLEMENTATION.
 
     CLEAR ef_hmacstring.
     CLEAR ef_hmacxstring.
+
+    " todo,
+    ASSERT if_length = 0.
 
     lv_algorithm = to_lower( if_algorithm ).
     ASSERT lv_algorithm = 'sha1' OR lv_algorithm = 'md5' OR lv_algorithm = 'sha256'.
