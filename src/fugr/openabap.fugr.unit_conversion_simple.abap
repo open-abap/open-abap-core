@@ -11,6 +11,8 @@ FUNCTION unit_conversion_simple.
   ELSEIF unit_in = 'LB' AND unit_out = 'KG'.
     lv_float = '0.45359237'.
     output = input * lv_float.
+  ELSEIF unit_in = 'CCM' AND unit_out = 'CDM'.
+    output = input / 1000.
   ELSEIF unit_in = 'FT3' AND unit_out = 'CDM'.
     lv_float = '28.31684660923'.
     output = input * lv_float.
