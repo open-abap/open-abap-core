@@ -107,7 +107,7 @@ CLASS kernel_call_transformation IMPLEMENTATION.
       WRITE '@KERNEL } else if (INPUT.source.constructor.name === "Table") {'.
 * dynamic input via ABAP_TRANS_SRCBIND_TAB
       WRITE '@KERNEL   for (const row of INPUT.source.array()) {'.
-      WRITE '@KERNEL     console.dir(row);'.
+*      WRITE '@KERNEL     console.dir(row);'.
       WRITE '@KERNEL     lv_name.set(row.get().name.get());'.
       WRITE '@KERNEL     result.assign(row.get().value.dereference());'.
       lv_result = lv_result && lo_data_to_xml->run(
