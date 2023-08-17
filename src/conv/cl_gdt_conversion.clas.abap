@@ -76,7 +76,14 @@ CLASS cl_gdt_conversion IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD unit_code_outbound.
-    ASSERT 1 = 'todo'.
+    CASE im_value.
+      WHEN 'KG'.
+        ex_value = 'KGM'.
+      WHEN 'CDM'.
+        ex_value = 'DMQ'.
+      WHEN OTHERS.
+        ASSERT 1 = 'todo'.
+    ENDCASE.
   ENDMETHOD.
 
   METHOD country_code_outbound.
