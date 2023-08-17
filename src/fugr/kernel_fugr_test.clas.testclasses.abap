@@ -24,6 +24,7 @@ CLASS ltcl_fugr DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS unit_g_to_kg FOR TESTING RAISING cx_static_check.
     METHODS unit_m3_to_cdm FOR TESTING RAISING cx_static_check.
     METHODS unit_ft3_to_cdm FOR TESTING RAISING cx_static_check.
+    METHODS unit_ccm_to_cdm FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -370,6 +371,27 @@ CLASS ltcl_fugr IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_result
       exp = '283.168' ).
+
+  ENDMETHOD.
+
+  METHOD unit_ccm_to_cdm.
+
+    DATA lv_result TYPE menge_d.
+
+    CALL FUNCTION 'UNIT_CONVERSION_SIMPLE'
+      EXPORTING
+        input    = 1000
+        unit_in  = 'CCM'
+        unit_out = 'CDM'
+      IMPORTING
+        output   = lv_result
+      EXCEPTIONS
+        OTHERS   = 1.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_result
+      exp = '1' ).
 
   ENDMETHOD.
 
