@@ -28,8 +28,9 @@ INTERFACE if_ixml_document PUBLIC.
         VALUE(element) TYPE REF TO if_ixml_attribute,
     create_element_ns
       IMPORTING
-        name TYPE string
+        name   TYPE string
         prefix TYPE string OPTIONAL
+        uri    TYPE string OPTIONAL
       RETURNING
         VALUE(element) TYPE REF TO if_ixml_element,
     create_element
