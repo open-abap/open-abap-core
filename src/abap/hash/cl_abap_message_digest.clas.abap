@@ -15,6 +15,7 @@ CLASS cl_abap_message_digest DEFINITION PUBLIC.
         if_data          TYPE string
       EXPORTING
         ef_hashxstring   TYPE xstring
+        ef_hashstring    TYPE string
         ef_hashb64string TYPE string
       RAISING
         cx_abap_message_digest.
@@ -49,6 +50,8 @@ CLASS cl_abap_message_digest IMPLEMENTATION.
     WRITE '@KERNEL shasum.update(if_data.get());'.
     WRITE '@KERNEL ef_hashxstring.set(shasum.digest("hex").toUpperCase());'.
     WRITE '@KERNEL ef_hashb64string.set(Buffer.from(ef_hashxstring.get(), "hex").toString("base64"));'.
+
+    ef_hashstring = ef_hashxstring.
 
   ENDMETHOD.
 ENDCLASS.
