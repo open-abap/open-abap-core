@@ -1,7 +1,9 @@
 INTERFACE if_ixml_node PUBLIC.
   CONSTANTS:
-    co_node_element TYPE i VALUE 0,
-    co_node_text TYPE i VALUE 0.
+    co_node_element  TYPE i VALUE 4,
+    co_node_text     TYPE i VALUE 16,
+    co_node_document TYPE i VALUE 1.
+
   METHODS:
     append_child IMPORTING new_child TYPE REF TO if_ixml_node,
     get_attributes RETURNING VALUE(map) TYPE REF TO if_ixml_named_node_map,
@@ -41,4 +43,11 @@ INTERFACE if_ixml_node PUBLIC.
   METHODS get_height
     RETURNING
       VALUE(rval) TYPE i.
+
+  METHODS create_filter_name_ns
+    IMPORTING
+      name        TYPE string
+      namespace   TYPE string OPTIONAL
+    RETURNING
+      VALUE(rval) TYPE REF TO if_ixml_node_filter.
 ENDINTERFACE.

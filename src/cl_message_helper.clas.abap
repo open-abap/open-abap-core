@@ -22,11 +22,31 @@ CLASS cl_message_helper DEFINITION PUBLIC.
       EXPORTING
         t100key TYPE scx_t100key
         textid  TYPE sotr_conc.
+
+    CLASS-METHODS get_otr_text_raw
+      IMPORTING
+        textid TYPE sotr_conc
+      EXPORTING
+        result TYPE string.
+
+    CLASS-METHODS replace_text_params
+      IMPORTING
+        obj    TYPE REF TO object
+      CHANGING
+        result TYPE string.
   PRIVATE SECTION.
     CONSTANTS gc_fallback TYPE string VALUE 'An exception was raised.'.
 ENDCLASS.
 
 CLASS cl_message_helper IMPLEMENTATION.
+
+  METHOD get_otr_text_raw.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD replace_text_params.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD get_text_for_message.
 

@@ -16,7 +16,8 @@ CLASS cl_abap_zip DEFINITION PUBLIC.
 
     METHODS get
       IMPORTING
-        name TYPE string
+        name    TYPE string OPTIONAL
+        index   TYPE i OPTIONAL
       EXPORTING
         content TYPE xstring.
 
@@ -67,12 +68,15 @@ CLASS cl_abap_zip IMPLEMENTATION.
     DATA ls_length   TYPE i.
     DATA ls_contents LIKE LINE OF mt_contents.
 
+    ASSERT name IS NOT INITIAL.
+    ASSERT index IS INITIAL.
+
     READ TABLE mt_contents WITH KEY name = name INTO ls_contents.
     cl_abap_gzip=>decompress_binary(
       EXPORTING
-        gzip_in = ls_contents-compressed
+        gzip_in     = ls_contents-compressed
       IMPORTING
-        raw_out = content
+        raw_out     = content
         raw_out_len = ls_length ).
   ENDMETHOD.
 

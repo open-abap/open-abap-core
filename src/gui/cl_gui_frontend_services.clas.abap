@@ -1,8 +1,11 @@
 CLASS cl_gui_frontend_services DEFINITION PUBLIC.
   PUBLIC SECTION.
-    CONSTANTS filetype_all TYPE string VALUE 'abc'.
+    CONSTANTS filetype_all  TYPE string VALUE 'abc'.
+    CONSTANTS filetype_xml  TYPE string VALUE 'xml'.
+    CONSTANTS filetype_text TYPE string VALUE 'txt'.
+
     CONSTANTS action_cancel TYPE i VALUE 1.
-    CONSTANTS action_ok TYPE i VALUE 1.
+    CONSTANTS action_ok     TYPE i VALUE 1.
 
     CONSTANTS platform_nt351 TYPE i VALUE 1.
     CONSTANTS platform_nt40 TYPE i VALUE 2.
@@ -19,6 +22,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
           filetype              TYPE string OPTIONAL
           write_lf              TYPE abap_bool OPTIONAL
           write_field_separator TYPE char1 OPTIONAL
+          confirm_overwrite     TYPE abap_bool OPTIONAL
         CHANGING
           data_tab TYPE any.
 
@@ -32,6 +36,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
       directory_list_files
         IMPORTING
           directory  TYPE string
+          files_only TYPE abap_bool OPTIONAL
         CHANGING
           file_table TYPE any
           count      TYPE i.
@@ -74,6 +79,8 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
           default_extension    TYPE string OPTIONAL
           default_file_name    TYPE string OPTIONAL
           file_filter          TYPE string OPTIONAL
+          initial_directory    TYPE string OPTIONAL
+          prompt_on_overwrite  TYPE abap_bool OPTIONAL
         CHANGING
           filename             TYPE string
           path                 TYPE string
@@ -84,7 +91,7 @@ CLASS cl_gui_frontend_services DEFINITION PUBLIC.
       directory_browse
         IMPORTING
           window_title    TYPE string OPTIONAL
-          initial_folder  TYPE string
+          initial_folder  TYPE string OPTIONAL
         CHANGING
           selected_folder TYPE string.
 

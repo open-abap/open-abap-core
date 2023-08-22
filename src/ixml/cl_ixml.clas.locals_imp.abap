@@ -191,6 +191,10 @@ CLASS lcl_node IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
+  METHOD if_ixml_node~create_filter_name_ns.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_element~get_attribute_node_ns.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
@@ -536,6 +540,10 @@ CLASS lcl_document IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
+  METHOD if_ixml_node~create_filter_name_ns.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_node~get_namespace_prefix.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
@@ -852,6 +860,10 @@ CLASS lcl_stream_factory IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
+  METHOD if_ixml_stream_factory~create_istream_cstring.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_stream_factory~create_ostream_cstring.
     CREATE OBJECT stream TYPE lcl_ostream.
 * hack, this method doesnt really follow normal ABAP semantics
@@ -874,7 +886,7 @@ CLASS lcl_stream_factory IMPLEMENTATION.
   METHOD if_ixml_stream_factory~create_istream_string.
     CREATE OBJECT stream TYPE lcl_istream
       EXPORTING
-        iv_xml = xml.
+        iv_xml = string.
   ENDMETHOD.
 ENDCLASS.
 
