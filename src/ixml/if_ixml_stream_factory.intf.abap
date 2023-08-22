@@ -29,4 +29,10 @@ INTERFACE if_ixml_stream_factory PUBLIC.
     RETURNING
       VALUE(rval) TYPE REF TO if_ixml_ostream.
 
+  METHODS create_istream_cstring
+    IMPORTING
+      string TYPE string
+    RETURNING
+      VALUE(rval) TYPE REF TO if_ixml_istream.
+
 ENDINTERFACE.

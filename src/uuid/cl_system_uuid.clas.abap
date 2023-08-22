@@ -4,6 +4,7 @@ CLASS cl_system_uuid DEFINITION PUBLIC.
     INTERFACES if_system_uuid_static.
 
     ALIASES create_uuid_c32_static FOR if_system_uuid_static~create_uuid_c32.
+    ALIASES create_uuid_x16_static FOR if_system_uuid_static~create_uuid_x16.
 ENDCLASS.
 
 CLASS cl_system_uuid IMPLEMENTATION.
