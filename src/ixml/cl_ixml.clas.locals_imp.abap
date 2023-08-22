@@ -874,7 +874,7 @@ CLASS lcl_stream_factory IMPLEMENTATION.
   METHOD if_ixml_stream_factory~create_istream_string.
     CREATE OBJECT stream TYPE lcl_istream
       EXPORTING
-        iv_xml = xml.
+        iv_xml = string.
   ENDMETHOD.
 ENDCLASS.
 
