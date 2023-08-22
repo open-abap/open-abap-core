@@ -1,11 +1,13 @@
 INTERFACE if_http_client PUBLIC.
-  DATA request TYPE REF TO if_http_request.
+  DATA request  TYPE REF TO if_http_request.
   DATA response TYPE REF TO if_http_response.
-  DATA propertytype_logon_popup TYPE i.
+
+  DATA propertytype_logon_popup   TYPE i.
   DATA propertytype_accept_cookie TYPE i.
+  DATA propertytype_redirect      TYPE i.
 
   CONSTANTS co_disabled TYPE i VALUE 0.
-  CONSTANTS co_enabled TYPE i VALUE 1.
+  CONSTANTS co_enabled  TYPE i VALUE 1.
 
   METHODS authenticate
     IMPORTING
