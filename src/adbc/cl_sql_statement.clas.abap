@@ -13,9 +13,19 @@ CLASS cl_sql_statement DEFINITION PUBLIC.
         VALUE(result_set) TYPE REF TO cl_sql_result_set
       RAISING
         cx_sql_exception.
+
+    METHODS execute_ddl
+      IMPORTING
+        statement TYPE string
+      RAISING
+        cx_sql_exception.
 ENDCLASS.
 
 CLASS cl_sql_statement IMPLEMENTATION.
+
+  METHOD execute_ddl.
+    ASSERT 1 = 'not supported'.
+  ENDMETHOD.
 
   METHOD execute_update.
 
