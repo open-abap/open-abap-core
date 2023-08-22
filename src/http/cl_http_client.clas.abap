@@ -82,6 +82,10 @@ CLASS cl_http_client IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
+  METHOD if_http_client~create_abs_url.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_http_client~send.
     DATA lv_method        TYPE string.
     DATA lv_url           TYPE string.

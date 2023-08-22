@@ -19,7 +19,7 @@ CLASS cl_http_utility DEFINITION PUBLIC.
 
     CLASS-METHODS encode_x_base64
       IMPORTING
-        data           TYPE xstring
+        unencoded      TYPE xstring
       RETURNING
         VALUE(encoded) TYPE string.
 
@@ -112,7 +112,7 @@ CLASS cl_http_utility IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD encode_x_base64.
-    WRITE '@KERNEL let buffer = Buffer.from(data.get(), "hex");'.
+    WRITE '@KERNEL let buffer = Buffer.from(unencoded.get(), "hex");'.
     WRITE '@KERNEL encoded.set(buffer.toString("base64"));'.
   ENDMETHOD.
 
