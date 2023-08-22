@@ -21,11 +21,22 @@ CLASS cl_bcs_convert DEFINITION PUBLIC.
       RAISING
         cx_bcs.
 
+    CLASS-METHODS solix_to_xstring
+      IMPORTING
+        it_solix TYPE solix_tab
+        iv_size TYPE i OPTIONAL
+      RETURNING
+        VALUE(ev_xstring) TYPE xstring.
+
 ENDCLASS.
 
 CLASS cl_bcs_convert IMPLEMENTATION.
 
   METHOD string_to_soli.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD solix_to_xstring.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
