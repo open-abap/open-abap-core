@@ -36,6 +36,12 @@ CLASS cl_abap_dyn_prg DEFINITION PUBLIC.
         val        TYPE csequence
       RETURNING
         VALUE(out) TYPE string.
+
+    CLASS-METHODS escape_xss_url
+      IMPORTING
+        val        TYPE csequence
+      RETURNING
+        VALUE(out) TYPE string.
 ENDCLASS.
 
 CLASS cl_abap_dyn_prg IMPLEMENTATION.
@@ -51,6 +57,10 @@ CLASS cl_abap_dyn_prg IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD quote.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD escape_xss_url.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 

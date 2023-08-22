@@ -3,6 +3,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
   PRIVATE SECTION.
     METHODS raw_sha256 FOR TESTING RAISING cx_static_check.
     METHODS char_sha256 FOR TESTING RAISING cx_static_check.
+    METHODS string FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -39,13 +40,27 @@ CLASS ltcl_test IMPLEMENTATION.
         ef_hashb64string = lv_base64 ).
 
     cl_abap_unit_assert=>assert_equals(
-       act = lv_hash
-       exp = 'B94D27B9934D3E08A52E52D7DA7DABFAC484EFE37A5380EE9088F7ACE2EFCDE9' ).
+      act = lv_hash
+      exp = 'B94D27B9934D3E08A52E52D7DA7DABFAC484EFE37A5380EE9088F7ACE2EFCDE9' ).
 
     cl_abap_unit_assert=>assert_equals(
-       act = lv_base64
-       exp = 'uU0nuZNNPgilLlLX2n2r+sSE7+N6U4DukIj3rOLvzek=' ).
+      act = lv_base64
+      exp = 'uU0nuZNNPgilLlLX2n2r+sSE7+N6U4DukIj3rOLvzek=' ).
 
+  ENDMETHOD.
+
+  METHOD string.
+
+    DATA lv_string TYPE string.
+    cl_abap_message_digest=>calculate_hash_for_char(
+      EXPORTING
+        if_data       = 'AABBCC112233'
+      IMPORTING
+        ef_hashstring = lv_string ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_string
+      exp = '0C3130008D4C3CAC322ECC947D218B61448E3888' ).
   ENDMETHOD.
 
 ENDCLASS.

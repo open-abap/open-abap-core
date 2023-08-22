@@ -32,6 +32,8 @@ CLASS cl_abap_elemdescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
     CLASS-METHODS get_f RETURNING VALUE(r_result) TYPE REF TO cl_abap_elemdescr.
     CLASS-METHODS get_d RETURNING VALUE(r_result) TYPE REF TO cl_abap_elemdescr.
     CLASS-METHODS get_t RETURNING VALUE(r_result) TYPE REF TO cl_abap_elemdescr.
+    CLASS-METHODS get_decfloat16 RETURNING VALUE(r_result) TYPE REF TO cl_abap_elemdescr.
+    CLASS-METHODS get_decfloat34 RETURNING VALUE(r_result) TYPE REF TO cl_abap_elemdescr.
     CLASS-METHODS get_string RETURNING VALUE(p_result) TYPE REF TO cl_abap_elemdescr.
     CLASS-METHODS get_c
       IMPORTING
@@ -63,6 +65,14 @@ ENDCLASS.
 CLASS cl_abap_elemdescr IMPLEMENTATION.
 
   METHOD get_p.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get_decfloat16.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get_decfloat34.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 

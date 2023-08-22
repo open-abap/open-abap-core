@@ -40,4 +40,10 @@ INTERFACE if_http_client PUBLIC.
       message TYPE string.
 
   METHODS refresh_request.
+
+  METHODS create_abs_url
+    IMPORTING
+      path       TYPE string OPTIONAL
+    RETURNING
+      VALUE(url) TYPE string.
 ENDINTERFACE.
