@@ -15,7 +15,7 @@ CLASS cl_salv_table DEFINITION PUBLIC.
     METHODS set_selection_mode IMPORTING val TYPE i.
     METHODS get_selected_rows RETURNING VALUE(rows) TYPE ty_rows.
     METHODS close_screen.
-    METHODS refresh IMPORTING refresh_mode TYPE any.
+    METHODS refresh IMPORTING refresh_mode TYPE any OPTIONAL.
     METHODS display.
     METHODS is_offline RETURNING VALUE(value) TYPE abap_bool.
     METHODS get_metadata.
