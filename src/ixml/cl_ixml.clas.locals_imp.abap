@@ -191,6 +191,10 @@ CLASS lcl_node IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
+  METHOD if_ixml_node~insert_child.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_node~clone.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
@@ -549,6 +553,10 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_height.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~insert_child.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
