@@ -1,8 +1,9 @@
 INTERFACE if_ixml_node PUBLIC.
   CONSTANTS:
-    co_node_element  TYPE i VALUE 4,
-    co_node_text     TYPE i VALUE 16,
-    co_node_document TYPE i VALUE 1.
+    co_node_document      TYPE i VALUE 1,
+    co_node_element       TYPE i VALUE 4,
+    co_node_text          TYPE i VALUE 16,
+    co_node_cdata_section TYPE i VALUE 32.
 
   METHODS:
     append_child IMPORTING new_child TYPE REF TO if_ixml_node,
@@ -50,4 +51,18 @@ INTERFACE if_ixml_node PUBLIC.
       namespace   TYPE string OPTIONAL
     RETURNING
       VALUE(rval) TYPE REF TO if_ixml_node_filter.
+
+  METHODS get_column
+    RETURNING
+      VALUE(rval) TYPE i.
+
+  METHODS create_iterator_filtered
+    IMPORTING
+      filter      TYPE REF TO if_ixml_node_filter
+    RETURNING
+      VALUE(rval) TYPE REF TO if_ixml_node_iterator.
+
+  METHODS clone
+    RETURNING
+      VALUE(rval) TYPE REF TO if_ixml_node.
 ENDINTERFACE.

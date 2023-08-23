@@ -11,10 +11,16 @@ CLASS cl_salv_columns_table DEFINITION PUBLIC.
       RETURNING VALUE(value) TYPE REF TO cl_salv_column.
     METHODS get
       RETURNING VALUE(value) TYPE string.
+    METHODS set_exception_column
+      IMPORTING value TYPE any.
 ENDCLASS.
 
 CLASS cl_salv_columns_table IMPLEMENTATION.
   METHOD get_column.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD set_exception_column.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 

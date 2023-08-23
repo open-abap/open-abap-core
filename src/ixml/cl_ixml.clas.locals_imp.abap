@@ -191,6 +191,18 @@ CLASS lcl_node IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
+  METHOD if_ixml_node~clone.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~create_iterator_filtered.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_column.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_node~create_filter_name_ns.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
@@ -540,6 +552,18 @@ CLASS lcl_document IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
+  METHOD if_ixml_node~clone.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~create_iterator_filtered.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_column.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_node~create_filter_name_ns.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
@@ -823,6 +847,10 @@ CLASS lcl_ostream IMPLEMENTATION.
     ENDIF.
   ENDMETHOD.
 
+  METHOD if_ixml_ostream~set_encoding.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_ostream~get_num_written_raw.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
@@ -845,6 +873,10 @@ CLASS lcl_istream IMPLEMENTATION.
 
   METHOD if_ixml_istream~close.
     RETURN.
+  ENDMETHOD.
+
+  METHOD if_ixml_istream~get_dtd_restriction.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 ENDCLASS.
 
