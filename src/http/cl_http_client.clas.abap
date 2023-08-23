@@ -65,6 +65,10 @@ CLASS cl_http_client IMPLEMENTATION.
 
   ENDMETHOD.
 
+  METHOD if_http_client~escape_url.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD create_by_url.
     CREATE OBJECT client TYPE cl_http_client
       EXPORTING

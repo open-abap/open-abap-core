@@ -46,4 +46,10 @@ INTERFACE if_http_client PUBLIC.
       path       TYPE string OPTIONAL
     RETURNING
       VALUE(url) TYPE string.
+
+  CLASS-METHODS escape_url
+    IMPORTING
+      unescaped      TYPE string
+    RETURNING
+      VALUE(escaped) TYPE string.
 ENDINTERFACE.

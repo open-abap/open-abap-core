@@ -191,6 +191,14 @@ CLASS lcl_node IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
+  METHOD if_ixml_node~clone.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~create_iterator_filtered.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_node~get_column.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
@@ -544,6 +552,14 @@ CLASS lcl_document IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
+  METHOD if_ixml_node~clone.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~create_iterator_filtered.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_node~get_column.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
@@ -829,6 +845,10 @@ CLASS lcl_ostream IMPLEMENTATION.
     ELSE.
       mv_string = mv_string && string.
     ENDIF.
+  ENDMETHOD.
+
+  METHOD if_ixml_ostream~set_encoding.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_ixml_ostream~get_num_written_raw.

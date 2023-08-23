@@ -54,4 +54,14 @@ INTERFACE if_ixml_node PUBLIC.
   METHODS get_column
     RETURNING
       VALUE(rval) TYPE i.
+
+  METHODS create_iterator_filtered
+    IMPORTING
+      filter      TYPE REF TO if_ixml_node_filter
+    RETURNING
+      VALUE(rval) TYPE REF TO if_ixml_node_iterator.
+
+  METHODS clone
+    RETURNING
+      VALUE(rval) TYPE REF TO if_ixml_node.
 ENDINTERFACE.
