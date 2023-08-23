@@ -1,8 +1,9 @@
 INTERFACE if_ixml_node PUBLIC.
   CONSTANTS:
-    co_node_element  TYPE i VALUE 4,
-    co_node_text     TYPE i VALUE 16,
-    co_node_document TYPE i VALUE 1.
+    co_node_document      TYPE i VALUE 1,
+    co_node_element       TYPE i VALUE 4,
+    co_node_text          TYPE i VALUE 16,
+    co_node_cdata_section TYPE i VALUE 32.
 
   METHODS:
     append_child IMPORTING new_child TYPE REF TO if_ixml_node,
