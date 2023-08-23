@@ -711,6 +711,10 @@ CLASS lcl_document IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
+  METHOD if_ixml_document~set_declaration.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_document~create_filter_and.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
@@ -881,6 +885,10 @@ CLASS lcl_istream IMPLEMENTATION.
 
   METHOD if_ixml_istream~close.
     RETURN.
+  ENDMETHOD.
+
+  METHOD if_ixml_istream~set_dtd_restriction.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_ixml_istream~get_dtd_restriction.
