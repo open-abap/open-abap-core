@@ -105,4 +105,8 @@ INTERFACE if_ixml_document PUBLIC.
       RETURNING VALUE(val) TYPE REF TO if_ixml_node_collection,
     get_root RETURNING VALUE(node) TYPE REF TO if_ixml_node,
     get_root_element RETURNING VALUE(root) TYPE REF TO if_ixml_element.
+
+  METHODS set_declaration
+    IMPORTING
+      declaration TYPE abap_bool.
 ENDINTERFACE.
