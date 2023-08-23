@@ -48,6 +48,12 @@ CLASS cl_salv_table DEFINITION PUBLIC.
     METHODS get_filters
       RETURNING
         VALUE(foo) TYPE REF TO cl_salv_filters.
+
+    METHODS to_xml
+      IMPORTING
+        xml_type   TYPE any
+      RETURNING
+        VALUE(xml) TYPE xstring.
 ENDCLASS.
 
 CLASS cl_salv_table IMPLEMENTATION.
@@ -57,6 +63,10 @@ CLASS cl_salv_table IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_layout.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD to_xml.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
