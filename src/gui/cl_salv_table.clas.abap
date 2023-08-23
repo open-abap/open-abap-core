@@ -19,6 +19,9 @@ CLASS cl_salv_table DEFINITION PUBLIC.
     METHODS display.
     METHODS is_offline RETURNING VALUE(value) TYPE abap_bool.
     METHODS get_metadata.
+    METHODS get_layout
+      RETURNING
+        VALUE(value) TYPE REF TO cl_salv_layout.
     METHODS set_screen_status
       IMPORTING
         pfstatus      TYPE any
@@ -50,6 +53,10 @@ ENDCLASS.
 CLASS cl_salv_table IMPLEMENTATION.
 
   METHOD set_selected_rows.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get_layout.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 

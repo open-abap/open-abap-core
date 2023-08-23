@@ -50,4 +50,8 @@ INTERFACE if_ixml_node PUBLIC.
       namespace   TYPE string OPTIONAL
     RETURNING
       VALUE(rval) TYPE REF TO if_ixml_node_filter.
+
+  METHODS get_column
+    RETURNING
+      VALUE(rval) TYPE i.
 ENDINTERFACE.

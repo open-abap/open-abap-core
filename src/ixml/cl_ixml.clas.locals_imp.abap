@@ -191,6 +191,10 @@ CLASS lcl_node IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
+  METHOD if_ixml_node~get_column.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_node~create_filter_name_ns.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
@@ -537,6 +541,10 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_height.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_column.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
