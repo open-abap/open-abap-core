@@ -26,6 +26,9 @@ CLASS cl_system_uuid IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_system_uuid_static~create_uuid_c22.
+    WRITE '@KERNEL if (cl_system_uuid.CRYPTO === undefined) cl_system_uuid.CRYPTO = await import("crypto");'.
+* yea, well, hmm,
+    WRITE '@KERNEL uuid.set(cl_system_uuid.CRYPTO.randomBytes(11).toString("hex"));'.
   ENDMETHOD.
 
 ENDCLASS.
