@@ -29,6 +29,10 @@ INTERFACE if_ixml_node PUBLIC.
     remove_child IMPORTING child TYPE REF TO if_ixml_node,
     set_value IMPORTING value TYPE string.
 
+  METHODS get_gid
+    RETURNING
+      VALUE(rval) TYPE i.
+
   METHODS insert_child
     IMPORTING
       new_child   TYPE REF TO if_ixml_node

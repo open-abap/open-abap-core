@@ -69,6 +69,13 @@ CLASS lcl_encoding DEFINITION.
 ENDCLASS.
 
 CLASS lcl_encoding IMPLEMENTATION.
+  METHOD if_ixml_encoding~get_byte_order.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_encoding~get_character_set.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 ENDCLASS.
 
 ****************************************************************
@@ -188,6 +195,10 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_height.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_gid.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
@@ -553,6 +564,10 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_height.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_gid.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
