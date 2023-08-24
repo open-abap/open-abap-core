@@ -15,6 +15,7 @@ CLASS cl_osql_test_environment DEFINITION PUBLIC.
     DATA mo_sql    TYPE REF TO cl_sql_statement.
 
     METHODS initialize.
+    METHODS validate.
     METHODS set_runtime_prefix.
 ENDCLASS.
 
@@ -34,6 +35,23 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
 
   ENDMETHOD.
 
+  METHOD validate.
+
+    DATA ref           TYPE REF TO data.
+    DATA lv_table      LIKE LINE OF mt_tables.
+    FIELD-SYMBOLS <fs> TYPE any.
+
+    LOOP AT mt_tables INTO lv_table.
+      TRY.
+          CREATE DATA ref TYPE (lv_table).
+          ASSIGN ref->* TO <fs>.
+          SELECT SINGLE * FROM (lv_table) INTO <fs>.
+        CATCH cx_sy_create_data_error cx_sy_dynamic_osql_semantics.
+          WRITE '@KERNEL throw new Error(`table ${lv_table.get().trimEnd()} invalid or does not exist`);'.
+      ENDTRY.
+    ENDLOOP.
+  ENDMETHOD.
+
   METHOD initialize.
 
     DATA lv_table  LIKE LINE OF mt_tables.
@@ -42,6 +60,9 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
     DATA lr_ref    TYPE REF TO data.
 
     WRITE '@KERNEL if (abap.dbo.schemaPrefix !== "") throw new Error("already prefixed");'.
+
+* validate that the tables to be doubled exists
+    validate( ).
 
 * https://www.sqlite.org/lang_attach.html
     mo_sql->execute_update( |ATTACH DATABASE ':memory:' AS { mv_schema };| ).

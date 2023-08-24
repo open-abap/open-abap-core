@@ -51,7 +51,7 @@
     "sy_modification": false,
     "selection_screen_naming": false,
     "select_performance": {
-      "exclude": [".testclasses."],
+      "exclude": [".testclasses.", "cl_osql_test_environment"],
       "endSelect": true,
       "selectStar": true,
       "starOkayIfFewColumns": 10
@@ -140,7 +140,7 @@
     "constructor_visibility_public": false,
     "cyclomatic_complexity": false,
     "dangerous_statement": false,
-    "db_operation_in_loop": true,
+    "db_operation_in_loop": false,
     "abapdoc": false,
     "allowed_object_naming": true,
     "allowed_object_types": false,
