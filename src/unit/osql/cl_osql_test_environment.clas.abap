@@ -43,6 +43,9 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
 
     WRITE '@KERNEL if (abap.dbo.schemaPrefix !== "") throw new Error("already prefixed");'.
 
+* validate that the tables to be doubled exists
+* todo
+
 * https://www.sqlite.org/lang_attach.html
     mo_sql->execute_update( |ATTACH DATABASE ':memory:' AS { mv_schema };| ).
 
