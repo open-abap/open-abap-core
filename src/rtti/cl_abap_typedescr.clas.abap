@@ -81,6 +81,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_int2 TYPE abap_typekind VALUE 's'.
     CONSTANTS typekind_int8 TYPE abap_typekind VALUE '8'.
     CONSTANTS typekind_intf TYPE abap_typekind VALUE '+'.
+    CONSTANTS typekind_iref TYPE abap_typekind VALUE 'm'.
     CONSTANTS typekind_num TYPE abap_typekind VALUE 'N'.
     CONSTANTS typekind_numeric TYPE abap_typekind VALUE '%'.
     CONSTANTS typekind_oref TYPE abap_typekind VALUE 'r'.
