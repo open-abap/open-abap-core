@@ -4,6 +4,7 @@ INTERFACE if_http_request PUBLIC.
 
   ALIASES add_multipart FOR if_http_entity~add_multipart.
   ALIASES append_cdata FOR if_http_entity~append_cdata.
+  ALIASES append_cdata2 FOR if_http_entity~append_cdata2.
   ALIASES append_data FOR if_http_entity~append_data.
   ALIASES co_protocol_version_1_0 FOR if_http_entity~co_protocol_version_1_0.
   ALIASES co_protocol_version_1_1 FOR if_http_entity~co_protocol_version_1_1.
