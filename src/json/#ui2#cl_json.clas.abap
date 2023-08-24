@@ -305,6 +305,8 @@ CLASS /ui2/cl_json IMPLEMENTATION.
                 lv_value = mo_parsed->value_string( prefix ).
                 IF lv_value CO '-0123456789'.
                   CREATE DATA data TYPE i.
+                ELSEIF lv_value CO '-0123456789.'.
+                  CREATE DATA data TYPE f.
                 ELSE.
                   ASSERT 1 = 'todo'.
                 ENDIF.
