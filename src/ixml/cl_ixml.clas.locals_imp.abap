@@ -69,6 +69,13 @@ CLASS lcl_encoding DEFINITION.
 ENDCLASS.
 
 CLASS lcl_encoding IMPLEMENTATION.
+  METHOD if_ixml_encoding~get_byte_order.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_encoding~get_character_set.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 ENDCLASS.
 
 ****************************************************************
