@@ -10,4 +10,10 @@ INTERFACE if_system_uuid_static PUBLIC.
       VALUE(uuid) TYPE sysuuid_c32
     RAISING
       cx_uuid_error.
+
+  CLASS-METHODS create_uuid_c22
+    RETURNING
+      VALUE(uuid) TYPE sysuuid_c22
+    RAISING
+      cx_uuid_error.
 ENDINTERFACE.

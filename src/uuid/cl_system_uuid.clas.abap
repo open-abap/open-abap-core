@@ -25,4 +25,7 @@ CLASS cl_system_uuid IMPLEMENTATION.
     WRITE '@KERNEL uuid.set(cl_system_uuid.CRYPTO.randomUUID());'.
   ENDMETHOD.
 
+  METHOD if_system_uuid_static~create_uuid_c22.
+  ENDMETHOD.
+
 ENDCLASS.
