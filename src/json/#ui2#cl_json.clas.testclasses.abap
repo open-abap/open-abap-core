@@ -28,6 +28,7 @@ CLASS ltcl_deserialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
     METHODS deserialize_time2 FOR TESTING RAISING cx_static_check.
     METHODS deserialize_array_ref FOR TESTING RAISING cx_static_check.
     METHODS more_array FOR TESTING RAISING cx_static_check.
+    METHODS deserialize_float_to_ref FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -543,6 +544,31 @@ CLASS ltcl_deserialize IMPLEMENTATION.
       act = row-title
       exp = 'Test' ).
 
+  ENDMETHOD.
+
+  METHOD deserialize_float_to_ref.
+    DATA lr_actual TYPE REF TO data.
+    DATA lv_json   TYPE string.
+
+    FIELD-SYMBOLS <any> TYPE any.
+
+    lv_json = '{"foo":-0.3333}'.
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = lv_json
+      CHANGING
+        data = lr_actual ).
+
+    cl_abap_unit_assert=>assert_not_initial( lr_actual ).
+    ASSIGN lr_actual->* TO <any>.
+    cl_abap_unit_assert=>assert_subrc( ).
+    ASSIGN COMPONENT 'FOO' OF STRUCTURE <any> TO <any>.
+    cl_abap_unit_assert=>assert_subrc( ).
+    ASSIGN <any>->* TO <any>.
+    cl_abap_unit_assert=>assert_equals(
+      act = <any>
+      exp = '-0.3333' ).
   ENDMETHOD.
 
 ENDCLASS.
