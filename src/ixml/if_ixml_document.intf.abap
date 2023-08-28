@@ -52,7 +52,7 @@ INTERFACE if_ixml_document PUBLIC.
     create_iterator
       RETURNING VALUE(rval) TYPE REF TO if_ixml_node_iterator,
     create_filter_node_type
-      IMPORTING typ TYPE string
+      IMPORTING node_types TYPE i
       RETURNING VALUE(val) TYPE REF TO if_ixml_node_filter,
     create_simple_element_ns
       IMPORTING

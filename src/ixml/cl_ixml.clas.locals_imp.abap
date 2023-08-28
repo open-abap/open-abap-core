@@ -628,7 +628,7 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~query_interface.
-    mi_node->if_ixml_node~query_interface( foo ).
+    mi_node->if_ixml_node~query_interface( iid ).
   ENDMETHOD.
 
   METHOD if_ixml_node~remove_node.
