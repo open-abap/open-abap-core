@@ -18,7 +18,7 @@ INTERFACE if_ixml_element PUBLIC.
     clone
       RETURNING VALUE(val) TYPE REF TO if_ixml_node,
     create_filter_node_type
-      IMPORTING name TYPE string
+      IMPORTING node_types TYPE i
       RETURNING VALUE(val) TYPE REF TO any,
     create_iterator
       RETURNING VALUE(val) TYPE REF TO if_ixml_node_iterator,
