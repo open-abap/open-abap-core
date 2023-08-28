@@ -98,7 +98,7 @@ CLASS cl_abap_conv_in_ce IMPLEMENTATION.
     ASSERT mv_js_encoding IS NOT INITIAL.
     WRITE '@KERNEL let buf = Buffer.from(input.get(), "hex");'.
 
-    WRITE '@KERNEL const util= await import("util");'.
+    WRITE '@KERNEL const util = await import("util");'.
     WRITE '@KERNEL const td = new util.TextDecoder(this.mv_js_encoding.get(), {fatal: this.mv_ignore_cerr.get() !== "X"});'.
     WRITE '@KERNEL try {'.
     WRITE '@KERNEL   data.set(td.decode(buf));'.
