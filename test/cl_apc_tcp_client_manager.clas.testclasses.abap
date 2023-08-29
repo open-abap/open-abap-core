@@ -26,9 +26,10 @@ ENDCLASS.
 CLASS ltcl_tcp DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION MEDIUM FINAL.
 
   PRIVATE SECTION.
-    METHODS test_port IMPORTING iv_port TYPE string.
-    METHODS port80 FOR TESTING RAISING cx_static_check.
-    METHODS port443 FOR TESTING RAISING cx_static_check.
+    METHODS test_port IMPORTING iv_port TYPE string RAISING cx_static_check.
+
+    METHODS port_80 FOR TESTING RAISING cx_static_check.
+    METHODS port_443 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -70,11 +71,11 @@ CLASS ltcl_tcp IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD port80.
+  METHOD port_80.
     test_port( '80' ).
   ENDMETHOD.
 
-  METHOD port443.
+  METHOD port_443.
     test_port( '443' ).
   ENDMETHOD.
 
