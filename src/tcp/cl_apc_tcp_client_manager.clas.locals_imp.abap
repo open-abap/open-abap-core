@@ -52,8 +52,10 @@ CLASS lcl_client IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_apc_wsp_client~connect.
-    WRITE '@KERNEL const net = await import("net");'.
-    WRITE '@KERNEL this.client = net.connect({ port: this.mv_port.get(), host: this.mv_host.get()}, () => {this.mo_handler.get().if_apc_wsp_event_handler$on_open();});'.
+    DATA lv_tsl TYPE abap_bool.
+    lv_tsl = boolc( mv_protocol = cl_apc_tcp_client_manager=>co_protocol_type_tcps ).
+    WRITE '@KERNEL const connect = await import("net");'.
+    WRITE '@KERNEL this.client = connect.connect({ port: this.mv_port.get(), host: this.mv_host.get()}, () => {this.mo_handler.get().if_apc_wsp_event_handler$on_open();});'.
     WRITE '@KERNEL this.client.on("data", async (data) => {'.
     WRITE '@KERNEL   const msg = await (new lcl_message().constructor_());'.
     WRITE '@KERNEL   await msg.if_apc_wsp_message$set_binary({iv_binary: data.toString("hex").toUpperCase()});'.
