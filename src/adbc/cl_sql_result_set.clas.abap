@@ -19,6 +19,11 @@ CLASS cl_sql_result_set DEFINITION PUBLIC.
         cx_sql_exception.
 
     METHODS close.
+
+    METHODS next_package
+      RAISING
+        cx_sql_exception
+        cx_parameter_invalid_type.
   PRIVATE SECTION.
     DATA mv_magic TYPE x LENGTH 1.
     DATA mv_index TYPE i.
@@ -54,6 +59,10 @@ CLASS cl_sql_result_set IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD set_param_table.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD next_package.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
