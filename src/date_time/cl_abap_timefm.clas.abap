@@ -1,5 +1,8 @@
 CLASS cl_abap_timefm DEFINITION PUBLIC.
   PUBLIC SECTION.
+    TYPES ty_format TYPE i.
+    TYPES ty_timefm TYPE c LENGTH 1.
+
     CLASS-METHODS conv_time_ext_to_int
       IMPORTING
         time_ext        TYPE csequence
@@ -16,9 +19,14 @@ CLASS cl_abap_timefm DEFINITION PUBLIC.
         time_ext TYPE string
       RAISING
         cx_parameter_invalid_range.
+
+    CLASS-METHODS get_environment_timefm
+      RETURNING
+        VALUE(timefm) TYPE ty_timefm.
 ENDCLASS.
 
 CLASS cl_abap_timefm IMPLEMENTATION.
+
   METHOD conv_time_ext_to_int.
     DATA lv_text TYPE string.
 
@@ -38,4 +46,9 @@ CLASS cl_abap_timefm IMPLEMENTATION.
   METHOD conv_time_int_to_ext.
     time_ext = |{ time_int TIME = ISO }|.
   ENDMETHOD.
+
+  METHOD get_environment_timefm.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
 ENDCLASS.

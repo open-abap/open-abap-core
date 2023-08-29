@@ -6,6 +6,12 @@ CLASS cl_sql_result_set DEFINITION PUBLIC.
       RAISING
         cx_parameter_invalid.
 
+    METHODS set_param_table
+      IMPORTING
+        itab_ref TYPE REF TO data
+      RAISING
+        cx_parameter_invalid.
+
     METHODS next
       RETURNING
         VALUE(rows_ret) TYPE i
@@ -45,6 +51,10 @@ CLASS cl_sql_result_set IMPLEMENTATION.
   METHOD close.
 * nothing here,
     RETURN.
+  ENDMETHOD.
+
+  METHOD set_param_table.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
 ENDCLASS.

@@ -1,5 +1,7 @@
 CLASS cl_salv_layout DEFINITION PUBLIC.
   PUBLIC SECTION.
+    CONSTANTS restrict_none TYPE i VALUE 3.
+
     METHODS set_key
       IMPORTING
         value TYPE any.
