@@ -23,7 +23,7 @@ CLASS lcl_handler IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.
 
-CLASS ltcl_tcp DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+CLASS ltcl_tcp DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION MEDIUM FINAL.
 
   PRIVATE SECTION.
     METHODS test1 FOR TESTING RAISING cx_static_check.
@@ -60,8 +60,11 @@ CLASS ltcl_tcp IMPLEMENTATION.
       UNTIL lo_handler->message IS NOT INITIAL
       UP TO 10 SECONDS.
 
-    WRITE / lo_handler->message.
     li_client->close( ).
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = cl_abap_codepage=>convert_from( lo_handler->message )
+      exp = 'HTTP/1.1*' ).
 
   ENDMETHOD.
 
