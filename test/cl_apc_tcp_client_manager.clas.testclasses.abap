@@ -23,16 +23,19 @@ CLASS lcl_handler IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.
 
-CLASS ltcl_tcp DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+CLASS ltcl_tcp DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION MEDIUM FINAL.
 
   PRIVATE SECTION.
-    METHODS test1 FOR TESTING RAISING cx_static_check.
+    METHODS test_port IMPORTING iv_port TYPE string RAISING cx_static_check.
+
+    METHODS port_80 FOR TESTING RAISING cx_static_check.
+    METHODS port_443 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_tcp IMPLEMENTATION.
 
-  METHOD test1.
+  METHOD test_port.
     DATA lo_handler         TYPE REF TO lcl_handler.
     DATA li_client          TYPE REF TO if_apc_wsp_client.
     DATA ls_frame           TYPE if_abap_channel_types=>ty_apc_tcp_frame.
@@ -41,18 +44,19 @@ CLASS ltcl_tcp IMPLEMENTATION.
 
     CREATE OBJECT lo_handler.
 
-* todo, set ls_frame details
+    ls_frame-frame_type   = if_apc_tcp_frame_types=>co_frame_type_fixed_length.
+    ls_frame-fixed_length = 10.
 
     li_client = cl_apc_tcp_client_manager=>create(
       i_host          = 'httpbin.org'
-      i_port          = '80'
+      i_port          = iv_port
       i_frame         = ls_frame
       i_event_handler = lo_handler ).
 
     li_client->connect( ).
-    li_message_manager = li_client->get_message_manager( ).
+    li_message_manager ?= li_client->get_message_manager( ).
     li_message = li_message_manager->create_message( ).
-    li_message->set_binary( '112233' ).
+    li_message->set_binary( '11223344556677889900' ).
     li_message_manager->send( li_message ).
 
     WAIT FOR PUSH CHANNELS
@@ -61,6 +65,18 @@ CLASS ltcl_tcp IMPLEMENTATION.
 
     li_client->close( ).
 
+    cl_abap_unit_assert=>assert_char_cp(
+      act = cl_abap_codepage=>convert_from( lo_handler->message )
+      exp = 'HTTP/1.1*' ).
+
+  ENDMETHOD.
+
+  METHOD port_80.
+    test_port( '80' ).
+  ENDMETHOD.
+
+  METHOD port_443.
+    test_port( '443' ).
   ENDMETHOD.
 
 ENDCLASS.
