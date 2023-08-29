@@ -20,8 +20,9 @@ CLASS cl_apc_tcp_client_manager IMPLEMENTATION.
   METHOD create.
     CREATE OBJECT ri_client TYPE lcl_client
       EXPORTING
-        iv_host    = i_host
-        iv_port    = i_port
-        io_handler = i_event_handler.
+        iv_host     = i_host
+        iv_port     = i_port
+        io_handler  = i_event_handler
+        iv_protocol = i_protocol.
   ENDMETHOD.
 ENDCLASS.
