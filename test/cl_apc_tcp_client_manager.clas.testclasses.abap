@@ -41,7 +41,8 @@ CLASS ltcl_tcp IMPLEMENTATION.
 
     CREATE OBJECT lo_handler.
 
-* todo, set ls_frame details
+    ls_frame-frame_type   = if_apc_tcp_frame_types=>co_frame_type_fixed_length.
+    ls_frame-fixed_length = 10.
 
     li_client = cl_apc_tcp_client_manager=>create(
       i_host          = 'httpbin.org'
@@ -59,6 +60,7 @@ CLASS ltcl_tcp IMPLEMENTATION.
       UNTIL lo_handler->message IS NOT INITIAL
       UP TO 10 SECONDS.
 
+    WRITE / lo_handler->message.
     li_client->close( ).
 
   ENDMETHOD.
