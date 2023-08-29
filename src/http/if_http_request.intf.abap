@@ -43,7 +43,7 @@ INTERFACE if_http_request PUBLIC.
 
   METHODS set_version
     IMPORTING
-      version TYPE string.
+      version TYPE i.
 
   METHODS set_authorization
     IMPORTING
