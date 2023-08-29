@@ -51,9 +51,9 @@ CLASS ltcl_tcp IMPLEMENTATION.
       i_event_handler = lo_handler ).
 
     li_client->connect( ).
-    li_message_manager = li_client->get_message_manager( ).
+    li_message_manager ?= li_client->get_message_manager( ).
     li_message = li_message_manager->create_message( ).
-    li_message->set_binary( '112233' ).
+    li_message->set_binary( '11223344556677889900' ).
     li_message_manager->send( li_message ).
 
     WAIT FOR PUSH CHANNELS
