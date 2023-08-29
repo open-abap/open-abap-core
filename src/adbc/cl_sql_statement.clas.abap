@@ -1,5 +1,8 @@
 CLASS cl_sql_statement DEFINITION PUBLIC.
   PUBLIC SECTION.
+    METHODS constructor
+      IMPORTING con_ref TYPE REF TO object OPTIONAL.
+
     METHODS execute_update
       IMPORTING
         statement TYPE string
@@ -22,6 +25,11 @@ CLASS cl_sql_statement DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS cl_sql_statement IMPLEMENTATION.
+
+  METHOD constructor.
+* todo,
+    ASSERT con_ref IS INITIAL.
+  ENDMETHOD.
 
   METHOD execute_ddl.
     ASSERT 1 = 'not supported'.
