@@ -10,6 +10,7 @@
     "test": "npm run lint && npm run unit"
   },
   "license": "MIT",
+
   "dependencies": {
     "@abaplint/cli": "^2.102.32",
     "@abaplint/runtime": "^2.7.84",
