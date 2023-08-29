@@ -26,13 +26,15 @@ ENDCLASS.
 CLASS ltcl_tcp DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION MEDIUM FINAL.
 
   PRIVATE SECTION.
-    METHODS test1 FOR TESTING RAISING cx_static_check.
+    METHODS test_port IMPORTING iv_port TYPE string.
+    METHODS port80 FOR TESTING RAISING cx_static_check.
+    METHODS port443 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_tcp IMPLEMENTATION.
 
-  METHOD test1.
+  METHOD test_port.
     DATA lo_handler         TYPE REF TO lcl_handler.
     DATA li_client          TYPE REF TO if_apc_wsp_client.
     DATA ls_frame           TYPE if_abap_channel_types=>ty_apc_tcp_frame.
@@ -46,7 +48,7 @@ CLASS ltcl_tcp IMPLEMENTATION.
 
     li_client = cl_apc_tcp_client_manager=>create(
       i_host          = 'httpbin.org'
-      i_port          = '80'
+      i_port          = iv_port
       i_frame         = ls_frame
       i_event_handler = lo_handler ).
 
@@ -66,6 +68,14 @@ CLASS ltcl_tcp IMPLEMENTATION.
       act = cl_abap_codepage=>convert_from( lo_handler->message )
       exp = 'HTTP/1.1*' ).
 
+  ENDMETHOD.
+
+  METHOD port80.
+    test_port( '80' ).
+  ENDMETHOD.
+
+  METHOD port443.
+    test_port( '443' ).
   ENDMETHOD.
 
 ENDCLASS.
