@@ -604,6 +604,8 @@ CLASS ltcl_serialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT F
     METHODS escape_newline FOR TESTING RAISING cx_static_check.
     METHODS date_field FOR TESTING RAISING cx_static_check.
     METHODS time_field FOR TESTING RAISING cx_static_check.
+    METHODS numc_field FOR TESTING RAISING cx_static_check.
+    METHODS numc_field2 FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_serialize IMPLEMENTATION.
@@ -928,6 +930,36 @@ CLASS ltcl_serialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_json
       exp = '{"TIMS":"11:22:33"}' ).
+  ENDMETHOD.
+
+  METHOD numc_field.
+
+    TYPES: BEGIN OF ty_output,
+             period TYPE n LENGTH 3,
+             fixed  TYPE string,
+           END OF ty_output.
+    DATA lt_output TYPE STANDARD TABLE OF ty_output WITH DEFAULT KEY.
+    DATA lv_json TYPE string.
+
+    APPEND INITIAL LINE TO lt_output.
+    lv_json = /ui2/cl_json=>serialize( lt_output ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = '[{"PERIOD":0,"FIXED":""}]' ).
+
+  ENDMETHOD.
+
+  METHOD numc_field2.
+
+    DATA period  TYPE n LENGTH 3.
+    DATA lv_json TYPE string.
+
+    period = 2.
+    lv_json = /ui2/cl_json=>serialize( period ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = '2' ).
+
   ENDMETHOD.
 
 ENDCLASS.

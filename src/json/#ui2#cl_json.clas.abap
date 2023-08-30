@@ -82,6 +82,13 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             r_json = '"' && escape( val = data format = cl_abap_format=>e_json_string ) && '"'.
           WHEN cl_abap_typedescr=>typekind_int.
             r_json = |{ data }|.
+          WHEN cl_abap_typedescr=>typekind_num.
+            IF data = 0.
+              r_json = |0|.
+            ELSE.
+              r_json = |{ data }|.
+              SHIFT r_json LEFT DELETING LEADING '0'.
+            ENDIF.
           WHEN cl_abap_typedescr=>typekind_packed.
             IF ts_as_iso8601 = abap_true
                 AND ( lo_type->absolute_name = `\TYPE=TIMESTAMP`
