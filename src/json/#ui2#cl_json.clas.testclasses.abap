@@ -605,6 +605,7 @@ CLASS ltcl_serialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT F
     METHODS date_field FOR TESTING RAISING cx_static_check.
     METHODS time_field FOR TESTING RAISING cx_static_check.
     METHODS numc_field FOR TESTING RAISING cx_static_check.
+    METHODS numc_field2 FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_serialize IMPLEMENTATION.
@@ -945,6 +946,19 @@ CLASS ltcl_serialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_json
       exp = '[{"PERIOD":0,"FIXED":""}]' ).
+
+  ENDMETHOD.
+
+  METHOD numc_field2.
+
+    DATA period  TYPE n LENGTH 3.
+    DATA lv_json TYPE string.
+
+    period = 2.
+    lv_json = /ui2/cl_json=>serialize( period ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = '2' ).
 
   ENDMETHOD.
 
