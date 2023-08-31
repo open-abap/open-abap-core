@@ -381,10 +381,15 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD assert_subrc.
+    DATA lv_msg TYPE string.
     IF act <> exp.
+      lv_msg = msg.
+      IF lv_msg IS INITIAL.
+        lv_msg = |Expected sy-subrc to equal { exp }, got { act }|.
+      ENDIF.
       RAISE EXCEPTION TYPE kernel_cx_assert
         EXPORTING
-          msg = |Expected sy-subrc to equal { exp }, got { act }|.
+          msg = lv_msg.
     ENDIF.
   ENDMETHOD.
 
