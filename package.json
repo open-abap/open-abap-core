@@ -13,8 +13,8 @@
 
   "dependencies": {
     "@abaplint/cli": "^2.102.34",
-    "@abaplint/runtime": "^2.7.88",
+    "@abaplint/runtime": "^2.7.92",
     "@abaplint/database-sqlite": "^2.7.74",
-    "@abaplint/transpiler-cli": "^2.7.88"
+    "@abaplint/transpiler-cli": "^2.7.92"
   }
 }
