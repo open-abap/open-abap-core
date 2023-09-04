@@ -31,3 +31,4 @@ jobs:
     - run: docker run -d -p8080:80 kennethreitz/httpbin
     - run: npm install
     - run: npm run integration
+    - run: npm run performance
