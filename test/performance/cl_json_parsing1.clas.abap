@@ -10,7 +10,7 @@ CLASS cl_json_parsing1 IMPLEMENTATION.
     DATA lo_reader TYPE REF TO if_sxml_reader.
 
     lv_json = lv_json && '['.
-    DO 5000 TIMES.
+    DO 8000 TIMES.
       lv_json = lv_json && '{"abap": 2, "foo": "sdfs", "another": ""},'.
     ENDDO.
     lv_json = substring(
