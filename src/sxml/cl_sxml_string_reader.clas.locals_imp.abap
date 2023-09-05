@@ -223,6 +223,7 @@ ENDCLASS.
 
 CLASS lcl_open_node IMPLEMENTATION.
   METHOD constructor.
+* NOTE: this is optimized to be a singleton, must be non-mutable for it to work, in json parsing
     if_sxml_node~type = if_sxml_node=>co_nt_element_open.
     if_sxml_open_element~qname-name = name.
     mt_attributes = attributes.
@@ -260,6 +261,7 @@ ENDCLASS.
 
 CLASS lcl_value_node IMPLEMENTATION.
   METHOD constructor.
+* NOTE: this is optimized to be a singleton, must be non-mutable for it to work, in json parsing
     if_sxml_node~type = if_sxml_node=>co_nt_value.
     mv_value = value.
   ENDMETHOD.
@@ -307,6 +309,8 @@ CLASS lcl_reader IMPLEMENTATION.
     DATA lt_value TYPE HASHED TABLE OF ty_cache WITH UNIQUE KEY name.
     DATA ls_cache TYPE ty_cache.
 
+    FIELD-SYMBOLS <ls_cache> TYPE ty_cache.
+
     IF mv_json IS INITIAL.
       RETURN.
     ENDIF.
@@ -334,9 +338,9 @@ CLASS lcl_reader IMPLEMENTATION.
 
 * optimized by using singletons,
           IF lines( lt_attributes ) = 0.
-            READ TABLE lt_open INTO ls_cache WITH KEY name = ls_parsed-name.
+            READ TABLE lt_open ASSIGNING <ls_cache> WITH KEY name = ls_parsed-name.
             IF sy-subrc = 0.
-              li_node = ls_cache-ref.
+              li_node = <ls_cache>-ref.
             ELSE.
               CREATE OBJECT li_node TYPE lcl_open_node
                 EXPORTING
@@ -353,9 +357,9 @@ CLASS lcl_reader IMPLEMENTATION.
           ENDIF.
         WHEN if_sxml_node=>co_nt_element_close.
 * optimized by using singletons,
-          READ TABLE lt_close INTO ls_cache WITH KEY name = ls_parsed-name.
+          READ TABLE lt_close ASSIGNING <ls_cache> WITH KEY name = ls_parsed-name.
           IF sy-subrc = 0.
-            li_node = ls_cache-ref.
+            li_node = <ls_cache>-ref.
           ELSE.
             CREATE OBJECT li_node TYPE lcl_close_node
               EXPORTING
@@ -366,9 +370,9 @@ CLASS lcl_reader IMPLEMENTATION.
           ENDIF.
         WHEN if_sxml_node=>co_nt_value.
           IF strlen( ls_parsed-value ) <= 2.
-            READ TABLE lt_value INTO ls_cache WITH KEY name = ls_parsed-value.
+            READ TABLE lt_value ASSIGNING <ls_cache> WITH KEY name = ls_parsed-value.
             IF sy-subrc = 0.
-              li_node = ls_cache-ref.
+              li_node = <ls_cache>-ref.
             ELSE.
               CREATE OBJECT li_node TYPE lcl_value_node
                 EXPORTING
