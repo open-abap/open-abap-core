@@ -50,6 +50,7 @@ jobs:
         sparse-checkout: src
     - name: Performance Before
       run: |
+        ls
         git status
         npm install && npm run performance
         cp results.json ../../results_before.json
