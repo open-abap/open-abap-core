@@ -377,7 +377,7 @@ CLASS lcl_reader IMPLEMENTATION.
               CREATE OBJECT li_node TYPE lcl_value_node
                 EXPORTING
                   value = ls_parsed-value.
-              ls_cache-name = ls_parsed-name.
+              ls_cache-name = ls_parsed-value.
               ls_cache-ref = li_node.
               INSERT ls_cache INTO TABLE lt_value.
             ENDIF.
