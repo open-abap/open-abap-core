@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
 
 const before = JSON.parse(fs.readFileSync("results_before.json"));
-const after = JSON.parse(fs.writeFileSync("results_after.json"));
+const after = JSON.parse(fs.readFileSync("results_after.json"));
 
 let comment = "Performance test results:\n";
 
