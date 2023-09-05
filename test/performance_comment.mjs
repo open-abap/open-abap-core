@@ -23,5 +23,3 @@ comment += "\nSHA: " + process.env.GITHUB_SHA + "\n";
 console.dir(comment);
 
 fs.writeFileSync("comment-performance.txt", comment);
-
-fs.writeFileSync("body.txt", "Performance test results: sdf");
