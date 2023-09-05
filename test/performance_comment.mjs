@@ -14,7 +14,7 @@ for (const key of Object.keys(after)) {
   } else {
     delta += ":green_circle:";
   }
-  comment += "| " + key + " | " + before[key] + "ms | " + after[key] + "ms | " + delta + " |\n";
+  comment += "| `" + key + "` | " + before[key] + "ms | " + after[key] + "ms | " + delta + " |\n";
 }
 
 comment += "\nUpdated: " + new Date().toISOString() + "\n";
