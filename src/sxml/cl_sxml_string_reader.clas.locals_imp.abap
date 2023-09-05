@@ -11,19 +11,19 @@ CLASS lcl_json_parser DEFINITION.
 
     TYPES ty_nodes TYPE STANDARD TABLE OF ty_node WITH DEFAULT KEY.
 
-    METHODS
-      parse
-        IMPORTING iv_json TYPE string
-        RETURNING VALUE(rt_nodes) TYPE ty_nodes.
+    METHODS parse
+      IMPORTING
+        iv_json  TYPE string
+        it_nodes TYPE REF TO ty_nodes.
 
   PRIVATE SECTION.
-    DATA mt_nodes TYPE ty_nodes.
+    DATA mt_nodes TYPE REF TO ty_nodes.
 
     METHODS append
       IMPORTING
-        iv_type TYPE if_sxml_node=>node_type
-        iv_name TYPE string OPTIONAL
-        iv_key TYPE string OPTIONAL
+        iv_type  TYPE if_sxml_node=>node_type
+        iv_name  TYPE string OPTIONAL
+        iv_key   TYPE string OPTIONAL
         iv_value TYPE string OPTIONAL.
 
     METHODS traverse
@@ -70,18 +70,18 @@ CLASS lcl_json_parser IMPLEMENTATION.
           xml_offset = lv_xml_offset.
     ENDIF.
 
-    CLEAR mt_nodes.
+    mt_nodes = it_nodes.
+    CLEAR mt_nodes->*.
     traverse( lv_json ).
-    rt_nodes = mt_nodes.
   ENDMETHOD.
 
   METHOD append.
-    DATA ls_node LIKE LINE OF mt_nodes.
+    DATA ls_node LIKE LINE OF mt_nodes->*.
     ls_node-type = iv_type.
     ls_node-name = iv_name.
     ls_node-key = iv_key.
     ls_node-value = iv_value.
-    APPEND ls_node TO mt_nodes.
+    APPEND ls_node TO mt_nodes->*.
   ENDMETHOD.
 
   METHOD traverse.
@@ -216,7 +216,7 @@ CLASS lcl_open_node DEFINITION.
     METHODS constructor
       IMPORTING
         name       TYPE string
-        attributes TYPE if_sxml_attribute=>attributes.
+        attributes TYPE if_sxml_attribute=>attributes OPTIONAL.
   PRIVATE SECTION.
     DATA mt_attributes TYPE if_sxml_attribute=>attributes.
 ENDCLASS.
@@ -289,12 +289,24 @@ CLASS lcl_reader IMPLEMENTATION.
 
   METHOD initialize.
 
+    TYPES: BEGIN OF ty_cache,
+             name TYPE string,
+             ref  TYPE REF TO if_sxml_node,
+           END OF ty_cache.
+
     DATA lo_json       TYPE REF TO lcl_json_parser.
-    DATA lt_parsed     TYPE lcl_json_parser=>ty_nodes.
-    DATA ls_parsed     LIKE LINE OF lt_parsed.
+    DATA lt_parsed     TYPE REF TO lcl_json_parser=>ty_nodes.
+    DATA ls_parsed     TYPE lcl_json_parser=>ty_node.
     DATA li_node       TYPE REF TO if_sxml_node.
     DATA lt_attributes TYPE if_sxml_attribute=>attributes.
     DATA li_attribute  TYPE REF TO if_sxml_attribute.
+
+    DATA lt_close TYPE HASHED TABLE OF ty_cache WITH UNIQUE KEY name.
+    DATA lt_open TYPE HASHED TABLE OF ty_cache WITH UNIQUE KEY name.
+    DATA lt_value TYPE HASHED TABLE OF ty_cache WITH UNIQUE KEY name.
+    DATA ls_cache TYPE ty_cache.
+
+    FIELD-SYMBOLS <ls_cache> TYPE ty_cache.
 
     IF mv_json IS INITIAL.
       RETURN.
@@ -302,10 +314,13 @@ CLASS lcl_reader IMPLEMENTATION.
 
 * todo, for now this only handles json, but the class is really meant for XML
     CREATE OBJECT lo_json.
-    lt_parsed = lo_json->parse( mv_json ).
+    CREATE DATA lt_parsed.
+    lo_json->parse(
+      iv_json  = mv_json
+      it_nodes = lt_parsed ).
     CLEAR lo_json. " release memory
 
-    LOOP AT lt_parsed INTO ls_parsed.
+    LOOP AT lt_parsed->* INTO ls_parsed.
       CASE ls_parsed-type.
         WHEN if_sxml_node=>co_nt_element_open.
           CLEAR lt_attributes.
@@ -318,11 +333,13 @@ CLASS lcl_reader IMPLEMENTATION.
             APPEND li_attribute TO lt_attributes.
           ENDIF.
 
+* optimized by using singletons,
           CREATE OBJECT li_node TYPE lcl_open_node
             EXPORTING
-              name = ls_parsed-name
+              name       = ls_parsed-name
               attributes = lt_attributes.
         WHEN if_sxml_node=>co_nt_element_close.
+* optimized by using singletons,
           CREATE OBJECT li_node TYPE lcl_close_node
             EXPORTING
               name = ls_parsed-name.

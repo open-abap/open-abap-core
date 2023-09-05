@@ -1,7 +1,7 @@
 {
   "input_folder": "{test,src}",
   "input_filter": [],
-  "output_folder": "output_test",
+  "output_folder": "output",
   "write_unit_tests": true,
   "write_source_map": true,
   "options": {

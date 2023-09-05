@@ -5,6 +5,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
   unit:
@@ -31,3 +32,59 @@ jobs:
     - run: docker run -d -p8080:80 kennethreitz/httpbin
     - run: npm install
     - run: npm run integration
+  performance:
+    needs: unit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+    - name: Performance After
+      run: |
+        npm install && npm run performance
+        cp results.json results_after.json
+    - uses: actions/checkout@v3
+      with:
+        ref: main
+        path: before
+    - name: Performance Before
+      run: |
+        rm -rf src
+        cp -rf before/src src
+        git status
+        npm install && npm run performance
+        cp results.json results_before.json
+
+    - name: cat and build comment
+      run: |
+        cat results_after.json
+        cat results_before.json
+        node ./test/performance_comment.mjs
+
+    - uses: jwalton/gh-find-current-pr@v1
+      id: findPr
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+    - run: echo ${{ steps.findPr.outputs.pr }}
+
+    - name: Find Comment
+      if: steps.findPr.outputs.pr != ''
+      uses: peter-evans/find-comment@v2
+      id: fc
+      with:
+        issue-number: '${{steps.findPr.outputs.pr}}'
+        body-includes: Performance test results
+
+    - run: echo ${{ steps.fc.outputs.comment-id }}
+
+    - name: Create comment
+      if: steps.findPr.outputs.pr != ''
+      uses: peter-evans/create-or-update-comment@v3
+      id: create-comment
+      with:
+        issue-number: '${{steps.findPr.outputs.pr}}'
+        edit-mode: replace
+        comment-id: '${{steps.fc.outputs.comment-id}}'
+        body-path: comment-performance.txt

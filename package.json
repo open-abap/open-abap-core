@@ -6,15 +6,16 @@
   "scripts": {
     "lint": "abaplint",
     "unit": "rm -rf output && abap_transpile && echo RUNNING && node --expose-gc output/index.mjs && echo OK",
-    "integration": "rm -rf output_test && abap_transpile ./abap_transpile_test.json && node --expose-gc output_test/index.mjs",
+    "performance": "rm -rf output && abap_transpile ./abap_transpile_test.json && node --expose-gc test/performance.mjs",
+    "integration": "rm -rf output && abap_transpile ./abap_transpile_test.json && node --expose-gc output/index.mjs",
     "test": "npm run lint && npm run unit"
   },
   "license": "MIT",
 
   "dependencies": {
     "@abaplint/cli": "^2.102.34",
-    "@abaplint/runtime": "^2.7.88",
+    "@abaplint/runtime": "^2.7.92",
     "@abaplint/database-sqlite": "^2.7.74",
-    "@abaplint/transpiler-cli": "^2.7.88"
+    "@abaplint/transpiler-cli": "^2.7.92"
   }
 }
