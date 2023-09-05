@@ -242,6 +242,7 @@ ENDCLASS.
 
 CLASS lcl_close_node IMPLEMENTATION.
   METHOD constructor.
+* NOTE: this is optimized to be a singleton, must be non-mutable for it to work, in json parsing
     if_sxml_node~type = if_sxml_node=>co_nt_element_close.
     if_sxml_close_element~qname-name = name.
   ENDMETHOD.
@@ -289,12 +290,20 @@ CLASS lcl_reader IMPLEMENTATION.
 
   METHOD initialize.
 
+    TYPES: BEGIN OF ty_close,
+             name TYPE string,
+             ref  TYPE REF TO if_sxml_node,
+           END OF ty_close.
+
     DATA lo_json       TYPE REF TO lcl_json_parser.
     DATA lt_parsed     TYPE REF TO lcl_json_parser=>ty_nodes.
     DATA ls_parsed     TYPE lcl_json_parser=>ty_node.
     DATA li_node       TYPE REF TO if_sxml_node.
     DATA lt_attributes TYPE if_sxml_attribute=>attributes.
     DATA li_attribute  TYPE REF TO if_sxml_attribute.
+
+    DATA lt_close TYPE HASHED TABLE OF ty_close WITH UNIQUE KEY name.
+    DATA ls_close LIKE LINE OF lt_close.
 
     IF mv_json IS INITIAL.
       RETURN.
@@ -326,9 +335,15 @@ CLASS lcl_reader IMPLEMENTATION.
               name = ls_parsed-name
               attributes = lt_attributes.
         WHEN if_sxml_node=>co_nt_element_close.
-          CREATE OBJECT li_node TYPE lcl_close_node
-            EXPORTING
-              name = ls_parsed-name.
+* optimized by using singletons,
+          READ TABLE lt_close INTO ls_close WITH KEY name = ls_parsed-name.
+          IF sy-subrc = 0.
+            li_node = ls_close-ref.
+          ELSE.
+            CREATE OBJECT li_node TYPE lcl_close_node
+              EXPORTING
+                name = ls_parsed-name.
+          ENDIF.
         WHEN if_sxml_node=>co_nt_value.
           CREATE OBJECT li_node TYPE lcl_value_node
             EXPORTING
