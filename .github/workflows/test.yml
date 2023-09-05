@@ -31,4 +31,26 @@ jobs:
     - run: docker run -d -p8080:80 kennethreitz/httpbin
     - run: npm install
     - run: npm run integration
-    - run: npm run performance
+  performance:
+    needs: unit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+    - name: Performance
+      run: |
+        npm install && npm run performance
+        cp results.json ../../results_after.json
+        git restore --source=main --staged --worktree -- src
+        git status
+        npm install && npm run performance
+        cp results.json ../../results_before.json
+    - name: cat
+      run: |
+        cat ../../results_after.json
+        cat ../../results_before.json

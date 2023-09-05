@@ -3,3 +3,4 @@ node_modules
 package-lock.json
 output_test
 foo.zip
+results.json
