@@ -5,7 +5,7 @@ CLASS cl_salv_column DEFINITION PUBLIC.
     METHODS set_medium_text IMPORTING value TYPE string.
     METHODS set_long_text IMPORTING value TYPE string.
     METHODS set_output_length IMPORTING value TYPE any.
-    METHODS set_sign IMPORTING value TYPE any.
+    METHODS set_sign IMPORTING value TYPE any OPTIONAL.
 ENDCLASS.
 
 CLASS cl_salv_column IMPLEMENTATION.
