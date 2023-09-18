@@ -4,6 +4,7 @@ CLASS cl_system_uuid DEFINITION PUBLIC.
     INTERFACES if_system_uuid_static.
 
     ALIASES create_uuid_c32_static FOR if_system_uuid_static~create_uuid_c32.
+    ALIASES create_uuid_x16_static FOR if_system_uuid_static~create_uuid_x16.
 ENDCLASS.
 
 CLASS cl_system_uuid IMPLEMENTATION.
@@ -22,6 +23,12 @@ CLASS cl_system_uuid IMPLEMENTATION.
     ASSERT version = 4.
     WRITE '@KERNEL if (cl_system_uuid.CRYPTO === undefined) cl_system_uuid.CRYPTO = await import("crypto");'.
     WRITE '@KERNEL uuid.set(cl_system_uuid.CRYPTO.randomUUID());'.
+  ENDMETHOD.
+
+  METHOD if_system_uuid_static~create_uuid_c22.
+    WRITE '@KERNEL if (cl_system_uuid.CRYPTO === undefined) cl_system_uuid.CRYPTO = await import("crypto");'.
+* yea, well, hmm,
+    WRITE '@KERNEL uuid.set(cl_system_uuid.CRYPTO.randomBytes(11).toString("hex"));'.
   ENDMETHOD.
 
 ENDCLASS.

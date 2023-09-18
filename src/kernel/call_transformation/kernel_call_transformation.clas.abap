@@ -92,16 +92,30 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     IF lv_result = abap_true.
       lv_result = '<?xml version="1.0" encoding="utf-16"?><asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0"><asx:values>'.
       CREATE OBJECT lo_data_to_xml.
-      WRITE '@KERNEL for (const name in INPUT.source) {'.
-      WRITE '@KERNEL   lv_name.set(name);'.
-      WRITE '@KERNEL   if (INPUT.source[name].constructor.name === "FieldSymbol") {'.
-      WRITE '@KERNEL     result.assign(INPUT.source[name].getPointer());'.
-      WRITE '@KERNEL   } else {'.
-      WRITE '@KERNEL     result.assign(INPUT.source[name]);'.
-      WRITE '@KERNEL   }'.
+      WRITE '@KERNEL if (INPUT.source.constructor.name === "Object") {'.
+      WRITE '@KERNEL   for (const name in INPUT.source) {'.
+      WRITE '@KERNEL     lv_name.set(name);'.
+      WRITE '@KERNEL     if (INPUT.source[name].constructor.name === "FieldSymbol") {'.
+      WRITE '@KERNEL       result.assign(INPUT.source[name].getPointer());'.
+      WRITE '@KERNEL     } else {'.
+      WRITE '@KERNEL       result.assign(INPUT.source[name]);'.
+      WRITE '@KERNEL     }'.
       lv_result = lv_result && lo_data_to_xml->run(
         iv_name = to_upper( lv_name )
         iv_ref  = result ).
+      WRITE '@KERNEL   }'.
+      WRITE '@KERNEL } else if (INPUT.source.constructor.name === "Table") {'.
+* dynamic input via ABAP_TRANS_SRCBIND_TAB
+      WRITE '@KERNEL   for (const row of INPUT.source.array()) {'.
+*      WRITE '@KERNEL     console.dir(row);'.
+      WRITE '@KERNEL     lv_name.set(row.get().name.get());'.
+      WRITE '@KERNEL     result.assign(row.get().value.dereference());'.
+      lv_result = lv_result && lo_data_to_xml->run(
+        iv_name = to_upper( lv_name )
+        iv_ref  = result ).
+      WRITE '@KERNEL   }'.
+      WRITE '@KERNEL } else {'.
+      ASSERT 1 = 'invalid input'.
       WRITE '@KERNEL }'.
 
       lv_result = lv_result &&

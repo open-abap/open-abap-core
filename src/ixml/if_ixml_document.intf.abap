@@ -1,6 +1,8 @@
 INTERFACE if_ixml_document PUBLIC.
   INTERFACES if_ixml_node.
 
+  ALIASES create_filter_name_ns FOR if_ixml_node~create_filter_name_ns.
+
   METHODS:
     set_encoding
       IMPORTING
@@ -8,6 +10,9 @@ INTERFACE if_ixml_document PUBLIC.
     set_standalone
       IMPORTING
         standalone TYPE abap_bool,
+    get_standalone
+      RETURNING
+        VALUE(rval) TYPE abap_bool,
     set_namespace_prefix
       IMPORTING
         prefix TYPE string,
@@ -25,8 +30,9 @@ INTERFACE if_ixml_document PUBLIC.
         VALUE(element) TYPE REF TO if_ixml_attribute,
     create_element_ns
       IMPORTING
-        name TYPE string
+        name   TYPE string
         prefix TYPE string OPTIONAL
+        uri    TYPE string OPTIONAL
       RETURNING
         VALUE(element) TYPE REF TO if_ixml_element,
     create_element
@@ -35,7 +41,7 @@ INTERFACE if_ixml_document PUBLIC.
       RETURNING
         VALUE(element) TYPE REF TO if_ixml_element,
     create_iterator_filtered
-      IMPORTING input TYPE any
+      IMPORTING filter TYPE any
       RETURNING VALUE(val) TYPE REF TO if_ixml_node_iterator,
     create_filter_and
       IMPORTING
@@ -46,7 +52,7 @@ INTERFACE if_ixml_document PUBLIC.
     create_iterator
       RETURNING VALUE(rval) TYPE REF TO if_ixml_node_iterator,
     create_filter_node_type
-      IMPORTING typ TYPE string
+      IMPORTING node_types TYPE i
       RETURNING VALUE(val) TYPE REF TO if_ixml_node_filter,
     create_simple_element_ns
       IMPORTING
@@ -99,4 +105,8 @@ INTERFACE if_ixml_document PUBLIC.
       RETURNING VALUE(val) TYPE REF TO if_ixml_node_collection,
     get_root RETURNING VALUE(node) TYPE REF TO if_ixml_node,
     get_root_element RETURNING VALUE(root) TYPE REF TO if_ixml_element.
+
+  METHODS set_declaration
+    IMPORTING
+      declaration TYPE abap_bool.
 ENDINTERFACE.

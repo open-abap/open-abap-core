@@ -22,11 +22,31 @@ CLASS cl_message_helper DEFINITION PUBLIC.
       EXPORTING
         t100key TYPE scx_t100key
         textid  TYPE sotr_conc.
+
+    CLASS-METHODS get_otr_text_raw
+      IMPORTING
+        textid TYPE sotr_conc
+      EXPORTING
+        result TYPE string.
+
+    CLASS-METHODS replace_text_params
+      IMPORTING
+        obj    TYPE REF TO object
+      CHANGING
+        result TYPE string.
   PRIVATE SECTION.
     CONSTANTS gc_fallback TYPE string VALUE 'An exception was raised.'.
 ENDCLASS.
 
 CLASS cl_message_helper IMPLEMENTATION.
+
+  METHOD get_otr_text_raw.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD replace_text_params.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD get_text_for_message.
 
@@ -72,18 +92,38 @@ CLASS cl_message_helper IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD set_msg_vars_for_clike.
+
+    DATA lv_char200 TYPE c LENGTH 200.
+
+    " move to char200 to avoid checking out of bound
+    lv_char200 = text.
+
     sy-msgid = '00'.
     sy-msgno = '001'.
-    sy-msgv1 = text.
-    IF strlen( text ) > 50.
-      sy-msgv2 = text+50.
+
+    sy-msgv1 = lv_char200.
+    IF lv_char200+49(1) = space.
+      lv_char200 = lv_char200+49.
+    ELSE.
+      lv_char200 = text+50.
     ENDIF.
-    IF strlen( text ) > 100.
-      sy-msgv3 = text+100.
+
+    sy-msgv2 = lv_char200.
+    IF lv_char200+49(1) = space.
+      lv_char200 = lv_char200+49.
+    ELSE.
+      lv_char200 = lv_char200+50.
     ENDIF.
-    IF strlen( text ) > 150.
-      sy-msgv4 = text+150.
+
+    sy-msgv3 = lv_char200.
+    IF lv_char200+49(1) = space.
+      lv_char200 = lv_char200+49.
+    ELSE.
+      lv_char200 = lv_char200+50.
     ENDIF.
+
+    sy-msgv4 = lv_char200.
+
   ENDMETHOD.
 
   METHOD check_msg_kind.

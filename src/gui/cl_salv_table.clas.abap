@@ -15,10 +15,13 @@ CLASS cl_salv_table DEFINITION PUBLIC.
     METHODS set_selection_mode IMPORTING val TYPE i.
     METHODS get_selected_rows RETURNING VALUE(rows) TYPE ty_rows.
     METHODS close_screen.
-    METHODS refresh.
+    METHODS refresh IMPORTING refresh_mode TYPE any OPTIONAL.
     METHODS display.
     METHODS is_offline RETURNING VALUE(value) TYPE abap_bool.
     METHODS get_metadata.
+    METHODS get_layout
+      RETURNING
+        VALUE(value) TYPE REF TO cl_salv_layout.
     METHODS set_screen_status
       IMPORTING
         pfstatus      TYPE any
@@ -45,11 +48,25 @@ CLASS cl_salv_table DEFINITION PUBLIC.
     METHODS get_filters
       RETURNING
         VALUE(foo) TYPE REF TO cl_salv_filters.
+
+    METHODS to_xml
+      IMPORTING
+        xml_type   TYPE any
+      RETURNING
+        VALUE(xml) TYPE xstring.
 ENDCLASS.
 
 CLASS cl_salv_table IMPLEMENTATION.
 
   METHOD set_selected_rows.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get_layout.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD to_xml.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 

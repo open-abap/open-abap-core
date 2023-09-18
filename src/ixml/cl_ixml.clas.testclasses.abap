@@ -13,7 +13,6 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS render_escape FOR TESTING RAISING cx_static_check.
     METHODS render_nested FOR TESTING RAISING cx_static_check.
     METHODS render_document_namespace_pref FOR TESTING RAISING cx_static_check.
-
     METHODS parse_basic FOR TESTING RAISING cx_static_check.
     METHODS parse_empty FOR TESTING RAISING cx_static_check.
     METHODS parse_namespace FOR TESTING RAISING cx_static_check.
@@ -36,6 +35,13 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_and_render FOR TESTING RAISING cx_static_check.
     METHODS parse_close_tag FOR TESTING RAISING cx_static_check.
     METHODS parse_more FOR TESTING RAISING cx_static_check.
+    METHODS get_first_child FOR TESTING RAISING cx_static_check.
+    METHODS create_ostream_xstring FOR TESTING RAISING cx_static_check.
+    METHODS fix_children FOR TESTING RAISING cx_static_check.
+    METHODS empty_root_element FOR TESTING RAISING cx_static_check.
+    METHODS another_children FOR TESTING RAISING cx_static_check.
+    METHODS render_standalone FOR TESTING RAISING cx_static_check.
+    METHODS render_namespaced_attr FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -744,6 +750,227 @@ CLASS ltcl_xml IMPLEMENTATION.
         cl_abap_unit_assert=>fail( ).
       ENDIF.
     ENDDO.
+
+  ENDMETHOD.
+
+  METHOD get_first_child.
+
+    DATA lv_xml  TYPE string.
+    DATA li_doc  TYPE REF TO if_ixml_document.
+    DATA li_node TYPE REF TO if_ixml_node.
+
+
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?><DATA><FOO1>2</FOO1><FOO2/><FOO3/></DATA>|.
+    li_doc = parse( lv_xml ).
+    li_node = li_doc->get_first_child( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_node->get_name( )
+      exp = 'DATA' ).
+
+  ENDMETHOD.
+
+  METHOD create_ostream_xstring.
+    DATA li_ostream  TYPE REF TO if_ixml_ostream.
+    DATA li_renderer TYPE REF TO if_ixml_renderer.
+    DATA lv_xml      TYPE string.
+    DATA lv_xstr     TYPE xstring.
+    DATA li_doc      TYPE REF TO if_ixml_document.
+
+
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?><DATA><FOO1>2</FOO1></DATA>|.
+    li_doc = parse( lv_xml ).
+
+    li_ostream = mi_ixml->create_stream_factory( )->create_ostream_xstring( lv_xstr ).
+    li_renderer = mi_ixml->create_renderer(
+      ostream  = li_ostream
+      document = li_doc ).
+    li_renderer->render( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_xstr
+      exp = '3C3F786D6C2076657273696F6E3D22312E302220656E636F64696E673D227574662D38223F3E3C444154413E3C464F4F313E323C2F464F4F313E3C2F444154413E' ).
+  ENDMETHOD.
+
+  METHOD fix_children.
+
+    DATA lo_document      TYPE REF TO if_ixml_document.
+    DATA lo_element       TYPE REF TO if_ixml_element.
+    DATA lo_encoding      TYPE REF TO if_ixml_encoding.
+    DATA lo_ixml          TYPE REF TO if_ixml.
+    DATA lo_ostream       TYPE REF TO if_ixml_ostream.
+    DATA lo_renderer      TYPE REF TO if_ixml_renderer.
+    DATA lo_root          TYPE REF TO if_ixml_element.
+    DATA lo_streamfactory TYPE REF TO if_ixml_stream_factory.
+    DATA lv_string        TYPE string.
+
+    lo_ixml = cl_ixml=>create( ).
+
+    lo_encoding = lo_ixml->create_encoding(
+      byte_order    = if_ixml_encoding=>co_platform_endian
+      character_set = 'utf-8' ).
+    lo_document = lo_ixml->create_document( ).
+    lo_document->set_encoding( lo_encoding ).
+    lo_document->set_standalone( abap_true ).
+
+    lo_root = lo_document->create_simple_element(
+      name   = 'TopName'
+      parent = lo_document ).
+    lo_root->set_attribute_ns(
+      name  = 'xmlns'
+      value = 'Namespace' ).
+
+    lo_element = lo_document->create_simple_element(
+      name   = 'Hello'
+      parent = lo_document ).
+    lo_element->set_attribute_ns(
+      name  = 'Namespace'
+      value = 'World' ).
+    lo_root->append_child( lo_element ).
+
+    lo_streamfactory = lo_ixml->create_stream_factory( ).
+    lo_ostream = lo_streamfactory->create_ostream_cstring( lv_string ).
+    lo_renderer = lo_ixml->create_renderer(
+      ostream  = lo_ostream
+      document = lo_document ).
+    lo_renderer->render( ).
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_string
+      exp = '*<TopName xmlns="Namespace"><Hello Namespace="World"/></TopName>' ).
+
+  ENDMETHOD.
+
+  METHOD empty_root_element.
+
+    DATA lo_document TYPE REF TO if_ixml_document.
+    DATA lo_element  TYPE REF TO if_ixml_element.
+    DATA lo_node     TYPE REF TO if_ixml_node.
+    DATA lo_ixml     TYPE REF TO if_ixml.
+
+    lo_ixml = cl_ixml=>create( ).
+
+    lo_document = lo_ixml->create_document( ).
+
+    lo_node ?= lo_document->get_root( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_node->get_name( )
+      exp = '#document' ).
+
+    lo_element ?= lo_document->get_root_element( ).
+    cl_abap_unit_assert=>assert_initial( lo_element ).
+
+  ENDMETHOD.
+
+  METHOD another_children.
+    DATA lo_document      TYPE REF TO if_ixml_document.
+    DATA lo_element       TYPE REF TO if_ixml_element.
+    DATA lo_encoding      TYPE REF TO if_ixml_encoding.
+    DATA lo_ixml          TYPE REF TO if_ixml.
+    DATA lo_ostream       TYPE REF TO if_ixml_ostream.
+    DATA lo_renderer      TYPE REF TO if_ixml_renderer.
+    DATA lo_root          TYPE REF TO if_ixml_element.
+    DATA lo_streamfactory TYPE REF TO if_ixml_stream_factory.
+    DATA lo_top           TYPE REF TO if_ixml_element.
+    DATA lv_string        TYPE string.
+
+    lo_ixml = cl_ixml=>create( ).
+
+    lo_encoding = lo_ixml->create_encoding(
+      byte_order    = if_ixml_encoding=>co_platform_endian
+      character_set = 'utf-8' ).
+    lo_document = lo_ixml->create_document( ).
+    lo_document->set_encoding( lo_encoding ).
+    lo_document->set_standalone( abap_true ).
+
+    lo_root = lo_document->create_simple_element(
+      name   = 'TopName'
+      parent = lo_document ).
+    lo_root->set_attribute_ns(
+      name  = 'xmlns'
+      value = 'Namespace' ).
+
+    lo_top ?= lo_document->get_root_element( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_top->get_name( )
+      exp = 'TopName' ).
+
+    lo_document->create_simple_element_ns(
+      name   = 'ThemeElements'
+      parent = lo_top ).
+
+    lo_streamfactory = lo_ixml->create_stream_factory( ).
+    lo_ostream = lo_streamfactory->create_ostream_cstring( lv_string ).
+    lo_renderer = lo_ixml->create_renderer(
+      ostream  = lo_ostream
+      document = lo_document ).
+    lo_renderer->render( ).
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_string
+      exp = '*<TopName xmlns="Namespace"><ThemeElements/></TopName>' ).
+  ENDMETHOD.
+
+  METHOD render_standalone.
+
+    DATA lo_document      TYPE REF TO if_ixml_document.
+    DATA lo_ixml          TYPE REF TO if_ixml.
+    DATA lo_ostream       TYPE REF TO if_ixml_ostream.
+    DATA lo_renderer      TYPE REF TO if_ixml_renderer.
+    DATA lo_streamfactory TYPE REF TO if_ixml_stream_factory.
+    DATA lv_string        TYPE string.
+
+    lo_ixml = cl_ixml=>create( ).
+
+    lo_document = lo_ixml->create_document( ).
+    lo_document->set_standalone( abap_true ).
+
+    lo_streamfactory = lo_ixml->create_stream_factory( ).
+    lo_ostream = lo_streamfactory->create_ostream_cstring( lv_string ).
+    lo_renderer = lo_ixml->create_renderer(
+      ostream  = lo_ostream
+      document = lo_document ).
+    lo_renderer->render( ).
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_string
+      exp = '* standalone="yes"*' ).
+
+  ENDMETHOD.
+
+  METHOD render_namespaced_attr.
+
+    DATA lo_document      TYPE REF TO if_ixml_document.
+    DATA lo_ixml          TYPE REF TO if_ixml.
+    DATA lo_ostream       TYPE REF TO if_ixml_ostream.
+    DATA lo_renderer      TYPE REF TO if_ixml_renderer.
+    DATA lo_streamfactory TYPE REF TO if_ixml_stream_factory.
+    DATA lo_root          TYPE REF TO if_ixml_element.
+    DATA lv_string        TYPE string.
+
+    lo_ixml = cl_ixml=>create( ).
+
+    lo_document = lo_ixml->create_document( ).
+    lo_document->set_standalone( abap_true ).
+
+    lo_root = lo_document->create_simple_element(
+      name   = 'TopName'
+      parent = lo_document ).
+    lo_root->set_attribute_ns(
+      name   = 'name'
+      prefix = 'prefix'
+      value  = 'Namespace' ).
+
+    lo_streamfactory = lo_ixml->create_stream_factory( ).
+    lo_ostream = lo_streamfactory->create_ostream_cstring( lv_string ).
+    lo_renderer = lo_ixml->create_renderer(
+      ostream  = lo_ostream
+      document = lo_document ).
+    lo_renderer->render( ).
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_string
+      exp = '*prefix:name="Namespace"*' ).
 
   ENDMETHOD.
 

@@ -35,4 +35,16 @@ INTERFACE if_http_utility PUBLIC.
     RETURNING
       VALUE(string) TYPE string.
 
+  CLASS-METHODS decode_base64
+    IMPORTING
+      encoded        TYPE string
+    RETURNING
+      VALUE(decoded) TYPE string.
+
+  CLASS-METHODS normalize_url
+    IMPORTING
+      unnormalized      TYPE string
+    RETURNING
+      VALUE(normalized) TYPE string.
+
 ENDINTERFACE.

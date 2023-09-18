@@ -2,6 +2,11 @@ CLASS cl_http_entity DEFINITION PUBLIC CREATE PRIVATE.
   PUBLIC SECTION.
     INTERFACES if_http_response.
     INTERFACES if_http_request.
+
+    ALIASES set_header_field FOR if_http_entity~set_header_field.
+    ALIASES append_cdata FOR if_http_entity~append_cdata.
+  PROTECTED SECTION.
+    DATA m_last_error TYPE i.
   PRIVATE SECTION.
     DATA mv_status       TYPE i.
     DATA mv_reason       TYPE string.
@@ -149,7 +154,13 @@ CLASS cl_http_entity IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_entity~set_header_fields.
-    ASSERT 1 = 'todo'.
+* todo, does this method clear the existing fields?
+    DATA ls_field LIKE LINE OF fields.
+    LOOP AT fields INTO ls_field.
+      if_http_entity~set_header_field(
+        name  = ls_field-name
+        value = ls_field-value ).
+    ENDLOOP.
   ENDMETHOD.
 
   METHOD if_http_entity~suppress_content_type.
@@ -207,7 +218,7 @@ CLASS cl_http_entity IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_entity~get_content_type.
-    val = if_http_entity~get_header_field( 'content-type' ).
+    content_type = if_http_entity~get_header_field( 'content-type' ).
   ENDMETHOD.
 
   METHOD if_http_entity~set_content_type.

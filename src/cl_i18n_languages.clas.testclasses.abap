@@ -3,10 +3,13 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS sap1_to_sap2_e FOR TESTING RAISING cx_root.
     METHODS sap1_to_sap2_d FOR TESTING RAISING cx_root.
     METHODS sap1_to_sap2_k FOR TESTING RAISING cx_root.
+    METHODS sap1_to_sap2_not_found FOR TESTING RAISING cx_root.
 
     METHODS sap2_to_iso_en FOR TESTING RAISING cx_root.
     METHODS sap2_to_iso_de FOR TESTING RAISING cx_root.
     METHODS sap2_to_iso_da FOR TESTING RAISING cx_root.
+
+    METHODS sap2_to_sap1_not_found FOR TESTING RAISING cx_root.
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
@@ -87,4 +90,51 @@ CLASS ltcl_test IMPLEMENTATION.
       act = lv_country
       exp = '' ).
   ENDMETHOD.
+
+  METHOD sap1_to_sap2_not_found.
+
+    DATA lv_laiso TYPE laiso.
+    DATA lv_subrc TYPE sy-subrc.
+
+    cl_i18n_languages=>sap1_to_sap2(
+      EXPORTING
+        im_lang_sap1  = space
+      RECEIVING
+        re_lang_sap2  = lv_laiso
+      EXCEPTIONS
+        no_assignment = 1
+        OTHERS        = 2 ).
+    lv_subrc = sy-subrc.
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_subrc
+      exp = 1 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_laiso
+      exp = '' ).
+
+  ENDMETHOD.
+
+  METHOD sap2_to_sap1_not_found.
+
+    DATA lv_spras TYPE spras.
+    DATA lv_subrc TYPE sy-subrc.
+
+    cl_i18n_languages=>sap2_to_sap1(
+      EXPORTING
+        im_lang_sap2  = space
+      RECEIVING
+        re_lang_sap1  = lv_spras
+      EXCEPTIONS
+        no_assignment = 1
+        OTHERS        = 2 ).
+    lv_subrc = sy-subrc.
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_subrc
+      exp = 1 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_spras
+      exp = '' ).
+
+  ENDMETHOD.
+
 ENDCLASS.

@@ -21,12 +21,99 @@ CLASS ltcl_deserialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
     METHODS deserialize_to_ref_bool FOR TESTING RAISING cx_static_check.
     METHODS deserialize_str FOR TESTING RAISING cx_static_check.
     METHODS deserialize_int FOR TESTING RAISING cx_static_check.
+    METHODS deserialize_empty_date FOR TESTING RAISING cx_static_check.
+    METHODS deserialize_empty_time FOR TESTING RAISING cx_static_check.
+    METHODS deserialize_date1 FOR TESTING RAISING cx_static_check.
+    METHODS deserialize_time1 FOR TESTING RAISING cx_static_check.
+    METHODS deserialize_time2 FOR TESTING RAISING cx_static_check.
     METHODS deserialize_array_ref FOR TESTING RAISING cx_static_check.
     METHODS more_array FOR TESTING RAISING cx_static_check.
+    METHODS deserialize_float_to_ref FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_deserialize IMPLEMENTATION.
+
+  METHOD deserialize_date1.
+    DATA: BEGIN OF ls_data,
+            date TYPE d,
+          END OF ls_data.
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = '{"date": "2023-11-11"}'
+      CHANGING
+        data = ls_data ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_data-date
+      exp = '20231111' ).
+  ENDMETHOD.
+
+  METHOD deserialize_time1.
+    DATA: BEGIN OF ls_data,
+        time TYPE t,
+      END OF ls_data.
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = '{"time": "11:22:33"}'
+      CHANGING
+        data = ls_data ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_data-time
+      exp = '112233' ).
+  ENDMETHOD.
+
+  METHOD deserialize_time2.
+    DATA: BEGIN OF ls_data,
+        time TYPE t,
+      END OF ls_data.
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = '{"time": "112233"}'
+      CHANGING
+        data = ls_data ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_data-time
+      exp = '112233' ).
+  ENDMETHOD.
+
+  METHOD deserialize_empty_date.
+
+    DATA: BEGIN OF ls_data,
+            date TYPE d,
+          END OF ls_data.
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = '{}'
+      CHANGING
+        data = ls_data ).
+
+    cl_abap_unit_assert=>assert_initial( ls_data-date ).
+
+  ENDMETHOD.
+
+  METHOD deserialize_empty_time.
+
+    DATA: BEGIN OF ls_data,
+            time TYPE t,
+          END OF ls_data.
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = '{}'
+      CHANGING
+        data = ls_data ).
+
+    cl_abap_unit_assert=>assert_initial( ls_data-time ).
+
+  ENDMETHOD.
+
 
   METHOD parse_abap_true.
     DATA: BEGIN OF stru,
@@ -459,6 +546,31 @@ CLASS ltcl_deserialize IMPLEMENTATION.
 
   ENDMETHOD.
 
+  METHOD deserialize_float_to_ref.
+    DATA lr_actual TYPE REF TO data.
+    DATA lv_json   TYPE string.
+
+    FIELD-SYMBOLS <any> TYPE any.
+
+    lv_json = '{"foo":-0.3333}'.
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = lv_json
+      CHANGING
+        data = lr_actual ).
+
+    cl_abap_unit_assert=>assert_not_initial( lr_actual ).
+    ASSIGN lr_actual->* TO <any>.
+    cl_abap_unit_assert=>assert_subrc( ).
+    ASSIGN COMPONENT 'FOO' OF STRUCTURE <any> TO <any>.
+    cl_abap_unit_assert=>assert_subrc( ).
+    ASSIGN <any>->* TO <any>.
+    cl_abap_unit_assert=>assert_equals(
+      act = <any>
+      exp = '-0.3333' ).
+  ENDMETHOD.
+
 ENDCLASS.
 
 *****************************************************************************************
@@ -492,6 +604,8 @@ CLASS ltcl_serialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT F
     METHODS escape_newline FOR TESTING RAISING cx_static_check.
     METHODS date_field FOR TESTING RAISING cx_static_check.
     METHODS time_field FOR TESTING RAISING cx_static_check.
+    METHODS numc_field FOR TESTING RAISING cx_static_check.
+    METHODS numc_field2 FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_serialize IMPLEMENTATION.
@@ -816,6 +930,36 @@ CLASS ltcl_serialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_json
       exp = '{"TIMS":"11:22:33"}' ).
+  ENDMETHOD.
+
+  METHOD numc_field.
+
+    TYPES: BEGIN OF ty_output,
+             period TYPE n LENGTH 3,
+             fixed  TYPE string,
+           END OF ty_output.
+    DATA lt_output TYPE STANDARD TABLE OF ty_output WITH DEFAULT KEY.
+    DATA lv_json TYPE string.
+
+    APPEND INITIAL LINE TO lt_output.
+    lv_json = /ui2/cl_json=>serialize( lt_output ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = '[{"PERIOD":0,"FIXED":""}]' ).
+
+  ENDMETHOD.
+
+  METHOD numc_field2.
+
+    DATA period  TYPE n LENGTH 3.
+    DATA lv_json TYPE string.
+
+    period = 2.
+    lv_json = /ui2/cl_json=>serialize( period ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = '2' ).
+
   ENDMETHOD.
 
 ENDCLASS.

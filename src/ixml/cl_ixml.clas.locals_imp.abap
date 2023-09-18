@@ -69,6 +69,13 @@ CLASS lcl_encoding DEFINITION.
 ENDCLASS.
 
 CLASS lcl_encoding IMPLEMENTATION.
+  METHOD if_ixml_encoding~get_byte_order.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_encoding~get_character_set.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 ENDCLASS.
 
 ****************************************************************
@@ -191,6 +198,30 @@ CLASS lcl_node IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
+  METHOD if_ixml_node~get_gid.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~insert_child.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~clone.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~create_iterator_filtered.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_column.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~create_filter_name_ns.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_element~get_attribute_node_ns.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
@@ -200,7 +231,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_namespace_prefix.
-    ASSERT 1 = 'todo'.
+    rv_prefix = mv_namespace.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_namespace_uri.
@@ -216,12 +247,14 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~get_name.
-    ASSERT 1 = 'todo'.
+    name = mv_name.
   ENDMETHOD.
 
   METHOD if_ixml_element~append_child.
     DATA lo_node TYPE REF TO lcl_node.
     lo_node ?= new_child.
+
+    lo_node->mi_parent->remove_child( lo_node ).
     lo_node->mi_parent = me.
 
     mo_children->append( new_child ).
@@ -336,10 +369,15 @@ CLASS lcl_node IMPLEMENTATION.
       IF li_node IS INITIAL.
         EXIT. " current loop
       ENDIF.
-      lv_attributes = lv_attributes && | | && li_node->get_name( ) && '="' && li_node->get_value( ) && '"'.
+      lv_ns = li_node->get_namespace_prefix( ).
+      IF lv_ns IS NOT INITIAL.
+        lv_ns = lv_ns && ':'.
+      ENDIF.
+      lv_attributes = lv_attributes && | | && lv_ns && li_node->get_name( ) && '="' && li_node->get_value( ) && '"'.
     ENDDO.
 
 *    WRITE '@KERNEL console.dir(mv_namespace);'.
+    CLEAR lv_ns.
     IF mv_namespace IS NOT INITIAL.
       lv_ns = mv_namespace && ':'.
     ENDIF.
@@ -385,6 +423,7 @@ CLASS lcl_node IMPLEMENTATION.
     CREATE OBJECT lo_node TYPE lcl_node.
     lo_node->set_name( name ).
     lo_node->set_value( value ).
+    lo_node->set_namespace_prefix( prefix ).
     mi_attributes->set_named_item_ns( lo_node ).
   ENDMETHOD.
 
@@ -510,9 +549,11 @@ ENDCLASS.
 CLASS lcl_document DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_document.
+
     METHODS constructor.
   PRIVATE SECTION.
-    DATA mi_node TYPE REF TO lcl_node.
+    DATA mi_node       TYPE REF TO lcl_node.
+    DATA mv_standalone TYPE abap_bool.
 ENDCLASS.
 
 CLASS lcl_document IMPLEMENTATION.
@@ -523,6 +564,30 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_height.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_gid.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~insert_child.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~clone.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~create_iterator_filtered.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~get_column.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~create_filter_name_ns.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
@@ -563,7 +628,7 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~query_interface.
-    mi_node->if_ixml_node~query_interface( foo ).
+    mi_node->if_ixml_node~query_interface( iid ).
   ENDMETHOD.
 
   METHOD if_ixml_node~remove_node.
@@ -622,8 +687,11 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~set_standalone.
-* todo, something here?
-    RETURN.
+    mv_standalone = standalone.
+  ENDMETHOD.
+
+  METHOD if_ixml_document~get_standalone.
+    rval = mv_standalone.
   ENDMETHOD.
 
   METHOD if_ixml_document~set_namespace_prefix.
@@ -636,7 +704,7 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~get_first_child.
-    ASSERT 1 = 'todo'.
+    child = mi_node->if_ixml_node~get_first_child( ).
   ENDMETHOD.
 
   METHOD if_ixml_document~create_attribute_ns.
@@ -655,6 +723,10 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~create_iterator_filtered.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_document~set_declaration.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
@@ -719,9 +791,18 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~get_root_element.
-    root = mi_node.
+    root ?= mi_node->if_ixml_element~get_first_child( ).
   ENDMETHOD.
 
+ENDCLASS.
+
+****************************************************************
+
+CLASS lcl_ostream DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_ixml_ostream.
+    DATA mv_string TYPE string.
+    DATA mv_hex TYPE abap_bool.
 ENDCLASS.
 
 ****************************************************************
@@ -734,7 +815,7 @@ CLASS lcl_renderer DEFINITION.
         ostream  TYPE REF TO if_ixml_ostream
         document TYPE REF TO if_ixml_document.
   PRIVATE SECTION.
-    DATA mi_ostream TYPE REF TO if_ixml_ostream.
+    DATA mi_ostream  TYPE REF TO if_ixml_ostream.
     DATA mi_document TYPE REF TO if_ixml_document.
 ENDCLASS.
 
@@ -745,22 +826,27 @@ CLASS lcl_renderer IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_renderer~render.
-    DATA li_root     TYPE REF TO if_ixml_element.
-    DATA li_element  TYPE REF TO if_ixml_element.
-    DATA li_children TYPE REF TO if_ixml_node_list.
-    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+    DATA li_root       TYPE REF TO if_ixml_element.
+    DATA lv_standalone TYPE string.
+    DATA lo_stream     TYPE REF TO lcl_ostream.
+
+    IF mi_document->get_standalone( ) = abap_true.
+      lv_standalone = | standalone="yes"|.
+    ENDIF.
+
+    lo_stream ?= mi_ostream.
+    IF lo_stream->mv_hex = abap_true.
+      mi_ostream->write_string( |<?xml version="1.0" encoding="utf-8"{ lv_standalone }?>| ).
+    ELSE.
+      mi_ostream->write_string( |<?xml version="1.0" encoding="utf-16"{ lv_standalone }?>| ).
+    ENDIF.
 
     li_root = mi_document->get_root_element( ).
+    IF li_root IS INITIAL.
+      RETURN.
+    ENDIF.
 
-    li_children = li_root->get_children( ).
-    li_iterator = li_children->create_iterator( ).
-    DO.
-      li_element ?= li_iterator->get_next( ).
-      IF li_element IS INITIAL.
-        EXIT. " current loop
-      ENDIF.
-      li_element->render( mi_ostream ).
-    ENDDO.
+    li_root->render( mi_ostream ).
   ENDMETHOD.
 
   METHOD if_ixml_renderer~set_normalizing.
@@ -770,15 +856,26 @@ ENDCLASS.
 
 ****************************************************************
 
-CLASS lcl_ostream DEFINITION.
-  PUBLIC SECTION.
-    INTERFACES if_ixml_ostream.
-    DATA mv_string TYPE string.
-ENDCLASS.
-
 CLASS lcl_ostream IMPLEMENTATION.
   METHOD if_ixml_ostream~write_string.
-    mv_string = mv_string && string.
+    DATA lo_obj  TYPE REF TO cl_abap_conv_out_ce.
+    DATA lv_xstr TYPE xstring.
+
+    IF mv_hex = abap_true.
+      cl_abap_conv_out_ce=>create( )->convert(
+        EXPORTING
+          data   = string
+          n      = strlen( string )
+        IMPORTING
+          buffer = lv_xstr ).
+      mv_string = mv_string && lv_xstr.
+    ELSE.
+      mv_string = mv_string && string.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD if_ixml_ostream~set_encoding.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_ixml_ostream~get_num_written_raw.
@@ -795,6 +892,7 @@ CLASS lcl_istream DEFINITION.
   PRIVATE SECTION.
     DATA mv_xml TYPE string.
 ENDCLASS.
+
 CLASS lcl_istream IMPLEMENTATION.
   METHOD constructor.
     mv_xml = iv_xml.
@@ -802,6 +900,14 @@ CLASS lcl_istream IMPLEMENTATION.
 
   METHOD if_ixml_istream~close.
     RETURN.
+  ENDMETHOD.
+
+  METHOD if_ixml_istream~set_dtd_restriction.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_istream~get_dtd_restriction.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 ENDCLASS.
 
@@ -817,15 +923,23 @@ CLASS lcl_stream_factory IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
+  METHOD if_ixml_stream_factory~create_istream_cstring.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_stream_factory~create_ostream_cstring.
     CREATE OBJECT stream TYPE lcl_ostream.
 * hack, this method doesnt really follow normal ABAP semantics
     WRITE '@KERNEL stream.get().mv_string = INPUT.string;'.
-    stream->write_string( '<?xml version="1.0" encoding="utf-16"?>' ).
   ENDMETHOD.
 
   METHOD if_ixml_stream_factory~create_ostream_xstring.
-    ASSERT 1 = 'todo'.
+    DATA lo_stream TYPE REF TO lcl_ostream.
+    CREATE OBJECT lo_stream TYPE lcl_ostream.
+    stream = lo_stream.
+    lo_stream->mv_hex = abap_true.
+* hack, this method doesnt really follow normal ABAP semantics
+    WRITE '@KERNEL stream.get().mv_string = INPUT.string;'.
   ENDMETHOD.
 
   METHOD if_ixml_stream_factory~create_istream_xstring.
@@ -835,7 +949,7 @@ CLASS lcl_stream_factory IMPLEMENTATION.
   METHOD if_ixml_stream_factory~create_istream_string.
     CREATE OBJECT stream TYPE lcl_istream
       EXPORTING
-        iv_xml = xml.
+        iv_xml = string.
   ENDMETHOD.
 ENDCLASS.
 

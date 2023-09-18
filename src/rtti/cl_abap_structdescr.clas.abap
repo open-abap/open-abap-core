@@ -26,11 +26,13 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
           not_found
           no_ddic_type.
 
-    METHODS is_ddic_type RETURNING VALUE(bool) TYPE abap_bool.
+    METHODS is_ddic_type
+      RETURNING
+        VALUE(bool) TYPE abap_bool.
 
     METHODS get_component_type
       IMPORTING
-        p_name TYPE any
+        p_name             TYPE any
       RETURNING
         VALUE(p_descr_ref) TYPE REF TO cl_abap_datadescr
       EXCEPTIONS
@@ -39,9 +41,17 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
 
     METHODS get_included_view
       IMPORTING
-        p_level TYPE i OPTIONAL
+        p_level         TYPE i OPTIONAL
       RETURNING
         VALUE(p_result) TYPE included_view.
+
+    CLASS-METHODS get
+      IMPORTING
+        p_components    TYPE component_table
+      RETURNING
+        VALUE(p_result) TYPE REF TO cl_abap_structdescr
+      RAISING
+        cx_sy_struct_creation.
 
     CLASS-METHODS create
       IMPORTING
@@ -54,15 +64,17 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
       RETURNING
         VALUE(p_result) TYPE symbol_table.
 
-    DATA components TYPE abap_compdescr_tab.
+    DATA components  TYPE abap_compdescr_tab.
     DATA struct_kind TYPE abap_structkind READ-ONLY.
 
   PRIVATE SECTION.
     METHODS update_components.
 
     TYPES: BEGIN OF ty_refs,
-             name      TYPE string,
-             ref       TYPE REF TO cl_abap_datadescr,
+             name       TYPE string,
+             ref        TYPE REF TO cl_abap_datadescr,
+             suffix     TYPE string,
+             as_include TYPE abap_bool,
            END OF ty_refs.
     DATA mt_refs TYPE STANDARD TABLE OF ty_refs WITH DEFAULT KEY.
 ENDCLASS.
@@ -70,6 +82,10 @@ ENDCLASS.
 CLASS cl_abap_structdescr IMPLEMENTATION.
 
   METHOD get_symbols.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
@@ -105,7 +121,24 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_included_view.
-    ASSERT 1 = 'todo'.
+    DATA ls_component LIKE LINE OF components.
+    DATA ls_view      LIKE LINE OF p_result.
+    DATA ls_ref       LIKE LINE OF mt_refs.
+
+    LOOP AT components INTO ls_component.
+      CLEAR ls_view.
+
+      ls_view-name = ls_component-name.
+      READ TABLE mt_refs WITH KEY name = ls_component-name INTO ls_ref.
+      IF sy-subrc = 0.
+        ls_view-type = ls_ref-ref.
+      ENDIF.
+      IF ls_ref-as_include = abap_true.
+        CONTINUE.
+      ENDIF.
+
+      INSERT ls_view INTO TABLE p_result.
+    ENDLOOP.
   ENDMETHOD.
 
   METHOD get_ddic_field_list.
@@ -152,9 +185,11 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
 
   METHOD construct_from_data.
 * todo, this method should be private
-    DATA lv_name      TYPE string.
-    DATA ls_ref       LIKE LINE OF mt_refs.
-    DATA lo_datadescr TYPE REF TO cl_abap_datadescr.
+    DATA lv_name       TYPE string.
+    DATA ls_ref        LIKE LINE OF mt_refs.
+    DATA lv_suffix     TYPE string.
+    DATA lv_as_include TYPE abap_bool.
+    DATA lo_datadescr  TYPE REF TO cl_abap_datadescr.
 
     FIELD-SYMBOLS <fs> TYPE any.
 
@@ -167,6 +202,19 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     lo_datadescr ?= cl_abap_typedescr=>describe_by_data( <fs> ).
     ls_ref-name = lv_name.
     ls_ref-ref  = lo_datadescr.
+
+    CLEAR lv_as_include.
+    WRITE '@KERNEL if (INPUT.data?.getAsInclude) {'.
+    WRITE '@KERNEL   lv_as_include.set(INPUT.data?.getAsInclude()?.[name.toLowerCase()] ? "X" : " ");'.
+    WRITE '@KERNEL }'.
+    ls_ref-as_include = lv_as_include.
+
+    CLEAR lv_suffix.
+    WRITE '@KERNEL if (INPUT.data?.getSuffix) {'.
+    WRITE '@KERNEL   lv_as_include.set(INPUT.data?.getSuffix()?.[name.toLowerCase()] || "");'.
+    WRITE '@KERNEL }'.
+    ls_ref-suffix = lv_suffix.
+
     APPEND ls_ref TO descr->mt_refs.
     WRITE '@KERNEL }'.
 
@@ -182,6 +230,8 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
       CLEAR ls_component.
       ls_component-name = ls_ref-name.
       ls_component-type_kind = ls_ref-ref->type_kind.
+      ls_component-length = ls_ref-ref->length.
+      ls_component-decimals = ls_ref-ref->decimals.
       APPEND ls_component TO components.
     ENDLOOP.
   ENDMETHOD.

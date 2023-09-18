@@ -1,14 +1,17 @@
 INTERFACE if_ixml_node PUBLIC.
   CONSTANTS:
-    co_node_element TYPE i VALUE 0,
-    co_node_text TYPE i VALUE 0.
+    co_node_document      TYPE i VALUE 1,
+    co_node_element       TYPE i VALUE 4,
+    co_node_text          TYPE i VALUE 16,
+    co_node_cdata_section TYPE i VALUE 32.
+
   METHODS:
     append_child IMPORTING new_child TYPE REF TO if_ixml_node,
     get_attributes RETURNING VALUE(map) TYPE REF TO if_ixml_named_node_map,
     get_first_child RETURNING VALUE(node) TYPE REF TO if_ixml_node,
     get_children RETURNING VALUE(val) TYPE REF TO if_ixml_node_list,
     query_interface
-      IMPORTING foo         TYPE string
+      IMPORTING iid         TYPE i
       RETURNING VALUE(rval) TYPE REF TO if_ixml_unknown,
     remove_node,
     get_parent RETURNING VALUE(val) TYPE REF TO if_ixml_node,
@@ -26,6 +29,17 @@ INTERFACE if_ixml_node PUBLIC.
     remove_child IMPORTING child TYPE REF TO if_ixml_node,
     set_value IMPORTING value TYPE string.
 
+  METHODS get_gid
+    RETURNING
+      VALUE(rval) TYPE i.
+
+  METHODS insert_child
+    IMPORTING
+      new_child   TYPE REF TO if_ixml_node
+      ref_child   TYPE REF TO if_ixml_node
+    RETURNING
+      VALUE(rval) TYPE i.
+
   METHODS get_next
     RETURNING
       VALUE(rval) TYPE REF TO if_ixml_node.
@@ -41,4 +55,25 @@ INTERFACE if_ixml_node PUBLIC.
   METHODS get_height
     RETURNING
       VALUE(rval) TYPE i.
+
+  METHODS create_filter_name_ns
+    IMPORTING
+      name        TYPE string
+      namespace   TYPE string OPTIONAL
+    RETURNING
+      VALUE(rval) TYPE REF TO if_ixml_node_filter.
+
+  METHODS get_column
+    RETURNING
+      VALUE(rval) TYPE i.
+
+  METHODS create_iterator_filtered
+    IMPORTING
+      filter      TYPE REF TO if_ixml_node_filter
+    RETURNING
+      VALUE(rval) TYPE REF TO if_ixml_node_iterator.
+
+  METHODS clone
+    RETURNING
+      VALUE(rval) TYPE REF TO if_ixml_node.
 ENDINTERFACE.

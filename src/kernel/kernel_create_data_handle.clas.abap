@@ -94,8 +94,11 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD table.
-    DATA lo_table TYPE REF TO cl_abap_tabledescr.
-    DATA field    TYPE REF TO data.
+    DATA lo_table     TYPE REF TO cl_abap_tabledescr.
+    DATA lt_keys      TYPE abap_table_keydescr_tab.
+    DATA ls_key       LIKE LINE OF lt_keys.
+    DATA lv_component TYPE string.
+    DATA field        TYPE REF TO data.
 
     lo_table ?= handle.
 
@@ -105,7 +108,26 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
       CHANGING
         dref   = field ).
 
-    WRITE '@KERNEL dref.assign(new abap.types.Table(field.getPointer()));'.
+    WRITE '@KERNEL let options = {primaryKey: undefined, keyType: "DEFAULT", withHeader: false};'.
+    WRITE '@KERNEL options.primaryKey = {name: "primary_key", type: "STANDARD", keyFields: [], isUnique: false};'.
+
+* todo, handle secondary keys,
+    lt_keys = lo_table->get_keys( ).
+    LOOP AT lt_keys INTO ls_key WHERE is_primary = abap_true.
+      IF ls_key-access_kind = cl_abap_tabledescr=>tablekind_sorted.
+        WRITE '@KERNEL options.primaryKey.type = "SORTED";'.
+      ELSEIF ls_key-access_kind = cl_abap_tabledescr=>tablekind_hashed.
+        WRITE '@KERNEL options.primaryKey.type = "HASHED";'.
+      ENDIF.
+      IF ls_key-is_unique = abap_true.
+        WRITE '@KERNEL options.primaryKey.isUnique = true;'.
+      ENDIF.
+      LOOP AT ls_key-components INTO lv_component.
+        WRITE '@KERNEL options.primaryKey.keyFields.push(lv_component.get().toLowerCase());'.
+      ENDLOOP.
+    ENDLOOP.
+
+    WRITE '@KERNEL dref.assign(abap.types.TableFactory.construct(field.getPointer(), options));'.
   ENDMETHOD.
 
   METHOD elem.
@@ -135,6 +157,8 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
         CREATE DATA dref TYPE n LENGTH lv_half.
       WHEN cl_abap_typedescr=>typekind_time.
         CREATE DATA dref TYPE t.
+      WHEN cl_abap_typedescr=>typekind_int8.
+        CREATE DATA dref TYPE int8.
       WHEN OTHERS.
         WRITE '@KERNEL console.dir(handle);'.
         ASSERT 1 = 'todo'.

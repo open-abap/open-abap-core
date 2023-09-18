@@ -1,0 +1,7 @@
+INTERFACE if_salv_c_aggregation PUBLIC.
+  CONSTANTS none    TYPE i VALUE 0.
+  CONSTANTS total   TYPE i VALUE 1.
+  CONSTANTS minimum TYPE i VALUE 2.
+  CONSTANTS maximum TYPE i VALUE 3.
+  CONSTANTS average TYPE i VALUE 4.
+ENDINTERFACE.

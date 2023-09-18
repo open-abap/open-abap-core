@@ -19,6 +19,13 @@ CLASS cl_http_client DEFINITION PUBLIC CREATE PRIVATE.
         VALUE(client) TYPE REF TO if_http_client.
 * todo, add classic exceptions
 
+    CLASS-METHODS create_internal
+      EXPORTING
+        client TYPE REF TO if_http_client
+      EXCEPTIONS
+        plugin_not_active
+        internal_error.
+
     METHODS constructor
       IMPORTING
         url TYPE string.
@@ -58,6 +65,10 @@ CLASS cl_http_client IMPLEMENTATION.
 
   ENDMETHOD.
 
+  METHOD if_http_client~escape_url.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD create_by_url.
     CREATE OBJECT client TYPE cl_http_client
       EXPORTING
@@ -79,6 +90,14 @@ CLASS cl_http_client IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD create_by_destination.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD create_internal.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_http_client~create_abs_url.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
@@ -219,6 +238,10 @@ CLASS cl_http_client IMPLEMENTATION.
 
   METHOD if_http_client~send_sap_logon_ticket.
     ASSERT 2 = 'not supported'.
+  ENDMETHOD.
+
+  METHOD if_http_client~refresh_request.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
 ENDCLASS.

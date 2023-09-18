@@ -29,13 +29,15 @@ CLASS lcl_client DEFINITION.
     INTERFACES if_apc_wsp_message_manager.
     METHODS constructor
       IMPORTING
-        iv_host TYPE string
-        iv_port TYPE i
-        io_handler TYPE REF TO if_apc_wsp_event_handler.
+        iv_host     TYPE string
+        iv_port     TYPE i
+        io_handler  TYPE REF TO if_apc_wsp_event_handler
+        iv_protocol TYPE i.
   PRIVATE SECTION.
-    DATA mv_host TYPE string.
-    DATA mv_port TYPE i.
+    DATA mv_host    TYPE string.
+    DATA mv_port    TYPE i.
     DATA mo_handler TYPE REF TO if_apc_wsp_event_handler.
+    DATA mv_protocol TYPE i.
 ENDCLASS.
 
 CLASS lcl_client IMPLEMENTATION.
@@ -43,14 +45,18 @@ CLASS lcl_client IMPLEMENTATION.
     ASSERT iv_host IS NOT INITIAL.
     ASSERT iv_port IS NOT INITIAL.
     ASSERT io_handler IS NOT INITIAL.
-    mv_host = iv_host.
-    mv_port = iv_port.
-    mo_handler = io_handler.
+
+    mv_host     = iv_host.
+    mv_port     = iv_port.
+    mo_handler  = io_handler.
+    mv_protocol = iv_protocol.
   ENDMETHOD.
 
   METHOD if_apc_wsp_client~connect.
-    WRITE '@KERNEL const net = await import("net");'.
-    WRITE '@KERNEL this.client = net.createConnection({ port: this.mv_port.get(), host: this.mv_host.get()}, () => {this.mo_handler.get().if_apc_wsp_event_handler$on_open();});'.
+    DATA lv_tls TYPE abap_bool.
+    lv_tls = boolc( mv_protocol = cl_apc_tcp_client_manager=>co_protocol_type_tcps ).
+    WRITE '@KERNEL const connect = lv_tls.get() === "X" ? await import("tls") : await import("net");'.
+    WRITE '@KERNEL this.client = connect.connect({ port: this.mv_port.get(), host: this.mv_host.get()}, () => {this.mo_handler.get().if_apc_wsp_event_handler$on_open();});'.
     WRITE '@KERNEL this.client.on("data", async (data) => {'.
     WRITE '@KERNEL   const msg = await (new lcl_message().constructor_());'.
     WRITE '@KERNEL   await msg.if_apc_wsp_message$set_binary({iv_binary: data.toString("hex").toUpperCase()});'.

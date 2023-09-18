@@ -82,6 +82,13 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             r_json = '"' && escape( val = data format = cl_abap_format=>e_json_string ) && '"'.
           WHEN cl_abap_typedescr=>typekind_int.
             r_json = |{ data }|.
+          WHEN cl_abap_typedescr=>typekind_num.
+            IF data = 0.
+              r_json = |0|.
+            ELSE.
+              r_json = |{ data }|.
+              SHIFT r_json LEFT DELETING LEADING '0'.
+            ENDIF.
           WHEN cl_abap_typedescr=>typekind_packed.
             IF ts_as_iso8601 = abap_true
                 AND ( lo_type->absolute_name = `\TYPE=TIMESTAMP`
@@ -214,6 +221,22 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           REPLACE ALL OCCURRENCES OF ':' IN lv_value WITH ''.
           REPLACE ALL OCCURRENCES OF 'Z' IN lv_value WITH ''.
           data = lv_value.
+        ELSEIF lo_type->type_kind = cl_abap_typedescr=>typekind_date.
+          lv_value = mo_parsed->value_string( prefix ).
+          REPLACE ALL OCCURRENCES OF '-' IN lv_value WITH ''.
+          IF lv_value CO space.
+            CLEAR data.
+          ELSE.
+            data = lv_value.
+          ENDIF.
+        ELSEIF lo_type->type_kind = cl_abap_typedescr=>typekind_time.
+          lv_value = mo_parsed->value_string( prefix ).
+          REPLACE ALL OCCURRENCES OF ':' IN lv_value WITH ''.
+          IF lv_value CO space.
+            CLEAR data.
+          ELSE.
+            data = lv_value.
+          ENDIF.
         ELSE.
           data = mo_parsed->value_string( prefix ).
         ENDIF.
@@ -289,6 +312,8 @@ CLASS /ui2/cl_json IMPLEMENTATION.
                 lv_value = mo_parsed->value_string( prefix ).
                 IF lv_value CO '-0123456789'.
                   CREATE DATA data TYPE i.
+                ELSEIF lv_value CO '-0123456789.'.
+                  CREATE DATA data TYPE f.
                 ELSE.
                   ASSERT 1 = 'todo'.
                 ENDIF.
