@@ -1,6 +1,7 @@
 CLASS /ui2/cl_json DEFINITION PUBLIC.
   PUBLIC SECTION.
     CONSTANTS: BEGIN OF pretty_mode,
+                 none       type string value '',
                  low_case   TYPE string VALUE 'low_case',
                  camel_case TYPE string VALUE 'camel_case',
                END OF pretty_mode.
