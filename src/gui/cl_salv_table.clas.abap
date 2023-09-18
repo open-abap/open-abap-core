@@ -5,7 +5,8 @@ CLASS cl_salv_table DEFINITION PUBLIC.
 
     CLASS-METHODS factory
       IMPORTING
-        r_container TYPE any OPTIONAL
+        list_display TYPE any OPTIONAL
+        r_container  TYPE any OPTIONAL
       EXPORTING
         r_salv_table TYPE any
       CHANGING
