@@ -13,6 +13,10 @@ CLASS cl_salv_layout DEFINITION PUBLIC.
     METHODS set_default
       IMPORTING
         value TYPE abap_bool.
+
+    METHODS has_default
+      RETURNING
+        VALUE(value) TYPE abap_bool.
 ENDCLASS.
 
 CLASS cl_salv_layout IMPLEMENTATION.
@@ -25,6 +29,10 @@ CLASS cl_salv_layout IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD set_default.
+    ASSERT 1 = 'not supported'.
+  ENDMETHOD.
+
+  METHOD has_default.
     ASSERT 1 = 'not supported'.
   ENDMETHOD.
 ENDCLASS.
