@@ -2,11 +2,12 @@ CLASS ltcl_exceptional_values DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATIO
 
   PRIVATE SECTION.
     METHODS max_integer FOR TESTING RAISING cx_static_check.
+    METHODS min_integer FOR TESTING RAISING cx_static_check.
+
     METHODS max_packed1 FOR TESTING RAISING cx_static_check.
     METHODS max_packed2 FOR TESTING RAISING cx_static_check.
     METHODS max_packed3 FOR TESTING RAISING cx_static_check.
     METHODS min_packed FOR TESTING RAISING cx_static_check.
-    METHODS min_integer FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
