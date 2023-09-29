@@ -126,20 +126,18 @@ CLASS cl_http_utility IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_utility~escape_url.
-    escaped = unescaped.
-    REPLACE ALL OCCURRENCES OF ':' IN escaped WITH '%3a'.
-    REPLACE ALL OCCURRENCES OF '/' IN escaped WITH '%2f'.
-    REPLACE ALL OCCURRENCES OF |'| IN escaped WITH '%27'.
-    REPLACE ALL OCCURRENCES OF '*' IN escaped WITH '%2a'.
-    REPLACE ALL OCCURRENCES OF '+' IN escaped WITH '%2b'.
-    REPLACE ALL OCCURRENCES OF '=' IN escaped WITH '%3d'.
-    REPLACE ALL OCCURRENCES OF '?' IN escaped WITH '%3f'.
-    REPLACE ALL OCCURRENCES OF '&' IN escaped WITH '%26'.
-    REPLACE ALL OCCURRENCES OF ';' IN escaped WITH '%3b'.
-    REPLACE ALL OCCURRENCES OF '@' IN escaped WITH '%40'.
-    REPLACE ALL OCCURRENCES OF '~' IN escaped WITH '%7e'.
-    REPLACE ALL OCCURRENCES OF '[' IN escaped WITH '%5b'.
-    REPLACE ALL OCCURRENCES OF ']' IN escaped WITH '%5d'.
+    DATA lv_index TYPE i.
+    DATA lv_char  TYPE string.
+
+    DO strlen( unescaped ) TIMES.
+      lv_index = sy-index - 1.
+      lv_char = unescaped+lv_index(1).
+      IF to_upper( lv_char ) CA sy-abcde OR lv_char CA '0123456789.-'.
+        escaped = escaped && lv_char.
+      ELSE.
+        escaped = escaped && '%' && to_lower( cl_abap_codepage=>convert_to( lv_char ) ).
+      ENDIF.
+    ENDDO.
   ENDMETHOD.
 
   METHOD if_http_utility~encode_base64.
