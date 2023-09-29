@@ -9,11 +9,13 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS unescape_url_eqs2 FOR TESTING RAISING cx_static_check.
     METHODS unescape_url_colon FOR TESTING RAISING cx_static_check.
     METHODS unescape_url_colon2 FOR TESTING RAISING cx_static_check.
-    METHODS escape_url FOR TESTING RAISING cx_static_check.
+    METHODS escape_url1 FOR TESTING RAISING cx_static_check.
+    METHODS escape_url2 FOR TESTING RAISING cx_static_check.
     METHODS encode_base64 FOR TESTING RAISING cx_static_check.
     METHODS fields_identity01 FOR TESTING RAISING cx_static_check.
     METHODS fields_identity02 FOR TESTING RAISING cx_static_check.
-    METHODS fields_escaping FOR TESTING RAISING cx_static_check.
+    METHODS fields_escaping1 FOR TESTING RAISING cx_static_check.
+    METHODS fields_escaping2 FOR TESTING RAISING cx_static_check.
     METHODS decode_base64 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
@@ -122,15 +124,27 @@ CLASS ltcl_test IMPLEMENTATION.
       exp = 'url=https://github.com/abapGit/abapGit&package=ZSDFSDd&branch_name=&folder_logic=PREFIX&display_name=&labels=' ).
   ENDMETHOD.
 
-  METHOD escape_url.
+  METHOD escape_url1.
 
     DATA value TYPE string.
 
-    value = cl_http_utility=>escape_url( |/foo/| ).
+    value = cl_http_utility=>escape_url( |/foO/| ).
 
     cl_abap_unit_assert=>assert_equals(
       act = value
-      exp = '%2Ffoo%2F' ).
+      exp = '%2ffoO%2f' ).
+
+  ENDMETHOD.
+
+  METHOD escape_url2.
+
+    DATA value TYPE string.
+
+    value = cl_http_utility=>escape_url( |aa'*+=?&:/;=?@~[]| ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = value
+      exp = 'aa%27%2a%2b%3d%3f%26%3a%2f%3b%3d%3f%40%7e%5b%5d' ).
 
   ENDMETHOD.
 
@@ -158,7 +172,7 @@ CLASS ltcl_test IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD fields_escaping.
+  METHOD fields_escaping1.
 
     DATA lv_output TYPE string.
     DATA lt_fields TYPE tihttpnvp.
@@ -173,6 +187,24 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_output
       exp = 'sdf=api%3a%2f%2f119d38c1-fe84-5520-b1e0-7e277a0c67bb%2f.default' ).
+
+  ENDMETHOD.
+
+  METHOD fields_escaping2.
+
+    DATA lv_output TYPE string.
+    DATA lt_fields TYPE tihttpnvp.
+    DATA ls_field  LIKE LINE OF lt_fields.
+
+    ls_field-name = 'sdf'.
+    ls_field-value = |aa'*+=?&:/;=?@~[]|.
+    APPEND ls_field TO lt_fields.
+
+    lv_output = cl_http_utility=>fields_to_string( lt_fields ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_output
+      exp = 'sdf=aa%27%2a%2b%3d%3f%26%3a%2f%3b%3d%3f%40%7e%5b%5d' ).
 
   ENDMETHOD.
 

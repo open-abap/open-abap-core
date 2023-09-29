@@ -103,8 +103,7 @@ CLASS cl_http_utility IMPLEMENTATION.
     DATA ls_field LIKE LINE OF fields.
 
     LOOP AT fields INTO ls_field.
-      REPLACE ALL OCCURRENCES OF ':' IN ls_field-value WITH '%3a'.
-      REPLACE ALL OCCURRENCES OF '/' IN ls_field-value WITH '%2f'.
+      ls_field-value = if_http_utility~escape_url( ls_field-value ).
       str = ls_field-name && '=' && ls_field-value.
       APPEND str TO tab.
     ENDLOOP.
@@ -127,7 +126,20 @@ CLASS cl_http_utility IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_utility~escape_url.
-    WRITE '@KERNEL escaped.set(encodeURIComponent(unescaped.get()));'.
+    escaped = unescaped.
+    REPLACE ALL OCCURRENCES OF ':' IN escaped WITH '%3a'.
+    REPLACE ALL OCCURRENCES OF '/' IN escaped WITH '%2f'.
+    REPLACE ALL OCCURRENCES OF |'| IN escaped WITH '%27'.
+    REPLACE ALL OCCURRENCES OF '*' IN escaped WITH '%2a'.
+    REPLACE ALL OCCURRENCES OF '+' IN escaped WITH '%2b'.
+    REPLACE ALL OCCURRENCES OF '=' IN escaped WITH '%3d'.
+    REPLACE ALL OCCURRENCES OF '?' IN escaped WITH '%3f'.
+    REPLACE ALL OCCURRENCES OF '&' IN escaped WITH '%26'.
+    REPLACE ALL OCCURRENCES OF ';' IN escaped WITH '%3b'.
+    REPLACE ALL OCCURRENCES OF '@' IN escaped WITH '%40'.
+    REPLACE ALL OCCURRENCES OF '~' IN escaped WITH '%7e'.
+    REPLACE ALL OCCURRENCES OF '[' IN escaped WITH '%5b'.
+    REPLACE ALL OCCURRENCES OF ']' IN escaped WITH '%5d'.
   ENDMETHOD.
 
   METHOD if_http_utility~encode_base64.
