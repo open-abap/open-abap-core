@@ -132,7 +132,7 @@ CLASS cl_http_utility IMPLEMENTATION.
     DO strlen( unescaped ) TIMES.
       lv_index = sy-index - 1.
       lv_char = unescaped+lv_index(1).
-      IF to_upper( lv_char ) CA sy-abcde OR lv_char CA '0123456789.-'.
+      IF to_upper( lv_char ) CA sy-abcde OR lv_char CA '0123456789.-()'.
         escaped = escaped && lv_char.
       ELSE.
         escaped = escaped && '%' && to_lower( cl_abap_codepage=>convert_to( lv_char ) ).

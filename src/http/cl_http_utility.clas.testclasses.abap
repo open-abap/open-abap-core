@@ -140,11 +140,11 @@ CLASS ltcl_test IMPLEMENTATION.
 
     DATA value TYPE string.
 
-    value = cl_http_utility=>escape_url( |aa'*+=?&:/;=?@~[],| ).
+    value = cl_http_utility=>escape_url( |aa'*+=?&:/;=?@~[],()| ).
 
     cl_abap_unit_assert=>assert_equals(
       act = value
-      exp = 'aa%27%2a%2b%3d%3f%26%3a%2f%3b%3d%3f%40%7e%5b%5d%2c' ).
+      exp = 'aa%27%2a%2b%3d%3f%26%3a%2f%3b%3d%3f%40%7e%5b%5d%2c()' ).
 
   ENDMETHOD.
 
