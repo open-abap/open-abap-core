@@ -80,11 +80,11 @@ CLASS ltcl_test IMPLEMENTATION.
 
     DATA decoded TYPE string.
 
-    decoded = cl_http_utility=>unescape_url( '%27' ).
+    decoded = cl_http_utility=>unescape_url( '%27%24' ).
 
     cl_abap_unit_assert=>assert_equals(
       act = decoded
-      exp = |'| ).
+      exp = |'$| ).
 
   ENDMETHOD.
 
@@ -128,11 +128,11 @@ CLASS ltcl_test IMPLEMENTATION.
 
     DATA value TYPE string.
 
-    value = cl_http_utility=>escape_url( |/foO/| ).
+    value = cl_http_utility=>escape_url( |/foO/$| ).
 
     cl_abap_unit_assert=>assert_equals(
       act = value
-      exp = '%2ffoO%2f' ).
+      exp = '%2ffoO%2f%24' ).
 
   ENDMETHOD.
 
