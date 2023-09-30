@@ -106,10 +106,13 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
   PRIVATE SECTION.
     CLASS-DATA gv_counter TYPE n LENGTH 10.
 
-    CLASS-METHODS
-      describe_by_dashes
-        IMPORTING p_name TYPE clike
-        RETURNING VALUE(type) TYPE REF TO cl_abap_typedescr.
+    CLASS-METHODS describe_by_dashes
+      IMPORTING p_name TYPE clike
+      RETURNING VALUE(type) TYPE REF TO cl_abap_typedescr.
+
+    CLASS-METHODS is_deep
+      IMPORTING  io_struct TYPE REF TO cl_abap_structdescr
+      RETURNING VALUE(rv_deep) TYPE abap_bool.
 ENDCLASS.
 
 CLASS cl_abap_typedescr IMPLEMENTATION.
@@ -235,10 +238,31 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     p_descr_ref = lo_cdescr.
   ENDMETHOD.
 
+  METHOD is_deep.
+
+    DATA lt_components TYPE cl_abap_structdescr=>component_table.
+    DATA ls_component  LIKE LINE OF lt_components.
+
+    lt_components = io_struct->get_components( ).
+    rv_deep = abap_false.
+
+    LOOP AT lt_components INTO ls_component.
+      IF ls_component-type->kind = kind_struct
+          OR ls_component-type->type_kind = typekind_string
+          OR ls_component-type->type_kind = typekind_xstring
+          OR ls_component-type->kind = kind_table.
+        rv_deep = abap_true.
+        RETURN.
+      ENDIF.
+    ENDLOOP.
+
+  ENDMETHOD.
+
   METHOD describe_by_data.
 
     DATA lo_elem      TYPE REF TO cl_abap_elemdescr.
     DATA lo_ref       TYPE REF TO cl_abap_refdescr.
+    DATA lo_struct    TYPE REF TO cl_abap_structdescr.
     DATA lv_any       TYPE string.
     DATA lv_convexit  TYPE string.
     DATA lv_ddicname  TYPE string.
@@ -317,8 +341,13 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->type_kind = typekind_decfloat34.
         type->kind = kind_elem.
       WHEN 'Structure'.
-        type ?= cl_abap_structdescr=>construct_from_data( p_data ).
-        type->type_kind = typekind_struct2.
+        lo_struct = cl_abap_structdescr=>construct_from_data( p_data ).
+        type ?= lo_struct.
+        IF is_deep( lo_struct ) = abap_true.
+          type->type_kind = typekind_struct2.
+        ELSE.
+          type->type_kind = typekind_struct1.
+        ENDIF.
         type->kind = kind_struct.
       WHEN 'Table' OR 'HashedTable'.
         type ?= cl_abap_tabledescr=>construct_from_data( p_data ).
