@@ -55,9 +55,17 @@ CLASS cl_salv_table DEFINITION PUBLIC.
         xml_type   TYPE any
       RETURNING
         VALUE(xml) TYPE xstring.
+
+    METHODS get_sorts
+      RETURNING
+        VALUE(value) TYPE REF TO cl_salv_sorts.
 ENDCLASS.
 
 CLASS cl_salv_table IMPLEMENTATION.
+
+  METHOD get_sorts.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD set_selected_rows.
     ASSERT 1 = 'todo'.
