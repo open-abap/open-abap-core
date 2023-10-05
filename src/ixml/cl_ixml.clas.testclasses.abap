@@ -995,9 +995,10 @@ CLASS ltcl_xml IMPLEMENTATION.
 
     li_stream_factory = li_ixml->create_stream_factory( ).
     li_istream        = li_stream_factory->create_istream_xstring( cl_abap_codepage=>convert_to( '<foo><bar>2</bar></foo>' ) ).
-    li_parser         = li_ixml->create_parser( stream_factory = li_stream_factory
-                                            istream        = li_istream
-                                            document       = li_xml_doc ).
+    li_parser         = li_ixml->create_parser(
+      stream_factory = li_stream_factory
+      istream        = li_istream
+      document       = li_xml_doc ).
     li_parser->set_normalizing( abap_true ).
     cl_abap_unit_assert=>assert_equals(
       act = li_parser->parse( )
@@ -1010,8 +1011,9 @@ CLASS ltcl_xml IMPLEMENTATION.
       character_set = 'utf-8'
       byte_order    = if_ixml_encoding=>co_big_endian ).
     li_xml_doc->set_encoding( li_encoding ).
-    li_renderer = li_ixml->create_renderer( ostream  = li_ostream
-                                        document = li_xml_doc ).
+    li_renderer = li_ixml->create_renderer(
+      ostream  = li_ostream
+      document = li_xml_doc ).
     li_renderer->set_normalizing( abap_true ).
     li_renderer->render( ).
 

@@ -943,7 +943,9 @@ CLASS lcl_stream_factory IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_stream_factory~create_istream_xstring.
-    ASSERT 1 = 'todo'.
+    CREATE OBJECT stream TYPE lcl_istream
+      EXPORTING
+        iv_xml = cl_abap_codepage=>convert_from( string ).
   ENDMETHOD.
 
   METHOD if_ixml_stream_factory~create_istream_string.
