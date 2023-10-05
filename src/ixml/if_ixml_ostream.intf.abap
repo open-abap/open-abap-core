@@ -22,4 +22,12 @@ INTERFACE if_ixml_ostream PUBLIC.
   METHODS get_pretty_print
     RETURNING
       VALUE(rval) TYPE boolean.
+
+  METHODS get_indent
+    RETURNING
+      VALUE(rval) TYPE i.
+
+  METHODS set_indent
+    IMPORTING
+      indent TYPE i.
 ENDINTERFACE.
