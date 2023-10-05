@@ -42,6 +42,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS another_children FOR TESTING RAISING cx_static_check.
     METHODS render_standalone FOR TESTING RAISING cx_static_check.
     METHODS render_namespaced_attr FOR TESTING RAISING cx_static_check.
+    METHODS pretty_xstring FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -971,6 +972,56 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = lv_string
       exp = '*prefix:name="Namespace"*' ).
+
+  ENDMETHOD.
+
+  METHOD pretty_xstring.
+
+    DATA: li_ixml           TYPE REF TO if_ixml,
+          li_xml_doc        TYPE REF TO if_ixml_document,
+          li_stream_factory TYPE REF TO if_ixml_stream_factory,
+          li_istream        TYPE REF TO if_ixml_istream,
+          li_parser         TYPE REF TO if_ixml_parser,
+          lv_xstring        TYPE xstring,
+          lv_actual         TYPE string,
+          lv_expected       TYPE string,
+          li_encoding       TYPE REF TO if_ixml_encoding,
+          li_ostream        TYPE REF TO if_ixml_ostream,
+          li_renderer       TYPE REF TO if_ixml_renderer.
+
+
+    li_ixml    = cl_ixml=>create( ).
+    li_xml_doc = li_ixml->create_document( ).
+
+    li_stream_factory = li_ixml->create_stream_factory( ).
+    li_istream        = li_stream_factory->create_istream_xstring( cl_abap_codepage=>convert_to( '<foo><bar>2</bar></foo>' ) ).
+    li_parser         = li_ixml->create_parser( stream_factory = li_stream_factory
+                                            istream        = li_istream
+                                            document       = li_xml_doc ).
+    li_parser->set_normalizing( abap_true ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_parser->parse( )
+      exp = 0 ).
+    li_istream->close( ).
+
+
+    li_ostream  = li_stream_factory->create_ostream_xstring( lv_xstring ).
+    li_encoding = li_ixml->create_encoding(
+      character_set = 'utf-8'
+      byte_order    = if_ixml_encoding=>co_big_endian ).
+    li_xml_doc->set_encoding( li_encoding ).
+    li_renderer = li_ixml->create_renderer( ostream  = li_ostream
+                                        document = li_xml_doc ).
+    li_renderer->set_normalizing( abap_true ).
+    li_renderer->render( ).
+
+
+    lv_actual = cl_abap_codepage=>convert_from( lv_xstring ).
+    lv_expected = |<?xml version="1.0" encoding="utf-8"?>\n<foo>\n <bar>2</bar>\n</foo>\n|.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_actual
+      exp = lv_expected ).
 
   ENDMETHOD.
 
