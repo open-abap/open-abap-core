@@ -801,8 +801,9 @@ ENDCLASS.
 CLASS lcl_ostream DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_ostream.
-    DATA mv_string TYPE string.
-    DATA mv_hex TYPE abap_bool.
+    DATA mv_string       TYPE string.
+    DATA mv_hex          TYPE abap_bool.
+    DATA mv_pretty_print TYPE abap_bool.
 ENDCLASS.
 
 ****************************************************************
@@ -840,6 +841,9 @@ CLASS lcl_renderer IMPLEMENTATION.
     ELSE.
       mi_ostream->write_string( |<?xml version="1.0" encoding="utf-16"{ lv_standalone }?>| ).
     ENDIF.
+    IF lo_stream->mv_pretty_print = abap_true.
+      mi_ostream->write_string( |\n| ).
+    ENDIF.
 
     li_root = mi_document->get_root_element( ).
     IF li_root IS INITIAL.
@@ -850,7 +854,7 @@ CLASS lcl_renderer IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_renderer~set_normalizing.
-    RETURN.
+    mi_ostream->set_pretty_print( normal ).
   ENDMETHOD.
 ENDCLASS.
 
@@ -872,6 +876,14 @@ CLASS lcl_ostream IMPLEMENTATION.
     ELSE.
       mv_string = mv_string && string.
     ENDIF.
+  ENDMETHOD.
+
+  METHOD if_ixml_ostream~set_pretty_print.
+    mv_pretty_print = pretty_print.
+  ENDMETHOD.
+
+  METHOD if_ixml_ostream~get_pretty_print.
+    rval = mv_pretty_print.
   ENDMETHOD.
 
   METHOD if_ixml_ostream~set_encoding.
