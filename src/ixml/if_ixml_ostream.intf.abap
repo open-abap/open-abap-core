@@ -14,4 +14,20 @@ INTERFACE if_ixml_ostream PUBLIC.
       encoding    TYPE REF TO if_ixml_encoding
     RETURNING
       VALUE(rval) TYPE boolean.
+
+  METHODS set_pretty_print
+    IMPORTING
+      pretty_print TYPE abap_bool DEFAULT abap_true.
+
+  METHODS get_pretty_print
+    RETURNING
+      VALUE(rval) TYPE boolean.
+
+  METHODS get_indent
+    RETURNING
+      VALUE(rval) TYPE i.
+
+  METHODS set_indent
+    IMPORTING
+      indent TYPE i.
 ENDINTERFACE.
