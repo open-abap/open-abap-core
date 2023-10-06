@@ -994,7 +994,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     li_xml_doc = li_ixml->create_document( ).
 
     li_stream_factory = li_ixml->create_stream_factory( ).
-    li_istream        = li_stream_factory->create_istream_xstring( cl_abap_codepage=>convert_to( '<foo><bar>2</bar></foo>' ) ).
+    li_istream        = li_stream_factory->create_istream_xstring( cl_abap_codepage=>convert_to( '<foo><bar>2</bar><moo><bar>2</bar></moo></foo>' ) ).
     li_parser         = li_ixml->create_parser(
       stream_factory = li_stream_factory
       istream        = li_istream
@@ -1019,7 +1019,7 @@ CLASS ltcl_xml IMPLEMENTATION.
 
 
     lv_actual = cl_abap_codepage=>convert_from( lv_xstring ).
-    lv_expected = |<?xml version="1.0" encoding="utf-8"?>\n<foo>\n <bar>2</bar>\n</foo>\n|.
+    lv_expected = |<?xml version="1.0" encoding="utf-8"?>\n<foo>\n <bar>2</bar>\n <moo>\n  <bar>2</bar>\n </moo>\n</foo>\n|.
 
     cl_abap_unit_assert=>assert_equals(
       act = lv_actual

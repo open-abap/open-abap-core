@@ -412,18 +412,22 @@ CLASS lcl_node IMPLEMENTATION.
     ENDDO.
     ostream->set_indent( ostream->get_indent( ) - 1 ).
 
-    IF li_children->get_length( ) > 0 AND ostream->get_pretty_print( ) = abap_true AND if_ixml_node~get_depth( ) > 1.
-      ostream->write_string( |\n| ).
-    ENDIF.
-
     IF li_children->get_length( ) > 0 OR mv_value IS NOT INITIAL.
       ostream->write_string( lcl_escape=>escape_value( mv_value ) ).
       IF mv_name <> '#text'.
+        IF ostream->get_pretty_print( ) = abap_true AND if_ixml_node~get_depth( ) > 1.
+          ostream->write_string( repeat( val = | | occ = ostream->get_indent( ) ) ).
+        ENDIF.
         ostream->write_string( '</' && lv_ns && mv_name && '>' ).
       ENDIF.
     ELSE.
       ostream->write_string( '/>' ).
     ENDIF.
+
+    IF ostream->get_pretty_print( ) = abap_true AND mv_name <> '#text'.
+      ostream->write_string( |\n| ).
+    ENDIF.
+
   ENDMETHOD.
 
   METHOD if_ixml_element~set_attribute_node_ns.
@@ -871,9 +875,6 @@ CLASS lcl_renderer IMPLEMENTATION.
 
     li_root->render( mi_ostream ).
 
-    IF lo_stream->mv_pretty_print = abap_true.
-      mi_ostream->write_string( |\n| ).
-    ENDIF.
   ENDMETHOD.
 
   METHOD if_ixml_renderer~set_normalizing.
