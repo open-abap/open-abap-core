@@ -42,9 +42,10 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS another_children FOR TESTING RAISING cx_static_check.
     METHODS render_standalone FOR TESTING RAISING cx_static_check.
     METHODS render_namespaced_attr FOR TESTING RAISING cx_static_check.
-    METHODS pretty_xstring FOR TESTING RAISING cx_static_check.
+    METHODS pretty1 FOR TESTING RAISING cx_static_check.
+    METHODS pretty2 FOR TESTING RAISING cx_static_check.
 
-    DATA mi_ixml TYPE REF TO if_ixml.
+    DATA mi_ixml     TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
 
     METHODS setup.
@@ -55,13 +56,17 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
       RETURNING
         VALUE(ri_doc) TYPE REF TO if_ixml_document.
 
-    METHODS dump
+    METHODS dump_nodes
       IMPORTING
         ii_list        TYPE REF TO if_ixml_node_list
       RETURNING
         VALUE(rv_dump) TYPE string.
 
     METHODS render
+      RETURNING
+        VALUE(rv_xml) TYPE string.
+
+    METHODS pretty_print
       RETURNING
         VALUE(rv_xml) TYPE string.
 ENDCLASS.
@@ -271,7 +276,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     ASSERT li_current->get_value( ) IS INITIAL.
   ENDMETHOD.
 
-  METHOD dump.
+  METHOD dump_nodes.
     DATA li_iterator TYPE REF TO if_ixml_node_iterator.
     DATA li_node TYPE REF TO if_ixml_node.
 
@@ -295,7 +300,7 @@ CLASS ltcl_xml IMPLEMENTATION.
       ENDIF.
       rv_dump = |{ rv_dump }\n|.
 
-      rv_dump = rv_dump && dump( li_node->get_children( ) ).
+      rv_dump = rv_dump && dump_nodes( li_node->get_children( ) ).
     ENDDO.
   ENDMETHOD.
 
@@ -362,7 +367,7 @@ CLASS ltcl_xml IMPLEMENTATION.
       |NAME:bar,DEPTH:1,VALUE:moo\n| &&
       |NAME:#text,DEPTH:0,VALUE:moo,LEAF:X\n|.
 
-    lv_dump = dump( parse( lv_xml )->if_ixml_node~get_children( ) ).
+    lv_dump = dump_nodes( parse( lv_xml )->if_ixml_node~get_children( ) ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lv_dump
@@ -385,7 +390,7 @@ CLASS ltcl_xml IMPLEMENTATION.
       |NAME:abapGit,DEPTH:1,VALUE:\n| &&
       |NAME:foo,DEPTH:0,VALUE:,LEAF:X\n|.
 
-    lv_dump = dump( parse( lv_xml )->if_ixml_node~get_children( ) ).
+    lv_dump = dump_nodes( parse( lv_xml )->if_ixml_node~get_children( ) ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lv_dump
@@ -418,7 +423,7 @@ CLASS ltcl_xml IMPLEMENTATION.
       |NAME:FOO,DEPTH:1,VALUE:val\n| &&
       |NAME:#text,DEPTH:0,VALUE:val,LEAF:X\n|.
 
-    lv_dump = dump( parse( lv_xml )->if_ixml_node~get_children( ) ).
+    lv_dump = dump_nodes( parse( lv_xml )->if_ixml_node~get_children( ) ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lv_dump
@@ -438,7 +443,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     lv_xml = |<?xml version="1.0" encoding="utf-16"?><abapGit><sub></sub></abapGit>|.
 
     li_doc = parse( lv_xml ).
-    lv_dump = dump( li_doc->if_ixml_node~get_children( ) ).
+    lv_dump = dump_nodes( li_doc->if_ixml_node~get_children( ) ).
 
     li_git ?= li_doc->find_from_name_ns( depth = 0
                                          name = 'abapGit' ).
@@ -448,7 +453,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     li_doc->get_root( )->remove_child( li_git ).
     li_doc->get_root( )->append_child( li_sub ).
 
-    lv_dump = dump( li_doc->if_ixml_node~get_children( ) ).
+    lv_dump = dump_nodes( li_doc->if_ixml_node~get_children( ) ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lv_dump
@@ -975,22 +980,13 @@ CLASS ltcl_xml IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD pretty_xstring.
+  METHOD pretty_print.
 
     DATA: li_stream_factory TYPE REF TO if_ixml_stream_factory,
-          li_istream        TYPE REF TO if_ixml_istream,
-          li_parser         TYPE REF TO if_ixml_parser,
           lv_xstring        TYPE xstring,
-          lv_actual         TYPE string,
-          lv_expected       TYPE string,
-          lv_xml            TYPE string,
           li_encoding       TYPE REF TO if_ixml_encoding,
           li_ostream        TYPE REF TO if_ixml_ostream,
           li_renderer       TYPE REF TO if_ixml_renderer.
-
-
-    lv_xml = |<foo><bar>2</bar><moo><bar>2</bar></moo></foo>|.
-    parse( lv_xml ).
 
     li_stream_factory = mi_ixml->create_stream_factory( ).
     li_ostream  = li_stream_factory->create_ostream_xstring( lv_xstring ).
@@ -1004,8 +1000,38 @@ CLASS ltcl_xml IMPLEMENTATION.
     li_renderer->set_normalizing( abap_true ).
     li_renderer->render( ).
 
+    rv_xml = cl_abap_codepage=>convert_from( lv_xstring ).
 
-    lv_actual = cl_abap_codepage=>convert_from( lv_xstring ).
+  ENDMETHOD.
+
+  METHOD pretty1.
+
+    DATA: lv_xstring  TYPE xstring,
+          lv_actual   TYPE string,
+          lv_expected TYPE string.
+
+
+    parse( |<foo><bar>2</bar></foo>| ).
+
+    lv_actual = pretty_print( ).
+    lv_expected = |<?xml version="1.0" encoding="utf-8"?>\n<foo>\n <bar>2</bar>\n</foo>\n|.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_actual
+      exp = lv_expected ).
+
+  ENDMETHOD.
+
+  METHOD pretty2.
+
+    DATA: lv_xstring  TYPE xstring,
+          lv_actual   TYPE string,
+          lv_expected TYPE string.
+
+
+    parse( |<foo><bar>2</bar><moo><bar>2</bar></moo></foo>| ).
+
+    lv_actual = pretty_print( ).
     lv_expected = |<?xml version="1.0" encoding="utf-8"?>\n<foo>\n <bar>2</bar>\n <moo>\n  <bar>2</bar>\n </moo>\n</foo>\n|.
 
     cl_abap_unit_assert=>assert_equals(
