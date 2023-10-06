@@ -977,9 +977,7 @@ CLASS ltcl_xml IMPLEMENTATION.
 
   METHOD pretty_xstring.
 
-    DATA: li_ixml           TYPE REF TO if_ixml,
-          li_xml_doc        TYPE REF TO if_ixml_document,
-          li_stream_factory TYPE REF TO if_ixml_stream_factory,
+    DATA: li_stream_factory TYPE REF TO if_ixml_stream_factory,
           li_istream        TYPE REF TO if_ixml_istream,
           li_parser         TYPE REF TO if_ixml_parser,
           lv_xstring        TYPE xstring,
@@ -990,15 +988,12 @@ CLASS ltcl_xml IMPLEMENTATION.
           li_renderer       TYPE REF TO if_ixml_renderer.
 
 
-    li_ixml    = cl_ixml=>create( ).
-    li_xml_doc = li_ixml->create_document( ).
-
-    li_stream_factory = li_ixml->create_stream_factory( ).
+    li_stream_factory = mi_ixml->create_stream_factory( ).
     li_istream        = li_stream_factory->create_istream_xstring( cl_abap_codepage=>convert_to( '<foo><bar>2</bar><moo><bar>2</bar></moo></foo>' ) ).
-    li_parser         = li_ixml->create_parser(
+    li_parser         = mi_ixml->create_parser(
       stream_factory = li_stream_factory
       istream        = li_istream
-      document       = li_xml_doc ).
+      document       = mi_document ).
     li_parser->set_normalizing( abap_true ).
     cl_abap_unit_assert=>assert_equals(
       act = li_parser->parse( )
@@ -1007,13 +1002,13 @@ CLASS ltcl_xml IMPLEMENTATION.
 
 
     li_ostream  = li_stream_factory->create_ostream_xstring( lv_xstring ).
-    li_encoding = li_ixml->create_encoding(
+    li_encoding = mi_ixml->create_encoding(
       character_set = 'utf-8'
       byte_order    = if_ixml_encoding=>co_big_endian ).
-    li_xml_doc->set_encoding( li_encoding ).
-    li_renderer = li_ixml->create_renderer(
+    mi_document->set_encoding( li_encoding ).
+    li_renderer = mi_ixml->create_renderer(
       ostream  = li_ostream
-      document = li_xml_doc ).
+      document = mi_document ).
     li_renderer->set_normalizing( abap_true ).
     li_renderer->render( ).
 
