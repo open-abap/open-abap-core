@@ -983,24 +983,16 @@ CLASS ltcl_xml IMPLEMENTATION.
           lv_xstring        TYPE xstring,
           lv_actual         TYPE string,
           lv_expected       TYPE string,
+          lv_xml            TYPE string,
           li_encoding       TYPE REF TO if_ixml_encoding,
           li_ostream        TYPE REF TO if_ixml_ostream,
           li_renderer       TYPE REF TO if_ixml_renderer.
 
 
+    lv_xml = |<foo><bar>2</bar><moo><bar>2</bar></moo></foo>|.
+    parse( lv_xml ).
+
     li_stream_factory = mi_ixml->create_stream_factory( ).
-    li_istream        = li_stream_factory->create_istream_xstring( cl_abap_codepage=>convert_to( '<foo><bar>2</bar><moo><bar>2</bar></moo></foo>' ) ).
-    li_parser         = mi_ixml->create_parser(
-      stream_factory = li_stream_factory
-      istream        = li_istream
-      document       = mi_document ).
-    li_parser->set_normalizing( abap_true ).
-    cl_abap_unit_assert=>assert_equals(
-      act = li_parser->parse( )
-      exp = 0 ).
-    li_istream->close( ).
-
-
     li_ostream  = li_stream_factory->create_ostream_xstring( lv_xstring ).
     li_encoding = mi_ixml->create_encoding(
       character_set = 'utf-8'
