@@ -108,7 +108,7 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD get_ddic_field_list.
 
-    DATA struct TYPE REF TO cl_abap_structdescr.
+    DATA struct      TYPE REF TO cl_abap_structdescr.
     DATA lt_ddfields TYPE ddfields.
     DATA ls_ddfields LIKE LINE OF lt_ddfields.
 
@@ -117,7 +117,7 @@ CLASS ltcl_test IMPLEMENTATION.
 
     cl_abap_unit_assert=>assert_equals(
       act = lines( lt_ddfields )
-      exp = 3 ).
+      exp = 4 ).
 
     READ TABLE lt_ddfields INTO ls_ddfields WITH KEY fieldname = 'MANDT'.
     cl_abap_unit_assert=>assert_subrc( ).
@@ -135,10 +135,10 @@ CLASS ltcl_test IMPLEMENTATION.
              field TYPE i,
            END OF ty_structure.
 
-    DATA ls_data TYPE ty_structure.
+    DATA ls_data  TYPE ty_structure.
     DATA lo_struc TYPE REF TO cl_abap_structdescr.
     DATA lt_comps TYPE cl_abap_structdescr=>component_table.
-    DATA ls_comp LIKE LINE OF lt_comps.
+    DATA ls_comp  LIKE LINE OF lt_comps.
 
     lo_struc ?= cl_abap_structdescr=>describe_by_data( ls_data ).
     lt_comps = lo_struc->get_components( ).
