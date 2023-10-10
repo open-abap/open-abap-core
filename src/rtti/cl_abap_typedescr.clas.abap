@@ -59,7 +59,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     DATA ddic          TYPE abap_bool.
     DATA length        TYPE i.
     DATA decimals      TYPE i.
-    DATA absolute_name TYPE string.
+    DATA absolute_name TYPE abap_abstypename.
     DATA relative_name TYPE string.
 
     CONSTANTS typekind_any TYPE abap_typekind VALUE '~'.
@@ -428,7 +428,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 
 * this is not completely correct, local type names and ddic names might overlap, but will work for now,
 * todo: use/check getDDICName() in the future,
-    WRITE '@KERNEL if(abap.DDIC[type.get().absolute_name.get().toUpperCase()]) { type.get().ddic.set("X"); }'.
+    WRITE '@KERNEL if(abap.DDIC[type.get().absolute_name.get().toUpperCase().trimEnd()]) { type.get().ddic.set("X"); }'.
 
     TRANSLATE type->absolute_name TO UPPER CASE.
     TRANSLATE type->relative_name TO UPPER CASE.
