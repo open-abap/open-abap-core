@@ -15,6 +15,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS differs FOR TESTING RAISING cx_static_check.
     METHODS cp1 FOR TESTING RAISING cx_static_check.
     METHODS cp2 FOR TESTING RAISING cx_static_check.
+    METHODS cp3 FOR TESTING RAISING cx_static_check.
     METHODS char_eq_string FOR TESTING RAISING cx_static_check.
     METHODS decfloat34_eq FOR TESTING RAISING cx_static_check.
     METHODS decfloat34_ne FOR TESTING RAISING cx_static_check.
@@ -58,6 +59,14 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = |hello\nfoobar\nmoo|
       exp = '*oo*' ).
+  ENDMETHOD.
+
+  METHOD cp3.
+    DATA foo TYPE c LENGTH 200.
+    foo = '\CLASS=LIF_TEST_TYPES\TYPE=FOO'.
+    cl_abap_unit_assert=>assert_char_cp(
+      act = foo
+      exp = '*\TYPE=FOO' ).
   ENDMETHOD.
 
   METHOD initial_numbers.

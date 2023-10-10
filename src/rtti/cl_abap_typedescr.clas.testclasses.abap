@@ -61,7 +61,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS is_ddic_type_true2 FOR TESTING.
     METHODS is_ddic_type_false FOR TESTING.
 
-    METHODS contant_field_absolute FOR TESTING.
+    METHODS constant_field_absolute FOR TESTING.
     METHODS structure_field_absolute FOR TESTING.
     METHODS unnamed_type FOR TESTING.
     METHODS describe_by_dashed FOR TESTING.
@@ -507,7 +507,7 @@ CLASS ltcl_test IMPLEMENTATION.
       exp = 16 ).
   ENDMETHOD.
 
-  METHOD contant_field_absolute.
+  METHOD constant_field_absolute.
     DATA lo_descr TYPE REF TO cl_abap_typedescr.
     lo_descr = cl_abap_typedescr=>describe_by_data( lif_test_types=>c_foo-true ).
 
