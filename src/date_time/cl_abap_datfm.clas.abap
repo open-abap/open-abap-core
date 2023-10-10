@@ -40,7 +40,7 @@ CLASS cl_abap_datfm IMPLEMENTATION.
 
     FIND ALL OCCURRENCES OF REGEX regex_ddmmyyyy_dot_seperated IN im_datext.
     IF sy-subrc = 0.
-      ex_datint = im_datext+6(8) && im_datext+3(2) && im_datext(2).
+      ex_datint = im_datext+6(4) && im_datext+3(2) && im_datext(2).
       ex_datfmused = ddmmyyyy_dot_seperated.
       RETURN.
     ENDIF.
