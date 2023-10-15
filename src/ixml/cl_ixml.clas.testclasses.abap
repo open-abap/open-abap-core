@@ -1011,7 +1011,6 @@ CLASS ltcl_xml IMPLEMENTATION.
           lv_actual   TYPE string,
           lv_expected TYPE string.
 
-
     parse( |<foo><bar>2</bar></foo>| ).
 
     lv_actual = pretty_print( ).

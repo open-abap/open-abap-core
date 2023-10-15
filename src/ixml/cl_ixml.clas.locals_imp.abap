@@ -181,6 +181,10 @@ CLASS lcl_node DEFINITION.
     DATA mo_children   TYPE REF TO lcl_node_list.
     DATA mi_parent     TYPE REF TO if_ixml_node.
     DATA mi_attributes TYPE REF TO if_ixml_named_node_map.
+
+    METHODS has_direct_text
+      RETURNING
+        VALUE(rv_has) TYPE abap_bool.
 ENDCLASS.
 
 CLASS lcl_node IMPLEMENTATION.
@@ -356,6 +360,22 @@ CLASS lcl_node IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
+  METHOD has_direct_text.
+    DATA li_children TYPE REF TO if_ixml_node_list.
+    DATA li_child    TYPE REF TO if_ixml_node.
+
+    li_children = if_ixml_node~get_children( ).
+    rv_has = abap_false.
+    IF li_children->get_length( ) <> 1.
+      RETURN.
+    ENDIF.
+
+    li_child = li_children->get_item( 1 ).
+    IF li_child->get_name( ) = '#text'.
+      rv_has = abap_true.
+    ENDIF.
+  ENDMETHOD.
+
   METHOD if_ixml_element~render.
     DATA li_iterator   TYPE REF TO if_ixml_node_iterator.
     DATA li_node       TYPE REF TO if_ixml_node.
@@ -397,7 +417,7 @@ CLASS lcl_node IMPLEMENTATION.
       ENDIF.
     ENDIF.
 
-    IF li_children->get_length( ) > 0 AND ostream->get_pretty_print( ) = abap_true AND if_ixml_node~get_depth( ) > 1.
+    IF ostream->get_pretty_print( ) = abap_true AND if_ixml_node~is_leaf( ) = abap_false AND has_direct_text( ) = abap_false.
       ostream->write_string( |\n| ).
     ENDIF.
 
@@ -425,8 +445,11 @@ CLASS lcl_node IMPLEMENTATION.
     ENDIF.
 
     IF ostream->get_pretty_print( ) = abap_true AND mv_name <> '#text'.
+      WRITE / 'new line2'.
       ostream->write_string( |\n| ).
     ENDIF.
+
+    WRITE / 'endnode'.
 
   ENDMETHOD.
 
