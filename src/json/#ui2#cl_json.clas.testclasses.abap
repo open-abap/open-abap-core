@@ -307,7 +307,7 @@ CLASS ltcl_deserialize IMPLEMENTATION.
         json         = ''
         assoc_arrays = abap_true
       CHANGING
-       data          = ref ).
+        data         = ref ).
     cl_abap_unit_assert=>assert_initial( ref ).
   ENDMETHOD.
 
@@ -318,7 +318,7 @@ CLASS ltcl_deserialize IMPLEMENTATION.
         json         = '2'
         assoc_arrays = abap_true
       CHANGING
-       data          = ref ).
+        data         = ref ).
     cl_abap_unit_assert=>assert_initial( ref ).
   ENDMETHOD.
 
