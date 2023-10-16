@@ -445,11 +445,8 @@ CLASS lcl_node IMPLEMENTATION.
     ENDIF.
 
     IF ostream->get_pretty_print( ) = abap_true AND mv_name <> '#text'.
-      WRITE / 'new line2'.
       ostream->write_string( |\n| ).
     ENDIF.
-
-    WRITE / 'endnode'.
 
   ENDMETHOD.
 
