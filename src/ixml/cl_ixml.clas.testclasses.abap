@@ -45,6 +45,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS pretty1 FOR TESTING RAISING cx_static_check.
     METHODS pretty2 FOR TESTING RAISING cx_static_check.
     METHODS pretty3 FOR TESTING RAISING cx_static_check.
+    METHODS pretty4 FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml     TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -1051,6 +1052,24 @@ CLASS ltcl_xml IMPLEMENTATION.
 
     lv_actual = pretty_print( ).
     lv_expected = |<?xml version="1.0" encoding="utf-8"?>\n<foo>\n <bar/>\n</foo>\n|.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_actual
+      exp = lv_expected ).
+
+  ENDMETHOD.
+
+  METHOD pretty4.
+
+    DATA: lv_xstring  TYPE xstring,
+          lv_actual   TYPE string,
+          lv_expected TYPE string.
+
+
+    parse( |<foo><bar></bar><moo></moo></foo>| ).
+
+    lv_actual = pretty_print( ).
+    lv_expected = |<?xml version="1.0" encoding="utf-8"?>\n<foo>\n <bar/>\n <moo/>\n</foo>\n|.
 
     cl_abap_unit_assert=>assert_equals(
       act = lv_actual
