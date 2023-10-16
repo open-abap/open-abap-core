@@ -1088,7 +1088,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     parse( |<top><foo><bar></bar><moo></moo></foo></top>| ).
 
     lv_actual = pretty_print( ).
-    lv_expected = |<?xml version="1.0" encoding="utf-8"?>\n<top>\n <foo>\n  <bar/>\n  <moo/>\n </foo>\n </top>|.
+    lv_expected = |<?xml version="1.0" encoding="utf-8"?>\n<top>\n <foo>\n  <bar/>\n  <moo/>\n </foo>\n</top>\n|.
 
     cl_abap_unit_assert=>assert_equals(
       act = lv_actual
