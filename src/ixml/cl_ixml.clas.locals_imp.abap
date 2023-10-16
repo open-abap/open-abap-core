@@ -435,7 +435,7 @@ CLASS lcl_node IMPLEMENTATION.
     IF li_children->get_length( ) > 0 OR mv_value IS NOT INITIAL.
       ostream->write_string( lcl_escape=>escape_value( mv_value ) ).
       IF mv_name <> '#text'.
-        IF ostream->get_pretty_print( ) = abap_true AND if_ixml_node~get_depth( ) > 1.
+        IF ostream->get_pretty_print( ) = abap_true AND has_direct_text( ) = abap_false.
           ostream->write_string( repeat( val = | | occ = ostream->get_indent( ) ) ).
         ENDIF.
         ostream->write_string( '</' && lv_ns && mv_name && '>' ).
@@ -445,11 +445,8 @@ CLASS lcl_node IMPLEMENTATION.
     ENDIF.
 
     IF ostream->get_pretty_print( ) = abap_true AND mv_name <> '#text'.
-      WRITE / 'new line2'.
       ostream->write_string( |\n| ).
     ENDIF.
-
-    WRITE / 'endnode'.
 
   ENDMETHOD.
 

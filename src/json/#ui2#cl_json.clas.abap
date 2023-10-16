@@ -176,6 +176,8 @@ CLASS /ui2/cl_json IMPLEMENTATION.
 
     IF jsonx IS NOT INITIAL.
       mo_parsed->parse( cl_abap_codepage=>convert_from( jsonx ) ).
+    ELSEIF json IS INITIAL.
+      RETURN.
     ELSE.
       mo_parsed->parse( json ).
     ENDIF.
