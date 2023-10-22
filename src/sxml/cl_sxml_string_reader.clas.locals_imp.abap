@@ -302,7 +302,7 @@ CLASS lcl_reader IMPLEMENTATION.
     DATA li_attribute  TYPE REF TO if_sxml_attribute.
 
     DATA lt_close TYPE HASHED TABLE OF ty_cache WITH UNIQUE KEY name.
-    DATA lt_open TYPE HASHED TABLE OF ty_cache WITH UNIQUE KEY name.
+    DATA lt_open  TYPE HASHED TABLE OF ty_cache WITH UNIQUE KEY name.
     DATA lt_value TYPE HASHED TABLE OF ty_cache WITH UNIQUE KEY name.
     DATA ls_cache TYPE ty_cache.
 
@@ -388,7 +388,9 @@ CLASS lcl_reader IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_sxml_reader~read_next_node.
-    initialize( ).
+    IF lines( mt_nodes ) = 0.
+      initialize( ).
+    ENDIF.
     READ TABLE mt_nodes INDEX mv_pointer INTO node.
     mv_pointer = mv_pointer + 1.
   ENDMETHOD.
