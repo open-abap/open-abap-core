@@ -314,7 +314,7 @@ CLASS lcl_reader IMPLEMENTATION.
     ASSERT mv_initialized = abap_false.
     mv_initialized = abap_true.
 
-* todo, for now this only handles json, but the class is really meant for XML
+* todo: for now this only handles json, but the class is really meant for XML
     CREATE OBJECT lo_json.
     CREATE DATA lt_parsed.
     lo_json->parse(
@@ -335,13 +335,11 @@ CLASS lcl_reader IMPLEMENTATION.
             APPEND li_attribute TO lt_attributes.
           ENDIF.
 
-* optimized by using singletons,
           CREATE OBJECT li_node TYPE lcl_open_node
             EXPORTING
               name       = <ls_parsed>-name
               attributes = lt_attributes.
         WHEN if_sxml_node=>co_nt_element_close.
-* optimized by using singletons,
           CREATE OBJECT li_node TYPE lcl_close_node
             EXPORTING
               name = <ls_parsed>-name.
