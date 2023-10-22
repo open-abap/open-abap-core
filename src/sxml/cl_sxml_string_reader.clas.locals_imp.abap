@@ -298,7 +298,7 @@ CLASS lcl_reader IMPLEMENTATION.
 
     DATA lo_json       TYPE REF TO lcl_json_parser.
     DATA lt_parsed     TYPE REF TO lcl_json_parser=>ty_nodes.
-    DATA ls_parsed     TYPE lcl_json_parser=>ty_node.
+*    DATA ls_parsed     TYPE lcl_json_parser=>ty_node.
     DATA li_node       TYPE REF TO if_sxml_node.
     DATA lt_attributes TYPE if_sxml_attribute=>attributes.
     DATA li_attribute  TYPE REF TO if_sxml_attribute.
@@ -309,6 +309,7 @@ CLASS lcl_reader IMPLEMENTATION.
     DATA ls_cache TYPE ty_cache.
 
     FIELD-SYMBOLS <ls_cache> TYPE ty_cache.
+    FIELD-SYMBOLS <ls_parsed> TYPE lcl_json_parser=>ty_node.
 
     ASSERT mv_initialized = abap_false.
     mv_initialized = abap_true.
@@ -321,15 +322,15 @@ CLASS lcl_reader IMPLEMENTATION.
       it_nodes = lt_parsed ).
     CLEAR lo_json. " release memory
 
-    LOOP AT lt_parsed->* INTO ls_parsed.
-      CASE ls_parsed-type.
+    LOOP AT lt_parsed->* ASSIGNING <ls_parsed>.
+      CASE <ls_parsed>-type.
         WHEN if_sxml_node=>co_nt_element_open.
           CLEAR lt_attributes.
-          IF ls_parsed-key IS NOT INITIAL.
+          IF <ls_parsed>-key IS NOT INITIAL.
             CREATE OBJECT li_attribute TYPE lcl_attribute
               EXPORTING
                 name       = 'name'
-                value      = ls_parsed-key
+                value      = <ls_parsed>-key
                 value_type = if_sxml_value=>co_vt_text.
             APPEND li_attribute TO lt_attributes.
           ENDIF.
@@ -337,17 +338,17 @@ CLASS lcl_reader IMPLEMENTATION.
 * optimized by using singletons,
           CREATE OBJECT li_node TYPE lcl_open_node
             EXPORTING
-              name       = ls_parsed-name
+              name       = <ls_parsed>-name
               attributes = lt_attributes.
         WHEN if_sxml_node=>co_nt_element_close.
 * optimized by using singletons,
           CREATE OBJECT li_node TYPE lcl_close_node
             EXPORTING
-              name = ls_parsed-name.
+              name = <ls_parsed>-name.
         WHEN if_sxml_node=>co_nt_value.
           CREATE OBJECT li_node TYPE lcl_value_node
             EXPORTING
-              value = ls_parsed-value.
+              value = <ls_parsed>-value.
         WHEN OTHERS.
           ASSERT 1 = 2.
       ENDCASE.
