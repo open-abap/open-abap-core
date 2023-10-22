@@ -291,24 +291,12 @@ CLASS lcl_reader IMPLEMENTATION.
 
   METHOD initialize.
 
-    TYPES: BEGIN OF ty_cache,
-             name TYPE string,
-             ref  TYPE REF TO if_sxml_node,
-           END OF ty_cache.
-
     DATA lo_json       TYPE REF TO lcl_json_parser.
     DATA lt_parsed     TYPE REF TO lcl_json_parser=>ty_nodes.
-*    DATA ls_parsed     TYPE lcl_json_parser=>ty_node.
     DATA li_node       TYPE REF TO if_sxml_node.
     DATA lt_attributes TYPE if_sxml_attribute=>attributes.
     DATA li_attribute  TYPE REF TO if_sxml_attribute.
 
-    DATA lt_close TYPE HASHED TABLE OF ty_cache WITH UNIQUE KEY name.
-    DATA lt_open  TYPE HASHED TABLE OF ty_cache WITH UNIQUE KEY name.
-    DATA lt_value TYPE HASHED TABLE OF ty_cache WITH UNIQUE KEY name.
-    DATA ls_cache TYPE ty_cache.
-
-    FIELD-SYMBOLS <ls_cache> TYPE ty_cache.
     FIELD-SYMBOLS <ls_parsed> TYPE lcl_json_parser=>ty_node.
 
     ASSERT mv_initialized = abap_false.
