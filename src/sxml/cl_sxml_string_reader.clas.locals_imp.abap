@@ -146,7 +146,7 @@ CLASS lcl_json_parser IMPLEMENTATION.
 
   METHOD traverse_object.
 
-    DATA lt_keys   TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA lt_keys  TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
     DATA lv_key   LIKE LINE OF lt_keys.
     DATA lv_value TYPE string.
 
