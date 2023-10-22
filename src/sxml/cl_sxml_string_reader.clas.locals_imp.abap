@@ -34,10 +34,6 @@ CLASS lcl_json_parser DEFINITION.
       IMPORTING
         iv_json TYPE any
         iv_key  TYPE string OPTIONAL.
-    METHODS traverse_basic
-      IMPORTING
-        iv_json TYPE any
-        iv_key  TYPE string OPTIONAL.
     METHODS traverse_array
       IMPORTING
         iv_json TYPE any
@@ -97,42 +93,32 @@ CLASS lcl_json_parser IMPLEMENTATION.
       WHEN 'array'.
         traverse_array( iv_json = iv_json iv_key = iv_key ).
       WHEN 'string' OR 'boolean' OR 'number' OR 'null'.
-        traverse_basic( iv_json = iv_json iv_key = iv_key ).
+        WRITE '@KERNEL iv_json = iv_json.value + "";'.
+
+        CASE lv_type.
+          WHEN 'string'.
+            lv_type = 'str'.
+          WHEN 'number'.
+            lv_type = 'num'.
+          WHEN 'boolean'.
+            lv_type = 'bool'.
+        ENDCASE.
+
+        append( iv_type = if_sxml_node=>co_nt_element_open
+                iv_name = lv_type
+                iv_key  = iv_key ).
+        IF lv_type <> 'null'.
+          append( iv_type  = if_sxml_node=>co_nt_value
+                  iv_value = iv_json ).
+        ENDIF.
+        append( iv_type = if_sxml_node=>co_nt_element_close
+                iv_name = lv_type ).
       WHEN OTHERS.
         ASSERT 2 = 'todo'.
     ENDCASE.
 
   ENDMETHOD.
 
-  METHOD traverse_basic.
-
-    DATA lv_type TYPE string.
-
-    WRITE '@KERNEL let parsed = iv_json.value;'.
-    WRITE '@KERNEL iv_json = iv_json.value + "";'.
-    WRITE '@KERNEL lv_type.set(typeof parsed);'.
-    WRITE '@KERNEL if (parsed === null) lv_type.set("null");'.
-
-    CASE lv_type.
-      WHEN 'string'.
-        lv_type = 'str'.
-      WHEN 'number'.
-        lv_type = 'num'.
-      WHEN 'boolean'.
-        lv_type = 'bool'.
-    ENDCASE.
-
-    append( iv_type = if_sxml_node=>co_nt_element_open
-            iv_name = lv_type
-            iv_key  = iv_key ).
-    IF lv_type <> 'null'.
-      append( iv_type  = if_sxml_node=>co_nt_value
-              iv_value = iv_json ).
-    ENDIF.
-    append( iv_type = if_sxml_node=>co_nt_element_close
-            iv_name = lv_type ).
-
-  ENDMETHOD.
 
   METHOD traverse_array.
 
