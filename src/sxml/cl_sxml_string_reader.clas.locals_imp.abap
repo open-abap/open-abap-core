@@ -109,7 +109,7 @@ CLASS lcl_json_parser IMPLEMENTATION.
     DATA lv_type TYPE string.
 
     WRITE '@KERNEL let parsed = iv_json.value;'.
-    WRITE '@KERNEL iv_json = new abap.types.String().set(iv_json.value + "");'.
+    WRITE '@KERNEL iv_json = iv_json.value + "";'.
     WRITE '@KERNEL lv_type.set(typeof parsed);'.
     WRITE '@KERNEL if (parsed === null) lv_type.set("null");'.
 
