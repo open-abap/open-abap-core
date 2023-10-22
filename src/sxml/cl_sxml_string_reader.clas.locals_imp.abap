@@ -280,11 +280,13 @@ CLASS lcl_reader DEFINITION.
     DATA mv_json    TYPE string.
     DATA mt_nodes   TYPE ty_nodes.
     DATA mv_pointer TYPE i.
+    DATA mv_initialized TYPE abap_bool.
 ENDCLASS.
 
 CLASS lcl_reader IMPLEMENTATION.
   METHOD constructor.
     mv_json = iv_json.
+    mv_initialized = abap_false.
   ENDMETHOD.
 
   METHOD initialize.
@@ -308,9 +310,8 @@ CLASS lcl_reader IMPLEMENTATION.
 
     FIELD-SYMBOLS <ls_cache> TYPE ty_cache.
 
-    IF mv_json IS INITIAL.
-      RETURN.
-    ENDIF.
+    ASSERT mv_initialized = abap_false.
+    mv_initialized = abap_true.
 
 * todo, for now this only handles json, but the class is really meant for XML
     CREATE OBJECT lo_json.
@@ -367,7 +368,9 @@ CLASS lcl_reader IMPLEMENTATION.
     DATA close TYPE REF TO if_sxml_close_element.
     DATA value TYPE REF TO if_sxml_value_node.
 
-    initialize( ).
+    IF mv_initialized = abap_false.
+      initialize( ).
+    ENDIF.
     READ TABLE mt_nodes INDEX mv_pointer INTO node.
     mv_pointer = mv_pointer + 1.
     if_sxml_reader~node_type = node->type.
@@ -388,7 +391,7 @@ CLASS lcl_reader IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_sxml_reader~read_next_node.
-    IF lines( mt_nodes ) = 0.
+    IF mv_initialized = abap_false.
       initialize( ).
     ENDIF.
     READ TABLE mt_nodes INDEX mv_pointer INTO node.
