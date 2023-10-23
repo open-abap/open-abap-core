@@ -44,6 +44,7 @@ CLASS lcl_invocation_result DEFINITION.
            END OF ty_name_value.
 
     DATA mt_exporting TYPE STANDARD TABLE OF ty_name_value WITH DEFAULT KEY.
+    DATA mt_tables TYPE STANDARD TABLE OF ty_name_value WITH DEFAULT KEY.
 ENDCLASS.
 
 CLASS lcl_invocation_result IMPLEMENTATION.
@@ -59,6 +60,18 @@ CLASS lcl_invocation_result IMPLEMENTATION.
 * todo: actually want to copy the data,
     GET REFERENCE OF value INTO ls_row-value.
     INSERT ls_row INTO TABLE mt_exporting.
+
+    self = me.
+  ENDMETHOD.
+
+  METHOD if_ftd_output_configuration~set_table_parameter.
+    DATA ls_row LIKE LINE OF mt_tables.
+
+    ls_row-name = name.
+* note: in javascript the referenced data will not be deallocated,
+* todo: actually want to copy the data,
+    GET REFERENCE OF value INTO ls_row-value.
+    INSERT ls_row INTO TABLE mt_tables.
 
     self = me.
   ENDMETHOD.
@@ -113,6 +126,9 @@ CLASS lcl_invoker IMPLEMENTATION.
 
     LOOP AT lo_result->mt_exporting INTO ls_exporting.
       WRITE '@KERNEL fminput.importing[ls_exporting.get().name.get().toLowerCase().trimEnd()].set(ls_exporting.get().value.dereference());'.
+    ENDLOOP.
+    LOOP AT lo_result->mt_tables INTO ls_table.
+      WRITE '@KERNEL fminput.tables[ls_table.get().name.get().toLowerCase().trimEnd()].set(ls_table.get().value.dereference());'.
     ENDLOOP.
 
   ENDMETHOD.
