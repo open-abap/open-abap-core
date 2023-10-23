@@ -589,6 +589,8 @@ CLASS ltcl_deserialize IMPLEMENTATION.
       CHANGING
         data = ls_data ).
 
+    cl_abap_unit_assert=>assert_initial( ls_data-foo ).
+
   ENDMETHOD.
 
 ENDCLASS.
