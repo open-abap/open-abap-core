@@ -104,15 +104,13 @@ CLASS lcl_invoker IMPLEMENTATION.
     li_arguments = lo_arguments.
 
 * todo, set arguments
-    WRITE '@KERNEL for (const importing in fminput.exporting) {'.
-*    WRITE '@KERNEL   console.dir(importing);'.
+    WRITE '@KERNEL for (const importing in fminput?.exporting || []) {'.
     WRITE '@KERNEL   ls_importing.get().name.set(importing.toUpperCase());'.
-*    WRITE '@KERNEL   console.dir(ls_importing.get().value);'.
     WRITE '@KERNEL   ls_importing.get().value.pointer = fminput.exporting[importing];'.
     INSERT ls_importing INTO TABLE lo_arguments->mt_importing.
     WRITE '@KERNEL }'.
 
-    WRITE '@KERNEL for (const table in fminput.tables) {'.
+    WRITE '@KERNEL for (const table in fminput?.tables || []) {'.
     WRITE '@KERNEL   ls_table.get().name.set(table.toUpperCase());'.
     WRITE '@KERNEL   ls_table.get().value.pointer = fminput.tables[table];'.
     INSERT ls_table INTO TABLE lo_arguments->mt_tables.
