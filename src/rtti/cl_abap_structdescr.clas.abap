@@ -26,10 +26,6 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
           not_found
           no_ddic_type.
 
-    METHODS is_ddic_type
-      RETURNING
-        VALUE(bool) TYPE abap_bool.
-
     METHODS get_component_type
       IMPORTING
         p_name             TYPE any
@@ -177,10 +173,6 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     <component>-keyflag = abap_true.
     WRITE '@KERNEL }'.
 
-  ENDMETHOD.
-
-  METHOD is_ddic_type.
-    bool = ddic.
   ENDMETHOD.
 
   METHOD construct_from_data.
