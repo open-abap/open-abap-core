@@ -301,7 +301,8 @@ CLASS cl_http_entity IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_request~set_version.
-    ASSERT 2 = 'todo'.
+* todo,
+    RETURN.
   ENDMETHOD.
 
   METHOD if_http_entity~set_form_field.
