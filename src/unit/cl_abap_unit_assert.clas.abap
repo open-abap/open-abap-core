@@ -308,8 +308,8 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
 
     DESCRIBE FIELD act TYPE type1.
     DESCRIBE FIELD exp TYPE type2.
-*    WRITE '@KERNEL console.dir(type1.get());'.
-*    WRITE '@KERNEL console.dir(type2.get());'.
+    " WRITE '@KERNEL console.dir(type1.get());'.
+    " WRITE '@KERNEL console.dir(type2.get());'.
     IF type1 CA 'CgyIFPDTXN8'. " basic types
       IF type2 IS NOT INITIAL.
         IF type2 NA 'CgyIFPDTXN8'.
@@ -338,6 +338,10 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
       IF diff >= tol.
         RAISE EXCEPTION TYPE kernel_cx_assert.
       ENDIF.
+    ELSEIF type1 = 'l'.
+      assert_equals(
+        act = act->*
+        exp = exp->* ).
     ELSEIF act <> exp.
       lv_act = lcl_dump=>to_string( act ).
       lv_exp = lcl_dump=>to_string( exp ).
