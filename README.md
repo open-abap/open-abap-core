@@ -1,4 +1,4 @@
-# open-abap
+# open-abap-core
 
 Reuseable ABAP functionality
 
