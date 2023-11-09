@@ -9,6 +9,8 @@ INTERFACE if_http_client PUBLIC.
   CONSTANTS co_disabled TYPE i VALUE 0.
   CONSTANTS co_enabled  TYPE i VALUE 1.
 
+  CONSTANTS co_timeout_default TYPE i VALUE 60.
+
   METHODS authenticate
     IMPORTING
       proxy_authentication TYPE abap_bool OPTIONAL

@@ -24,6 +24,14 @@ CLASS cl_abap_hmac DEFINITION PUBLIC.
         ef_hmacb64string TYPE string
       RAISING
         cx_abap_message_digest.
+
+    CLASS-METHODS string_to_xstring
+      IMPORTING
+        if_input TYPE string
+      RETURNING
+        VALUE(er_output) TYPE xstring
+      RAISING
+        cx_abap_message_digest.
 ENDCLASS.
 
 CLASS cl_abap_hmac IMPLEMENTATION.
@@ -58,6 +66,10 @@ CLASS cl_abap_hmac IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD calculate_hmac_for_char.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD string_to_xstring.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 ENDCLASS.
