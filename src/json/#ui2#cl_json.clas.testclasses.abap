@@ -600,6 +600,7 @@ CLASS ltcl_deserialize IMPLEMENTATION.
     DATA lr_data TYPE REF TO data.
 
     FIELD-SYMBOLS <any> TYPE any.
+    FIELD-SYMBOLS <table> TYPE ANY TABLE.
 
 
     lv_json = `{"oScroll": []}`.
@@ -615,6 +616,10 @@ CLASS ltcl_deserialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_subrc( ).
     ASSIGN COMPONENT 'OSCROLL' OF STRUCTURE <any> TO <any>.
     cl_abap_unit_assert=>assert_subrc( ).
+    ASSIGN <any>->* TO <table>.
+    cl_abap_unit_assert=>assert_equals(
+      exp = 0
+      act = lines( <table> ) ).
 
   ENDMETHOD.
 
