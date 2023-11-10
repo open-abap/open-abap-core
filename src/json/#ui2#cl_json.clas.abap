@@ -309,7 +309,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             ENDLOOP.
             lo_struct = cl_abap_structdescr=>create( lt_components ).
             CREATE DATA data TYPE HANDLE lo_struct.
-          ELSEIF lines( lt_members ) > 0 AND lv_type = 'array'.
+          ELSEIF lv_type = 'array'.
             lo_table = cl_abap_tabledescr=>create( cl_abap_refdescr=>get_ref_to_data( ) ).
             CREATE DATA data TYPE HANDLE lo_table.
           ELSE.
