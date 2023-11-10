@@ -599,6 +599,9 @@ CLASS ltcl_deserialize IMPLEMENTATION.
     DATA lv_json TYPE string.
     DATA lr_data TYPE REF TO data.
 
+    FIELD-SYMBOLS <any> TYPE any.
+
+
     lv_json = `{"oScroll": []}`.
 
     /ui2/cl_json=>deserialize(
@@ -606,6 +609,12 @@ CLASS ltcl_deserialize IMPLEMENTATION.
         json = lv_json
       CHANGING
         data = lr_data ).
+
+    cl_abap_unit_assert=>assert_not_initial( lr_data ).
+    ASSIGN lr_data->* TO <any>.
+    cl_abap_unit_assert=>assert_subrc( ).
+    ASSIGN COMPONENT 'OSCROLL' OF STRUCTURE <any> TO <any>.
+    cl_abap_unit_assert=>assert_subrc( ).
 
   ENDMETHOD.
 
