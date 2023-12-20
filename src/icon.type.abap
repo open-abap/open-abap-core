@@ -42,6 +42,7 @@ CONSTANTS icon_host TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_htm TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_incoming_object TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_incomplete TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_information TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_insert_row TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_led_green TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_led_inactive TYPE c LENGTH 4 VALUE 'ICON'.
@@ -50,8 +51,10 @@ CONSTANTS icon_led_yellow TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_list TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_mass_change TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_message_critical TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_message_error_small TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_message_information TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_message_question TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_message_warning_small TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_move TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_no_status TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_object_list TYPE c LENGTH 4 VALUE 'ICON'.
