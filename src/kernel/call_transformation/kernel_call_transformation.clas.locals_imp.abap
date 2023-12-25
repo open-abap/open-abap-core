@@ -155,6 +155,10 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
         ENDLOOP.
         rv_xml = rv_xml && |</{ iv_name }>|.
       WHEN cl_abap_typedescr=>kind_elem.
+        IF ms_options-initial_components = kernel_call_transformation=>gc_options-suppress AND iv_ref->* IS INITIAL.
+          RETURN.
+        ENDIF.
+
         IF lo_type->type_kind = cl_abap_typedescr=>typekind_string AND iv_ref->* IS INITIAL.
           rv_xml = rv_xml && |<{ iv_name }/>|.
         ELSE.
