@@ -139,6 +139,12 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
         lo_struc ?= lo_type.
         lt_comps = lo_struc->get_components( ).
         ASSIGN iv_ref->* TO <any>.
+
+        IF ms_options-initial_components = kernel_call_transformation=>gc_options-suppress AND <any> IS INITIAL.
+          rv_xml = rv_xml && |<{ iv_name }/>|.
+          RETURN.
+        ENDIF.
+
         rv_xml = rv_xml && |<{ iv_name }>|.
         LOOP AT lt_comps INTO ls_compo.
           ASSIGN COMPONENT ls_compo-name OF STRUCTURE <any> TO <field>.
