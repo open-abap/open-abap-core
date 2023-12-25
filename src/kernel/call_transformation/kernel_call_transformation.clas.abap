@@ -1,10 +1,22 @@
 CLASS kernel_call_transformation DEFINITION PUBLIC.
 * handling of ABAP statement CALL TRANSFORMATION
   PUBLIC SECTION.
-    CLASS-METHODS call IMPORTING input TYPE any.
+    TYPES: BEGIN OF ty_options,
+             initial_components TYPE string,
+           END OF ty_options.
+
+    CONSTANTS: BEGIN OF gc_options,
+                 suppress TYPE string VALUE 'suppress',
+               END OF gc_options.
+
+    CLASS-METHODS call
+      IMPORTING
+        name    TYPE any
+        options TYPE any.
   PRIVATE SECTION.
-    CLASS-DATA mi_doc TYPE REF TO if_ixml_document.
-    CLASS-DATA mi_writer TYPE REF TO if_sxml_writer.
+    CLASS-DATA mi_doc     TYPE REF TO if_ixml_document.
+    CLASS-DATA mi_writer  TYPE REF TO if_sxml_writer.
+    CLASS-DATA ms_options TYPE ty_options.
 
     CLASS-METHODS parse_xml
       IMPORTING
@@ -19,6 +31,9 @@ CLASS kernel_call_transformation DEFINITION PUBLIC.
         iv_ref TYPE REF TO data
       RETURNING
         VALUE(rv_type) TYPE string.
+
+    CLASS-METHODS parse_options
+      IMPORTING options TYPE any.
 ENDCLASS.
 
 CLASS kernel_call_transformation IMPLEMENTATION.
@@ -45,6 +60,8 @@ CLASS kernel_call_transformation IMPLEMENTATION.
 * only the ID transformation is implemented
     WRITE '@KERNEL lv_name.set(INPUT.name.toUpperCase());'.
     ASSERT lv_name = 'ID'.
+
+    parse_options( options ).
 
 * Handle input SOURCE
     WRITE '@KERNEL if (INPUT.sourceXML?.constructor.name === "ABAPObject") this.mi_doc.set(INPUT.sourceXML);'.
@@ -91,7 +108,9 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     WRITE '@KERNEL }'.
     IF lv_result = abap_true.
       lv_result = '<?xml version="1.0" encoding="utf-16"?><asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0"><asx:values>'.
-      CREATE OBJECT lo_data_to_xml.
+      CREATE OBJECT lo_data_to_xml
+        EXPORTING
+          is_options = ms_options.
       WRITE '@KERNEL if (INPUT.source.constructor.name === "Object") {'.
       WRITE '@KERNEL   for (const name in INPUT.source) {'.
       WRITE '@KERNEL     lv_name.set(name);'.
@@ -161,6 +180,26 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     WRITE '@KERNEL }'.
 
 *    WRITE '@KERNEL console.dir(INPUT.result.data);'.
+
+  ENDMETHOD.
+
+  METHOD parse_options.
+* https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapcall_transformation_options.htm
+
+    DATA lv_name  TYPE string.
+    DATA lv_value TYPE string.
+
+    FIELD-SYMBOLS <lv_field> TYPE string.
+
+
+    WRITE '@KERNEL for (const name in INPUT.options || {}) {'.
+    WRITE '@KERNEL   lv_name.set(name);'.
+    WRITE '@KERNEL   lv_value.set(INPUT.options[name]);'.
+    ASSIGN COMPONENT lv_name OF STRUCTURE ms_options TO <lv_field>.
+    IF sy-subrc = 0.
+      <lv_field> = lv_value.
+    ENDIF.
+    WRITE '@KERNEL }'.
 
   ENDMETHOD.
 
