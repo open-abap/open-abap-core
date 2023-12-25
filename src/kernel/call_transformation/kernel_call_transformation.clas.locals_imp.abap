@@ -169,6 +169,12 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
         ENDIF.
       WHEN cl_abap_typedescr=>kind_table.
         ASSIGN iv_ref->* TO <table>.
+
+        IF ms_options-initial_components = kernel_call_transformation=>gc_options-suppress AND <table> IS INITIAL.
+          rv_xml = rv_xml && |<{ iv_name }/>|.
+          RETURN.
+        ENDIF.
+
         rv_xml = rv_xml && |<{ iv_name }>|.
         LOOP AT <table> ASSIGNING <any>.
           GET REFERENCE OF <any> INTO lv_ref.
