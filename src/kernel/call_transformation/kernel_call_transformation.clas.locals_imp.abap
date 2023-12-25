@@ -10,14 +10,15 @@ CLASS lcl_heap DEFINITION.
         VALUE(rv_xml) TYPE string.
   PRIVATE SECTION.
     DATA mv_counter TYPE i.
-    DATA mv_data TYPE string.
+    DATA mv_data    TYPE string.
 ENDCLASS.
 
 CLASS lcl_data_to_xml DEFINITION.
   PUBLIC SECTION.
     METHODS constructor
       IMPORTING
-        io_heap TYPE REF TO lcl_heap OPTIONAL.
+        is_options TYPE kernel_call_transformation=>ty_options OPTIONAL
+        io_heap    TYPE REF TO lcl_heap OPTIONAL.
 
     METHODS run
       IMPORTING
@@ -30,7 +31,8 @@ CLASS lcl_data_to_xml DEFINITION.
       RETURNING
         VALUE(rv_xml) TYPE string.
   PRIVATE SECTION.
-    DATA mo_heap TYPE REF TO lcl_heap.
+    DATA mo_heap    TYPE REF TO lcl_heap.
+    DATA ms_options TYPE kernel_call_transformation=>ty_options.
 ENDCLASS.
 
 CLASS lcl_heap IMPLEMENTATION.
@@ -110,6 +112,8 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
     ELSE.
       mo_heap = io_heap.
     ENDIF.
+
+    ms_options = is_options.
   ENDMETHOD.
 
   METHOD serialize_heap.
@@ -126,6 +130,7 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
     FIELD-SYMBOLS <any>   TYPE any.
     FIELD-SYMBOLS <table> TYPE ANY TABLE.
     FIELD-SYMBOLS <field> TYPE any.
+
 
     lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
 

@@ -1,17 +1,22 @@
 CLASS kernel_call_transformation DEFINITION PUBLIC.
 * handling of ABAP statement CALL TRANSFORMATION
   PUBLIC SECTION.
+    TYPES: BEGIN OF ty_options,
+             initial_components TYPE string,
+           END OF ty_options.
+
+    CONSTANTS: BEGIN OF gc_options,
+                 suppress TYPE string VALUE 'suppress',
+               END OF gc_options.
+
     CLASS-METHODS call
       IMPORTING
         name    TYPE any
         options TYPE any.
   PRIVATE SECTION.
-    CLASS-DATA mi_doc TYPE REF TO if_ixml_document.
-    CLASS-DATA mi_writer TYPE REF TO if_sxml_writer.
-
-    CLASS-DATA: BEGIN OF ms_options,
-                  initial_components TYPE string,
-                END OF ms_options.
+    CLASS-DATA mi_doc     TYPE REF TO if_ixml_document.
+    CLASS-DATA mi_writer  TYPE REF TO if_sxml_writer.
+    CLASS-DATA ms_options TYPE ty_options.
 
     CLASS-METHODS parse_xml
       IMPORTING
@@ -103,7 +108,9 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     WRITE '@KERNEL }'.
     IF lv_result = abap_true.
       lv_result = '<?xml version="1.0" encoding="utf-16"?><asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0"><asx:values>'.
-      CREATE OBJECT lo_data_to_xml.
+      CREATE OBJECT lo_data_to_xml
+        EXPORTING
+          is_options = ms_options.
       WRITE '@KERNEL if (INPUT.source.constructor.name === "Object") {'.
       WRITE '@KERNEL   for (const name in INPUT.source) {'.
       WRITE '@KERNEL     lv_name.set(name);'.
