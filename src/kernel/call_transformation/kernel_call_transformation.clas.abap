@@ -184,6 +184,8 @@ CLASS kernel_call_transformation IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD parse_options.
+* https://help.sap.com/doc/abapdocu_752_index_htm/7.52/en-US/abapcall_transformation_options.htm
+
     DATA lv_name  TYPE string.
     DATA lv_value TYPE string.
 
