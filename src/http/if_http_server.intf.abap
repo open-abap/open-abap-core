@@ -12,6 +12,7 @@ INTERFACE if_http_server PUBLIC.
 
   CLASS-DATA session_id TYPE string READ-ONLY.
   CLASS-DATA authentication_method TYPE i READ-ONLY.
+  CLASS-DATA authenticated TYPE i READ-ONLY.
 
   METHODS logoff
     IMPORTING
