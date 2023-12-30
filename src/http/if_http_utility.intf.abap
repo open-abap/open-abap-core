@@ -2,9 +2,10 @@ INTERFACE if_http_utility PUBLIC.
 
   CLASS-METHODS string_to_fields
     IMPORTING
-      string        TYPE string
+      string             TYPE string
+      ignore_parenthesis TYPE i DEFAULT 0
     RETURNING
-      VALUE(fields) TYPE tihttpnvp.
+      VALUE(fields)      TYPE tihttpnvp.
 
   CLASS-METHODS get_last_error
     RETURNING

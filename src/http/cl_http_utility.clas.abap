@@ -82,6 +82,8 @@ CLASS cl_http_utility IMPLEMENTATION.
     DATA str LIKE LINE OF tab.
     DATA ls_field LIKE LINE OF fields.
 
+    ASSERT ignore_parenthesis = 0.
+
     SPLIT string AT '&' INTO TABLE tab.
     LOOP AT tab INTO str.
       SPLIT str AT '=' INTO ls_field-name ls_field-value.
