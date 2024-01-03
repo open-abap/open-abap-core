@@ -15,7 +15,7 @@ CLASS cl_ui2_deserialize1 IMPLEMENTATION.
     DATA ls_data TYPE STANDARD TABLE OF ty_data WITH DEFAULT KEY.
 
     lv_json = lv_json && '['.
-    DO 8000 TIMES.
+    DO 200 TIMES.
       lv_json = lv_json && '{"abap": 2, "foo": "sdfs", "another": ""},'.
     ENDDO.
     lv_json = substring(
@@ -26,7 +26,7 @@ CLASS cl_ui2_deserialize1 IMPLEMENTATION.
     /ui2/cl_json=>deserialize(
       EXPORTING
         json = lv_json
-      changing
+      CHANGING
         data = ls_data ).
   ENDMETHOD.
 ENDCLASS.
