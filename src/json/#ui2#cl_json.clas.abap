@@ -343,11 +343,12 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           ENDIF.
         ENDIF.
         ASSIGN data->* TO <any>.
+* todo: optimize, it should not be nessesary to call cl_abap_typedescr
         _deserialize(
           EXPORTING
             prefix      = prefix
             pretty_name = pretty_name
-            io_type     = lo_refdescr->get_referenced_type( )
+            io_type     = cl_abap_typedescr=>describe_by_data( <any> )
           CHANGING
             data        = <any> ).
       WHEN OTHERS.
