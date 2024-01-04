@@ -107,11 +107,6 @@ CLASS lcl_parser DEFINITION.
         iv_path        TYPE string
       RETURNING
         VALUE(rv_type) TYPE string.
-    " METHODS exists
-    "   IMPORTING
-    "     iv_path          TYPE string
-    "   RETURNING
-    "     VALUE(rv_exists) TYPE abap_bool.
     METHODS members
       IMPORTING
         iv_path           TYPE string
@@ -159,11 +154,6 @@ CLASS lcl_parser IMPLEMENTATION.
     ENDLOOP.
     rv_path = iv_path.
   ENDMETHOD.
-
-  " METHOD exists.
-  "   READ TABLE mt_data WITH KEY key_full_name COMPONENTS full_name = iv_path TRANSPORTING NO FIELDS.
-  "   rv_exists = boolc( sy-subrc = 0 ).
-  " ENDMETHOD.
 
   METHOD get_type.
     DATA ls_data LIKE LINE OF mt_data.
