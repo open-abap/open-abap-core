@@ -122,12 +122,14 @@ CLASS lcl_parser DEFINITION.
          parent    TYPE string,
          name      TYPE string,
          full_name TYPE string,
+         full_name_upper TYPE string,
          value     TYPE string,
          type      TYPE string,
        END OF ty_data.
 
     TYPES ty_data_tt TYPE STANDARD TABLE OF ty_data WITH DEFAULT KEY
       WITH UNIQUE SORTED KEY key_full_name COMPONENTS full_name
+      WITH UNIQUE SORTED KEY key_full_name_upper COMPONENTS full_name_upper
       WITH NON-UNIQUE SORTED KEY key_parent COMPONENTS parent.
 
     DATA mt_data TYPE ty_data_tt.
@@ -141,18 +143,20 @@ CLASS lcl_parser IMPLEMENTATION.
       REPLACE ALL OCCURRENCES OF '-' IN <ls_data>-parent WITH '_'.
       REPLACE ALL OCCURRENCES OF '-' IN <ls_data>-name WITH '_'.
       REPLACE ALL OCCURRENCES OF '-' IN <ls_data>-full_name WITH '_'.
+      REPLACE ALL OCCURRENCES OF '-' IN <ls_data>-full_name_upper WITH '_'.
     ENDLOOP.
   ENDMETHOD.
 
   METHOD find_ignore_case.
     DATA ls_data LIKE LINE OF mt_data.
-    LOOP AT mt_data INTO ls_data.
-      IF to_upper( ls_data-full_name ) = to_upper( iv_path ).
-        rv_path = ls_data-full_name.
-        RETURN.
-      ENDIF.
-    ENDLOOP.
+
+    READ TABLE mt_data WITH KEY key_full_name_upper COMPONENTS full_name_upper = to_upper( iv_path ) INTO ls_data.
+    IF sy-subrc = 0.
+      rv_path = ls_data-full_name.
+      RETURN.
+    ENDIF.
     rv_path = iv_path.
+
   ENDMETHOD.
 
   METHOD get_type.
@@ -245,6 +249,7 @@ CLASS lcl_parser IMPLEMENTATION.
             ls_data-parent = lo_stack->get_full_name( ).
             ls_data-name = lv_push.
             ls_data-full_name = ls_data-parent && ls_data-name.
+            ls_data-full_name_upper = to_upper( ls_data-full_name ).
             ls_data-type = li_open->qname-name.
 
             lv_index = lv_index + 1.
@@ -266,6 +271,7 @@ CLASS lcl_parser IMPLEMENTATION.
             ls_data-parent = lo_stack->get_full_name( ).
             ls_data-name = '/'.
             ls_data-full_name = ls_data-parent && ls_data-name.
+            ls_data-full_name_upper = to_upper( ls_data-full_name ).
             ls_data-type = li_open->qname-name.
             APPEND ls_data TO mt_data.
 
