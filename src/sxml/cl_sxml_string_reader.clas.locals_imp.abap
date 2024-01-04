@@ -157,7 +157,7 @@ CLASS lcl_json_parser IMPLEMENTATION.
 
     WRITE '@KERNEL for (const k of Object.keys(parsed)) {'.
     WRITE '@KERNEL   lv_key.set(k);'.
-    WRITE '@KERNEL   lv_value = {value: parsed[lv_key.get()]};'.
+    WRITE '@KERNEL   lv_value = {value: parsed[k]};'.
     traverse( iv_json = lv_value
               iv_key  = lv_key ).
     WRITE '@KERNEL };'.
