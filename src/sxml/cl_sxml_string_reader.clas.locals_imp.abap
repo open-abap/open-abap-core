@@ -146,22 +146,21 @@ CLASS lcl_json_parser IMPLEMENTATION.
 
   METHOD traverse_object.
 
-    DATA lt_keys  TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
-    DATA lv_key   LIKE LINE OF lt_keys.
+    DATA lv_key   TYPE string.
     DATA lv_value TYPE string.
 
     WRITE '@KERNEL let parsed = iv_json.value;'.
-    WRITE '@KERNEL Object.keys(parsed).forEach(k => lt_keys.append(k));'.
 
     append( iv_type = if_sxml_node=>co_nt_element_open
             iv_name = 'object'
             iv_key  = iv_key ).
 
-    LOOP AT lt_keys INTO lv_key.
-      WRITE '@KERNEL lv_value = {value: parsed[lv_key.get()]};'.
-      traverse( iv_json = lv_value
-                iv_key  = lv_key ).
-    ENDLOOP.
+    WRITE '@KERNEL for (const k of Object.keys(parsed)) {'.
+    WRITE '@KERNEL   lv_key.set(k);'.
+    WRITE '@KERNEL   lv_value = {value: parsed[lv_key.get()]};'.
+    traverse( iv_json = lv_value
+              iv_key  = lv_key ).
+    WRITE '@KERNEL };'.
 
     append( iv_type = if_sxml_node=>co_nt_element_close
             iv_name = 'object' ).
