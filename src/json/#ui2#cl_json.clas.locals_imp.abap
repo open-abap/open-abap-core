@@ -107,11 +107,11 @@ CLASS lcl_parser DEFINITION.
         iv_path        TYPE string
       RETURNING
         VALUE(rv_type) TYPE string.
-    METHODS exists
-      IMPORTING
-        iv_path          TYPE string
-      RETURNING
-        VALUE(rv_exists) TYPE abap_bool.
+    " METHODS exists
+    "   IMPORTING
+    "     iv_path          TYPE string
+    "   RETURNING
+    "     VALUE(rv_exists) TYPE abap_bool.
     METHODS members
       IMPORTING
         iv_path           TYPE string
@@ -130,7 +130,11 @@ CLASS lcl_parser DEFINITION.
          value     TYPE string,
          type      TYPE string,
        END OF ty_data.
-    TYPES ty_data_tt TYPE STANDARD TABLE OF ty_data WITH DEFAULT KEY.
+
+    TYPES ty_data_tt TYPE STANDARD TABLE OF ty_data WITH DEFAULT KEY
+      WITH UNIQUE SORTED KEY key_full_name COMPONENTS full_name
+      WITH NON-UNIQUE SORTED KEY key_parent COMPONENTS parent.
+
     DATA mt_data TYPE ty_data_tt.
 ENDCLASS.
 
@@ -156,20 +160,20 @@ CLASS lcl_parser IMPLEMENTATION.
     rv_path = iv_path.
   ENDMETHOD.
 
-  METHOD exists.
-    READ TABLE mt_data WITH KEY full_name = iv_path TRANSPORTING NO FIELDS.
-    rv_exists = boolc( sy-subrc = 0 ).
-  ENDMETHOD.
+  " METHOD exists.
+  "   READ TABLE mt_data WITH KEY key_full_name COMPONENTS full_name = iv_path TRANSPORTING NO FIELDS.
+  "   rv_exists = boolc( sy-subrc = 0 ).
+  " ENDMETHOD.
 
   METHOD get_type.
     DATA ls_data LIKE LINE OF mt_data.
-    READ TABLE mt_data WITH KEY full_name = iv_path INTO ls_data.
+    READ TABLE mt_data WITH KEY key_full_name COMPONENTS full_name = iv_path INTO ls_data.
     rv_type = ls_data-type.
   ENDMETHOD.
 
   METHOD members.
     DATA ls_data LIKE LINE OF mt_data.
-    LOOP AT mt_data INTO ls_data WHERE parent = iv_path.
+    LOOP AT mt_data INTO ls_data USING KEY key_parent WHERE parent = iv_path.
       APPEND ls_data-name TO rt_members.
     ENDLOOP.
   ENDMETHOD.
@@ -189,7 +193,7 @@ CLASS lcl_parser IMPLEMENTATION.
   METHOD value_string.
     DATA ls_data LIKE LINE OF mt_data.
 
-    READ TABLE mt_data INTO ls_data WITH KEY full_name = iv_path.
+    READ TABLE mt_data WITH KEY key_full_name COMPONENTS full_name = iv_path INTO ls_data.
     IF sy-subrc = 0.
       rv_value = ls_data-value.
     ENDIF.
