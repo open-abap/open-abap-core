@@ -26,31 +26,31 @@ CLASS lcl_stack DEFINITION.
              is_array    TYPE abap_bool,
              array_index TYPE i,
            END OF ty_data.
-    DATA mt_data TYPE STANDARD TABLE OF ty_data WITH DEFAULT KEY.
+    DATA mt_stack TYPE STANDARD TABLE OF ty_data WITH DEFAULT KEY.
 ENDCLASS.
 
 CLASS lcl_stack IMPLEMENTATION.
   METHOD push.
-    DATA ls_data LIKE LINE OF mt_data.
+    DATA ls_data LIKE LINE OF mt_stack.
     ls_data-name = iv_name.
     ls_data-is_array = boolc( iv_type = 'array' ).
-    APPEND ls_data TO mt_data.
+    APPEND ls_data TO mt_stack.
   ENDMETHOD.
 
   METHOD is_array.
     DATA lv_index TYPE i.
-    DATA ls_data LIKE LINE OF mt_data.
-    lv_index = lines( mt_data ).
-    READ TABLE mt_data INTO ls_data INDEX lv_index.       "#EC CI_SUBRC
+    DATA ls_data LIKE LINE OF mt_stack.
+    lv_index = lines( mt_stack ).
+    READ TABLE mt_stack INTO ls_data INDEX lv_index.       "#EC CI_SUBRC
     rv_array = ls_data-is_array.
   ENDMETHOD.
 
   METHOD get_and_increase_index.
     DATA lv_index TYPE i.
-    FIELD-SYMBOLS <ls_data> LIKE LINE OF mt_data.
+    FIELD-SYMBOLS <ls_data> LIKE LINE OF mt_stack.
 
-    lv_index = lines( mt_data ).
-    READ TABLE mt_data ASSIGNING <ls_data> INDEX lv_index.
+    lv_index = lines( mt_stack ).
+    READ TABLE mt_stack ASSIGNING <ls_data> INDEX lv_index.
     IF sy-subrc = 0.
       <ls_data>-array_index = <ls_data>-array_index + 1.
       rv_index = <ls_data>-array_index.
@@ -60,18 +60,18 @@ CLASS lcl_stack IMPLEMENTATION.
 
   METHOD pop.
     DATA lv_index TYPE i.
-    DATA ls_data LIKE LINE OF mt_data.
-    lv_index = lines( mt_data ).
+    DATA ls_data LIKE LINE OF mt_stack.
+    lv_index = lines( mt_stack ).
     IF lv_index > 0.
-      READ TABLE mt_data INTO ls_data INDEX lv_index.     "#EC CI_SUBRC
+      READ TABLE mt_stack INTO ls_data INDEX lv_index.     "#EC CI_SUBRC
       rv_name = ls_data-name.
-      DELETE mt_data INDEX lv_index.
+      DELETE mt_stack INDEX lv_index.
     ENDIF.
   ENDMETHOD.
 
   METHOD get_full_name.
-    DATA ls_data LIKE LINE OF mt_data.
-    LOOP AT mt_data INTO ls_data.
+    DATA ls_data LIKE LINE OF mt_stack.
+    LOOP AT mt_stack INTO ls_data.
       rv_path = rv_path && ls_data-name.
     ENDLOOP.
   ENDMETHOD.
