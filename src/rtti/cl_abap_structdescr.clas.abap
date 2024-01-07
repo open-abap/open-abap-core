@@ -211,7 +211,6 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
 
     CLEAR components.
     LOOP AT mt_refs ASSIGNING <ls_ref>.
-      CLEAR ls_component.
       ls_component-name = <ls_ref>-name.
       ls_component-type_kind = <ls_ref>-type->type_kind.
       ls_component-length = <ls_ref>-type->length.
