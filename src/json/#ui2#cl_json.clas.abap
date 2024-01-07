@@ -59,10 +59,10 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     DATA lo_type       TYPE REF TO cl_abap_typedescr.
     DATA lo_struct     TYPE REF TO cl_abap_structdescr.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
-    DATA ls_component  LIKE LINE OF lt_components.
     DATA ref           TYPE REF TO data.
     DATA lv_index      TYPE i.
 
+    FIELD-SYMBOLS <ls_component> LIKE LINE OF lt_components.
     FIELD-SYMBOLS <any> TYPE any.
     FIELD-SYMBOLS <tab> TYPE ANY TABLE.
 
@@ -132,18 +132,18 @@ CLASS /ui2/cl_json IMPLEMENTATION.
         lo_struct ?= lo_type.
         lt_components = lo_struct->get_components( ).
         r_json = '{'.
-        LOOP AT lt_components INTO ls_component.
-          ASSIGN COMPONENT ls_component-name OF STRUCTURE data TO <any>.
+        LOOP AT lt_components ASSIGNING <ls_component>.
+          ASSIGN COMPONENT <ls_component>-name OF STRUCTURE data TO <any>.
           ASSERT sy-subrc = 0.
           IF compress = abap_true AND <any> IS INITIAL.
             CONTINUE.
           ENDIF.
           IF pretty_name = pretty_mode-camel_case.
-            r_json = r_json && |"{ to_mixed( to_lower( ls_component-name ) ) }":|.
+            r_json = r_json && |"{ to_mixed( to_lower( <ls_component>-name ) ) }":|.
           ELSEIF pretty_name = pretty_mode-low_case.
-            r_json = r_json && |"{ to_lower( ls_component-name ) }":|.
+            r_json = r_json && |"{ to_lower( <ls_component>-name ) }":|.
           ELSE.
-            r_json = r_json && |"{ ls_component-name }":|.
+            r_json = r_json && |"{ <ls_component>-name }":|.
           ENDIF.
           r_json = r_json && serialize(
             data          = <any>
@@ -214,6 +214,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     DATA lv_member     LIKE LINE OF lt_members.
 
     FIELD-SYMBOLS <any> TYPE any.
+    FIELD-SYMBOLS <ls_component> LIKE LINE OF lt_components.
 
     prefix = mo_parsed->find_ignore_case( prefix ).
 
@@ -272,21 +273,21 @@ CLASS /ui2/cl_json IMPLEMENTATION.
       WHEN cl_abap_typedescr=>kind_struct.
         lo_struct ?= io_type.
         lt_components = lo_struct->get_components( ).
-        LOOP AT lt_components INTO ls_component.
-          ASSIGN COMPONENT ls_component-name OF STRUCTURE data TO <any>.
+        LOOP AT lt_components ASSIGNING <ls_component>.
+          ASSIGN COMPONENT <ls_component>-name OF STRUCTURE data TO <any>.
           ASSERT sy-subrc = 0.
           CASE pretty_name.
             WHEN pretty_mode-camel_case.
-              lv_name = to_mixed( to_lower( ls_component-name ) ).
+              lv_name = to_mixed( to_lower( <ls_component>-name ) ).
             WHEN OTHERS.
-              lv_name = to_lower( ls_component-name ).
+              lv_name = to_lower( <ls_component>-name ).
           ENDCASE.
           " WRITE '@KERNEL console.dir("structure: " + lv_name.get());'.
           _deserialize(
             EXPORTING
               prefix      = prefix && '/' && lv_name
               pretty_name = pretty_name
-              io_type     = ls_component-type
+              io_type     = <ls_component>-type
             CHANGING
               data        = <any> ).
         ENDLOOP.
