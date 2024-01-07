@@ -75,20 +75,23 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
   METHOD struct.
     DATA lo_struct     TYPE REF TO cl_abap_structdescr.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
-    DATA ls_component  LIKE LINE OF lt_components.
     DATA field         TYPE REF TO data.
+    DATA lv_name TYPE string.
+
+    FIELD-SYMBOLS <ls_component> LIKE LINE OF lt_components.
 
     lo_struct ?= handle.
     lt_components = lo_struct->get_components( ).
     WRITE '@KERNEL let obj = {};'.
-    LOOP AT lt_components INTO ls_component.
+    LOOP AT lt_components ASSIGNING <ls_component>.
 *      WRITE '@KERNEL console.dir(ls_component.get().name);'.
       call(
         EXPORTING
-          handle = lo_struct->get_component_type( ls_component-name )
+          handle = lo_struct->get_component_type( <ls_component>-name )
         CHANGING
           dref   = field ).
-      WRITE '@KERNEL obj[ls_component.get().name.get().toLowerCase()] = field.getPointer();'.
+      lv_name = to_lower( <ls_component>-name ).
+      WRITE '@KERNEL obj[lv_name.get()] = field.getPointer();'.
     ENDLOOP.
     WRITE '@KERNEL dref.assign(new abap.types.Structure(obj));'.
   ENDMETHOD.
