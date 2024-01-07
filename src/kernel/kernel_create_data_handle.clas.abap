@@ -75,20 +75,23 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
   METHOD struct.
     DATA lo_struct     TYPE REF TO cl_abap_structdescr.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
-    DATA ls_component  LIKE LINE OF lt_components.
     DATA field         TYPE REF TO data.
+    DATA lv_name       TYPE string.
+
+    FIELD-SYMBOLS <ls_component> LIKE LINE OF lt_components.
 
     lo_struct ?= handle.
     lt_components = lo_struct->get_components( ).
     WRITE '@KERNEL let obj = {};'.
-    LOOP AT lt_components INTO ls_component.
+    LOOP AT lt_components ASSIGNING <ls_component>.
 *      WRITE '@KERNEL console.dir(ls_component.get().name);'.
       call(
         EXPORTING
-          handle = lo_struct->get_component_type( ls_component-name )
+          handle = lo_struct->get_component_type( <ls_component>-name )
         CHANGING
           dref   = field ).
-      WRITE '@KERNEL obj[ls_component.get().name.get().toLowerCase()] = field.getPointer();'.
+      lv_name = to_lower( <ls_component>-name ).
+      WRITE '@KERNEL obj[lv_name.get()] = field.getPointer();'.
     ENDLOOP.
     WRITE '@KERNEL dref.assign(new abap.types.Structure(obj));'.
   ENDMETHOD.
@@ -96,9 +99,10 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
   METHOD table.
     DATA lo_table     TYPE REF TO cl_abap_tabledescr.
     DATA lt_keys      TYPE abap_table_keydescr_tab.
-    DATA ls_key       LIKE LINE OF lt_keys.
     DATA lv_component TYPE string.
     DATA field        TYPE REF TO data.
+
+    FIELD-SYMBOLS <ls_key> LIKE LINE OF lt_keys.
 
     lo_table ?= handle.
 
@@ -113,16 +117,16 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
 
 * todo, handle secondary keys,
     lt_keys = lo_table->get_keys( ).
-    LOOP AT lt_keys INTO ls_key WHERE is_primary = abap_true.
-      IF ls_key-access_kind = cl_abap_tabledescr=>tablekind_sorted.
+    LOOP AT lt_keys ASSIGNING <ls_key> WHERE is_primary = abap_true.
+      IF <ls_key>-access_kind = cl_abap_tabledescr=>tablekind_sorted.
         WRITE '@KERNEL options.primaryKey.type = "SORTED";'.
-      ELSEIF ls_key-access_kind = cl_abap_tabledescr=>tablekind_hashed.
+      ELSEIF <ls_key>-access_kind = cl_abap_tabledescr=>tablekind_hashed.
         WRITE '@KERNEL options.primaryKey.type = "HASHED";'.
       ENDIF.
-      IF ls_key-is_unique = abap_true.
+      IF <ls_key>-is_unique = abap_true.
         WRITE '@KERNEL options.primaryKey.isUnique = true;'.
       ENDIF.
-      LOOP AT ls_key-components INTO lv_component.
+      LOOP AT <ls_key>-components INTO lv_component.
         WRITE '@KERNEL options.primaryKey.keyFields.push(lv_component.get().toLowerCase());'.
       ENDLOOP.
     ENDLOOP.
