@@ -207,15 +207,15 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
 
   METHOD update_components.
     DATA ls_component LIKE LINE OF components.
-    DATA ls_ref       LIKE LINE OF mt_refs.
+    FIELD-SYMBOLS <ls_ref> LIKE LINE OF mt_refs.
 
     CLEAR components.
-    LOOP AT mt_refs INTO ls_ref.
+    LOOP AT mt_refs ASSIGNING <ls_ref>.
       CLEAR ls_component.
-      ls_component-name = ls_ref-name.
-      ls_component-type_kind = ls_ref-type->type_kind.
-      ls_component-length = ls_ref-type->length.
-      ls_component-decimals = ls_ref-type->decimals.
+      ls_component-name = <ls_ref>-name.
+      ls_component-type_kind = <ls_ref>-type->type_kind.
+      ls_component-length = <ls_ref>-type->length.
+      ls_component-decimals = <ls_ref>-type->decimals.
       APPEND ls_component TO components.
     ENDLOOP.
   ENDMETHOD.
