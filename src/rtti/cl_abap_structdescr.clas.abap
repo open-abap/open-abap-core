@@ -66,15 +66,7 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
   PRIVATE SECTION.
     METHODS update_components.
 
-    TYPES: BEGIN OF ty_refs,
-             name       TYPE string,
-             ref        TYPE REF TO cl_abap_datadescr,
-             suffix     TYPE string,
-             as_include TYPE abap_bool,
-           END OF ty_refs.
-    DATA mt_refs TYPE STANDARD TABLE OF ty_refs WITH DEFAULT KEY.
-
-    DATA mt_components_cache TYPE component_table.
+    DATA mt_refs TYPE component_table.
 ENDCLASS.
 
 CLASS cl_abap_structdescr IMPLEMENTATION.
@@ -109,7 +101,7 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     LOOP AT p_components INTO ls_component.
       CLEAR ls_ref.
       ls_ref-name = ls_component-name.
-      ls_ref-ref  = ls_component-type.
+      ls_ref-type = ls_component-type.
       APPEND ls_ref TO ref->mt_refs.
     ENDLOOP.
     ref->update_components( ).
@@ -129,7 +121,7 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
       ls_view-name = ls_component-name.
       READ TABLE mt_refs WITH KEY name = ls_component-name INTO ls_ref.
       IF sy-subrc = 0.
-        ls_view-type = ls_ref-ref.
+        ls_view-type = ls_ref-type.
       ENDIF.
       IF ls_ref-as_include = abap_true.
         CONTINUE.
@@ -195,7 +187,7 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     ASSIGN COMPONENT lv_name OF STRUCTURE data TO <fs>.
     lo_datadescr ?= cl_abap_typedescr=>describe_by_data( <fs> ).
     ls_ref-name = lv_name.
-    ls_ref-ref  = lo_datadescr.
+    ls_ref-type = lo_datadescr.
 
     CLEAR lv_as_include.
     WRITE '@KERNEL if (INPUT.data?.getAsInclude) {'.
@@ -218,31 +210,20 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
   METHOD update_components.
     DATA ls_component LIKE LINE OF components.
     DATA ls_ref       LIKE LINE OF mt_refs.
-    DATA ls_row       LIKE LINE OF mt_components_cache.
 
     CLEAR components.
     LOOP AT mt_refs INTO ls_ref.
       CLEAR ls_component.
       ls_component-name = ls_ref-name.
-      ls_component-type_kind = ls_ref-ref->type_kind.
-      ls_component-length = ls_ref-ref->length.
-      ls_component-decimals = ls_ref-ref->decimals.
+      ls_component-type_kind = ls_ref-type->type_kind.
+      ls_component-length = ls_ref-type->length.
+      ls_component-decimals = ls_ref-type->decimals.
       APPEND ls_component TO components.
-    ENDLOOP.
-
-    CLEAR mt_components_cache.
-    LOOP AT mt_refs INTO ls_ref.
-      CLEAR ls_row.
-      ls_row-name = ls_ref-name.
-      ls_row-type = ls_ref-ref.
-      " as_include type abap_bool,
-      " suffix     type string,
-      APPEND ls_row TO mt_components_cache.
     ENDLOOP.
   ENDMETHOD.
 
   METHOD get_components.
-    rt_components = mt_components_cache.
+    rt_components = mt_refs.
   ENDMETHOD.
 
   METHOD get_component_type.
@@ -251,7 +232,7 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     IF sy-subrc <> 0.
       RAISE component_not_found.
     ELSE.
-      p_descr_ref = line-ref.
+      p_descr_ref = line-type.
     ENDIF.
   ENDMETHOD.
 
