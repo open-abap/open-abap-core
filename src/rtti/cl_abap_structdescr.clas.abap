@@ -73,6 +73,8 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
              as_include TYPE abap_bool,
            END OF ty_refs.
     DATA mt_refs TYPE STANDARD TABLE OF ty_refs WITH DEFAULT KEY.
+
+    DATA mt_components_cache TYPE component_table.
 ENDCLASS.
 
 CLASS cl_abap_structdescr IMPLEMENTATION.
@@ -216,6 +218,7 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
   METHOD update_components.
     DATA ls_component LIKE LINE OF components.
     DATA ls_ref       LIKE LINE OF mt_refs.
+    DATA ls_row       LIKE LINE OF mt_components_cache.
 
     CLEAR components.
     LOOP AT mt_refs INTO ls_ref.
@@ -226,24 +229,23 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
       ls_component-decimals = ls_ref-ref->decimals.
       APPEND ls_component TO components.
     ENDLOOP.
-  ENDMETHOD.
 
-  METHOD get_components.
-    DATA ls_component LIKE LINE OF components.
-    DATA ret          LIKE LINE OF rt_components.
-    DATA ls_ref       LIKE LINE OF mt_refs.
-
+    CLEAR mt_components_cache.
     LOOP AT components INTO ls_component.
-      CLEAR ret.
-      ret-name = ls_component-name.
+      CLEAR ls_row.
+      ls_row-name = ls_component-name.
       READ TABLE mt_refs INTO ls_ref WITH KEY name = ls_component-name.
       IF sy-subrc = 0.
-        ret-type = ls_ref-ref.
+        ls_row-type = ls_ref-ref.
       ENDIF.
       " as_include type abap_bool,
       " suffix     type string,
-      APPEND ret TO rt_components.
+      APPEND ls_row TO mt_components_cache.
     ENDLOOP.
+  ENDMETHOD.
+
+  METHOD get_components.
+    rt_components = mt_components_cache.
   ENDMETHOD.
 
   METHOD get_component_type.
