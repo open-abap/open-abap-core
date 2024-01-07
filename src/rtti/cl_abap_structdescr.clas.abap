@@ -189,13 +189,11 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     ls_ref-name = lv_name.
     ls_ref-type = lo_datadescr.
 
-    CLEAR lv_as_include.
     WRITE '@KERNEL if (INPUT.data?.getAsInclude) {'.
     WRITE '@KERNEL   lv_as_include.set(INPUT.data?.getAsInclude()?.[name.toLowerCase()] ? "X" : " ");'.
     WRITE '@KERNEL }'.
     ls_ref-as_include = lv_as_include.
 
-    CLEAR lv_suffix.
     WRITE '@KERNEL if (INPUT.data?.getSuffix) {'.
     WRITE '@KERNEL   lv_as_include.set(INPUT.data?.getSuffix()?.[name.toLowerCase()] || "");'.
     WRITE '@KERNEL }'.
