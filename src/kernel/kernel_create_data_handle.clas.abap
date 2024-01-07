@@ -76,7 +76,7 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
     DATA lo_struct     TYPE REF TO cl_abap_structdescr.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
     DATA field         TYPE REF TO data.
-    DATA lv_name TYPE string.
+    DATA lv_name       TYPE string.
 
     FIELD-SYMBOLS <ls_component> LIKE LINE OF lt_components.
 
