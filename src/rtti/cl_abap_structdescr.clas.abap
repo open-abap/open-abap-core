@@ -231,13 +231,10 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     ENDLOOP.
 
     CLEAR mt_components_cache.
-    LOOP AT components INTO ls_component.
+    LOOP AT mt_refs INTO ls_ref.
       CLEAR ls_row.
-      ls_row-name = ls_component-name.
-      READ TABLE mt_refs INTO ls_ref WITH KEY name = ls_component-name.
-      IF sy-subrc = 0.
-        ls_row-type = ls_ref-ref.
-      ENDIF.
+      ls_row-name = ls_ref-name.
+      ls_row-type = ls_ref-ref.
       " as_include type abap_bool,
       " suffix     type string,
       APPEND ls_row TO mt_components_cache.
