@@ -47,7 +47,7 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
 
     methods serialize_int
       importing
-     DATA type DATA.
+      DATA type DATA.
 
   methods CONSTRUCTOR
     importing
