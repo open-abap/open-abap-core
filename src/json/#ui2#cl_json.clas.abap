@@ -21,6 +21,13 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
       CHANGING
         data             TYPE data.
 
+  methods IS_COMPRESSABLE
+    importing
+      !TYPE_DESCR type ref to CL_ABAP_TYPEDESCR
+      !NAME type CSEQUENCE
+    returning
+      value(RV_COMPRESS) type ABAP_BOOL .
+
     CLASS-METHODS serialize
       IMPORTING
         data          TYPE data
@@ -38,6 +45,23 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
       RETURNING
         VALUE(rr_data) TYPE REF TO data.
 
+methods serialize_int
+  importing
+     DATA type DATA.
+
+  methods CONSTRUCTOR
+    importing
+      !COMPRESS type BOOL default C_BOOL-FALSE
+      !PRETTY_NAME type PRETTY_NAME_MODE default PRETTY_MODE-NONE
+      !ASSOC_ARRAYS type BOOL default C_BOOL-FALSE
+      !TS_AS_ISO8601 type BOOL default C_BOOL-FALSE.
+
+  data mv_compress type abap_bool.
+  data MV_PRETTY_NAME type string.
+  data MV_ASSOC_ARRAYS type abap_bool.
+  data MV_TS_AS_ISO8601 type abap_bool.
+  data mv_extended type abap_bool.
+
   PRIVATE SECTION.
     CLASS-DATA mo_parsed TYPE REF TO lcl_parser.
     CLASS-METHODS _deserialize
@@ -51,11 +75,13 @@ ENDCLASS.
 
 CLASS /ui2/cl_json IMPLEMENTATION.
 
-  METHOD generate.
-    ASSERT 1 = 'todo'.
-  ENDMETHOD.
+method serialize_int.
 
-  METHOD serialize.
+  data mv_compress type abap_bool.
+  data MV_PRETTY_NAME type string.
+  data MV_ASSOC_ARRAYS type abap_bool.
+  data MV_TS_AS_ISO8601 type abap_bool.
+
     DATA lo_type       TYPE REF TO cl_abap_typedescr.
     DATA lo_struct     TYPE REF TO cl_abap_structdescr.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
@@ -198,6 +224,46 @@ CLASS /ui2/cl_json IMPLEMENTATION.
         io_type     = lo_type
       CHANGING
         data        = data ).
+
+endmethod.
+
+METHOD constructor.
+
+  DATA: rtti TYPE REF TO cl_abap_classdescr.
+
+  mv_compress       = compress.
+  mv_pretty_name    = pretty_name.
+  mv_assoc_arrays   = assoc_arrays.
+  mv_ts_as_iso8601  = ts_as_iso8601.
+
+  rtti ?= cl_abap_classdescr=>describe_by_object_ref( me ).
+  IF rtti->absolute_name NE mc_me_type.
+    mv_extended = abap_true.
+  ENDIF.
+
+ENDMETHOD.
+
+  METHOD is_compressable.
+    rv_compress = abap_true.
+  ENDMETHOD.
+
+  METHOD generate.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD serialize.
+
+  DATA lo_json  TYPE REF TO /ui2/cl_json.
+
+  CREATE OBJECT lo_json
+    EXPORTING
+      compress      = compress
+      pretty_name   = pretty_name
+      assoc_arrays      = assoc_arrays
+      ts_as_iso8601    = ts_as_iso8601.
+
+  r_json = lo_json->serialize_int( name = name data = data type_descr = type_descr ).
+
   ENDMETHOD.
 
   METHOD _deserialize.
