@@ -77,11 +77,6 @@ CLASS /ui2/cl_json IMPLEMENTATION.
 
 method serialize_int.
 
-  data mv_compress type abap_bool.
-  data MV_PRETTY_NAME type string.
-  data MV_ASSOC_ARRAYS type abap_bool.
-  data MV_TS_AS_ISO8601 type abap_bool.
-
     DATA lo_type       TYPE REF TO cl_abap_typedescr.
     DATA lo_struct     TYPE REF TO cl_abap_structdescr.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
