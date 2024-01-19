@@ -21,7 +21,7 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
       CHANGING
         data             TYPE data.
 
-  methods IS_COMPRESSABLE
+    methods IS_COMPRESSABLE
     importing
       !TYPE_DESCR type ref to CL_ABAP_TYPEDESCR
       !NAME type CSEQUENCE
