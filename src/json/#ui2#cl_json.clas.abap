@@ -46,7 +46,7 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
         VALUE(rr_data) TYPE REF TO data.
 
     methods serialize_int
-  importing
+      importing
      DATA type DATA.
 
   methods CONSTRUCTOR
