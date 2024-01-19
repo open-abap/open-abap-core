@@ -22,7 +22,7 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
         data             TYPE data.
 
     methods IS_COMPRESSABLE
-    importing
+      importing
       !TYPE_DESCR type ref to CL_ABAP_TYPEDESCR
       !NAME type CSEQUENCE
     returning
