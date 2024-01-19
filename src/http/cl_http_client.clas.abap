@@ -237,7 +237,8 @@ CLASS cl_http_client IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_client~send_sap_logon_ticket.
-    ASSERT 2 = 'not supported'.
+* do nothing,
+    RETURN.
   ENDMETHOD.
 
   METHOD if_http_client~refresh_request.

@@ -57,6 +57,7 @@ ENDCLASS.
 
 CLASS cl_abap_gzip IMPLEMENTATION.
   METHOD decompress_binary_with_header.
+* with gzip RFC 1952 header
     WRITE '@KERNEL const zlib = await import("zlib");'.
     WRITE '@KERNEL const buf = Buffer.from(gzip_in.get(), "hex");'.
     WRITE '@KERNEL const decompress = zlib.gunzipSync(buf).toString("hex").toUpperCase();'.

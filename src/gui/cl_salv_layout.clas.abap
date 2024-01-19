@@ -17,10 +17,18 @@ CLASS cl_salv_layout DEFINITION PUBLIC.
     METHODS has_default
       RETURNING
         VALUE(value) TYPE abap_bool.
+
+    METHODS set_initial_layout
+      IMPORTING
+        value TYPE clike.
 ENDCLASS.
 
 CLASS cl_salv_layout IMPLEMENTATION.
   METHOD set_key.
+    ASSERT 1 = 'not supported'.
+  ENDMETHOD.
+
+  METHOD set_initial_layout.
     ASSERT 1 = 'not supported'.
   ENDMETHOD.
 

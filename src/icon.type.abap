@@ -2,6 +2,8 @@ TYPE-POOL icon.
 CONSTANTS icon_abap TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_address TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_adopt TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_arrow_left TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_arrow_right TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_ben_current_benefits TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_biw_report TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_biw_source_sys_r3 TYPE c LENGTH 4 VALUE 'ICON'.
@@ -40,6 +42,7 @@ CONSTANTS icon_host TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_htm TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_incoming_object TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_incomplete TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_information TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_insert_row TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_led_green TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_led_inactive TYPE c LENGTH 4 VALUE 'ICON'.
@@ -48,8 +51,10 @@ CONSTANTS icon_led_yellow TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_list TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_mass_change TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_message_critical TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_message_error_small TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_message_information TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_message_question TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_message_warning_small TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_move TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_no_status TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_object_list TYPE c LENGTH 4 VALUE 'ICON'.
@@ -68,6 +73,7 @@ CONSTANTS icon_red_light TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_refresh TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_relation TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_release TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_resubmission TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_select_all TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_select_detail TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_set_state TYPE c LENGTH 4 VALUE 'ICON'.

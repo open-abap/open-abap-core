@@ -15,6 +15,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS differs FOR TESTING RAISING cx_static_check.
     METHODS cp1 FOR TESTING RAISING cx_static_check.
     METHODS cp2 FOR TESTING RAISING cx_static_check.
+    METHODS cp3 FOR TESTING RAISING cx_static_check.
     METHODS char_eq_string FOR TESTING RAISING cx_static_check.
     METHODS decfloat34_eq FOR TESTING RAISING cx_static_check.
     METHODS decfloat34_ne FOR TESTING RAISING cx_static_check.
@@ -22,6 +23,9 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS char_n_pack FOR TESTING RAISING cx_static_check.
     METHODS int8_eq_int8 FOR TESTING RAISING cx_static_check.
     METHODS int8_eq_5 FOR TESTING RAISING cx_static_check.
+    METHODS refs_positive FOR TESTING RAISING cx_static_check.
+    METHODS refs_negative FOR TESTING RAISING cx_static_check.
+    METHODS float_zero FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -58,6 +62,14 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = |hello\nfoobar\nmoo|
       exp = '*oo*' ).
+  ENDMETHOD.
+
+  METHOD cp3.
+    DATA foo TYPE c LENGTH 200.
+    foo = '\CLASS=LIF_TEST_TYPES\TYPE=FOO'.
+    cl_abap_unit_assert=>assert_char_cp(
+      act = foo
+      exp = '*\TYPE=FOO' ).
   ENDMETHOD.
 
   METHOD initial_numbers.
@@ -222,6 +234,48 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       exp = val1
       act = 5 ).
+  ENDMETHOD.
+
+  METHOD refs_positive.
+    DATA int1 TYPE i.
+    DATA int2 TYPE i.
+    DATA ref1 TYPE REF TO i.
+    DATA ref2 TYPE REF TO i.
+
+    int1 = 5.
+    int2 = 5.
+    GET REFERENCE OF int1 INTO ref1.
+    GET REFERENCE OF int2 INTO ref2.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ref1
+      exp = ref2 ).
+  ENDMETHOD.
+
+  METHOD refs_negative.
+    DATA int1 TYPE i.
+    DATA int2 TYPE i.
+    DATA ref1 TYPE REF TO i.
+    DATA ref2 TYPE REF TO i.
+
+    int1 = 5.
+    int2 = 7.
+    GET REFERENCE OF int1 INTO ref1.
+    GET REFERENCE OF int2 INTO ref2.
+
+    cl_abap_unit_assert=>assert_differs(
+      act = ref1
+      exp = ref2 ).
+  ENDMETHOD.
+
+  METHOD float_zero.
+
+    DATA lv_f TYPE f.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_f
+      exp = 0 ).
+
   ENDMETHOD.
 
 ENDCLASS.

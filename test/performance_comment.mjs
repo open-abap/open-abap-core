@@ -10,9 +10,9 @@ comment += "| :--- | ---: | ---: | ---: |\n";
 for (const key of Object.keys(after)) {
   let delta = after[key] - before[key];
   if (Math.abs(delta) > 1000) {
-    delta += ":red_circle:";
+    delta += " :red_circle:";
   } else {
-    delta += ":green_circle:";
+    delta += " :green_circle:";
   }
   comment += "| `" + key + "` | " + before[key] + "ms | " + after[key] + "ms | " + delta + " |\n";
 }

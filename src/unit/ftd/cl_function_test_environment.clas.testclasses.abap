@@ -70,3 +70,35 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+*****************************************
+
+CLASS ltcl_no_parameters DEFINITION FINAL FOR TESTING DURATION SHORT RISK LEVEL HARMLESS.
+  PUBLIC SECTION.
+    INTERFACES if_ftd_invocation_answer.
+  PRIVATE SECTION.
+    METHODS test FOR TESTING RAISING cx_static_check.
+ENDCLASS.
+
+CLASS ltcl_no_parameters IMPLEMENTATION.
+
+  METHOD test.
+
+    DATA lt_deps    TYPE if_function_test_environment=>tt_function_dependencies.
+    DATA li_env     TYPE REF TO if_function_test_environment.
+    DATA lv_message TYPE string.
+
+
+    INSERT 'NOTHING' INTO TABLE lt_deps.
+    li_env = cl_function_test_environment=>create( lt_deps ).
+    li_env->get_double( 'NOTHING' )->configure_call( )->ignore_all_parameters( )->then_answer( me ).
+
+    CALL FUNCTION 'NOTHING'.
+
+  ENDMETHOD.
+
+  METHOD if_ftd_invocation_answer~answer.
+    RETURN.
+  ENDMETHOD.
+
+ENDCLASS.

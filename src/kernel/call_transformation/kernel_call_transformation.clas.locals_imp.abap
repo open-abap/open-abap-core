@@ -10,14 +10,15 @@ CLASS lcl_heap DEFINITION.
         VALUE(rv_xml) TYPE string.
   PRIVATE SECTION.
     DATA mv_counter TYPE i.
-    DATA mv_data TYPE string.
+    DATA mv_data    TYPE string.
 ENDCLASS.
 
 CLASS lcl_data_to_xml DEFINITION.
   PUBLIC SECTION.
     METHODS constructor
       IMPORTING
-        io_heap TYPE REF TO lcl_heap OPTIONAL.
+        is_options TYPE kernel_call_transformation=>ty_options OPTIONAL
+        io_heap    TYPE REF TO lcl_heap OPTIONAL.
 
     METHODS run
       IMPORTING
@@ -30,7 +31,8 @@ CLASS lcl_data_to_xml DEFINITION.
       RETURNING
         VALUE(rv_xml) TYPE string.
   PRIVATE SECTION.
-    DATA mo_heap TYPE REF TO lcl_heap.
+    DATA mo_heap    TYPE REF TO lcl_heap.
+    DATA ms_options TYPE kernel_call_transformation=>ty_options.
 ENDCLASS.
 
 CLASS lcl_heap IMPLEMENTATION.
@@ -110,6 +112,8 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
     ELSE.
       mo_heap = io_heap.
     ENDIF.
+
+    ms_options = is_options.
   ENDMETHOD.
 
   METHOD serialize_heap.
@@ -127,6 +131,7 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
     FIELD-SYMBOLS <table> TYPE ANY TABLE.
     FIELD-SYMBOLS <field> TYPE any.
 
+
     lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
 
     CASE lo_type->kind.
@@ -134,6 +139,12 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
         lo_struc ?= lo_type.
         lt_comps = lo_struc->get_components( ).
         ASSIGN iv_ref->* TO <any>.
+
+        IF ms_options-initial_components = kernel_call_transformation=>gc_options-suppress AND <any> IS INITIAL.
+          rv_xml = rv_xml && |<{ iv_name }/>|.
+          RETURN.
+        ENDIF.
+
         rv_xml = rv_xml && |<{ iv_name }>|.
         LOOP AT lt_comps INTO ls_compo.
           ASSIGN COMPONENT ls_compo-name OF STRUCTURE <any> TO <field>.
@@ -144,6 +155,10 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
         ENDLOOP.
         rv_xml = rv_xml && |</{ iv_name }>|.
       WHEN cl_abap_typedescr=>kind_elem.
+        IF ms_options-initial_components = kernel_call_transformation=>gc_options-suppress AND iv_ref->* IS INITIAL.
+          RETURN.
+        ENDIF.
+
         IF lo_type->type_kind = cl_abap_typedescr=>typekind_string AND iv_ref->* IS INITIAL.
           rv_xml = rv_xml && |<{ iv_name }/>|.
         ELSE.
@@ -154,6 +169,12 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
         ENDIF.
       WHEN cl_abap_typedescr=>kind_table.
         ASSIGN iv_ref->* TO <table>.
+
+        IF ms_options-initial_components = kernel_call_transformation=>gc_options-suppress AND <table> IS INITIAL.
+          rv_xml = rv_xml && |<{ iv_name }/>|.
+          RETURN.
+        ENDIF.
+
         rv_xml = rv_xml && |<{ iv_name }>|.
         LOOP AT <table> ASSIGNING <any>.
           GET REFERENCE OF <any> INTO lv_ref.

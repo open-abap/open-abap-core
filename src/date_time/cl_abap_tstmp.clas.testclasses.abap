@@ -3,7 +3,9 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
   PRIVATE SECTION.
     METHODS subtract FOR TESTING RAISING cx_static_check.
     METHODS add FOR TESTING RAISING cx_static_check.
+    METHODS add_long FOR TESTING RAISING cx_static_check.
     METHODS subtractsecs FOR TESTING RAISING cx_static_check.
+    METHODS subtract2 FOR TESTING RAISING cx_static_check.
     METHODS move FOR TESTING RAISING cx_static_check.
     METHODS systemtstmp_syst2utc FOR TESTING RAISING cx_static_check.
     METHODS move_to_short1 FOR TESTING RAISING cx_static_check.
@@ -43,6 +45,16 @@ CLASS ltcl_test IMPLEMENTATION.
 
   ENDMETHOD.
 
+  METHOD add_long.
+
+    DATA lv_time TYPE timestampl.
+
+    lv_time = cl_abap_tstmp=>add(
+      tstmp = lv_time
+      secs  = 5000 ).
+
+  ENDMETHOD.
+
   METHOD subtractsecs.
 
     CONSTANTS lc_time TYPE timestamp VALUE '19820201011000'.
@@ -55,6 +67,23 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_time
       exp = '19820131234640' ).
+
+  ENDMETHOD.
+
+  METHOD subtract2.
+
+    DATA lv_epoch TYPE timestampl.
+    DATA lv_start TYPE timestampl.
+    DATA lv_result TYPE timestampl.
+
+    GET TIME STAMP FIELD lv_start.
+    lv_epoch = '19700101000000'.
+
+    lv_result = cl_abap_tstmp=>subtract(
+      tstmp1 = lv_start
+      tstmp2 = lv_epoch ).
+
+    ASSERT lv_result > 0.
 
   ENDMETHOD.
 

@@ -82,6 +82,8 @@ CLASS cl_http_utility IMPLEMENTATION.
     DATA str LIKE LINE OF tab.
     DATA ls_field LIKE LINE OF fields.
 
+    ASSERT ignore_parenthesis = 0.
+
     SPLIT string AT '&' INTO TABLE tab.
     LOOP AT tab INTO str.
       SPLIT str AT '=' INTO ls_field-name ls_field-value.
@@ -103,8 +105,7 @@ CLASS cl_http_utility IMPLEMENTATION.
     DATA ls_field LIKE LINE OF fields.
 
     LOOP AT fields INTO ls_field.
-      REPLACE ALL OCCURRENCES OF ':' IN ls_field-value WITH '%3a'.
-      REPLACE ALL OCCURRENCES OF '/' IN ls_field-value WITH '%2f'.
+      ls_field-value = if_http_utility~escape_url( ls_field-value ).
       str = ls_field-name && '=' && ls_field-value.
       APPEND str TO tab.
     ENDLOOP.
@@ -127,7 +128,18 @@ CLASS cl_http_utility IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_utility~escape_url.
-    WRITE '@KERNEL escaped.set(encodeURIComponent(unescaped.get()));'.
+    DATA lv_index TYPE i.
+    DATA lv_char  TYPE string.
+
+    DO strlen( unescaped ) TIMES.
+      lv_index = sy-index - 1.
+      lv_char = unescaped+lv_index(1).
+      IF to_upper( lv_char ) CA sy-abcde OR lv_char CA '0123456789.-()'.
+        escaped = escaped && lv_char.
+      ELSE.
+        escaped = escaped && '%' && to_lower( cl_abap_codepage=>convert_to( lv_char ) ).
+      ENDIF.
+    ENDDO.
   ENDMETHOD.
 
   METHOD if_http_utility~encode_base64.

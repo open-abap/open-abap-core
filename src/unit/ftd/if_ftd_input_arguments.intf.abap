@@ -8,4 +8,12 @@ INTERFACE if_ftd_input_arguments PUBLIC.
     RAISING
       cx_ftd_parameter_not_found.
 
+  METHODS get_table_parameter
+    IMPORTING
+      name          TYPE abap_parmname
+    RETURNING
+      VALUE(result) TYPE REF TO data
+    RAISING
+      cx_ftd_parameter_not_found.
+
 ENDINTERFACE.

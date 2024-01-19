@@ -34,10 +34,6 @@ CLASS lcl_json_parser DEFINITION.
       IMPORTING
         iv_json TYPE any
         iv_key  TYPE string OPTIONAL.
-    METHODS traverse_basic
-      IMPORTING
-        iv_json TYPE any
-        iv_key  TYPE string OPTIONAL.
     METHODS traverse_array
       IMPORTING
         iv_json TYPE any
@@ -97,42 +93,32 @@ CLASS lcl_json_parser IMPLEMENTATION.
       WHEN 'array'.
         traverse_array( iv_json = iv_json iv_key = iv_key ).
       WHEN 'string' OR 'boolean' OR 'number' OR 'null'.
-        traverse_basic( iv_json = iv_json iv_key = iv_key ).
+        WRITE '@KERNEL iv_json = iv_json.value + "";'.
+
+        CASE lv_type.
+          WHEN 'string'.
+            lv_type = 'str'.
+          WHEN 'number'.
+            lv_type = 'num'.
+          WHEN 'boolean'.
+            lv_type = 'bool'.
+        ENDCASE.
+
+        append( iv_type = if_sxml_node=>co_nt_element_open
+                iv_name = lv_type
+                iv_key  = iv_key ).
+        IF lv_type <> 'null'.
+          append( iv_type  = if_sxml_node=>co_nt_value
+                  iv_value = iv_json ).
+        ENDIF.
+        append( iv_type = if_sxml_node=>co_nt_element_close
+                iv_name = lv_type ).
       WHEN OTHERS.
         ASSERT 2 = 'todo'.
     ENDCASE.
 
   ENDMETHOD.
 
-  METHOD traverse_basic.
-
-    DATA lv_type TYPE string.
-
-    WRITE '@KERNEL let parsed = iv_json.value;'.
-    WRITE '@KERNEL iv_json = new abap.types.String().set(iv_json.value + "");'.
-    WRITE '@KERNEL lv_type.set(typeof parsed);'.
-    WRITE '@KERNEL if (parsed === null) lv_type.set("null");'.
-
-    CASE lv_type.
-      WHEN 'string'.
-        lv_type = 'str'.
-      WHEN 'number'.
-        lv_type = 'num'.
-      WHEN 'boolean'.
-        lv_type = 'bool'.
-    ENDCASE.
-
-    append( iv_type = if_sxml_node=>co_nt_element_open
-            iv_name = lv_type
-            iv_key  = iv_key ).
-    IF lv_type <> 'null'.
-      append( iv_type  = if_sxml_node=>co_nt_value
-              iv_value = iv_json ).
-    ENDIF.
-    append( iv_type = if_sxml_node=>co_nt_element_close
-            iv_name = lv_type ).
-
-  ENDMETHOD.
 
   METHOD traverse_array.
 
@@ -160,22 +146,21 @@ CLASS lcl_json_parser IMPLEMENTATION.
 
   METHOD traverse_object.
 
-    DATA lt_keys   TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
-    DATA lv_key   LIKE LINE OF lt_keys.
+    DATA lv_key   TYPE string.
     DATA lv_value TYPE string.
 
     WRITE '@KERNEL let parsed = iv_json.value;'.
-    WRITE '@KERNEL Object.keys(parsed).forEach(k => lt_keys.append(k));'.
 
     append( iv_type = if_sxml_node=>co_nt_element_open
             iv_name = 'object'
             iv_key  = iv_key ).
 
-    LOOP AT lt_keys INTO lv_key.
-      WRITE '@KERNEL lv_value = {value: parsed[lv_key.get()]};'.
-      traverse( iv_json = lv_value
-                iv_key  = lv_key ).
-    ENDLOOP.
+    WRITE '@KERNEL for (const k of Object.keys(parsed)) {'.
+    WRITE '@KERNEL   lv_key.set(k);'.
+    WRITE '@KERNEL   lv_value = {value: parsed[k]};'.
+    traverse( iv_json = lv_value
+              iv_key  = lv_key ).
+    WRITE '@KERNEL };'.
 
     append( iv_type = if_sxml_node=>co_nt_element_close
             iv_name = 'object' ).
@@ -280,39 +265,29 @@ CLASS lcl_reader DEFINITION.
     DATA mv_json    TYPE string.
     DATA mt_nodes   TYPE ty_nodes.
     DATA mv_pointer TYPE i.
+    DATA mv_initialized TYPE abap_bool.
 ENDCLASS.
 
 CLASS lcl_reader IMPLEMENTATION.
   METHOD constructor.
     mv_json = iv_json.
+    mv_initialized = abap_false.
   ENDMETHOD.
 
   METHOD initialize.
 
-    TYPES: BEGIN OF ty_cache,
-             name TYPE string,
-             ref  TYPE REF TO if_sxml_node,
-           END OF ty_cache.
-
     DATA lo_json       TYPE REF TO lcl_json_parser.
     DATA lt_parsed     TYPE REF TO lcl_json_parser=>ty_nodes.
-    DATA ls_parsed     TYPE lcl_json_parser=>ty_node.
     DATA li_node       TYPE REF TO if_sxml_node.
     DATA lt_attributes TYPE if_sxml_attribute=>attributes.
     DATA li_attribute  TYPE REF TO if_sxml_attribute.
 
-    DATA lt_close TYPE HASHED TABLE OF ty_cache WITH UNIQUE KEY name.
-    DATA lt_open TYPE HASHED TABLE OF ty_cache WITH UNIQUE KEY name.
-    DATA lt_value TYPE HASHED TABLE OF ty_cache WITH UNIQUE KEY name.
-    DATA ls_cache TYPE ty_cache.
+    FIELD-SYMBOLS <ls_parsed> TYPE lcl_json_parser=>ty_node.
 
-    FIELD-SYMBOLS <ls_cache> TYPE ty_cache.
+    ASSERT mv_initialized = abap_false.
+    mv_initialized = abap_true.
 
-    IF mv_json IS INITIAL.
-      RETURN.
-    ENDIF.
-
-* todo, for now this only handles json, but the class is really meant for XML
+* todo: for now this only handles json, but the class is really meant for XML
     CREATE OBJECT lo_json.
     CREATE DATA lt_parsed.
     lo_json->parse(
@@ -320,33 +295,31 @@ CLASS lcl_reader IMPLEMENTATION.
       it_nodes = lt_parsed ).
     CLEAR lo_json. " release memory
 
-    LOOP AT lt_parsed->* INTO ls_parsed.
-      CASE ls_parsed-type.
+    LOOP AT lt_parsed->* ASSIGNING <ls_parsed>.
+      CASE <ls_parsed>-type.
         WHEN if_sxml_node=>co_nt_element_open.
           CLEAR lt_attributes.
-          IF ls_parsed-key IS NOT INITIAL.
+          IF <ls_parsed>-key IS NOT INITIAL.
             CREATE OBJECT li_attribute TYPE lcl_attribute
               EXPORTING
                 name       = 'name'
-                value      = ls_parsed-key
+                value      = <ls_parsed>-key
                 value_type = if_sxml_value=>co_vt_text.
             APPEND li_attribute TO lt_attributes.
           ENDIF.
 
-* optimized by using singletons,
           CREATE OBJECT li_node TYPE lcl_open_node
             EXPORTING
-              name       = ls_parsed-name
+              name       = <ls_parsed>-name
               attributes = lt_attributes.
         WHEN if_sxml_node=>co_nt_element_close.
-* optimized by using singletons,
           CREATE OBJECT li_node TYPE lcl_close_node
             EXPORTING
-              name = ls_parsed-name.
+              name = <ls_parsed>-name.
         WHEN if_sxml_node=>co_nt_value.
           CREATE OBJECT li_node TYPE lcl_value_node
             EXPORTING
-              value = ls_parsed-value.
+              value = <ls_parsed>-value.
         WHEN OTHERS.
           ASSERT 1 = 2.
       ENDCASE.
@@ -367,7 +340,9 @@ CLASS lcl_reader IMPLEMENTATION.
     DATA close TYPE REF TO if_sxml_close_element.
     DATA value TYPE REF TO if_sxml_value_node.
 
-    initialize( ).
+    IF mv_initialized = abap_false.
+      initialize( ).
+    ENDIF.
     READ TABLE mt_nodes INDEX mv_pointer INTO node.
     mv_pointer = mv_pointer + 1.
     if_sxml_reader~node_type = node->type.
@@ -388,7 +363,9 @@ CLASS lcl_reader IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_sxml_reader~read_next_node.
-    initialize( ).
+    IF mv_initialized = abap_false.
+      initialize( ).
+    ENDIF.
     READ TABLE mt_nodes INDEX mv_pointer INTO node.
     mv_pointer = mv_pointer + 1.
   ENDMETHOD.

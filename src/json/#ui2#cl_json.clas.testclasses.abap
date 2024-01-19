@@ -29,6 +29,8 @@ CLASS ltcl_deserialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
     METHODS deserialize_array_ref FOR TESTING RAISING cx_static_check.
     METHODS more_array FOR TESTING RAISING cx_static_check.
     METHODS deserialize_float_to_ref FOR TESTING RAISING cx_static_check.
+    METHODS deserialize_packed_empty FOR TESTING RAISING cx_static_check.
+    METHODS refs_something FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -307,7 +309,7 @@ CLASS ltcl_deserialize IMPLEMENTATION.
         json         = ''
         assoc_arrays = abap_true
       CHANGING
-       data          = ref ).
+        data         = ref ).
     cl_abap_unit_assert=>assert_initial( ref ).
   ENDMETHOD.
 
@@ -318,7 +320,7 @@ CLASS ltcl_deserialize IMPLEMENTATION.
         json         = '2'
         assoc_arrays = abap_true
       CHANGING
-       data          = ref ).
+        data         = ref ).
     cl_abap_unit_assert=>assert_initial( ref ).
   ENDMETHOD.
 
@@ -569,6 +571,56 @@ CLASS ltcl_deserialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = <any>
       exp = '-0.3333' ).
+  ENDMETHOD.
+
+  METHOD deserialize_packed_empty.
+
+    DATA: BEGIN OF ls_data,
+            foo TYPE p LENGTH 5,
+          END OF ls_data.
+    DATA lv_json   TYPE string.
+
+    FIELD-SYMBOLS <any> TYPE any.
+
+    lv_json = '{}'.
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = lv_json
+      CHANGING
+        data = ls_data ).
+
+    cl_abap_unit_assert=>assert_initial( ls_data-foo ).
+
+  ENDMETHOD.
+
+  METHOD refs_something.
+
+    DATA lv_json TYPE string.
+    DATA lr_data TYPE REF TO data.
+
+    FIELD-SYMBOLS <any> TYPE any.
+    FIELD-SYMBOLS <table> TYPE ANY TABLE.
+
+
+    lv_json = `{"oScroll": []}`.
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = lv_json
+      CHANGING
+        data = lr_data ).
+
+    cl_abap_unit_assert=>assert_not_initial( lr_data ).
+    ASSIGN lr_data->* TO <any>.
+    cl_abap_unit_assert=>assert_subrc( ).
+    ASSIGN COMPONENT 'OSCROLL' OF STRUCTURE <any> TO <any>.
+    cl_abap_unit_assert=>assert_subrc( ).
+    ASSIGN <any>->* TO <table>.
+    cl_abap_unit_assert=>assert_equals(
+      exp = 0
+      act = lines( <table> ) ).
+
   ENDMETHOD.
 
 ENDCLASS.

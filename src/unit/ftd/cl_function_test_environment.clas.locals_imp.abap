@@ -8,12 +8,22 @@ CLASS lcl_input_arguments DEFINITION.
            END OF ty_name_value.
 
     DATA mt_importing TYPE STANDARD TABLE OF ty_name_value WITH DEFAULT KEY.
+    DATA mt_tables    TYPE STANDARD TABLE OF ty_name_value WITH DEFAULT KEY.
 ENDCLASS.
 
 CLASS lcl_input_arguments IMPLEMENTATION.
   METHOD if_ftd_input_arguments~get_importing_parameter.
     DATA ls_row LIKE LINE OF mt_importing.
     READ TABLE mt_importing INTO ls_row WITH KEY name = name.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_ftd_parameter_not_found.
+    ENDIF.
+    result = ls_row-value.
+  ENDMETHOD.
+
+  METHOD if_ftd_input_arguments~get_table_parameter.
+    DATA ls_row LIKE LINE OF mt_tables.
+    READ TABLE mt_tables INTO ls_row WITH KEY name = name.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE cx_ftd_parameter_not_found.
     ENDIF.
@@ -34,6 +44,7 @@ CLASS lcl_invocation_result DEFINITION.
            END OF ty_name_value.
 
     DATA mt_exporting TYPE STANDARD TABLE OF ty_name_value WITH DEFAULT KEY.
+    DATA mt_tables TYPE STANDARD TABLE OF ty_name_value WITH DEFAULT KEY.
 ENDCLASS.
 
 CLASS lcl_invocation_result IMPLEMENTATION.
@@ -49,6 +60,18 @@ CLASS lcl_invocation_result IMPLEMENTATION.
 * todo: actually want to copy the data,
     GET REFERENCE OF value INTO ls_row-value.
     INSERT ls_row INTO TABLE mt_exporting.
+
+    self = me.
+  ENDMETHOD.
+
+  METHOD if_ftd_output_configuration~set_table_parameter.
+    DATA ls_row LIKE LINE OF mt_tables.
+
+    ls_row-name = name.
+* note: in javascript the referenced data will not be deallocated,
+* todo: actually want to copy the data,
+    GET REFERENCE OF value INTO ls_row-value.
+    INSERT ls_row INTO TABLE mt_tables.
 
     self = me.
   ENDMETHOD.
@@ -72,6 +95,7 @@ CLASS lcl_invoker IMPLEMENTATION.
     DATA li_arguments TYPE REF TO if_ftd_input_arguments.
     DATA ls_exporting LIKE LINE OF lo_result->mt_exporting.
     DATA ls_importing LIKE LINE OF lo_arguments->mt_importing.
+    DATA ls_table     LIKE LINE OF lo_arguments->mt_tables.
 
     CREATE OBJECT lo_result.
     li_result = lo_result.
@@ -80,12 +104,16 @@ CLASS lcl_invoker IMPLEMENTATION.
     li_arguments = lo_arguments.
 
 * todo, set arguments
-    WRITE '@KERNEL for (const importing in fminput.exporting) {'.
-*    WRITE '@KERNEL   console.dir(importing);'.
+    WRITE '@KERNEL for (const importing in fminput?.exporting || []) {'.
     WRITE '@KERNEL   ls_importing.get().name.set(importing.toUpperCase());'.
-*    WRITE '@KERNEL   console.dir(ls_importing.get().value);'.
     WRITE '@KERNEL   ls_importing.get().value.pointer = fminput.exporting[importing];'.
     INSERT ls_importing INTO TABLE lo_arguments->mt_importing.
+    WRITE '@KERNEL }'.
+
+    WRITE '@KERNEL for (const table in fminput?.tables || []) {'.
+    WRITE '@KERNEL   ls_table.get().name.set(table.toUpperCase());'.
+    WRITE '@KERNEL   ls_table.get().value.pointer = fminput.tables[table];'.
+    INSERT ls_table INTO TABLE lo_arguments->mt_tables.
     WRITE '@KERNEL }'.
 
     answer->answer(
@@ -96,6 +124,9 @@ CLASS lcl_invoker IMPLEMENTATION.
 
     LOOP AT lo_result->mt_exporting INTO ls_exporting.
       WRITE '@KERNEL fminput.importing[ls_exporting.get().name.get().toLowerCase().trimEnd()].set(ls_exporting.get().value.dereference());'.
+    ENDLOOP.
+    LOOP AT lo_result->mt_tables INTO ls_table.
+      WRITE '@KERNEL fminput.tables[ls_table.get().name.get().toLowerCase().trimEnd()].set(ls_table.get().value.dereference());'.
     ENDLOOP.
 
   ENDMETHOD.

@@ -181,6 +181,10 @@ CLASS lcl_node DEFINITION.
     DATA mo_children   TYPE REF TO lcl_node_list.
     DATA mi_parent     TYPE REF TO if_ixml_node.
     DATA mi_attributes TYPE REF TO if_ixml_named_node_map.
+
+    METHODS has_direct_text
+      RETURNING
+        VALUE(rv_has) TYPE abap_bool.
 ENDCLASS.
 
 CLASS lcl_node IMPLEMENTATION.
@@ -356,12 +360,30 @@ CLASS lcl_node IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
+  METHOD has_direct_text.
+    DATA li_children TYPE REF TO if_ixml_node_list.
+    DATA li_child    TYPE REF TO if_ixml_node.
+
+    li_children = if_ixml_node~get_children( ).
+    rv_has = abap_false.
+    IF li_children->get_length( ) <> 1.
+      RETURN.
+    ENDIF.
+
+    li_child = li_children->get_item( 1 ).
+    IF li_child->get_name( ) = '#text'.
+      rv_has = abap_true.
+    ENDIF.
+  ENDMETHOD.
+
   METHOD if_ixml_element~render.
     DATA li_iterator   TYPE REF TO if_ixml_node_iterator.
     DATA li_node       TYPE REF TO if_ixml_node.
     DATA li_element    TYPE REF TO if_ixml_element.
+    DATA li_children   TYPE REF TO if_ixml_node_list.
     DATA lv_attributes TYPE string.
     DATA lv_ns         TYPE string.
+
 
     li_iterator = mi_attributes->create_iterator( ).
     DO.
@@ -382,14 +404,25 @@ CLASS lcl_node IMPLEMENTATION.
       lv_ns = mv_namespace && ':'.
     ENDIF.
 
+    li_children = if_ixml_node~get_children( ).
+
+    IF mv_name <> '#text' AND ostream->get_pretty_print( ) = abap_true.
+      ostream->write_string( repeat( val = | | occ = ostream->get_indent( ) ) ).
+    ENDIF.
+
     IF mv_name <> '#text'.
       ostream->write_string( '<' && lv_ns && mv_name && lv_attributes ).
-      IF if_ixml_node~get_children( )->get_length( ) > 0 OR mv_value IS NOT INITIAL.
+      IF li_children->get_length( ) > 0 OR mv_value IS NOT INITIAL.
         ostream->write_string( '>' ).
       ENDIF.
     ENDIF.
 
-    li_iterator = if_ixml_node~get_children( )->create_iterator( ).
+    IF ostream->get_pretty_print( ) = abap_true AND if_ixml_node~is_leaf( ) = abap_false AND has_direct_text( ) = abap_false.
+      ostream->write_string( |\n| ).
+    ENDIF.
+
+    ostream->set_indent( ostream->get_indent( ) + 1 ).
+    li_iterator = li_children->create_iterator( ).
     DO.
       li_element ?= li_iterator->get_next( ).
       IF li_element IS INITIAL.
@@ -397,15 +430,24 @@ CLASS lcl_node IMPLEMENTATION.
       ENDIF.
       li_element->render( ostream ).
     ENDDO.
+    ostream->set_indent( ostream->get_indent( ) - 1 ).
 
-    IF if_ixml_node~get_children( )->get_length( ) > 0 OR mv_value IS NOT INITIAL.
+    IF li_children->get_length( ) > 0 OR mv_value IS NOT INITIAL.
       ostream->write_string( lcl_escape=>escape_value( mv_value ) ).
       IF mv_name <> '#text'.
+        IF ostream->get_pretty_print( ) = abap_true AND has_direct_text( ) = abap_false.
+          ostream->write_string( repeat( val = | | occ = ostream->get_indent( ) ) ).
+        ENDIF.
         ostream->write_string( '</' && lv_ns && mv_name && '>' ).
       ENDIF.
     ELSE.
       ostream->write_string( '/>' ).
     ENDIF.
+
+    IF ostream->get_pretty_print( ) = abap_true AND mv_name <> '#text'.
+      ostream->write_string( |\n| ).
+    ENDIF.
+
   ENDMETHOD.
 
   METHOD if_ixml_element~set_attribute_node_ns.
@@ -477,8 +519,8 @@ CLASS lcl_node IMPLEMENTATION.
 
   METHOD if_ixml_node~get_depth.
     DATA li_iterator TYPE REF TO if_ixml_node_iterator.
-    DATA li_node TYPE REF TO if_ixml_node.
-    DATA lv_max TYPE i.
+    DATA li_node     TYPE REF TO if_ixml_node.
+    DATA lv_max      TYPE i.
 
     IF mo_children->if_ixml_node_list~get_length( ) = 0.
       val = 0.
@@ -801,8 +843,10 @@ ENDCLASS.
 CLASS lcl_ostream DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_ostream.
-    DATA mv_string TYPE string.
-    DATA mv_hex TYPE abap_bool.
+    DATA mv_string       TYPE string.
+    DATA mv_hex          TYPE abap_bool.
+    DATA mv_pretty_print TYPE abap_bool.
+    DATA mv_indent       TYPE i.
 ENDCLASS.
 
 ****************************************************************
@@ -840,6 +884,9 @@ CLASS lcl_renderer IMPLEMENTATION.
     ELSE.
       mi_ostream->write_string( |<?xml version="1.0" encoding="utf-16"{ lv_standalone }?>| ).
     ENDIF.
+    IF lo_stream->mv_pretty_print = abap_true.
+      mi_ostream->write_string( |\n| ).
+    ENDIF.
 
     li_root = mi_document->get_root_element( ).
     IF li_root IS INITIAL.
@@ -847,10 +894,11 @@ CLASS lcl_renderer IMPLEMENTATION.
     ENDIF.
 
     li_root->render( mi_ostream ).
+
   ENDMETHOD.
 
   METHOD if_ixml_renderer~set_normalizing.
-    RETURN.
+    mi_ostream->set_pretty_print( normal ).
   ENDMETHOD.
 ENDCLASS.
 
@@ -872,6 +920,22 @@ CLASS lcl_ostream IMPLEMENTATION.
     ELSE.
       mv_string = mv_string && string.
     ENDIF.
+  ENDMETHOD.
+
+  METHOD if_ixml_ostream~set_pretty_print.
+    mv_pretty_print = pretty_print.
+  ENDMETHOD.
+
+  METHOD if_ixml_ostream~get_pretty_print.
+    rval = mv_pretty_print.
+  ENDMETHOD.
+
+  METHOD if_ixml_ostream~set_indent.
+    mv_indent = indent.
+  ENDMETHOD.
+
+  METHOD if_ixml_ostream~get_indent.
+    rval = mv_indent.
   ENDMETHOD.
 
   METHOD if_ixml_ostream~set_encoding.
@@ -943,7 +1007,9 @@ CLASS lcl_stream_factory IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_stream_factory~create_istream_xstring.
-    ASSERT 1 = 'todo'.
+    CREATE OBJECT stream TYPE lcl_istream
+      EXPORTING
+        iv_xml = cl_abap_codepage=>convert_from( string ).
   ENDMETHOD.
 
   METHOD if_ixml_stream_factory~create_istream_string.

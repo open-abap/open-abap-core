@@ -44,6 +44,7 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
       IMPORTING
         VALUE(prefix) TYPE string
         pretty_name   TYPE string OPTIONAL
+        io_type       TYPE REF TO cl_abap_typedescr
       CHANGING
         data          TYPE data.
 ENDCLASS.
@@ -58,10 +59,10 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     DATA lo_type       TYPE REF TO cl_abap_typedescr.
     DATA lo_struct     TYPE REF TO cl_abap_structdescr.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
-    DATA ls_component  LIKE LINE OF lt_components.
     DATA ref           TYPE REF TO data.
     DATA lv_index      TYPE i.
 
+    FIELD-SYMBOLS <ls_component> LIKE LINE OF lt_components.
     FIELD-SYMBOLS <any> TYPE any.
     FIELD-SYMBOLS <tab> TYPE ANY TABLE.
 
@@ -131,18 +132,18 @@ CLASS /ui2/cl_json IMPLEMENTATION.
         lo_struct ?= lo_type.
         lt_components = lo_struct->get_components( ).
         r_json = '{'.
-        LOOP AT lt_components INTO ls_component.
-          ASSIGN COMPONENT ls_component-name OF STRUCTURE data TO <any>.
+        LOOP AT lt_components ASSIGNING <ls_component>.
+          ASSIGN COMPONENT <ls_component>-name OF STRUCTURE data TO <any>.
           ASSERT sy-subrc = 0.
           IF compress = abap_true AND <any> IS INITIAL.
             CONTINUE.
           ENDIF.
           IF pretty_name = pretty_mode-camel_case.
-            r_json = r_json && |"{ to_mixed( to_lower( ls_component-name ) ) }":|.
+            r_json = r_json && |"{ to_mixed( to_lower( <ls_component>-name ) ) }":|.
           ELSEIF pretty_name = pretty_mode-low_case.
-            r_json = r_json && |"{ to_lower( ls_component-name ) }":|.
+            r_json = r_json && |"{ to_lower( <ls_component>-name ) }":|.
           ELSE.
-            r_json = r_json && |"{ ls_component-name }":|.
+            r_json = r_json && |"{ <ls_component>-name }":|.
           ENDIF.
           r_json = r_json && serialize(
             data          = <any>
@@ -172,10 +173,15 @@ CLASS /ui2/cl_json IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD deserialize.
+
+    DATA lo_type TYPE REF TO cl_abap_typedescr.
+
     CREATE OBJECT mo_parsed.
 
     IF jsonx IS NOT INITIAL.
       mo_parsed->parse( cl_abap_codepage=>convert_from( jsonx ) ).
+    ELSEIF json IS INITIAL.
+      RETURN.
     ELSE.
       mo_parsed->parse( json ).
     ENDIF.
@@ -183,18 +189,21 @@ CLASS /ui2/cl_json IMPLEMENTATION.
 * todo, this should take the "pretty_name" into account
     mo_parsed->adjust_names( ).
 
+    lo_type = cl_abap_typedescr=>describe_by_data( data ).
+
     _deserialize(
       EXPORTING
         prefix      = ''
         pretty_name = pretty_name
+        io_type     = lo_type
       CHANGING
         data        = data ).
   ENDMETHOD.
 
   METHOD _deserialize.
-    DATA lo_type       TYPE REF TO cl_abap_typedescr.
     DATA lo_struct     TYPE REF TO cl_abap_structdescr.
     DATA lo_table      TYPE REF TO cl_abap_tabledescr.
+    DATA lo_refdescr   TYPE REF TO cl_abap_refdescr.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
     DATA ls_component  LIKE LINE OF lt_components.
     DATA lt_members    TYPE string_table.
@@ -205,27 +214,27 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     DATA lv_member     LIKE LINE OF lt_members.
 
     FIELD-SYMBOLS <any> TYPE any.
+    FIELD-SYMBOLS <ls_component> LIKE LINE OF lt_components.
 
-    lo_type = cl_abap_typedescr=>describe_by_data( data ).
     prefix = mo_parsed->find_ignore_case( prefix ).
 
 *    WRITE '@KERNEL console.dir(lo_type.get());'.
-    CASE lo_type->kind.
+    CASE io_type->kind.
       WHEN cl_abap_typedescr=>kind_elem.
 *        WRITE '@KERNEL console.dir(lo_type.get().absolute_name);'.
-        IF lo_type->absolute_name = '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL'
-            OR lo_type->absolute_name = '\TYPE=ABAP_BOOLEAN'
-            OR lo_type->absolute_name = '\TYPE=FLAG'.
+        IF io_type->absolute_name = '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL'
+            OR io_type->absolute_name = '\TYPE=ABAP_BOOLEAN'
+            OR io_type->absolute_name = '\TYPE=FLAG'.
           data = boolc( mo_parsed->value_string( prefix ) = 'true' ).
-        ELSEIF lo_type->absolute_name = `\TYPE=TIMESTAMP`
-            OR lo_type->absolute_name = `\TYPE=TIMESTAMPL`.
+        ELSEIF io_type->absolute_name = `\TYPE=TIMESTAMP`
+            OR io_type->absolute_name = `\TYPE=TIMESTAMPL`.
           lv_value = mo_parsed->value_string( prefix ).
           REPLACE ALL OCCURRENCES OF '-' IN lv_value WITH ''.
           REPLACE ALL OCCURRENCES OF 'T' IN lv_value WITH ''.
           REPLACE ALL OCCURRENCES OF ':' IN lv_value WITH ''.
           REPLACE ALL OCCURRENCES OF 'Z' IN lv_value WITH ''.
           data = lv_value.
-        ELSEIF lo_type->type_kind = cl_abap_typedescr=>typekind_date.
+        ELSEIF io_type->type_kind = cl_abap_typedescr=>typekind_date.
           lv_value = mo_parsed->value_string( prefix ).
           REPLACE ALL OCCURRENCES OF '-' IN lv_value WITH ''.
           IF lv_value CO space.
@@ -233,7 +242,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           ELSE.
             data = lv_value.
           ENDIF.
-        ELSEIF lo_type->type_kind = cl_abap_typedescr=>typekind_time.
+        ELSEIF io_type->type_kind = cl_abap_typedescr=>typekind_time.
           lv_value = mo_parsed->value_string( prefix ).
           REPLACE ALL OCCURRENCES OF ':' IN lv_value WITH ''.
           IF lv_value CO space.
@@ -245,6 +254,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           data = mo_parsed->value_string( prefix ).
         ENDIF.
       WHEN cl_abap_typedescr=>kind_table.
+        lo_table ?= io_type.
         lt_members = mo_parsed->members( prefix && '/' ).
         LOOP AT lt_members INTO lv_member.
 *          WRITE '@KERNEL console.dir(lv_member.get());'.
@@ -254,32 +264,35 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             EXPORTING
               prefix      = prefix && '/' && lv_member
               pretty_name = pretty_name
+              io_type     = lo_table->get_table_line_type( )
             CHANGING
               data        = <any> ).
 *          WRITE '@KERNEL console.dir(fs_row_);'.
           INSERT <any> INTO TABLE data.
         ENDLOOP.
       WHEN cl_abap_typedescr=>kind_struct.
-        lo_struct ?= lo_type.
+        lo_struct ?= io_type.
         lt_components = lo_struct->get_components( ).
-        LOOP AT lt_components INTO ls_component.
-          ASSIGN COMPONENT ls_component-name OF STRUCTURE data TO <any>.
+        LOOP AT lt_components ASSIGNING <ls_component>.
+          ASSIGN COMPONENT <ls_component>-name OF STRUCTURE data TO <any>.
           ASSERT sy-subrc = 0.
           CASE pretty_name.
             WHEN pretty_mode-camel_case.
-              lv_name = to_mixed( to_lower( ls_component-name ) ).
+              lv_name = to_mixed( to_lower( <ls_component>-name ) ).
             WHEN OTHERS.
-              lv_name = to_lower( ls_component-name ).
+              lv_name = to_lower( <ls_component>-name ).
           ENDCASE.
           " WRITE '@KERNEL console.dir("structure: " + lv_name.get());'.
           _deserialize(
             EXPORTING
               prefix      = prefix && '/' && lv_name
               pretty_name = pretty_name
+              io_type     = <ls_component>-type
             CHANGING
               data        = <any> ).
         ENDLOOP.
       WHEN cl_abap_typedescr=>kind_ref.
+        lo_refdescr ?= io_type.
         IF data IS INITIAL.
           lt_members = mo_parsed->members( prefix && '/' ).
 
@@ -307,7 +320,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             ENDLOOP.
             lo_struct = cl_abap_structdescr=>create( lt_components ).
             CREATE DATA data TYPE HANDLE lo_struct.
-          ELSEIF lines( lt_members ) > 0 AND lv_type = 'array'.
+          ELSEIF lv_type = 'array'.
             lo_table = cl_abap_tabledescr=>create( cl_abap_refdescr=>get_ref_to_data( ) ).
             CREATE DATA data TYPE HANDLE lo_table.
           ELSE.
@@ -331,10 +344,12 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           ENDIF.
         ENDIF.
         ASSIGN data->* TO <any>.
+* todo: optimize, it should not be nessesary to call cl_abap_typedescr
         _deserialize(
           EXPORTING
             prefix      = prefix
             pretty_name = pretty_name
+            io_type     = cl_abap_typedescr=>describe_by_data( <any> )
           CHANGING
             data        = <any> ).
       WHEN OTHERS.

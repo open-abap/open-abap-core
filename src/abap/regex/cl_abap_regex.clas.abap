@@ -33,7 +33,10 @@ CLASS cl_abap_regex IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD create_pcre.
-    ASSERT 1 = 'todo'.
+    CREATE OBJECT regex
+      EXPORTING
+        pattern     = pattern
+        ignore_case = ignore_case.
   ENDMETHOD.
 
   METHOD create_matcher.

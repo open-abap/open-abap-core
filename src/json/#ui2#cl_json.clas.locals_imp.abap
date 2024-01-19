@@ -26,31 +26,31 @@ CLASS lcl_stack DEFINITION.
              is_array    TYPE abap_bool,
              array_index TYPE i,
            END OF ty_data.
-    DATA mt_data TYPE STANDARD TABLE OF ty_data WITH DEFAULT KEY.
+    DATA mt_stack TYPE STANDARD TABLE OF ty_data WITH DEFAULT KEY.
 ENDCLASS.
 
 CLASS lcl_stack IMPLEMENTATION.
   METHOD push.
-    DATA ls_data LIKE LINE OF mt_data.
+    DATA ls_data LIKE LINE OF mt_stack.
     ls_data-name = iv_name.
     ls_data-is_array = boolc( iv_type = 'array' ).
-    APPEND ls_data TO mt_data.
+    APPEND ls_data TO mt_stack.
   ENDMETHOD.
 
   METHOD is_array.
     DATA lv_index TYPE i.
-    DATA ls_data LIKE LINE OF mt_data.
-    lv_index = lines( mt_data ).
-    READ TABLE mt_data INTO ls_data INDEX lv_index.       "#EC CI_SUBRC
+    DATA ls_data LIKE LINE OF mt_stack.
+    lv_index = lines( mt_stack ).
+    READ TABLE mt_stack INTO ls_data INDEX lv_index.       "#EC CI_SUBRC
     rv_array = ls_data-is_array.
   ENDMETHOD.
 
   METHOD get_and_increase_index.
     DATA lv_index TYPE i.
-    FIELD-SYMBOLS <ls_data> LIKE LINE OF mt_data.
+    FIELD-SYMBOLS <ls_data> LIKE LINE OF mt_stack.
 
-    lv_index = lines( mt_data ).
-    READ TABLE mt_data ASSIGNING <ls_data> INDEX lv_index.
+    lv_index = lines( mt_stack ).
+    READ TABLE mt_stack ASSIGNING <ls_data> INDEX lv_index.
     IF sy-subrc = 0.
       <ls_data>-array_index = <ls_data>-array_index + 1.
       rv_index = <ls_data>-array_index.
@@ -60,18 +60,18 @@ CLASS lcl_stack IMPLEMENTATION.
 
   METHOD pop.
     DATA lv_index TYPE i.
-    DATA ls_data LIKE LINE OF mt_data.
-    lv_index = lines( mt_data ).
+    DATA ls_data LIKE LINE OF mt_stack.
+    lv_index = lines( mt_stack ).
     IF lv_index > 0.
-      READ TABLE mt_data INTO ls_data INDEX lv_index.     "#EC CI_SUBRC
+      READ TABLE mt_stack INTO ls_data INDEX lv_index.     "#EC CI_SUBRC
       rv_name = ls_data-name.
-      DELETE mt_data INDEX lv_index.
+      DELETE mt_stack INDEX lv_index.
     ENDIF.
   ENDMETHOD.
 
   METHOD get_full_name.
-    DATA ls_data LIKE LINE OF mt_data.
-    LOOP AT mt_data INTO ls_data.
+    DATA ls_data LIKE LINE OF mt_stack.
+    LOOP AT mt_stack INTO ls_data.
       rv_path = rv_path && ls_data-name.
     ENDLOOP.
   ENDMETHOD.
@@ -107,11 +107,6 @@ CLASS lcl_parser DEFINITION.
         iv_path        TYPE string
       RETURNING
         VALUE(rv_type) TYPE string.
-    METHODS exists
-      IMPORTING
-        iv_path          TYPE string
-      RETURNING
-        VALUE(rv_exists) TYPE abap_bool.
     METHODS members
       IMPORTING
         iv_path           TYPE string
@@ -127,10 +122,16 @@ CLASS lcl_parser DEFINITION.
          parent    TYPE string,
          name      TYPE string,
          full_name TYPE string,
+         full_name_upper TYPE string,
          value     TYPE string,
          type      TYPE string,
        END OF ty_data.
-    TYPES ty_data_tt TYPE STANDARD TABLE OF ty_data WITH DEFAULT KEY.
+
+    TYPES ty_data_tt TYPE STANDARD TABLE OF ty_data WITH DEFAULT KEY
+      WITH UNIQUE SORTED KEY key_full_name COMPONENTS full_name
+      WITH UNIQUE SORTED KEY key_full_name_upper COMPONENTS full_name_upper
+      WITH NON-UNIQUE SORTED KEY key_parent COMPONENTS parent.
+
     DATA mt_data TYPE ty_data_tt.
 ENDCLASS.
 
@@ -142,34 +143,31 @@ CLASS lcl_parser IMPLEMENTATION.
       REPLACE ALL OCCURRENCES OF '-' IN <ls_data>-parent WITH '_'.
       REPLACE ALL OCCURRENCES OF '-' IN <ls_data>-name WITH '_'.
       REPLACE ALL OCCURRENCES OF '-' IN <ls_data>-full_name WITH '_'.
+      REPLACE ALL OCCURRENCES OF '-' IN <ls_data>-full_name_upper WITH '_'.
     ENDLOOP.
   ENDMETHOD.
 
   METHOD find_ignore_case.
     DATA ls_data LIKE LINE OF mt_data.
-    LOOP AT mt_data INTO ls_data.
-      IF to_upper( ls_data-full_name ) = to_upper( iv_path ).
-        rv_path = ls_data-full_name.
-        RETURN.
-      ENDIF.
-    ENDLOOP.
-    rv_path = iv_path.
-  ENDMETHOD.
 
-  METHOD exists.
-    READ TABLE mt_data WITH KEY full_name = iv_path TRANSPORTING NO FIELDS.
-    rv_exists = boolc( sy-subrc = 0 ).
+    READ TABLE mt_data WITH KEY key_full_name_upper COMPONENTS full_name_upper = to_upper( iv_path ) INTO ls_data.
+    IF sy-subrc = 0.
+      rv_path = ls_data-full_name.
+      RETURN.
+    ENDIF.
+    rv_path = iv_path.
+
   ENDMETHOD.
 
   METHOD get_type.
     DATA ls_data LIKE LINE OF mt_data.
-    READ TABLE mt_data WITH KEY full_name = iv_path INTO ls_data.
+    READ TABLE mt_data WITH KEY key_full_name COMPONENTS full_name = iv_path INTO ls_data.
     rv_type = ls_data-type.
   ENDMETHOD.
 
   METHOD members.
     DATA ls_data LIKE LINE OF mt_data.
-    LOOP AT mt_data INTO ls_data WHERE parent = iv_path.
+    LOOP AT mt_data INTO ls_data USING KEY key_parent WHERE parent = iv_path.
       APPEND ls_data-name TO rt_members.
     ENDLOOP.
   ENDMETHOD.
@@ -189,7 +187,7 @@ CLASS lcl_parser IMPLEMENTATION.
   METHOD value_string.
     DATA ls_data LIKE LINE OF mt_data.
 
-    READ TABLE mt_data INTO ls_data WITH KEY full_name = iv_path.
+    READ TABLE mt_data WITH KEY key_full_name COMPONENTS full_name = iv_path INTO ls_data.
     IF sy-subrc = 0.
       rv_value = ls_data-value.
     ENDIF.
@@ -251,6 +249,7 @@ CLASS lcl_parser IMPLEMENTATION.
             ls_data-parent = lo_stack->get_full_name( ).
             ls_data-name = lv_push.
             ls_data-full_name = ls_data-parent && ls_data-name.
+            ls_data-full_name_upper = to_upper( ls_data-full_name ).
             ls_data-type = li_open->qname-name.
 
             lv_index = lv_index + 1.
@@ -272,6 +271,7 @@ CLASS lcl_parser IMPLEMENTATION.
             ls_data-parent = lo_stack->get_full_name( ).
             ls_data-name = '/'.
             ls_data-full_name = ls_data-parent && ls_data-name.
+            ls_data-full_name_upper = to_upper( ls_data-full_name ).
             ls_data-type = li_open->qname-name.
             APPEND ls_data TO mt_data.
 
