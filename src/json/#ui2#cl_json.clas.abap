@@ -142,9 +142,6 @@ CLASS /ui2/cl_json IMPLEMENTATION.
         LOOP AT <tab> ASSIGNING <any>.
           lv_index = sy-tabix.
           r_json = r_json && serialize_int( data = <any> ).
-*            pretty_name   = mv_pretty_name
-*            compress      = mv_compress
-*            ts_as_iso8601 = mv_ts_as_iso8601
 
           IF lines( data ) <> lv_index.
             r_json = r_json && ','.
