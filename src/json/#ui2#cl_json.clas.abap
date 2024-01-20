@@ -21,12 +21,12 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
       CHANGING
         data             TYPE data.
 
-    methods IS_COMPRESSABLE
-      importing
-      !TYPE_DESCR type ref to CL_ABAP_TYPEDESCR
-      !NAME type CSEQUENCE
-      returning
-      value(RV_COMPRESS) type ABAP_BOOL .
+    METHODS is_compressable
+      IMPORTING
+        type_descr TYPE REF TO cl_abap_typedescr
+        name       TYPE string
+      RETURNING
+      VALUE(rv_compress) TYPE abap_bool.
 
     CLASS-METHODS serialize
       IMPORTING
@@ -45,22 +45,24 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
       RETURNING
         VALUE(rr_data) TYPE REF TO data.
 
-    methods serialize_int
-      importing
-      DATA type DATA.
+    METHODS serialize_int
+      IMPORTING
+        data TYPE data
+      RETURNING
+        VALUE(r_json) TYPE string.
 
-  methods CONSTRUCTOR
-    importing
-      !COMPRESS type BOOL default C_BOOL-FALSE
-      !PRETTY_NAME type PRETTY_NAME_MODE default PRETTY_MODE-NONE
-      !ASSOC_ARRAYS type BOOL default C_BOOL-FALSE
-      !TS_AS_ISO8601 type BOOL default C_BOOL-FALSE.
+    METHODS constructor
+      IMPORTING
+        compress TYPE abap_bool DEFAULT abap_false
+        pretty_name TYPE pretty_name_mode DEFAULT pretty_mode-none
+        assoc_arrays TYPE abap_bool DEFAULT abap_false
+        ts_as_iso8601 TYPE abap_bool DEFAULT abap_false.
 
-  data mv_compress type abap_bool.
-  data MV_PRETTY_NAME type string.
-  data MV_ASSOC_ARRAYS type abap_bool.
-  data MV_TS_AS_ISO8601 type abap_bool.
-  data mv_extended type abap_bool.
+    DATA mv_compress TYPE abap_bool.
+    DATA mv_pretty_name TYPE string.
+    DATA mv_assoc_arrays TYPE abap_bool.
+    DATA mv_ts_as_iso8601 TYPE abap_bool.
+    DATA mv_extended TYPE abap_bool.
 
   PRIVATE SECTION.
     CLASS-DATA mo_parsed TYPE REF TO lcl_parser.
@@ -75,7 +77,7 @@ ENDCLASS.
 
 CLASS /ui2/cl_json IMPLEMENTATION.
 
-method serialize_int.
+  METHOD serialize_int.
 
     DATA lo_type       TYPE REF TO cl_abap_typedescr.
     DATA lo_struct     TYPE REF TO cl_abap_structdescr.
@@ -116,7 +118,7 @@ method serialize_int.
               SHIFT r_json LEFT DELETING LEADING '0'.
             ENDIF.
           WHEN cl_abap_typedescr=>typekind_packed.
-            IF ts_as_iso8601 = abap_true
+            IF mv_ts_as_iso8601 = abap_true
                 AND ( lo_type->absolute_name = `\TYPE=TIMESTAMP`
                 OR lo_type->absolute_name = `\TYPE=TIMESTAMPL` ).
               IF data IS INITIAL.
@@ -139,11 +141,11 @@ method serialize_int.
         ASSIGN data TO <tab>.
         LOOP AT <tab> ASSIGNING <any>.
           lv_index = sy-tabix.
-          r_json = r_json && serialize(
-            data          = <any>
-            pretty_name   = pretty_name
-            compress      = compress
-            ts_as_iso8601 = ts_as_iso8601 ).
+          r_json = r_json && serialize_int( data = <any> ).
+*            pretty_name   = mv_pretty_name
+*            compress      = mv_compress
+*            ts_as_iso8601 = mv_ts_as_iso8601
+
           IF lines( data ) <> lv_index.
             r_json = r_json && ','.
           ENDIF.
@@ -156,21 +158,20 @@ method serialize_int.
         LOOP AT lt_components ASSIGNING <ls_component>.
           ASSIGN COMPONENT <ls_component>-name OF STRUCTURE data TO <any>.
           ASSERT sy-subrc = 0.
-          IF compress = abap_true AND <any> IS INITIAL.
+          IF mv_compress = abap_true AND <any> IS INITIAL.
             CONTINUE.
           ENDIF.
-          IF pretty_name = pretty_mode-camel_case.
+          IF mv_pretty_name = pretty_mode-camel_case.
             r_json = r_json && |"{ to_mixed( to_lower( <ls_component>-name ) ) }":|.
-          ELSEIF pretty_name = pretty_mode-low_case.
+          ELSEIF mv_pretty_name = pretty_mode-low_case.
             r_json = r_json && |"{ to_lower( <ls_component>-name ) }":|.
           ELSE.
             r_json = r_json && |"{ <ls_component>-name }":|.
           ENDIF.
-          r_json = r_json && serialize(
-            data          = <any>
-            pretty_name   = pretty_name
-            compress      = compress
-            ts_as_iso8601 = ts_as_iso8601 ).
+          r_json = r_json && serialize_int( data = <any> ).
+*           pretty_name   = pretty_name
+*           compress      = compress
+*           ts_as_iso8601 = ts_as_iso8601 ).
           r_json = r_json && ','.
         ENDLOOP.
         IF r_json CP '*,'.
@@ -183,11 +184,10 @@ method serialize_int.
           RETURN.
         ENDIF.
         ASSIGN data->* TO <any>.
-        r_json = serialize(
-          data          = <any>
-          pretty_name   = pretty_name
-          compress      = compress
-          ts_as_iso8601 = ts_as_iso8601 ).
+        r_json = serialize_int( data = <any> ).
+*          pretty_name   = pretty_name
+*          compress      = compress
+*          ts_as_iso8601 = ts_as_iso8601 ).
       WHEN OTHERS.
         ASSERT 1 = 'cl_json, unknown kind'.
     ENDCASE.
@@ -220,23 +220,23 @@ method serialize_int.
       CHANGING
         data        = data ).
 
-endmethod.
+  ENDMETHOD.
 
-METHOD constructor.
+  METHOD constructor.
 
-  DATA: rtti TYPE REF TO cl_abap_classdescr.
+    DATA rtti TYPE REF TO cl_abap_classdescr.
 
-  mv_compress       = compress.
-  mv_pretty_name    = pretty_name.
-  mv_assoc_arrays   = assoc_arrays.
-  mv_ts_as_iso8601  = ts_as_iso8601.
+    mv_compress       = compress.
+    mv_pretty_name    = pretty_name.
+    mv_assoc_arrays   = assoc_arrays.
+    mv_ts_as_iso8601  = ts_as_iso8601.
 
-  rtti ?= cl_abap_classdescr=>describe_by_object_ref( me ).
-  IF rtti->absolute_name NE mc_me_type.
-    mv_extended = abap_true.
-  ENDIF.
+*  rtti ?= cl_abap_classdescr=>describe_by_object_ref( me ).
+*  IF rtti->absolute_name NE mc_me_type.
+*    mv_extended = abap_true.
+*  ENDIF.
 
-ENDMETHOD.
+  ENDMETHOD.
 
   METHOD is_compressable.
     rv_compress = abap_true.
@@ -248,16 +248,16 @@ ENDMETHOD.
 
   METHOD serialize.
 
-  DATA lo_json  TYPE REF TO /ui2/cl_json.
+    DATA lo_json  TYPE REF TO /ui2/cl_json.
 
-  CREATE OBJECT lo_json
-    EXPORTING
-      compress      = compress
-      pretty_name   = pretty_name
-      assoc_arrays      = assoc_arrays
-      ts_as_iso8601    = ts_as_iso8601.
+    CREATE OBJECT lo_json
+      EXPORTING
+        compress      = compress
+        pretty_name   = pretty_name
+        assoc_arrays  = assoc_arrays
+        ts_as_iso8601 = ts_as_iso8601.
 
-  r_json = lo_json->serialize_int( name = name data = data type_descr = type_descr ).
+    r_json = lo_json->serialize_int( data = data ).
 
   ENDMETHOD.
 
