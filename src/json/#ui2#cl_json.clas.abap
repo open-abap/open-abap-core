@@ -166,9 +166,6 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             r_json = r_json && |"{ <ls_component>-name }":|.
           ENDIF.
           r_json = r_json && serialize_int( data = <any> ).
-*           pretty_name   = pretty_name
-*           compress      = compress
-*           ts_as_iso8601 = ts_as_iso8601 ).
           r_json = r_json && ','.
         ENDLOOP.
         IF r_json CP '*,'.
