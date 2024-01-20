@@ -182,9 +182,6 @@ CLASS /ui2/cl_json IMPLEMENTATION.
         ENDIF.
         ASSIGN data->* TO <any>.
         r_json = serialize_int( data = <any> ).
-*          pretty_name   = pretty_name
-*          compress      = compress
-*          ts_as_iso8601 = ts_as_iso8601 ).
       WHEN OTHERS.
         ASSERT 1 = 'cl_json, unknown kind'.
     ENDCASE.
