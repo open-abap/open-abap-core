@@ -21,13 +21,6 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
       CHANGING
         data             TYPE data.
 
-    METHODS is_compressable
-      IMPORTING
-        type_descr TYPE REF TO cl_abap_typedescr
-        name       TYPE string
-      RETURNING
-      VALUE(rv_compress) TYPE abap_bool.
-
     CLASS-METHODS serialize
       IMPORTING
         data          TYPE data
@@ -58,11 +51,20 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
         assoc_arrays TYPE abap_bool DEFAULT abap_false
         ts_as_iso8601 TYPE abap_bool DEFAULT abap_false.
 
+  PROTECTED SECTION.
+
     DATA mv_compress TYPE abap_bool.
     DATA mv_pretty_name TYPE string.
     DATA mv_assoc_arrays TYPE abap_bool.
     DATA mv_ts_as_iso8601 TYPE abap_bool.
     DATA mv_extended TYPE abap_bool.
+
+    METHODS is_compressable
+      IMPORTING
+        type_descr TYPE REF TO cl_abap_typedescr
+        name       TYPE string
+      RETURNING
+      VALUE(rv_compress) TYPE abap_bool.
 
   PRIVATE SECTION.
     CLASS-DATA mo_parsed TYPE REF TO lcl_parser.
