@@ -79,6 +79,8 @@ CLASS cl_gdt_conversion IMPLEMENTATION.
     CASE im_value.
       WHEN ''.
         RAISE EXCEPTION TYPE cx_gdt_conversion.
+      WHEN 'ST'.
+        ex_value = 'PCE'.
       WHEN 'KG'.
         ex_value = 'KGM'.
       WHEN 'CDM'.
