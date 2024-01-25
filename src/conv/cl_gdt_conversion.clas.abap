@@ -77,6 +77,8 @@ CLASS cl_gdt_conversion IMPLEMENTATION.
 
   METHOD unit_code_outbound.
     CASE im_value.
+      WHEN ''.
+        RAISE EXCEPTION TYPE cx_gdt_conversion.
       WHEN 'KG'.
         ex_value = 'KGM'.
       WHEN 'CDM'.
