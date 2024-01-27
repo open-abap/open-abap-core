@@ -39,10 +39,12 @@ CLASS lcl_stack IMPLEMENTATION.
 
   METHOD is_array.
     DATA lv_index TYPE i.
-    DATA ls_data LIKE LINE OF mt_stack.
+    FIELD-SYMBOLS <ls_data> LIKE LINE OF mt_stack.
     lv_index = lines( mt_stack ).
-    READ TABLE mt_stack INTO ls_data INDEX lv_index.       "#EC CI_SUBRC
-    rv_array = ls_data-is_array.
+    READ TABLE mt_stack ASSIGNING <ls_data> INDEX lv_index.
+    IF sy-subrc = 0.
+      rv_array = <ls_data>-is_array.
+    ENDIF.
   ENDMETHOD.
 
   METHOD get_and_increase_index.
@@ -60,19 +62,19 @@ CLASS lcl_stack IMPLEMENTATION.
 
   METHOD pop.
     DATA lv_index TYPE i.
-    DATA ls_data LIKE LINE OF mt_stack.
+    FIELD-SYMBOLS <ls_data> LIKE LINE OF mt_stack.
     lv_index = lines( mt_stack ).
     IF lv_index > 0.
-      READ TABLE mt_stack INTO ls_data INDEX lv_index.     "#EC CI_SUBRC
-      rv_name = ls_data-name.
+      READ TABLE mt_stack ASSIGNING <ls_data> INDEX lv_index.     "#EC CI_SUBRC
+      rv_name = <ls_data>-name.
       DELETE mt_stack INDEX lv_index.
     ENDIF.
   ENDMETHOD.
 
   METHOD get_full_name.
-    DATA ls_data LIKE LINE OF mt_stack.
-    LOOP AT mt_stack INTO ls_data.
-      rv_path = rv_path && ls_data-name.
+    FIELD-SYMBOLS <ls_data> LIKE LINE OF mt_stack.
+    LOOP AT mt_stack ASSIGNING <ls_data>.
+      rv_path = rv_path && <ls_data>-name.
     ENDLOOP.
   ENDMETHOD.
 ENDCLASS.
