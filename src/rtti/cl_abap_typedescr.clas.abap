@@ -241,16 +241,16 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
   METHOD is_deep.
 
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
-    DATA ls_component  LIKE LINE OF lt_components.
+    FIELD-SYMBOLS <ls_component> LIKE LINE OF lt_components.
 
     lt_components = io_struct->get_components( ).
     rv_deep = abap_false.
 
-    LOOP AT lt_components INTO ls_component.
-      IF ls_component-type->kind = kind_struct
-          OR ls_component-type->type_kind = typekind_string
-          OR ls_component-type->type_kind = typekind_xstring
-          OR ls_component-type->kind = kind_table.
+    LOOP AT lt_components ASSIGNING <ls_component>.
+      IF <ls_component>-type->kind = kind_struct
+          OR <ls_component>-type->type_kind = typekind_string
+          OR <ls_component>-type->type_kind = typekind_xstring
+          OR <ls_component>-type->kind = kind_table.
         rv_deep = abap_true.
         RETURN.
       ENDIF.
