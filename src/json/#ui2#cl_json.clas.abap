@@ -85,6 +85,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
 
     DATA lo_type       TYPE REF TO cl_abap_typedescr.
     DATA lo_struct     TYPE REF TO cl_abap_structdescr.
+    DATA lo_table      TYPE REF TO cl_abap_tabledescr.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
     DATA ref           TYPE REF TO data.
     DATA lv_index      TYPE i.
@@ -148,9 +149,12 @@ CLASS /ui2/cl_json IMPLEMENTATION.
       WHEN cl_abap_typedescr=>kind_table.
         r_json = '['.
         ASSIGN data TO <tab>.
+        lo_table ?= lo_type.
         LOOP AT <tab> ASSIGNING <any>.
           lv_index = sy-tabix.
-          r_json = r_json && serialize_int( data = <any> ).
+          r_json = r_json && serialize_int(
+            data       = <any>
+            type_descr = lo_table->get_table_line_type( ) ).
 
           IF lines( data ) <> lv_index.
             r_json = r_json && ','.
@@ -174,7 +178,9 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           ELSE.
             r_json = r_json && |"{ <ls_component>-name }":|.
           ENDIF.
-          r_json = r_json && serialize_int( data = <any> ).
+          r_json = r_json && serialize_int(
+            data       = <any>
+            type_descr = <ls_component>-type ).
           r_json = r_json && ','.
         ENDLOOP.
         IF r_json CP '*,'.
