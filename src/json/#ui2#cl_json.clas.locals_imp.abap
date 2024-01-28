@@ -130,8 +130,8 @@ CLASS lcl_parser DEFINITION.
        END OF ty_data.
 
     TYPES ty_data_tt TYPE STANDARD TABLE OF ty_data WITH DEFAULT KEY
-      WITH UNIQUE HASHED KEY key_full_name COMPONENTS full_name
-      WITH UNIQUE HASHED KEY key_full_name_upper COMPONENTS full_name_upper
+      WITH UNIQUE SORTED KEY key_full_name COMPONENTS full_name
+      WITH UNIQUE SORTED KEY key_full_name_upper COMPONENTS full_name_upper
       WITH NON-UNIQUE SORTED KEY key_parent COMPONENTS parent.
 
     DATA mt_data TYPE ty_data_tt.
