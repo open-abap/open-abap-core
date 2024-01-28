@@ -28,6 +28,7 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
         pretty_name   TYPE string OPTIONAL
         assoc_arrays  TYPE abap_bool OPTIONAL
         ts_as_iso8601 TYPE abap_bool OPTIONAL
+        type_descr    TYPE REF TO cl_abap_typedescr OPTIONAL
       RETURNING
         VALUE(r_json) TYPE string.
 
@@ -40,7 +41,8 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
 
     METHODS serialize_int
       IMPORTING
-        data TYPE data
+        data          TYPE data
+        type_descr    TYPE REF TO cl_abap_typedescr OPTIONAL
       RETURNING
         VALUE(r_json) TYPE string.
 
@@ -83,6 +85,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
 
     DATA lo_type       TYPE REF TO cl_abap_typedescr.
     DATA lo_struct     TYPE REF TO cl_abap_structdescr.
+    DATA lo_table      TYPE REF TO cl_abap_tabledescr.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
     DATA ref           TYPE REF TO data.
     DATA lv_index      TYPE i.
@@ -91,7 +94,12 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     FIELD-SYMBOLS <any> TYPE any.
     FIELD-SYMBOLS <tab> TYPE ANY TABLE.
 
-    lo_type = cl_abap_typedescr=>describe_by_data( data ).
+    IF type_descr IS INITIAL.
+      lo_type = cl_abap_typedescr=>describe_by_data( data ).
+    ELSE.
+      lo_type = type_descr.
+    ENDIF.
+
     CASE lo_type->kind.
       WHEN cl_abap_typedescr=>kind_elem.
 *        WRITE '@KERNEL console.dir(lo_type);'.
@@ -141,9 +149,12 @@ CLASS /ui2/cl_json IMPLEMENTATION.
       WHEN cl_abap_typedescr=>kind_table.
         r_json = '['.
         ASSIGN data TO <tab>.
+        lo_table ?= lo_type.
         LOOP AT <tab> ASSIGNING <any>.
           lv_index = sy-tabix.
-          r_json = r_json && serialize_int( data = <any> ).
+          r_json = r_json && serialize_int(
+            data       = <any>
+            type_descr = lo_table->get_table_line_type( ) ).
 
           IF lines( data ) <> lv_index.
             r_json = r_json && ','.
@@ -167,7 +178,9 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           ELSE.
             r_json = r_json && |"{ <ls_component>-name }":|.
           ENDIF.
-          r_json = r_json && serialize_int( data = <any> ).
+          r_json = r_json && serialize_int(
+            data       = <any>
+            type_descr = <ls_component>-type ).
           r_json = r_json && ','.
         ENDLOOP.
         IF r_json CP '*,'.
@@ -250,7 +263,9 @@ CLASS /ui2/cl_json IMPLEMENTATION.
         assoc_arrays  = assoc_arrays
         ts_as_iso8601 = ts_as_iso8601.
 
-    r_json = lo_json->serialize_int( data = data ).
+    r_json = lo_json->serialize_int(
+      data       = data
+      type_descr = type_descr ).
 
   ENDMETHOD.
 
