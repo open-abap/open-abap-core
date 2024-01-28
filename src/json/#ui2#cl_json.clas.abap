@@ -28,6 +28,7 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
         pretty_name   TYPE string OPTIONAL
         assoc_arrays  TYPE abap_bool OPTIONAL
         ts_as_iso8601 TYPE abap_bool OPTIONAL
+        type_descr    TYPE REF TO cl_abap_typedescr OPTIONAL
       RETURNING
         VALUE(r_json) TYPE string.
 
@@ -40,7 +41,8 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
 
     METHODS serialize_int
       IMPORTING
-        data TYPE data
+        data          TYPE data
+        type_descr    TYPE REF TO cl_abap_typedescr OPTIONAL
       RETURNING
         VALUE(r_json) TYPE string.
 
@@ -91,7 +93,12 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     FIELD-SYMBOLS <any> TYPE any.
     FIELD-SYMBOLS <tab> TYPE ANY TABLE.
 
-    lo_type = cl_abap_typedescr=>describe_by_data( data ).
+    IF type_descr IS INITIAL.
+      lo_type = cl_abap_typedescr=>describe_by_data( data ).
+    ELSE.
+      lo_type = type_descr.
+    ENDIF.
+
     CASE lo_type->kind.
       WHEN cl_abap_typedescr=>kind_elem.
 *        WRITE '@KERNEL console.dir(lo_type);'.
@@ -250,7 +257,9 @@ CLASS /ui2/cl_json IMPLEMENTATION.
         assoc_arrays  = assoc_arrays
         ts_as_iso8601 = ts_as_iso8601.
 
-    r_json = lo_json->serialize_int( data = data ).
+    r_json = lo_json->serialize_int(
+      data       = data
+      type_descr = type_descr ).
 
   ENDMETHOD.
 
