@@ -1,10 +1,11 @@
 CLASS ltcl_gzip DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
-    METHODS compress FOR TESTING.
-    METHODS decompress FOR TESTING.
-    METHODS identity FOR TESTING.
-    METHODS decompress_header FOR TESTING.
+    METHODS compress FOR TESTING RAISING cx_static_check.
+    METHODS decompress FOR TESTING RAISING cx_static_check.
+    METHODS decompress_flush FOR TESTING RAISING cx_static_check.
+    METHODS identity FOR TESTING RAISING cx_static_check.
+    METHODS decompress_header FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -97,6 +98,25 @@ CLASS ltcl_gzip IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_xstr
       exp = '68656C6C6F20776F726C64' ).
+  ENDMETHOD.
+
+  METHOD decompress_flush.
+
+    DATA lv_compressed TYPE xstring.
+    DATA lv_raw        TYPE xstring.
+
+    lv_compressed = 'CA48CDC9C907000000FFFF'.
+
+    cl_abap_gzip=>decompress_binary(
+      EXPORTING
+        gzip_in = lv_compressed
+      IMPORTING
+        raw_out = lv_raw ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_codepage=>convert_from( lv_raw )
+      exp = 'hello' ).
+
   ENDMETHOD.
 
 ENDCLASS.
