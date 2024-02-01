@@ -76,7 +76,7 @@ CLASS cl_abap_gzip IMPLEMENTATION.
   METHOD decompress_binary.
     WRITE '@KERNEL const zlib = await import("zlib");'.
     WRITE '@KERNEL const buf = Buffer.from(gzip_in.get(), "hex");'.
-    WRITE '@KERNEL const decompress = zlib.inflateRawSync(buf).toString("hex").toUpperCase();'.
+    WRITE '@KERNEL const decompress = zlib.inflateRawSync(buf, {finishFlush: zlib.constants.Z_SYNC_FLUSH}).toString("hex").toUpperCase();'.
 
     WRITE '@KERNEL raw_out.set(decompress);'.
     raw_out_len = xstrlen( raw_out ).
