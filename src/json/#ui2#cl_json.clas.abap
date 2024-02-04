@@ -29,6 +29,7 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
         assoc_arrays  TYPE abap_bool OPTIONAL
         ts_as_iso8601 TYPE abap_bool OPTIONAL
         type_descr    TYPE REF TO cl_abap_typedescr OPTIONAL
+        format_output TYPE abap_bool OPTIONAL
       RETURNING
         VALUE(r_json) TYPE string.
 
@@ -255,6 +256,8 @@ CLASS /ui2/cl_json IMPLEMENTATION.
   METHOD serialize.
 
     DATA lo_json  TYPE REF TO /ui2/cl_json.
+
+    ASSERT format_output IS INITIAL.
 
     CREATE OBJECT lo_json
       EXPORTING
