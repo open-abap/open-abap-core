@@ -1,7 +1,8 @@
 INTERFACE if_sxml_reader PUBLIC.
+
   DATA node_type TYPE if_sxml_node=>node_type READ-ONLY.
-  DATA name TYPE string READ-ONLY.
-  DATA value TYPE string READ-ONLY.
+  DATA name      TYPE string READ-ONLY.
+  DATA value     TYPE string READ-ONLY.
 
   METHODS
     read_next_node
