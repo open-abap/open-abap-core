@@ -23,23 +23,23 @@ CLASS ltcl_json DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
       IMPORTING iv_json TYPE string
       RETURNING VALUE(rt_nodes) TYPE ty_nodes.
 
-    METHODS empty_object FOR TESTING.
-    METHODS empty_array FOR TESTING.
-    METHODS simple_integer FOR TESTING.
-    METHODS simple_true FOR TESTING.
-    METHODS simple_null FOR TESTING.
-    METHODS integer_array FOR TESTING.
-    METHODS key_value FOR TESTING.
-    METHODS key_empty FOR TESTING.
-    METHODS two_keys FOR TESTING.
-    METHODS two_array FOR TESTING.
-    METHODS array_with_object FOR TESTING.
-    METHODS object_with_object FOR TESTING.
-    METHODS bad_json_read_next_node FOR TESTING.
-    METHODS bad_json_next_node FOR TESTING.
-    METHODS bad_json_xml_offset FOR TESTING.
-    METHODS next_node FOR TESTING.
-    METHODS skip_node FOR TESTING.
+    METHODS empty_object FOR TESTING RAISING cx_static_check.
+    METHODS empty_array FOR TESTING RAISING cx_static_check.
+    METHODS simple_integer FOR TESTING RAISING cx_static_check.
+    METHODS simple_true FOR TESTING RAISING cx_static_check.
+    METHODS simple_null FOR TESTING RAISING cx_static_check.
+    METHODS integer_array FOR TESTING RAISING cx_static_check.
+    METHODS key_value FOR TESTING RAISING cx_static_check.
+    METHODS key_empty FOR TESTING RAISING cx_static_check.
+    METHODS two_keys FOR TESTING RAISING cx_static_check.
+    METHODS two_array FOR TESTING RAISING cx_static_check.
+    METHODS array_with_object FOR TESTING RAISING cx_static_check.
+    METHODS object_with_object FOR TESTING RAISING cx_static_check.
+    METHODS bad_json_read_next_node FOR TESTING RAISING cx_static_check.
+    METHODS bad_json_next_node FOR TESTING RAISING cx_static_check.
+    METHODS bad_json_xml_offset FOR TESTING RAISING cx_static_check.
+    METHODS next_node FOR TESTING RAISING cx_static_check.
+    METHODS skip_node FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
