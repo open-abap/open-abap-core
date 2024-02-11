@@ -335,7 +335,14 @@ CLASS lcl_reader IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_sxml_reader~next_node.
-    DATA node  LIKE LINE OF mt_nodes.
+    if_sxml_reader~read_next_node( ).
+  ENDMETHOD.
+
+  METHOD if_sxml_reader~skip_node.
+* huh, what should this method do?
+  ENDMETHOD.
+
+  METHOD if_sxml_reader~read_next_node.
     DATA open  TYPE REF TO if_sxml_open_element.
     DATA close TYPE REF TO if_sxml_close_element.
     DATA value TYPE REF TO if_sxml_value_node.
@@ -345,28 +352,19 @@ CLASS lcl_reader IMPLEMENTATION.
     ENDIF.
     READ TABLE mt_nodes INDEX mv_pointer INTO node.
     mv_pointer = mv_pointer + 1.
-    if_sxml_reader~node_type = node->type.
 
-    CLEAR if_sxml_reader~name.
-    CASE if_sxml_reader~node_type.
-      WHEN if_sxml_node=>co_nt_element_open.
-        open ?= node.
-        if_sxml_reader~name = open->qname-name.
-      WHEN if_sxml_node=>co_nt_element_close.
-        close ?= node.
-        if_sxml_reader~name = close->qname-name.
-    ENDCASE.
-  ENDMETHOD.
-
-  METHOD if_sxml_reader~skip_node.
-* huh, what should this method do?
-  ENDMETHOD.
-
-  METHOD if_sxml_reader~read_next_node.
-    IF mv_initialized = abap_false.
-      initialize( ).
+    IF node IS NOT INITIAL.
+      if_sxml_reader~node_type = node->type.
+      CASE if_sxml_reader~node_type.
+        WHEN if_sxml_node=>co_nt_element_open.
+          open ?= node.
+          if_sxml_reader~name = open->qname-name.
+        WHEN if_sxml_node=>co_nt_element_close.
+          close ?= node.
+          if_sxml_reader~name = close->qname-name.
+        WHEN OTHERS.
+          CLEAR if_sxml_reader~name.
+      ENDCASE.
     ENDIF.
-    READ TABLE mt_nodes INDEX mv_pointer INTO node.
-    mv_pointer = mv_pointer + 1.
   ENDMETHOD.
 ENDCLASS.
