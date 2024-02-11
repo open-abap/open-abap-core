@@ -42,6 +42,7 @@ CLASS ltcl_json DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS skip_node FOR TESTING RAISING cx_static_check.
     METHODS read_next_node FOR TESTING RAISING cx_static_check.
     METHODS read_next_node2 FOR TESTING RAISING cx_static_check.
+    METHODS read_next_node3 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -512,6 +513,23 @@ CLASS ltcl_json IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_reader->node_type
       exp = if_sxml_node=>co_nt_element_open ).
+  ENDMETHOD.
+
+  METHOD read_next_node3.
+    DATA lo_reader TYPE REF TO if_sxml_reader.
+    DATA lo_node   TYPE REF TO if_sxml_node.
+
+    lo_reader = cl_sxml_string_reader=>create( cl_abap_codepage=>convert_to( '{"hello": 2}' ) ).
+
+    lo_reader->read_next_node( ).
+    lo_reader->read_next_node( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_reader->node_type
+      exp = if_sxml_node=>co_nt_element_open ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_reader->value
+      exp = 'hello' ).
   ENDMETHOD.
 
 ENDCLASS.
