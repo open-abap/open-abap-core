@@ -346,6 +346,8 @@ CLASS lcl_reader IMPLEMENTATION.
     DATA open  TYPE REF TO if_sxml_open_element.
     DATA close TYPE REF TO if_sxml_close_element.
     DATA value TYPE REF TO if_sxml_value_node.
+    DATA attr  TYPE REF TO if_sxml_attribute.
+    DATA attrs TYPE if_sxml_attribute=>attributes.
 
     IF mv_initialized = abap_false.
       initialize( ).
@@ -355,13 +357,24 @@ CLASS lcl_reader IMPLEMENTATION.
 
     IF node IS NOT INITIAL.
       if_sxml_reader~node_type = node->type.
+
       CASE if_sxml_reader~node_type.
         WHEN if_sxml_node=>co_nt_element_open.
           open ?= node.
           if_sxml_reader~name = open->qname-name.
+
+          attrs = open->get_attributes( ).
+          READ TABLE attrs INDEX 1 INTO attr.
+          IF sy-subrc = 0.
+            if_sxml_reader~value = attr->get_value( ).
+          ENDIF.
         WHEN if_sxml_node=>co_nt_element_close.
           close ?= node.
           if_sxml_reader~name = close->qname-name.
+          CLEAR if_sxml_reader~value.
+        WHEN if_sxml_node=>co_nt_value.
+          value ?= node.
+          if_sxml_reader~value = value->get_value( ).
         WHEN OTHERS.
           CLEAR if_sxml_reader~name.
       ENDCASE.
