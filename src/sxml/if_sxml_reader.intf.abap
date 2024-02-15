@@ -1,8 +1,10 @@
 INTERFACE if_sxml_reader PUBLIC.
 
-  DATA node_type TYPE if_sxml_node=>node_type READ-ONLY.
-  DATA name      TYPE string READ-ONLY.
-  DATA value     TYPE string READ-ONLY.
+  DATA node_type  TYPE if_sxml_node=>node_type READ-ONLY.
+  DATA name       TYPE string READ-ONLY.
+  DATA value_type TYPE if_sxml_value=>value_type READ-ONLY.
+  DATA value      TYPE string READ-ONLY.
+  DATA value_raw  TYPE xstring READ-ONLY.
 
   CONSTANTS co_opt_normalizing TYPE i VALUE 1.
   CONSTANTS co_opt_keep_whitespace TYPE i VALUE 2.
@@ -53,4 +55,11 @@ INTERFACE if_sxml_reader PUBLIC.
   METHODS get_path
     RETURNING
       VALUE(path) TYPE if_sxml_named=>path.
+
+  METHODS current_node.
+
+  METHODS read_current_node
+    RETURNING
+      VALUE(node) TYPE REF TO if_sxml_node.
+
 ENDINTERFACE.

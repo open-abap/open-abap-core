@@ -207,6 +207,7 @@ CLASS lcl_open_node DEFINITION.
 ENDCLASS.
 
 CLASS lcl_open_node IMPLEMENTATION.
+
   METHOD constructor.
     if_sxml_node~type = if_sxml_node=>co_nt_element_open.
     if_sxml_open_element~qname-name = name.
@@ -215,6 +216,10 @@ CLASS lcl_open_node IMPLEMENTATION.
 
   METHOD if_sxml_open_element~get_attributes.
     attr = mt_attributes.
+  ENDMETHOD.
+
+  METHOD if_sxml_open_element~set_prefix.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_sxml_open_element~set_attribute.
@@ -251,13 +256,26 @@ CLASS lcl_value_node DEFINITION.
 ENDCLASS.
 
 CLASS lcl_value_node IMPLEMENTATION.
+
   METHOD constructor.
     if_sxml_node~type = if_sxml_node=>co_nt_value.
     mv_value = value.
   ENDMETHOD.
 
+  METHOD if_sxml_value_node~get_value_raw.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_sxml_value_node~set_value.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_sxml_value_node~set_value_raw.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_sxml_value_node~get_value.
-    val = mv_value.
+    value = mv_value.
   ENDMETHOD.
 ENDCLASS.
 
@@ -277,6 +295,14 @@ CLASS lcl_reader DEFINITION.
 ENDCLASS.
 
 CLASS lcl_reader IMPLEMENTATION.
+  METHOD if_sxml_reader~current_node.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_sxml_reader~read_current_node.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_sxml_reader~get_nsuri_by_prefix.
     ASSERT 1 = 'todo'.
   ENDMETHOD.

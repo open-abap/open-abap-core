@@ -28,4 +28,8 @@ INTERFACE if_sxml_open_element PUBLIC.
       attributes TYPE if_sxml_attribute=>attributes
     RAISING
       cx_sxml_name_error.
+
+  METHODS set_prefix
+    IMPORTING
+      prefix TYPE string OPTIONAL.
 ENDINTERFACE.
