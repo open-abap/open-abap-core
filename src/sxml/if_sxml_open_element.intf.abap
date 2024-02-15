@@ -32,4 +32,11 @@ INTERFACE if_sxml_open_element PUBLIC.
   METHODS set_prefix
     IMPORTING
       prefix TYPE string OPTIONAL.
+
+  METHODS get_attribute_value
+    IMPORTING
+      !name TYPE string
+      !nsuri TYPE string OPTIONAL
+    RETURNING
+      VALUE(value) TYPE REF TO if_sxml_value.
 ENDINTERFACE.
