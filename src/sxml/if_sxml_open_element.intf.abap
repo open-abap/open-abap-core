@@ -2,8 +2,11 @@ INTERFACE if_sxml_open_element PUBLIC.
   INTERFACES if_sxml_node.
 
   DATA: BEGIN OF qname,
-          name TYPE string,
+          name      TYPE string,
+          namespace TYPE string,
         END OF qname.
+
+  DATA prefix TYPE string READ-ONLY.
 
   METHODS get_attributes
     RETURNING

@@ -43,6 +43,18 @@ CLASS cl_sxml_string_writer IMPLEMENTATION.
     mv_type = type.
   ENDMETHOD.
 
+  METHOD if_sxml_writer~new_close_element.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_sxml_writer~write_attribute_raw.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_sxml_writer~new_value.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_sxml_writer~new_open_element.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
