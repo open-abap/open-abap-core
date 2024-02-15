@@ -8,4 +8,15 @@ INTERFACE if_sxml_open_element PUBLIC.
   METHODS get_attributes
     RETURNING
       VALUE(attr) TYPE if_sxml_attribute=>attributes.
+
+  METHODS set_attribute
+    IMPORTING
+      name   TYPE string
+      nsuri  TYPE string OPTIONAL
+      prefix TYPE string OPTIONAL
+      value  TYPE string OPTIONAL
+    RETURNING
+      VALUE(attribute) TYPE REF TO if_sxml_attribute
+    RAISING
+      cx_sxml_name_error.
 ENDINTERFACE.

@@ -216,6 +216,10 @@ CLASS lcl_open_node IMPLEMENTATION.
   METHOD if_sxml_open_element~get_attributes.
     attr = mt_attributes.
   ENDMETHOD.
+
+  METHOD if_sxml_open_element~set_attribute.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 ENDCLASS.
 
 CLASS lcl_close_node DEFINITION.

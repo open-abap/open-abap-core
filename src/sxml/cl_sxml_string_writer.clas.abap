@@ -43,6 +43,18 @@ CLASS cl_sxml_string_writer IMPLEMENTATION.
     mv_type = type.
   ENDMETHOD.
 
+  METHOD if_sxml_writer~new_open_element.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_sxml_writer~write_namespace_declaration.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_sxml_writer~write_node.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD create.
     CREATE OBJECT writer
       EXPORTING
