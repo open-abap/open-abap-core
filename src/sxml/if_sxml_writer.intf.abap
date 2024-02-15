@@ -85,4 +85,10 @@ INTERFACE if_sxml_writer PUBLIC.
     RAISING
       cx_sxml_state_error.
 
+  METHODS write_value_raw
+    IMPORTING
+      value TYPE xstring
+    RAISING
+      cx_sxml_state_error.
+
 ENDINTERFACE.

@@ -59,6 +59,10 @@ CLASS cl_sxml_string_writer IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
+  METHOD if_sxml_writer~write_value_raw.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_sxml_writer~write_namespace_declaration.
     ASSERT 1 = 'todo'.
   ENDMETHOD.

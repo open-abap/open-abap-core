@@ -220,6 +220,10 @@ CLASS lcl_open_node IMPLEMENTATION.
   METHOD if_sxml_open_element~set_attribute.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
+
+  METHOD if_sxml_open_element~set_attributes.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 ENDCLASS.
 
 CLASS lcl_close_node DEFINITION.
@@ -273,6 +277,21 @@ CLASS lcl_reader DEFINITION.
 ENDCLASS.
 
 CLASS lcl_reader IMPLEMENTATION.
+  METHOD if_sxml_reader~get_nsuri_by_prefix.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_sxml_reader~get_prefix_by_nsuri.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_sxml_reader~get_nsbindings.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_sxml_reader~get_path.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD constructor.
     mv_json = iv_json.

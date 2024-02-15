@@ -22,4 +22,10 @@ INTERFACE if_sxml_open_element PUBLIC.
       VALUE(attribute) TYPE REF TO if_sxml_attribute
     RAISING
       cx_sxml_name_error.
+
+  METHODS set_attributes
+    IMPORTING
+      attributes TYPE if_sxml_attribute=>attributes
+    RAISING
+      cx_sxml_name_error.
 ENDINTERFACE.
