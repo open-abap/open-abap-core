@@ -207,6 +207,7 @@ CLASS lcl_open_node DEFINITION.
 ENDCLASS.
 
 CLASS lcl_open_node IMPLEMENTATION.
+
   METHOD constructor.
     if_sxml_node~type = if_sxml_node=>co_nt_element_open.
     if_sxml_open_element~qname-name = name.
@@ -215,6 +216,10 @@ CLASS lcl_open_node IMPLEMENTATION.
 
   METHOD if_sxml_open_element~get_attributes.
     attr = mt_attributes.
+  ENDMETHOD.
+
+  METHOD if_sxml_open_element~set_prefix.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD if_sxml_open_element~set_attribute.
