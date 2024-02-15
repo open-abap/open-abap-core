@@ -23,12 +23,26 @@ INTERFACE if_sxml_writer PUBLIC.
     RAISING
       cx_sxml_state_error.
 
+  CLASS-METHODS new_close_element
+    RETURNING
+      VALUE(element) TYPE REF TO if_sxml_close_element.
+
   METHODS write_attribute
     IMPORTING
       name   TYPE string
       nsuri  TYPE string OPTIONAL
       prefix TYPE string OPTIONAL
       value  TYPE string OPTIONAL
+    RAISING
+      cx_sxml_state_error
+      cx_sxml_name_error.
+
+  METHODS write_attribute_raw
+    IMPORTING
+      name   TYPE string
+      nsuri  TYPE string OPTIONAL
+      prefix TYPE string OPTIONAL
+      value  TYPE xstring OPTIONAL
     RAISING
       cx_sxml_state_error
       cx_sxml_name_error.
@@ -53,6 +67,10 @@ INTERFACE if_sxml_writer PUBLIC.
       VALUE(element) TYPE REF TO if_sxml_open_element
     RAISING
       cx_sxml_name_error.
+
+  CLASS-METHODS new_value
+    RETURNING
+      VALUE(value) TYPE REF TO if_sxml_value_node.
 
   METHODS write_namespace_declaration
     IMPORTING

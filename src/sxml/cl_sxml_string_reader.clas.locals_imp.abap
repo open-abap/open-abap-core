@@ -273,9 +273,14 @@ CLASS lcl_reader DEFINITION.
 ENDCLASS.
 
 CLASS lcl_reader IMPLEMENTATION.
+
   METHOD constructor.
     mv_json = iv_json.
     mv_initialized = abap_false.
+  ENDMETHOD.
+
+  METHOD if_sxml_reader~set_option.
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD initialize.
