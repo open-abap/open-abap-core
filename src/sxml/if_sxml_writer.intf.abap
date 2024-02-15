@@ -44,4 +44,27 @@ INTERFACE if_sxml_writer PUBLIC.
       option TYPE i
       value  TYPE abap_bool DEFAULT abap_true.
 
+  CLASS-METHODS new_open_element
+    IMPORTING
+      name   TYPE string
+      nsuri  TYPE string OPTIONAL
+      prefix TYPE string OPTIONAL
+    RETURNING
+      VALUE(element) TYPE REF TO if_sxml_open_element
+    RAISING
+      cx_sxml_name_error.
+
+  METHODS write_namespace_declaration
+    IMPORTING
+      nsuri  TYPE string
+      prefix TYPE string OPTIONAL
+    RAISING
+      cx_sxml_name_error.
+
+  METHODS write_node
+    IMPORTING
+      node TYPE REF TO if_sxml_node
+    RAISING
+      cx_sxml_state_error.
+
 ENDINTERFACE.
