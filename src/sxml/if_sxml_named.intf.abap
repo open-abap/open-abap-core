@@ -16,4 +16,6 @@ INTERFACE if_sxml_named PUBLIC.
          END OF nsbinding.
   TYPES nsbindings TYPE HASHED TABLE OF nsbinding WITH UNIQUE KEY prefix.
 
+  CONSTANTS co_use_default_xmlns TYPE string VALUE ':'.
+
 ENDINTERFACE.

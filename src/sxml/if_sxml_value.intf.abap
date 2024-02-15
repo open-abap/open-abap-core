@@ -1,6 +1,7 @@
 INTERFACE if_sxml_value PUBLIC.
 
   TYPES value_type TYPE i.
+  DATA type TYPE value_type.
   CONSTANTS co_vt_text TYPE value_type VALUE 2.
 
   METHODS get_value

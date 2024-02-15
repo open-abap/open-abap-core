@@ -53,4 +53,11 @@ INTERFACE if_sxml_reader PUBLIC.
   METHODS get_path
     RETURNING
       VALUE(path) TYPE if_sxml_named=>path.
+
+  METHODS current_node.
+
+  METHODS read_current_node
+    RETURNING
+      VALUE(node) TYPE REF TO if_sxml_node.
+
 ENDINTERFACE.
