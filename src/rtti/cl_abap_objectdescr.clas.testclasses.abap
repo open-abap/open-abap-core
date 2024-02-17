@@ -76,6 +76,22 @@ CLASS lcl_ref1 IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.
 
+CLASS lcl_ref2_deferred DEFINITION DEFERRED.
+CLASS lcl_ref1_deferred DEFINITION.
+  PUBLIC SECTION.
+    DATA mo_app TYPE REF TO lcl_ref2_deferred.
+    METHODS constructor.
+ENDCLASS.
+CLASS lcl_ref1_deferred IMPLEMENTATION.
+  METHOD constructor.
+    CREATE OBJECT mo_app.
+  ENDMETHOD.
+ENDCLASS.
+CLASS lcl_ref2_deferred DEFINITION.
+ENDCLASS.
+CLASS lcl_ref2_deferred IMPLEMENTATION.
+ENDCLASS.
+
 ************************************************************************************
 
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
@@ -90,6 +106,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS method_and_parameter_char30 FOR TESTING RAISING cx_static_check.
     METHODS from_interface FOR TESTING RAISING cx_static_check.
     METHODS nested_orefs FOR TESTING RAISING cx_static_check.
+    METHODS deferred FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -301,7 +318,14 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD nested_orefs.
 
     DATA lo_ref TYPE REF TO lcl_ref1.
+    CREATE OBJECT lo_ref.
+    cl_abap_typedescr=>describe_by_object_ref( lo_ref ).
 
+  ENDMETHOD.
+
+  METHOD deferred.
+
+    DATA lo_ref TYPE REF TO lcl_ref1_deferred.
     CREATE OBJECT lo_ref.
     cl_abap_typedescr=>describe_by_object_ref( lo_ref ).
 
