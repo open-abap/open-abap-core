@@ -61,6 +61,17 @@ ENDCLASS.
 CLASS lcl_from_intf IMPLEMENTATION.
 ENDCLASS.
 
+CLASS lcl_ref2 DEFINITION.
+ENDCLASS.
+CLASS lcl_ref2 IMPLEMENTATION.
+ENDCLASS.
+CLASS lcl_ref1 DEFINITION.
+  PUBLIC SECTION.
+    DATA mo_app TYPE REF TO lcl_ref2.
+ENDCLASS.
+CLASS lcl_ref1 IMPLEMENTATION.
+ENDCLASS.
+
 ************************************************************************************
 
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
@@ -74,6 +85,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS method_and_parameter FOR TESTING RAISING cx_static_check.
     METHODS method_and_parameter_char30 FOR TESTING RAISING cx_static_check.
     METHODS from_interface FOR TESTING RAISING cx_static_check.
+    METHODS nested_orefs FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -279,6 +291,15 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = ls_attr-name
       exp = 'FOO' ).
+
+  ENDMETHOD.
+
+  METHOD nested_orefs.
+
+    DATA lo_ref TYPE REF TO lcl_ref1.
+
+    CREATE OBJECT lo_ref.
+    cl_abap_typedescr=>describe_by_object_ref( lo_ref ).
 
   ENDMETHOD.
 
