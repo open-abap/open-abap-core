@@ -68,8 +68,12 @@ ENDCLASS.
 CLASS lcl_ref1 DEFINITION.
   PUBLIC SECTION.
     DATA mo_app TYPE REF TO lcl_ref2.
+    METHODS constructor.
 ENDCLASS.
 CLASS lcl_ref1 IMPLEMENTATION.
+  METHOD constructor.
+    CREATE OBJECT mo_app.
+  ENDMETHOD.
 ENDCLASS.
 
 ************************************************************************************
