@@ -19,7 +19,7 @@ INTERFACE if_ixml_element PUBLIC.
       RETURNING VALUE(val) TYPE REF TO if_ixml_node,
     create_filter_node_type
       IMPORTING node_types TYPE i
-      RETURNING VALUE(val) TYPE REF TO any,
+      RETURNING VALUE(val) TYPE REF TO if_ixml_node_filter,
     create_iterator
       RETURNING VALUE(val) TYPE REF TO if_ixml_node_iterator,
     find_from_name_ns
