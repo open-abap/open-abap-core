@@ -157,7 +157,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             data       = <any>
             type_descr = lo_table->get_table_line_type( ) ).
 
-          IF lines( data ) <> lv_index.
+          IF lines( <tab> ) <> lv_index.
             r_json = r_json && ','.
           ENDIF.
         ENDLOOP.
