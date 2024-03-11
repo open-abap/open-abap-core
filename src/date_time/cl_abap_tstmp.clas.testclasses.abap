@@ -8,6 +8,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS subtract2 FOR TESTING RAISING cx_static_check.
     METHODS move FOR TESTING RAISING cx_static_check.
     METHODS systemtstmp_syst2utc FOR TESTING RAISING cx_static_check.
+    METHODS systemtstmp_syst2utc_initial FOR TESTING RAISING cx_static_check.
     METHODS move_to_short1 FOR TESTING RAISING cx_static_check.
     METHODS td_subtract1 FOR TESTING RAISING cx_static_check.
 
@@ -125,6 +126,19 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_timestamp
       exp = 20220101112233 ).
+
+  ENDMETHOD.
+
+  METHOD systemtstmp_syst2utc_initial.
+
+    TRY.
+        cl_abap_tstmp=>systemtstmp_syst2utc(
+          syst_date = '00000000'
+          syst_time = '110000' ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_parameter_invalid_type.
+        RETURN.
+    ENDTRY.
 
   ENDMETHOD.
 
