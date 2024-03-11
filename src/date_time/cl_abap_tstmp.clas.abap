@@ -43,7 +43,7 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
       EXPORTING
         utc_tstmp TYPE p
       RAISING
-        cx_parameter_invalid_type.
+        cx_parameter_invalid_range.
 
     CLASS-METHODS move_to_short
       IMPORTING
@@ -95,7 +95,7 @@ CLASS cl_abap_tstmp IMPLEMENTATION.
   METHOD systemtstmp_syst2utc.
 * system timezone is always UTC for open-abap, so no conversion needed
     IF syst_date IS INITIAL.
-      RAISE EXCEPTION TYPE cx_parameter_invalid_type.
+      RAISE EXCEPTION TYPE cx_parameter_invalid_range.
     ENDIF.
 
     utc_tstmp = |{ syst_date }{ syst_time }|.

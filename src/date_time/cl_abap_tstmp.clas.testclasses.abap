@@ -136,7 +136,7 @@ CLASS ltcl_test IMPLEMENTATION.
           syst_date = '00000000'
           syst_time = '110000' ).
         cl_abap_unit_assert=>fail( ).
-      CATCH cx_parameter_invalid_type.
+      CATCH cx_parameter_invalid_range.
         RETURN.
     ENDTRY.
 
