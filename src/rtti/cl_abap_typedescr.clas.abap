@@ -302,7 +302,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->length = lv_length * 2.
         lo_elem ?= type.
         lo_elem->output_length = lv_length.
-      WHEN 'Hex'.
+      WHEN 'Hex' OR 'HexUInt8'.
         CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_hex.
         type->kind = kind_elem.
