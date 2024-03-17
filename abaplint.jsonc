@@ -107,7 +107,7 @@
     "nesting": true,
     "try_without_catch": true,
     "identical_descriptions": {
-      "exclude": ["funcname", "sxco_fm_name", "sysuuid"]
+      "exclude": ["funcname", "sxco_fm_name", "sysuuid", "meins", "msehi"]
     },
     "check_subrc": false,
     "check_text_elements": true,
