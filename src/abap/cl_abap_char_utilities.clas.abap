@@ -5,6 +5,8 @@ CLASS cl_abap_char_utilities DEFINITION PUBLIC.
     CONSTANTS byte_order_mark_big    TYPE x LENGTH 2 VALUE 'FEFF'.
     CONSTANTS byte_order_mark_little TYPE x LENGTH 2 VALUE 'FFFE'.
     CONSTANTS charsize               TYPE i VALUE 2.
+* open-abap is little endian
+    CONSTANTS endian                 TYPE abap_endian VALUE 'L'.
 
     CONSTANTS backspace      TYPE abap_char1 VALUE %_backspace.
     CONSTANTS cr_lf          TYPE abap_cr_lf VALUE %_cr_lf.
