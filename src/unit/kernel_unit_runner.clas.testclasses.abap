@@ -34,7 +34,7 @@ CLASS ltcl_test IMPLEMENTATION.
 * this method is used internally for testing, dont set it FOR TESTING
     DATA tab1 TYPE string_table.
     DATA tab2 TYPE string_table.
-    INSERT 'asdf' INTO TABLE tab1.
+    INSERT |asdf| INTO TABLE tab1.
     cl_abap_unit_assert=>assert_equals(
       act = tab1
       exp = tab2 ).
