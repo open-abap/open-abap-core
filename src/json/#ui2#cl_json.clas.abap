@@ -286,6 +286,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     DATA lv_member     LIKE LINE OF lt_members.
 
     FIELD-SYMBOLS <any> TYPE any.
+    FIELD-SYMBOLS <at> TYPE ANY TABLE.
     FIELD-SYMBOLS <ls_component> LIKE LINE OF lt_components.
 
     prefix = mo_parsed->find_ignore_case( prefix ).
@@ -328,6 +329,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
       WHEN cl_abap_typedescr=>kind_table.
         lo_table ?= io_type.
         lt_members = mo_parsed->members( prefix && '/' ).
+        ASSIGN data TO <at>.
         LOOP AT lt_members INTO lv_member.
 *          WRITE '@KERNEL console.dir(lv_member.get());'.
           CREATE DATA ref LIKE LINE OF data.
@@ -340,7 +342,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             CHANGING
               data        = <any> ).
 *          WRITE '@KERNEL console.dir(fs_row_);'.
-          INSERT <any> INTO TABLE data.
+          INSERT <any> INTO TABLE <at>.
         ENDLOOP.
       WHEN cl_abap_typedescr=>kind_struct.
         lo_struct ?= io_type.
