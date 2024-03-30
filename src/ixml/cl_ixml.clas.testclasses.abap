@@ -47,6 +47,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS pretty3 FOR TESTING RAISING cx_static_check.
     METHODS pretty4 FOR TESTING RAISING cx_static_check.
     METHODS pretty5 FOR TESTING RAISING cx_static_check.
+    METHODS add_stuff FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml     TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -1093,6 +1094,28 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_actual
       exp = lv_expected ).
+
+  ENDMETHOD.
+
+  METHOD add_stuff.
+
+    DATA li_element TYPE REF TO if_ixml_element.
+    DATA li_top     TYPE REF TO if_ixml_element.
+    DATA lv_xml     TYPE string.
+
+    li_top = mi_document->create_element_ns(
+      prefix = 'asx'
+      name   = 'abap' ).
+    mi_document->append_child( li_top ).
+
+    li_element = mi_document->create_element( 'HELLO' ).
+    li_top->append_child( li_element ).
+
+    lv_xml = render( ).
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_xml
+      exp = '*<asx:abap><HELLO*' ).
 
   ENDMETHOD.
 

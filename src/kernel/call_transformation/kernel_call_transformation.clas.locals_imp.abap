@@ -407,6 +407,8 @@ CLASS lcl_object_to_ixml IMPLEMENTATION.
     DATA lv_name    TYPE string.
     DATA result     TYPE REF TO data.
     DATA li_element TYPE REF TO if_ixml_element.
+    DATA li_top     TYPE REF TO if_ixml_element.
+    DATA li_sub     TYPE REF TO if_ixml_element.
     DATA lt_stab    TYPE abap_trans_srcbind_tab.
     DATA ls_stab    LIKE LINE OF lt_stab.
 
@@ -416,13 +418,29 @@ CLASS lcl_object_to_ixml IMPLEMENTATION.
     WRITE '@KERNEL }'.
     ASSERT lines( lt_stab ) > 0.
 
+    li_top = ii_doc->create_element_ns(
+      prefix = 'asx'
+      name   = 'abap' ).
+    li_top->set_attribute(
+      name  = 'xmlns:asx'
+      value = 'http://www.sap.com/abapxml' ).
+    li_top->set_attribute(
+      name  = 'version'
+      value = '1.0' ).
+    ii_doc->append_child( li_top ).
+
+    li_sub = ii_doc->create_element_ns(
+      prefix = 'asx'
+      name   = 'values' ).
+    li_top->append_child( li_sub ).
+
     LOOP AT lt_stab INTO ls_stab.
       li_element = ii_doc->create_element( ls_stab-name ).
       traverse(
         ii_parent = li_element
         ii_doc    = ii_doc
         iv_ref    = ls_stab-value ).
-      ii_doc->append_child( li_element ).
+      li_sub->append_child( li_element ).
     ENDLOOP.
 
   ENDMETHOD.

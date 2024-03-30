@@ -258,7 +258,10 @@ CLASS lcl_node IMPLEMENTATION.
     DATA lo_node TYPE REF TO lcl_node.
     lo_node ?= new_child.
 
-    lo_node->mi_parent->remove_child( lo_node ).
+    IF lo_node->mi_parent IS NOT INITIAL.
+      lo_node->mi_parent->remove_child( lo_node ).
+    ENDIF.
+
     lo_node->mi_parent = me.
 
     mo_children->append( new_child ).
