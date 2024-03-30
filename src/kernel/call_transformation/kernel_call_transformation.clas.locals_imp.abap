@@ -397,6 +397,7 @@ CLASS lcl_object_to_ixml DEFINITION.
     CLASS-METHODS traverse
       IMPORTING
         ii_parent TYPE REF TO if_ixml_element
+        ii_doc    TYPE REF TO if_ixml_document
         iv_ref    TYPE REF TO data.
 ENDCLASS.
 
@@ -419,6 +420,7 @@ CLASS lcl_object_to_ixml IMPLEMENTATION.
       li_element = ii_doc->create_element( ls_stab-name ).
       traverse(
         ii_parent = li_element
+        ii_doc    = ii_doc
         iv_ref    = ls_stab-value ).
       ii_doc->append_child( li_element ).
     ENDLOOP.
@@ -427,11 +429,12 @@ CLASS lcl_object_to_ixml IMPLEMENTATION.
 
   METHOD traverse.
 
-    DATA lo_type  TYPE REF TO cl_abap_typedescr.
-    DATA lo_struc TYPE REF TO cl_abap_structdescr.
-    DATA lt_comps TYPE cl_abap_structdescr=>component_table.
-    DATA ls_compo LIKE LINE OF lt_comps.
-    DATA lv_ref   TYPE REF TO data.
+    DATA lo_type    TYPE REF TO cl_abap_typedescr.
+    DATA lo_struc   TYPE REF TO cl_abap_structdescr.
+    DATA lt_comps   TYPE cl_abap_structdescr=>component_table.
+    DATA ls_compo   LIKE LINE OF lt_comps.
+    DATA lv_ref     TYPE REF TO data.
+    DATA li_element TYPE REF TO if_ixml_element.
     FIELD-SYMBOLS <any>   TYPE any.
     FIELD-SYMBOLS <table> TYPE ANY TABLE.
     FIELD-SYMBOLS <field> TYPE any.
@@ -440,7 +443,20 @@ CLASS lcl_object_to_ixml IMPLEMENTATION.
 
     CASE lo_type->kind.
       WHEN cl_abap_typedescr=>kind_struct.
-        ii_parent->set_value( 'todo,struct' ).
+        lo_struc ?= lo_type.
+        lt_comps = lo_struc->get_components( ).
+        ASSIGN iv_ref->* TO <any>.
+
+        LOOP AT lt_comps INTO ls_compo.
+          li_element = ii_doc->create_element( ls_compo-name ).
+          ASSIGN COMPONENT ls_compo-name OF STRUCTURE <any> TO <field>.
+          GET REFERENCE OF <field> INTO lv_ref.
+          traverse(
+            ii_parent = li_element
+            ii_doc    = ii_doc
+            iv_ref    = lv_ref ).
+          ii_parent->append_child( li_element ).
+        ENDLOOP.
       WHEN cl_abap_typedescr=>kind_elem.
         ii_parent->set_value( |{ iv_ref->* }| ).
       WHEN cl_abap_typedescr=>kind_table.

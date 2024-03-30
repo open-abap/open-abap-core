@@ -96,5 +96,6 @@ INTERFACE if_ixml_element PUBLIC.
     set_value
       IMPORTING
         value TYPE string
-      RETURNING VALUE(rc) TYPE i.
+      RETURNING
+        VALUE(rc) TYPE i.
 ENDINTERFACE.
