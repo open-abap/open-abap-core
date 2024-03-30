@@ -140,11 +140,13 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
           lv_value = li_href->get_value( ).
           ASSERT lv_value IS NOT INITIAL.
           li_heap = find_href_in_heap( lv_value ).
+
           li_iname = li_heap->get_attributes( )->get_named_item_ns( 'internalName' ).
           IF li_iname IS INITIAL.
 * then its a non serializable object, not to be instantiated
             RETURN.
           ENDIF.
+
           lv_value = li_iname->get_value( ).
           ASSERT lv_value IS NOT INITIAL.
 *          WRITE '@KERNEL console.dir(lv_value);'.
@@ -168,18 +170,7 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
               traverse( ii_node = li_child
                         iv_ref  = lv_ref ).
             ENDIF.
-*            WRITE '@KERNEL console.dir(lv_name);'.
           ENDDO.
-
-"           lo_clasdescr ?= cl_abap_typedescr=>describe_by_object_ref( <any> ).
-"           LOOP AT lo_clasdescr->attributes INTO ls_attribute.
-" *            WRITE '@KERNEL console.dir(ls_attribute.get().name.get());'.
-"             ASSIGN <any>->(ls_attribute-name) TO <field>.
-"             ASSERT sy-subrc = 0.
-"             GET REFERENCE OF <field> INTO lv_ref.
-"             traverse( ii_node = li_heap->get_first_child( )
-"                       iv_ref  = lv_ref ).
-"           ENDLOOP.
         ELSE.
           ASSERT 1 = 'todo_ref2'.
         ENDIF.
