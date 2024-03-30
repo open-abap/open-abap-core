@@ -460,7 +460,17 @@ CLASS lcl_object_to_ixml IMPLEMENTATION.
       WHEN cl_abap_typedescr=>kind_elem.
         ii_parent->set_value( |{ iv_ref->* }| ).
       WHEN cl_abap_typedescr=>kind_table.
-        ii_parent->set_value( 'todo,tabl' ).
+        ASSIGN iv_ref->* TO <table>.
+
+        LOOP AT <table> ASSIGNING <any>.
+          li_element = ii_doc->create_element( 'item' ).
+          GET REFERENCE OF <any> INTO lv_ref.
+          traverse(
+            ii_parent = li_element
+            ii_doc    = ii_doc
+            iv_ref    = lv_ref ).
+          ii_parent->append_child( li_element ).
+        ENDLOOP.
       WHEN OTHERS.
         ASSERT 1 = 2.
     ENDCASE.
