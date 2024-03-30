@@ -196,10 +196,10 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
               rv_xml = |<{ iv_name }/>|.
               RETURN.
             ENDIF.
-            ASSERT 1 = 'todo,lcl_data_to_xml'.
+            ASSERT 1 = 'todo,lcl_data_to_xml1'.
         ENDCASE.
       WHEN OTHERS.
-        ASSERT 1 = 'todo,lcl_data_to_xml'.
+        ASSERT 1 = 'todo,lcl_data_to_xml2'.
     ENDCASE.
   ENDMETHOD.
 
