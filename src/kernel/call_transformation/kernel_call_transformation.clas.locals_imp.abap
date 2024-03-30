@@ -421,6 +421,12 @@ CLASS lcl_object_to_ixml IMPLEMENTATION.
     li_top = ii_doc->create_element_ns(
       prefix = 'asx'
       name   = 'abap' ).
+    li_top->set_attribute(
+      name  = 'xmlns:asx'
+      value = 'http://www.sap.com/abapxml' ).
+    li_top->set_attribute(
+      name  = 'version'
+      value = '1.0' ).
     ii_doc->append_child( li_top ).
 
     li_sub = ii_doc->create_element_ns(
