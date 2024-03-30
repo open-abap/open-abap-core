@@ -1107,6 +1107,7 @@ CLASS ltcl_xml IMPLEMENTATION.
       prefix = 'asx'
       name   = 'abap' ).
     mi_document->append_child( li_top ).
+
     li_element = mi_document->create_element( 'HELLO' ).
     li_top->append_child( li_element ).
 
