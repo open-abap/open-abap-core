@@ -142,35 +142,40 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
           li_heap = find_href_in_heap( lv_value ).
 
           li_iname = li_heap->get_attributes( )->get_named_item_ns( 'internalName' ).
-          IF li_iname IS INITIAL.
+          IF li_iname IS INITIAL AND lv_value(1) = 'o'.
 * then its a non serializable object, not to be instantiated
             RETURN.
           ENDIF.
 
-          lv_value = li_iname->get_value( ).
-          ASSERT lv_value IS NOT INITIAL.
+          IF lv_value(1) = 'o'.
+            lv_value = li_iname->get_value( ).
+            ASSERT lv_value IS NOT INITIAL.
 *          WRITE '@KERNEL console.dir(lv_value);'.
-          WRITE '@KERNEL fs_any_.pointer.value = new abap.Classes[lv_value.get()]();'.
+            WRITE '@KERNEL fs_any_.pointer.value = new abap.Classes[lv_value.get()]();'.
 
           " li_child = ii_node->get_attributes( )->get_named_item_ns( 'href' ).
           " WRITE '@KERNEL console.dir(ii_node.get());'.
 
-          li_iterator = li_heap->get_first_child( )->get_children( )->create_iterator( ).
-          DO.
-            li_child = li_iterator->get_next( ).
-            IF li_child IS INITIAL.
-              EXIT. " current loop
-            ENDIF.
-            lv_name = li_child->get_name( ).
-            REPLACE FIRST OCCURRENCE OF '.' IN lv_name WITH '~'.
+            li_iterator = li_heap->get_first_child( )->get_children( )->create_iterator( ).
+            DO.
+              li_child = li_iterator->get_next( ).
+              IF li_child IS INITIAL.
+                EXIT. " current loop
+              ENDIF.
+              lv_name = li_child->get_name( ).
+              REPLACE FIRST OCCURRENCE OF '.' IN lv_name WITH '~'.
 
-            ASSIGN <any>->(lv_name) TO <field>.
-            IF sy-subrc = 0.
-              GET REFERENCE OF <field> INTO lv_ref.
-              traverse( ii_node = li_child
+              ASSIGN <any>->(lv_name) TO <field>.
+              IF sy-subrc = 0.
+                GET REFERENCE OF <field> INTO lv_ref.
+                traverse( ii_node = li_child
                         iv_ref  = lv_ref ).
-            ENDIF.
-          ENDDO.
+              ENDIF.
+            ENDDO.
+          ELSE.
+* its a data reference
+            ASSERT 1 = 2.
+          ENDIF.
         ELSE.
           ASSERT 1 = 'todo_ref2'.
         ENDIF.
