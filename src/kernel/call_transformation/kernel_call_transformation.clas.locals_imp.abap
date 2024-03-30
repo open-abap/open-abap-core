@@ -423,13 +423,18 @@ CLASS lcl_object_to_ixml IMPLEMENTATION.
       name   = 'abap' ).
     ii_doc->append_child( li_top ).
 
+    li_sub = ii_doc->create_element_ns(
+      prefix = 'asx'
+      name   = 'values' ).
+    li_top->append_child( li_sub ).
+
     LOOP AT lt_stab INTO ls_stab.
       li_element = ii_doc->create_element( ls_stab-name ).
       traverse(
         ii_parent = li_element
         ii_doc    = ii_doc
         iv_ref    = ls_stab-value ).
-      li_top->append_child( li_element ).
+      li_sub->append_child( li_element ).
     ENDLOOP.
 
   ENDMETHOD.
