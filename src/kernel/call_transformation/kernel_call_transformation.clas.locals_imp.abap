@@ -1,6 +1,11 @@
 CLASS lcl_heap DEFINITION.
   PUBLIC SECTION.
-    METHODS add
+    METHODS add_object
+      IMPORTING
+        iv_ref      TYPE any
+      RETURNING
+        VALUE(rv_id) TYPE string.
+    METHODS add_data
       IMPORTING
         iv_ref      TYPE any
       RETURNING
@@ -47,7 +52,41 @@ CLASS lcl_heap IMPLEMENTATION.
     rv_xml = rv_xml && |</asx:heap>|.
   ENDMETHOD.
 
-  METHOD add.
+  METHOD add_data.
+
+    DATA lo_descr       TYPE REF TO cl_abap_datadescr.
+    DATA lv_data        TYPE string.
+    DATA lv_name        TYPE string.
+    DATA lo_data_to_xml TYPE REF TO lcl_data_to_xml.
+    DATA lv_counter     LIKE mv_counter.
+
+
+    mv_counter = mv_counter + 1.
+    lv_counter = mv_counter.
+
+    lo_descr ?= cl_abap_typedescr=>describe_by_data( iv_ref ).
+    lv_name = lo_descr->relative_name.
+
+    CREATE OBJECT lo_data_to_xml
+      EXPORTING
+        io_heap = me.
+
+    REPLACE ALL OCCURRENCES OF '=>' IN lv_name WITH '.'.
+
+    lv_data = lv_data &&
+      |<prg:{ lv_name } xmlns:prg="http://www.sap.com/abapxml/classes/class-pool/TODO" id="d{ mv_counter }">|.
+    lv_data = lv_data && lo_data_to_xml->run(
+      iv_name = 'DATAREF'
+      iv_ref  = iv_ref ).
+    lv_data = lv_data &&
+      |</prg:{ lv_name }>|.
+
+    mv_data = mv_data && lv_data.
+    rv_id = |{ lv_counter }|.
+
+  ENDMETHOD.
+
+  METHOD add_object.
     DATA lv_name         TYPE string.
     DATA is_serializable TYPE abap_bool.
     DATA lo_descr        TYPE REF TO cl_abap_classdescr.
@@ -188,15 +227,15 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
           WHEN cl_abap_typedescr=>typekind_oref.
             IF iv_ref->* IS INITIAL.
               rv_xml = |<{ iv_name }/>|.
-              RETURN.
+            ELSE.
+              rv_xml = |<{ iv_name } href="#o{ mo_heap->add_object( iv_ref->* ) }"/>|.
             ENDIF.
-            rv_xml = |<{ iv_name } href="#o{ mo_heap->add( iv_ref->* ) }"/>|.
           WHEN OTHERS.
             IF iv_ref->* IS INITIAL.
               rv_xml = |<{ iv_name }/>|.
-              RETURN.
+            ELSE.
+              rv_xml = |<{ iv_name } href="#d{ mo_heap->add_data( iv_ref->* ) }"/>|.
             ENDIF.
-            ASSERT 1 = 'todo,lcl_data_to_xml1'.
         ENDCASE.
       WHEN OTHERS.
         ASSERT 1 = 'todo,lcl_data_to_xml2'.
