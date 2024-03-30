@@ -204,3 +204,125 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+********************
+
+CLASS lcl_object_to_sxml DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS run
+      IMPORTING
+        ii_writer TYPE REF TO if_sxml_writer
+        source    TYPE any.
+
+  PRIVATE SECTION.
+    CLASS-DATA mi_writer TYPE REF TO if_sxml_writer.
+
+    CLASS-METHODS traverse_write
+      IMPORTING
+        iv_ref TYPE REF TO data.
+
+    CLASS-METHODS traverse_write_type
+      IMPORTING
+        iv_ref TYPE REF TO data
+      RETURNING
+        VALUE(rv_type) TYPE string.
+ENDCLASS.
+
+CLASS lcl_object_to_sxml IMPLEMENTATION.
+
+  METHOD run.
+    DATA lv_name TYPE string.
+    DATA result  TYPE REF TO data.
+
+    mi_writer = ii_writer.
+
+    mi_writer->open_element( name = 'object' ).
+    WRITE '@KERNEL for (const name in INPUT.source) {'.
+    WRITE '@KERNEL   lv_name.set(name);'.
+    WRITE '@KERNEL   if (INPUT.source[name].constructor.name === "FieldSymbol") {'.
+    WRITE '@KERNEL     result.assign(INPUT.source[name].getPointer());'.
+    WRITE '@KERNEL   } else {'.
+    WRITE '@KERNEL     result.assign(INPUT.source[name]);'.
+    WRITE '@KERNEL   }'.
+    mi_writer->open_element( name = 'str' ).
+    mi_writer->write_attribute( name = 'name' value = to_upper( lv_name ) ).
+    traverse_write( result ).
+    mi_writer->close_element( ).
+    WRITE '@KERNEL }'.
+    mi_writer->close_element( ).
+  ENDMETHOD.
+
+  METHOD traverse_write_type.
+    DATA lo_type TYPE REF TO cl_abap_typedescr.
+    lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
+    CASE lo_type->type_kind.
+      WHEN cl_abap_typedescr=>typekind_int
+          OR cl_abap_typedescr=>typekind_int1
+          OR cl_abap_typedescr=>typekind_int2
+          OR cl_abap_typedescr=>typekind_int8
+          OR cl_abap_typedescr=>typekind_decfloat
+          OR cl_abap_typedescr=>typekind_decfloat16
+          OR cl_abap_typedescr=>typekind_decfloat34.
+        rv_type = 'num'.
+      WHEN OTHERS.
+        rv_type = 'str'.
+    ENDCASE.
+  ENDMETHOD.
+
+  METHOD traverse_write.
+* TODO: refactor this method
+
+    DATA lo_type TYPE REF TO cl_abap_typedescr.
+    DATA lo_struc TYPE REF TO cl_abap_structdescr.
+    DATA lt_comps TYPE cl_abap_structdescr=>component_table.
+    DATA ls_compo LIKE LINE OF lt_comps.
+    DATA lv_ref TYPE REF TO data.
+    FIELD-SYMBOLS <any> TYPE any.
+    FIELD-SYMBOLS <table> TYPE ANY TABLE.
+    FIELD-SYMBOLS <field> TYPE any.
+
+*     WRITE '@KERNEL console.dir(iv_ref.getPointer());'.
+    lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
+*    WRITE '@KERNEL console.dir(lo_type.get().kind.get());'.
+    CASE lo_type->kind.
+      WHEN cl_abap_typedescr=>kind_struct.
+        mi_writer->open_element( name = 'object' ).
+
+        lo_struc ?= lo_type.
+        lt_comps = lo_struc->get_components( ).
+        ASSIGN iv_ref->* TO <any>.
+        LOOP AT lt_comps INTO ls_compo.
+          ASSIGN COMPONENT ls_compo-name OF STRUCTURE <any> TO <field>.
+          GET REFERENCE OF <field> INTO lv_ref.
+          mi_writer->open_element( name = traverse_write_type( lv_ref ) ).
+          mi_writer->write_attribute( name = 'name' value = to_upper( ls_compo-name ) ).
+          traverse_write( lv_ref ).
+          mi_writer->close_element( ).
+        ENDLOOP.
+
+        mi_writer->close_element( ).
+      WHEN cl_abap_typedescr=>kind_elem.
+        mi_writer->write_value( iv_ref->* ).
+      WHEN cl_abap_typedescr=>kind_table.
+        mi_writer->open_element( name = 'array' ).
+
+        ASSIGN iv_ref->* TO <table>.
+        LOOP AT <table> ASSIGNING <any>.
+          GET REFERENCE OF <any> INTO lv_ref.
+          IF cl_abap_typedescr=>describe_by_data( lv_ref->* )->kind = cl_abap_typedescr=>kind_elem.
+            mi_writer->open_element( name = traverse_write_type( lv_ref ) ).
+          ENDIF.
+          traverse_write( lv_ref ).
+          IF cl_abap_typedescr=>describe_by_data( lv_ref->* )->kind = cl_abap_typedescr=>kind_elem.
+            mi_writer->close_element( ).
+          ENDIF.
+        ENDLOOP.
+
+        mi_writer->close_element( ).
+      WHEN OTHERS.
+        ASSERT 1 = 'todo_traverse_write'.
+    ENDCASE.
+
+  ENDMETHOD.
+
+ENDCLASS.

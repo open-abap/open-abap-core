@@ -863,22 +863,22 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
 
   METHOD dynamic_source_ixml.
 
-    DATA li_doc  TYPE REF TO if_ixml_document.
-    DATA lt_stab TYPE abap_trans_srcbind_tab.
-    DATA lv_xml  TYPE string.
+    " DATA li_doc  TYPE REF TO if_ixml_document.
+    " DATA lt_stab TYPE abap_trans_srcbind_tab.
+    " DATA lv_xml  TYPE string.
 
-    FIELD-SYMBOLS <ls_stab> LIKE LINE OF lt_stab.
+    " FIELD-SYMBOLS <ls_stab> LIKE LINE OF lt_stab.
 
-    APPEND INITIAL LINE TO lt_stab ASSIGNING <ls_stab>.
-    <ls_stab>-name = 'HELLO'.
-    GET REFERENCE OF 3 INTO <ls_stab>-value.
+    " APPEND INITIAL LINE TO lt_stab ASSIGNING <ls_stab>.
+    " <ls_stab>-name = 'HELLO'.
+    " GET REFERENCE OF 3 INTO <ls_stab>-value.
 
-    li_doc = cl_ixml=>create( )->create_document( ).
+    " li_doc = cl_ixml=>create( )->create_document( ).
 
-    CALL TRANSFORMATION id
-      OPTIONS initial_components = 'suppress'
-      SOURCE (lt_stab)
-      RESULT XML li_doc.
+    " CALL TRANSFORMATION id
+    "   OPTIONS initial_components = 'suppress'
+    "   SOURCE (lt_stab)
+    "   RESULT XML li_doc.
 
 * no assertions, just test it doesnt dump
 
