@@ -384,3 +384,19 @@ CLASS lcl_object_to_string IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+********************
+
+CLASS lcl_object_to_ixml DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS run
+      IMPORTING
+        ii_doc TYPE REF TO if_ixml_document
+        source TYPE any.
+ENDCLASS.
+
+CLASS lcl_object_to_ixml IMPLEMENTATION.
+  METHOD run.
+    WRITE / 'todo'.
+  ENDMETHOD.
+ENDCLASS.

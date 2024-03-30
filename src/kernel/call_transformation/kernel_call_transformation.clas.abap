@@ -76,7 +76,9 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     WRITE '@KERNEL   lv_dummy = INPUT.source;'.
     WRITE '@KERNEL }'.
     IF li_doc IS NOT INITIAL.
-      WRITE / 'todo'.
+      lcl_object_to_ixml=>run(
+        ii_doc = li_doc
+        source = lv_dummy ).
       RETURN.
     ENDIF.
 
