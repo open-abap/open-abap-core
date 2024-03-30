@@ -412,7 +412,7 @@ CLASS lcl_object_to_ixml IMPLEMENTATION.
     DATA lt_stab    TYPE abap_trans_srcbind_tab.
     DATA ls_stab    LIKE LINE OF lt_stab.
 
-    WRITE '@KERNEL console.dir(INPUT.source);'.
+*    WRITE '@KERNEL console.dir(INPUT.source);'.
     WRITE '@KERNEL if (INPUT.source.constructor.name === "Table") {'.
     WRITE '@KERNEL   lt_stab = INPUT.source;'.
     WRITE '@KERNEL }'.
