@@ -62,6 +62,15 @@ ENDCLASS.
 CLASS lcl_static IMPLEMENTATION.
 ENDCLASS.
 
+CLASS lcl_ref_table DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_serializable_object.
+    TYPES ty_table TYPE STANDARD TABLE OF i WITH DEFAULT KEY.
+    DATA attri TYPE REF TO ty_table.
+ENDCLASS.
+CLASS lcl_ref_table IMPLEMENTATION.
+ENDCLASS.
+
 ***********************************************
 
 CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
@@ -106,6 +115,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS obj_to_xml_multi FOR TESTING RAISING cx_static_check.
     METHODS two_obj FOR TESTING RAISING cx_static_check.
     METHODS nested_obj FOR TESTING RAISING cx_static_check.
+    METHODS ref_table FOR TESTING RAISING cx_static_check.
     METHODS empty_back_to_data FOR TESTING RAISING cx_static_check.
     METHODS obj_with_table FOR TESTING RAISING cx_static_check.
     METHODS obj_static_attr FOR TESTING RAISING cx_static_check.
@@ -795,6 +805,43 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       exp = 10
       act = lo_nested->bar->foo ).
+
+  ENDMETHOD.
+
+  METHOD ref_table.
+
+    DATA lo_obj TYPE REF TO lcl_ref_table.
+    DATA lv_xml TYPE string.
+    DATA lv_val TYPE i.
+
+    CREATE OBJECT lo_obj.
+
+    CREATE DATA lo_obj->attri.
+    INSERT 123 INTO TABLE lo_obj->attri->*.
+
+    CALL TRANSFORMATION id
+      SOURCE data = lo_obj
+      RESULT XML lv_xml
+      OPTIONS data_refs = `heap-or-create`.
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_xml
+      exp = '*<item>123</item>*' ).
+
+    CLEAR lo_obj.
+
+    CALL TRANSFORMATION id
+      SOURCE XML lv_xml
+      RESULT data = lo_obj.
+
+    cl_abap_unit_assert=>assert_not_initial( lo_obj ).
+
+    READ TABLE lo_obj->attri->* INDEX 1 INTO lv_val.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      exp = 123
+      act = lv_val ).
 
   ENDMETHOD.
 
