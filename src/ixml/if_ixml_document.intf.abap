@@ -76,6 +76,7 @@ INTERFACE if_ixml_document PUBLIC.
     find_from_name
       IMPORTING
         name      TYPE string
+        depth     TYPE i OPTIONAL
         namespace TYPE string OPTIONAL
       RETURNING
         VALUE(element) TYPE REF TO if_ixml_element,

@@ -809,7 +809,10 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~find_from_name.
-    ASSERT 1 = 'todo, use find_from_name_ns instead'.
+    element = mi_node->if_ixml_element~find_from_name_ns(
+      name      = name
+      depth     = depth
+      namespace = namespace ).
   ENDMETHOD.
 
   METHOD if_ixml_document~find_from_name_ns.
