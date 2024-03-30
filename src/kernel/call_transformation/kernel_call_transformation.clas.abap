@@ -98,8 +98,8 @@ CLASS kernel_call_transformation IMPLEMENTATION.
       RAISE EXCEPTION TYPE cx_xslt_runtime_error.
     ENDIF.
 
+* output = is an ABAP internal table, dynamic result parameter
     WRITE '@KERNEL if (INPUT.result.constructor.name === "Table") {'.
-* INPUT.result is an ABAP internal table, dynamic result parameter
     WRITE '@KERNEL lt_rtab = INPUT.result;'.
     LOOP AT lt_rtab INTO ls_rtab.
       kernel_ixml_xml_to_data=>build(
@@ -129,8 +129,6 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     ENDIF.
     WRITE '@KERNEL }'.
     WRITE '@KERNEL }'.
-
-*    WRITE '@KERNEL console.dir(INPUT.result.data);'.
 
   ENDMETHOD.
 
