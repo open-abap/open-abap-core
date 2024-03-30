@@ -40,6 +40,7 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     DATA lv_type   TYPE string.
     DATA lv_dummy  TYPE string.
     DATA li_writer TYPE REF TO if_sxml_writer.
+    DATA li_doc    TYPE REF TO if_ixml_document.
 
 
     CLEAR mi_doc.
@@ -67,8 +68,21 @@ CLASS kernel_call_transformation IMPLEMENTATION.
       ENDIF.
     ENDIF.
 
+* input = object, output = ixml_document
+    WRITE '@KERNEL if (typeof INPUT.source === "object"'.
+    WRITE '@KERNEL     && INPUT.resultXML?.constructor.name === "ABAPObject"'.
+    WRITE '@KERNEL     && INPUT.resultXML?.qualifiedName === "IF_IXML_DOCUMENT") {'.
+    WRITE '@KERNEL   li_doc.set(INPUT.resultXML);'.
+    WRITE '@KERNEL   lv_dummy = INPUT.source;'.
+    WRITE '@KERNEL }'.
+    IF li_doc IS NOT INITIAL.
+      WRITE / 'todo'.
+      RETURN.
+    ENDIF.
+
 * input = object, output = sxml_writer
-    WRITE '@KERNEL if (typeof INPUT.source === "object" && INPUT.resultXML?.constructor.name === "ABAPObject") {'.
+    WRITE '@KERNEL if (typeof INPUT.source === "object"'.
+    WRITE '@KERNEL     && INPUT.resultXML?.constructor.name === "ABAPObject") {'.
     WRITE '@KERNEL   li_writer.set(INPUT.resultXML);'.
     WRITE '@KERNEL   lv_dummy = INPUT.source;'.
     WRITE '@KERNEL }'.
