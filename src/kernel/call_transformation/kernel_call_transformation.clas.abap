@@ -15,7 +15,6 @@ CLASS kernel_call_transformation DEFINITION PUBLIC.
         options TYPE any.
   PRIVATE SECTION.
     CLASS-DATA mi_doc     TYPE REF TO if_ixml_document.
-    CLASS-DATA mi_writer  TYPE REF TO if_sxml_writer.
     CLASS-DATA ms_options TYPE ty_options.
 
     CLASS-METHODS parse_xml
@@ -37,14 +36,13 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     DATA lv_result TYPE string.
     DATA result    TYPE REF TO data.
     DATA lt_rtab   TYPE abap_trans_resbind_tab.
-    DATA lo_writer TYPE REF TO cl_sxml_string_writer.
     DATA ls_rtab   LIKE LINE OF lt_rtab.
     DATA lv_type   TYPE string.
-    DATA lo_data_to_xml TYPE REF TO lcl_data_to_xml.
     DATA lv_dummy  TYPE string.
+    DATA li_writer TYPE REF TO if_sxml_writer.
+
 
     CLEAR mi_doc.
-    CLEAR mi_writer.
 
 *    WRITE '@KERNEL console.dir(INPUT);'.
 
@@ -71,12 +69,12 @@ CLASS kernel_call_transformation IMPLEMENTATION.
 
 * input = object, output = sxml_writer
     WRITE '@KERNEL if (typeof INPUT.source === "object" && INPUT.resultXML?.constructor.name === "ABAPObject") {'.
-    WRITE '@KERNEL   this.mi_writer.set(INPUT.resultXML);'.
+    WRITE '@KERNEL   li_writer.set(INPUT.resultXML);'.
     WRITE '@KERNEL   lv_dummy = INPUT.source;'.
     WRITE '@KERNEL }'.
-    IF mi_writer IS NOT INITIAL.
+    IF li_writer IS NOT INITIAL.
       lcl_object_to_sxml=>run(
-        ii_writer = mi_writer
+        ii_writer = li_writer
         source    = lv_dummy ).
       RETURN.
     ENDIF.
