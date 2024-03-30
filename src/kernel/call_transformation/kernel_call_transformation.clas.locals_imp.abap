@@ -344,9 +344,9 @@ CLASS lcl_object_to_string IMPLEMENTATION.
 
   METHOD run.
 
-    DATA lv_name   TYPE string.
+    DATA lv_name        TYPE string.
     DATA lo_data_to_xml TYPE REF TO lcl_data_to_xml.
-    DATA result    TYPE REF TO data.
+    DATA result         TYPE REF TO data.
 
     rv_result = '<?xml version="1.0" encoding="utf-16"?><asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0"><asx:values>'.
     CREATE OBJECT lo_data_to_xml
@@ -393,10 +393,62 @@ CLASS lcl_object_to_ixml DEFINITION.
       IMPORTING
         ii_doc TYPE REF TO if_ixml_document
         source TYPE any.
+  PRIVATE SECTION.
+    CLASS-METHODS traverse
+      IMPORTING
+        ii_parent TYPE REF TO if_ixml_element
+        iv_ref    TYPE REF TO data.
 ENDCLASS.
 
 CLASS lcl_object_to_ixml IMPLEMENTATION.
+
   METHOD run.
-    WRITE / 'todo'.
+    DATA lv_name    TYPE string.
+    DATA result     TYPE REF TO data.
+    DATA li_element TYPE REF TO if_ixml_element.
+    DATA lt_stab    TYPE abap_trans_srcbind_tab.
+    DATA ls_stab    LIKE LINE OF lt_stab.
+
+    WRITE '@KERNEL console.dir(INPUT.source);'.
+    WRITE '@KERNEL if (INPUT.source.constructor.name === "Table") {'.
+    WRITE '@KERNEL   lt_stab = INPUT.source;'.
+    WRITE '@KERNEL }'.
+    ASSERT lines( lt_stab ) > 0.
+
+    LOOP AT lt_stab INTO ls_stab.
+      li_element = ii_doc->create_element( ls_stab-name ).
+      traverse(
+        ii_parent = li_element
+        iv_ref    = ls_stab-value ).
+      ii_doc->append_child( li_element ).
+    ENDLOOP.
+
   ENDMETHOD.
+
+  METHOD traverse.
+
+    DATA lo_type  TYPE REF TO cl_abap_typedescr.
+    DATA lo_struc TYPE REF TO cl_abap_structdescr.
+    DATA lt_comps TYPE cl_abap_structdescr=>component_table.
+    DATA ls_compo LIKE LINE OF lt_comps.
+    DATA lv_ref   TYPE REF TO data.
+    FIELD-SYMBOLS <any>   TYPE any.
+    FIELD-SYMBOLS <table> TYPE ANY TABLE.
+    FIELD-SYMBOLS <field> TYPE any.
+
+    lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
+
+    CASE lo_type->kind.
+      WHEN cl_abap_typedescr=>kind_struct.
+        ii_parent->set_value( 'todo,struct' ).
+      WHEN cl_abap_typedescr=>kind_elem.
+        ii_parent->set_value( |{ iv_ref->* }| ).
+      WHEN cl_abap_typedescr=>kind_table.
+        ii_parent->set_value( 'todo,tabl' ).
+      WHEN OTHERS.
+        ASSERT 1 = 2.
+    ENDCASE.
+
+  ENDMETHOD.
+
 ENDCLASS.
