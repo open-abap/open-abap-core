@@ -67,6 +67,11 @@ ENDCLASS.
 CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
+
+    METHODS render_ixml
+      IMPORTING ii_doc TYPE REF TO if_ixml_document
+      RETURNING VALUE(rv_xml) TYPE string.
+
     METHODS test1_xml FOR TESTING RAISING cx_static_check.
     METHODS test2_xml FOR TESTING RAISING cx_static_check.
     METHODS test3_xml FOR TESTING RAISING cx_static_check.
@@ -112,6 +117,23 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
+
+  METHOD render_ixml.
+
+    DATA li_ixml     TYPE REF TO if_ixml.
+    DATA li_ostream  TYPE REF TO if_ixml_ostream.
+    DATA li_renderer TYPE REF TO if_ixml_renderer.
+    DATA li_factory  TYPE REF TO if_ixml_stream_factory.
+
+    li_ixml = cl_ixml=>create( ).
+    li_factory = li_ixml->create_stream_factory( ).
+    li_ostream = li_factory->create_ostream_cstring( rv_xml ).
+    li_renderer = li_ixml->create_renderer(
+      ostream  = li_ostream
+      document = ii_doc ).
+    li_renderer->render( ).
+
+  ENDMETHOD.
 
   METHOD test4_xml.
 
@@ -880,7 +902,11 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
       SOURCE (lt_stab)
       RESULT XML li_doc.
 
-* no assertions, just test it doesnt dump
+    lv_xml = render_ixml( li_doc ).
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_xml
+      exp = '*<HELLO>3</HELLO>*' ).
 
   ENDMETHOD.
 
