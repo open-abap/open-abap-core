@@ -5,30 +5,48 @@ CLASS cl_system_uuid DEFINITION PUBLIC.
 
     ALIASES create_uuid_c32_static FOR if_system_uuid_static~create_uuid_c32.
     ALIASES create_uuid_x16_static FOR if_system_uuid_static~create_uuid_x16.
+  PRIVATE SECTION.
+    CLASS-METHODS random RETURNING VALUE(rv_str) TYPE string.
 ENDCLASS.
 
 CLASS cl_system_uuid IMPLEMENTATION.
 
-  METHOD if_system_uuid_static~create_uuid_x16.
+  METHOD random.
+    " browser and node
     WRITE '@KERNEL if (cl_system_uuid.CRYPTO === undefined) cl_system_uuid.CRYPTO = await import("crypto");'.
-    WRITE '@KERNEL uuid.set(cl_system_uuid.CRYPTO.randomBytes(16).toString("hex").toUpperCase());'.
+    WRITE '@KERNEL if (cl_system_uuid.CRYPTO) {'.
+    WRITE '@KERNEL   rv_str.set(cl_system_uuid.CRYPTO.randomUUID());'.
+    WRITE '@KERNEL } else {'.
+    WRITE '@KERNEL   rv_str = window.crypto.randomUUID();'.
+    WRITE '@KERNEL }'.
+  ENDMETHOD.
+
+  METHOD if_system_uuid_static~create_uuid_x16.
+    DATA lv_str TYPE string.
+    lv_str = random( ).
+    REPLACE ALL OCCURRENCES OF '-' IN lv_str WITH ''.
+    TRANSLATE lv_str TO UPPER CASE.
+    uuid = lv_str(32).
   ENDMETHOD.
 
   METHOD if_system_uuid_static~create_uuid_c32.
-    WRITE '@KERNEL if (cl_system_uuid.CRYPTO === undefined) cl_system_uuid.CRYPTO = await import("crypto");'.
-    WRITE '@KERNEL uuid.set(cl_system_uuid.CRYPTO.randomBytes(16).toString("hex").toUpperCase());'.
+    DATA lv_str TYPE string.
+    lv_str = random( ).
+    REPLACE ALL OCCURRENCES OF '-' IN lv_str WITH ''.
+    uuid = lv_str(32).
+    TRANSLATE uuid TO UPPER CASE.
   ENDMETHOD.
 
   METHOD if_system_uuid_rfc4122_static~create_uuid_c36_by_version.
     ASSERT version = 4.
-    WRITE '@KERNEL if (cl_system_uuid.CRYPTO === undefined) cl_system_uuid.CRYPTO = await import("crypto");'.
-    WRITE '@KERNEL uuid.set(cl_system_uuid.CRYPTO.randomUUID());'.
+    uuid = random( ).
   ENDMETHOD.
 
   METHOD if_system_uuid_static~create_uuid_c22.
-    WRITE '@KERNEL if (cl_system_uuid.CRYPTO === undefined) cl_system_uuid.CRYPTO = await import("crypto");'.
-* yea, well, hmm,
-    WRITE '@KERNEL uuid.set(cl_system_uuid.CRYPTO.randomBytes(11).toString("hex"));'.
+    DATA lv_str TYPE string.
+    lv_str = random( ).
+    REPLACE ALL OCCURRENCES OF '-' IN lv_str WITH ''.
+    uuid = lv_str(22).
   ENDMETHOD.
 
 ENDCLASS.
