@@ -14,7 +14,7 @@ CLASS cl_system_uuid IMPLEMENTATION.
   METHOD random.
     " browser and node
     WRITE '@KERNEL if (cl_system_uuid.CRYPTO === undefined) cl_system_uuid.CRYPTO = await import("crypto");'.
-    WRITE '@KERNEL if (cl_system_uuid.CRYPTO) {'.
+    WRITE '@KERNEL if (cl_system_uuid.CRYPTO.randomUUID) {'.
     WRITE '@KERNEL   rv_str.set(cl_system_uuid.CRYPTO.randomUUID());'.
     WRITE '@KERNEL } else {'.
     WRITE '@KERNEL   rv_str = window.crypto.randomUUID();'.
