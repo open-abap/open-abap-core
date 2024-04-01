@@ -17,5 +17,7 @@ For example [cl_abap_datfm.clas.abap](./src/date_time/cl_abap_datfm.clas.abap) i
 
 ## Add-ons
 
-* [open-abap-gui](https://github.com/open-abap/open-abap-gui)
+* [open-abap-gui](https://github.com/open-abap/open-abap-gui) SAP GUI related classes/functionality
 * [open-abap-odata](https://github.com/open-abap/open-abap-odata)
+* [open-abap-bal](https://github.com/open-abap/open-abap-bal) BAL logging
+* [shims-rfc](https://github.com/open-abap/shims-rfc) Shims for tRFC + qRFC + bgRFC
