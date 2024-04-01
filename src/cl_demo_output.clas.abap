@@ -4,7 +4,9 @@ CLASS cl_demo_output DEFINITION PUBLIC.
       IMPORTING
         data TYPE any
         name TYPE string OPTIONAL.
+
     CLASS-METHODS clear.
+
     CLASS-METHODS display
       IMPORTING
       data TYPE any OPTIONAL

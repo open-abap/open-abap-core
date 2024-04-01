@@ -14,3 +14,8 @@ For use with latest https://github.com/abaplint/transpiler
 - to add new functionality please cover it with unit tests appropriately
 
 For example [cl_abap_datfm.clas.abap](./src/date_time/cl_abap_datfm.clas.abap) implements the `cl_abap_datfm` class. The [cl_abap_datfm.clas.testclasses.abap](./src/date_time/cl_abap_datfm.clas.testclasses.abap) defined unit tests for it. So all like in real ABAP :)
+
+## Add-ons
+
+* [open-abap-gui](https://github.com/open-abap/open-abap-gui)
+* [open-abap-odata](https://github.com/open-abap/open-abap-odata)
