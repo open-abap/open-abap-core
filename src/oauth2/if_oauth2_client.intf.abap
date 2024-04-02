@@ -1,12 +1,16 @@
 INTERFACE if_oauth2_client PUBLIC.
 
+  CONSTANTS c_param_kind_header_field TYPE string VALUE 'H'.
+  CONSTANTS c_param_kind_form_field   TYPE string VALUE 'F'.
+
   METHODS execute_cc_flow
     RAISING
       cx_static_check.
 
   METHODS set_token
     IMPORTING
-      ii_http_client TYPE REF TO if_http_client
+      io_http_client TYPE REF TO if_http_client
+      i_param_kind   TYPE string OPTIONAL
     RAISING
       cx_static_check.
 
