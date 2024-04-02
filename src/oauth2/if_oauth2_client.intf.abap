@@ -5,13 +5,13 @@ INTERFACE if_oauth2_client PUBLIC.
 
   METHODS execute_cc_flow
     RAISING
-      cx_static_check.
+      cx_oa2c.
 
   METHODS set_token
     IMPORTING
       io_http_client TYPE REF TO if_http_client
       i_param_kind   TYPE string OPTIONAL
     RAISING
-      cx_static_check.
+      cx_oa2c.
 
 ENDINTERFACE.
