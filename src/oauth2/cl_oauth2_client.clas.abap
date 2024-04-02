@@ -9,7 +9,7 @@ CLASS cl_oauth2_client DEFINITION PUBLIC.
       RETURNING
         VALUE(ro_oauth2_client) TYPE REF TO if_oauth2_client
       RAISING
-        cx_static_check.
+        cx_oa2c.
 ENDCLASS.
 
 CLASS cl_oauth2_client IMPLEMENTATION.
