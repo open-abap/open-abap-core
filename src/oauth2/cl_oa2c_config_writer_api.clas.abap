@@ -35,13 +35,11 @@ CLASS cl_oa2c_config_writer_api DEFINITION PUBLIC.
         e_authorization_endpoint TYPE string
         e_token_endpoint         TYPE string
         e_target_path            TYPE string
-        e_configured_granttype   TYPE oa2c_granttype
-        et_configured_scopes     TYPE string_table.
+        e_configured_granttype   TYPE oa2c_granttype.
 
   PRIVATE SECTION.
     TYPES: BEGIN OF ty_config,
              configuration          TYPE oa2c_configuration,
-             profile                TYPE oa2c_profile,
              client_id              TYPE string,
              client_secret          TYPE string,
              authorization_endpoint TYPE string,
@@ -63,7 +61,6 @@ CLASS cl_oa2c_config_writer_api IMPLEMENTATION.
 
     CREATE OBJECT ro_config_writer_api.
     ro_config_writer_api->ms_config-configuration = i_configuration.
-    ro_config_writer_api->ms_config-profile = i_profile.
     ro_config_writer_api->ms_config-client_id = i_client_id.
     ro_config_writer_api->ms_config-client_secret = i_client_secret.
     ro_config_writer_api->ms_config-authorization_endpoint = i_authorization_endpoint.
@@ -100,7 +97,7 @@ CLASS cl_oa2c_config_writer_api IMPLEMENTATION.
     e_token_endpoint = ms_config-token_endpoint.
     e_target_path = ms_config-target_path.
     e_configured_granttype = ms_config-granttype.
-* todo, scopes?
+
   ENDMETHOD.
 
 ENDCLASS.
