@@ -53,7 +53,7 @@ CLASS cl_oauth2_client IMPLEMENTATION.
         e_token_endpoint = lv_endpoint
         e_target_path    = lv_path ).
 
-    WRITE '@KERNEL lv_client_secret.set(mo_config_writer_api.ms_config.client_secret);'.
+    WRITE '@KERNEL lv_client_secret.set(this.mo_config_writer_api.ms_config.client_secret);'.
 
     cl_http_client=>create_by_url(
       EXPORTING
