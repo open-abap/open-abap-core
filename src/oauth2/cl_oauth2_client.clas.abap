@@ -25,7 +25,7 @@ CLASS cl_oauth2_client IMPLEMENTATION.
     DATA lv_scope  TYPE string.
 
     WRITE '@KERNEL const scopes = abap.OA2P[i_profile.get().toUpperCase().trimEnd()].scopes;'.
-    WRITE '@KERNEL lv_scope.set(scopes[0].get());'.
+    WRITE '@KERNEL lv_scope.set(scopes[0]);'.
 
     CREATE OBJECT lo_client.
     lo_client->mo_config_writer_api = cl_oa2c_config_writer_api=>load( i_configuration ).
