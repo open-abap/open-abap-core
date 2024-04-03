@@ -51,26 +51,56 @@ CLASS cl_oa2c_config_writer_api DEFINITION PUBLIC.
            END OF ty_config.
 
 * this class currently only saves to memory for testing purposes
-    CLASS-DATA mt_saved_configs TYPE STANDARD TABLE OF ty_config WITH DEFAULT KEY.
+    CLASS-DATA mt_saved_configs TYPE SORTED TABLE OF ty_config WITH UNIQUE KEY configuration.
+
+    DATA ms_config TYPE ty_config.
 ENDCLASS.
 
 CLASS cl_oa2c_config_writer_api IMPLEMENTATION.
 
   METHOD create.
     ASSERT i_configured_granttype = c_granttype_cc.
-* todo
+
+    CREATE OBJECT ro_config_writer_api.
+    ro_config_writer_api->ms_config-configuration = i_configuration.
+    ro_config_writer_api->ms_config-profile = i_profile.
+    ro_config_writer_api->ms_config-client_id = i_client_id.
+    ro_config_writer_api->ms_config-client_secret = i_client_secret.
+    ro_config_writer_api->ms_config-authorization_endpoint = i_authorization_endpoint.
+    ro_config_writer_api->ms_config-token_endpoint = i_token_endpoint.
+    ro_config_writer_api->ms_config-target_path = i_target_path.
+    ro_config_writer_api->ms_config-granttype = i_configured_granttype.
   ENDMETHOD.
 
   METHOD save.
-    ASSERT 1 = 2.
-  ENDMETHOD.
 
-  METHOD read.
-    ASSERT 1 = 2.
+    INSERT ms_config INTO TABLE mt_saved_configs.
+    ASSERT sy-subrc = 0.
+
   ENDMETHOD.
 
   METHOD load.
-    ASSERT 1 = 2.
+
+    DATA ls_config TYPE ty_config.
+
+    READ TABLE mt_saved_configs INTO ls_config WITH KEY configuration = i_configuration.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_oa2c_config_not_found.
+    ENDIF.
+
+    CREATE OBJECT ro_config_writer_api.
+    ro_config_writer_api->ms_config = ls_config.
+
+  ENDMETHOD.
+
+  METHOD read.
+
+    e_client_id = ms_config-client_id.
+    e_authorization_endpoint = ms_config-authorization_endpoint.
+    e_token_endpoint = ms_config-token_endpoint.
+    e_target_path = ms_config-target_path.
+    e_configured_granttype = ms_config-granttype.
+* todo, scopes?
   ENDMETHOD.
 
 ENDCLASS.
