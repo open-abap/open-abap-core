@@ -13,12 +13,12 @@ CLASS cl_oauth2_client DEFINITION PUBLIC.
 
   PRIVATE SECTION.
     DATA mo_config_writer_api TYPE REF TO cl_oa2c_config_writer_api.
+    DATA mv_token             TYPE string.
 ENDCLASS.
 
 CLASS cl_oauth2_client IMPLEMENTATION.
 
   METHOD create.
-* todo, throw cx_oa2c_config_not_found
 
     DATA lo_client TYPE REF TO cl_oauth2_client.
 
@@ -32,13 +32,92 @@ CLASS cl_oauth2_client IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_oauth2_client~execute_cc_flow.
-    WRITE / 'todo, cl_oauth2_client in open-abap-core, execute_cc_flow()'.
-    ASSERT 1 = 'todo'.
+
+    DATA lv_text        TYPE string.
+    DATA lv_code        TYPE i.
+    DATA lv_message     TYPE string.
+    DATA lv_cdata       TYPE string.
+    DATA li_http_client TYPE REF TO if_http_client.
+
+
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url                = 'todo'
+      IMPORTING
+        client             = li_http_client
+      EXCEPTIONS
+        argument_not_found = 1
+        plugin_not_active  = 2
+        internal_error     = 3
+        OTHERS             = 4 ).
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_oa2c.
+    ENDIF.
+
+    li_http_client->propertytype_logon_popup = if_http_client=>co_disabled.
+
+    li_http_client->request->set_method( 'POST' ).
+
+    li_http_client->request->set_form_field(
+      name  = 'grant_type'
+      value = 'client_credentials' ).
+    li_http_client->request->set_form_field(
+      name  = 'client_id'
+      value = 'todo' ).
+    li_http_client->request->set_form_field(
+      name  = 'scope'
+      value = 'todo' ).
+    li_http_client->request->set_form_field(
+      name  = 'client_secret'
+      value = 'todo' ).
+    li_http_client->request->set_content_type( 'application/x-www-form-urlencoded' ).
+
+    li_http_client->send(
+      EXCEPTIONS
+        http_communication_failure = 1
+        http_invalid_state         = 2
+        http_processing_failed     = 3
+        http_invalid_timeout       = 4
+        OTHERS                     = 5 ).
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_oa2c.
+    ENDIF.
+
+    li_http_client->receive(
+      EXCEPTIONS
+        http_communication_failure = 1
+        http_invalid_state         = 2
+        http_processing_failed     = 3
+        OTHERS                     = 4 ).
+    IF sy-subrc <> 0.
+      li_http_client->get_last_error(
+        IMPORTING
+          code    = lv_code
+          message = lv_message ).
+      RAISE EXCEPTION TYPE cx_oa2c.
+    ENDIF.
+
+    li_http_client->response->get_status( IMPORTING code = lv_code ).
+    lv_cdata = li_http_client->response->get_cdata( ).
+    li_http_client->close( ).
+
+    IF lv_code <> 200.
+      RAISE EXCEPTION TYPE cx_oa2c.
+    ENDIF.
+
+    FIND REGEX |"access_token":"([\\w\\.-]+)"| IN lv_cdata SUBMATCHES mv_token.
+    ASSERT sy-subrc = 0.
+
   ENDMETHOD.
 
   METHOD if_oauth2_client~set_token.
-    WRITE / 'todo, cl_oauth2_client in open-abap-core, set_token()'.
-    ASSERT 1 = 'todo'.
+    IF mv_token IS INITIAL.
+      RAISE EXCEPTION TYPE cx_oa2c_at_not_available.
+    ENDIF.
+
+    io_http_client->request->set_header_field(
+      name  = 'Authorization'
+      value = |{ mv_token }| ).
   ENDMETHOD.
 
 ENDCLASS.
