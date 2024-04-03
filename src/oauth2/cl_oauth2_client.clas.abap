@@ -15,6 +15,10 @@ ENDCLASS.
 CLASS cl_oauth2_client IMPLEMENTATION.
 
   METHOD create.
+* todo, throw cx_oa2c_config_not_found
+
+    WRITE '@KERNEL const scopes = abap.OA2P[i_profile.get().toUpperCase()].scopes;'.
+
     WRITE / 'todo, cl_oauth2_client in open-abap-core, create()'.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
