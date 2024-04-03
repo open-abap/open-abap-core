@@ -1,0 +1,7 @@
+CLASS cx_oa2c_config_not_found DEFINITION PUBLIC INHERITING FROM cx_oa2c.
+  PUBLIC SECTION.
+ENDCLASS.
+
+CLASS cx_oa2c_config_not_found IMPLEMENTATION.
+
+ENDCLASS.
