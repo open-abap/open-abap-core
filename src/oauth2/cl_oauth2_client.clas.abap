@@ -4,7 +4,7 @@ CLASS cl_oauth2_client DEFINITION PUBLIC.
 
     CLASS-METHODS create
       IMPORTING
-        i_profile               TYPE clike
+        i_profile               TYPE oa2c_profile
         i_configuration         TYPE clike OPTIONAL
       RETURNING
         VALUE(ro_oauth2_client) TYPE REF TO if_oauth2_client
