@@ -25,7 +25,7 @@ CLASS cl_oauth2_client IMPLEMENTATION.
     DATA lv_scope  TYPE string.
 
     WRITE '@KERNEL const scopes = abap.OA2P[i_profile.get().toUpperCase().trimEnd()].scopes;'.
-    WRITE '@KERNEL lv_scope.set(scopes[0].get());'.
+    WRITE '@KERNEL lv_scope.set(scopes[0]);'.
 
     CREATE OBJECT lo_client.
     lo_client->mo_config_writer_api = cl_oa2c_config_writer_api=>load( i_configuration ).
@@ -53,7 +53,7 @@ CLASS cl_oauth2_client IMPLEMENTATION.
         e_token_endpoint = lv_endpoint
         e_target_path    = lv_path ).
 
-    WRITE '@KERNEL lv_client_secret.set(mo_config_writer_api.ms_config.client_secret);'.
+    WRITE '@KERNEL lv_client_secret.set(this.mo_config_writer_api.get().ms_config.get().client_secret);'.
 
     cl_http_client=>create_by_url(
       EXPORTING

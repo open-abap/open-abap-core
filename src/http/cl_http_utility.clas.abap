@@ -58,7 +58,9 @@ ENDCLASS.
 CLASS cl_http_utility IMPLEMENTATION.
 
   METHOD set_request_uri.
-    ASSERT 1 = 'todo'.
+    request->set_header_field(
+      name = '~request_uri'
+      value = uri ).
   ENDMETHOD.
 
   METHOD escape_html.
