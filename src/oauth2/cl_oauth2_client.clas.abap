@@ -14,6 +14,7 @@ CLASS cl_oauth2_client DEFINITION PUBLIC.
   PRIVATE SECTION.
     DATA mo_config_writer_api TYPE REF TO cl_oa2c_config_writer_api.
     DATA mv_token             TYPE string.
+    DATA mv_scope TYPE string.
 ENDCLASS.
 
 CLASS cl_oauth2_client IMPLEMENTATION.
@@ -21,8 +22,10 @@ CLASS cl_oauth2_client IMPLEMENTATION.
   METHOD create.
 
     DATA lo_client TYPE REF TO cl_oauth2_client.
+    DATA lv_scope  TYPE string.
 
     WRITE '@KERNEL const scopes = abap.OA2P[i_profile.get().toUpperCase()].scopes;'.
+    WRITE '@KERNEL lv_scope.set(scopes[0].get());'.
 
     CREATE OBJECT lo_client.
     lo_client->mo_config_writer_api = cl_oa2c_config_writer_api=>load( i_configuration ).
@@ -33,16 +36,28 @@ CLASS cl_oauth2_client IMPLEMENTATION.
 
   METHOD if_oauth2_client~execute_cc_flow.
 
-    DATA lv_text        TYPE string.
-    DATA lv_code        TYPE i.
-    DATA lv_message     TYPE string.
-    DATA lv_cdata       TYPE string.
-    DATA li_http_client TYPE REF TO if_http_client.
+    DATA lv_text          TYPE string.
+    DATA lv_code          TYPE i.
+    DATA lv_message       TYPE string.
+    DATA lv_cdata         TYPE string.
+    DATA lv_client_id     TYPE string.
+    DATA lv_client_secret TYPE string.
+    DATA lv_endpoint      TYPE string.
+    DATA lv_path          TYPE string.
+    DATA li_http_client   TYPE REF TO if_http_client.
 
+
+    mo_config_writer_api->read(
+      IMPORTING
+        e_client_id      = lv_client_id
+        e_token_endpoint = lv_endpoint
+        e_target_path    = lv_path ).
+
+    WRITE '@KERNEL lv_client_secret.set(mo_config_writer_api.ms_config.client_secret);'.
 
     cl_http_client=>create_by_url(
       EXPORTING
-        url                = 'todo'
+        url                = lv_endpoint && lv_path
       IMPORTING
         client             = li_http_client
       EXCEPTIONS
@@ -63,13 +78,13 @@ CLASS cl_oauth2_client IMPLEMENTATION.
       value = 'client_credentials' ).
     li_http_client->request->set_form_field(
       name  = 'client_id'
-      value = 'todo' ).
+      value = lv_client_id ).
     li_http_client->request->set_form_field(
       name  = 'scope'
-      value = 'todo' ).
+      value = mv_scope ).
     li_http_client->request->set_form_field(
       name  = 'client_secret'
-      value = 'todo' ).
+      value = lv_client_secret ).
     li_http_client->request->set_content_type( 'application/x-www-form-urlencoded' ).
 
     li_http_client->send(
