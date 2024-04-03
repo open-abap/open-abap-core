@@ -24,7 +24,6 @@ CLASS cl_oauth2_client IMPLEMENTATION.
     DATA lo_client TYPE REF TO cl_oauth2_client.
     DATA lv_scope  TYPE string.
 
-    WRITE '@KERNEL console.dir(abap.OA2P);'.
     WRITE '@KERNEL const scopes = abap.OA2P[i_profile.get().toUpperCase().trimEnd()].scopes;'.
     WRITE '@KERNEL lv_scope.set(scopes[0].get());'.
 
