@@ -133,7 +133,7 @@ CLASS cl_oauth2_client IMPLEMENTATION.
 
     io_http_client->request->set_header_field(
       name  = 'Authorization'
-      value = |{ mv_token }| ).
+      value = |Bearer { mv_token }| ).
   ENDMETHOD.
 
 ENDCLASS.
