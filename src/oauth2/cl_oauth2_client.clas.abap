@@ -14,7 +14,7 @@ CLASS cl_oauth2_client DEFINITION PUBLIC.
   PRIVATE SECTION.
     DATA mo_config_writer_api TYPE REF TO cl_oa2c_config_writer_api.
     DATA mv_token             TYPE string.
-    DATA mv_scope TYPE string.
+    DATA mv_scope             TYPE string.
 ENDCLASS.
 
 CLASS cl_oauth2_client IMPLEMENTATION.
@@ -29,6 +29,7 @@ CLASS cl_oauth2_client IMPLEMENTATION.
 
     CREATE OBJECT lo_client.
     lo_client->mo_config_writer_api = cl_oa2c_config_writer_api=>load( i_configuration ).
+    lo_client->mv_scope = lv_scope.
 
     ro_oauth2_client ?= lo_client.
 
