@@ -17,7 +17,18 @@ ENDCLASS.
 CLASS cl_sec_sxml_writer IMPLEMENTATION.
 
   METHOD crypt_aes_ctr.
-    ASSERT 1 = 'todo'.
+    ASSERT algorithm = co_aes128_algorithm.
+
+    WRITE '@KERNEL const crypto = await import("crypto");'.
+
+    WRITE '@KERNEL const js_key = Buffer.from(key.get(), "hex");'.
+    WRITE '@KERNEL const js_iv = Buffer.from(iv.get(), "hex");'.
+    WRITE '@KERNEL const js_input = Buffer.from(input.get(), "hex");'.
+
+    WRITE '@KERNEL const cipher = crypto.createDecipheriv("aes-128-ctr", js_key, js_iv);'.
+    WRITE '@KERNEL const encrypted = cipher.update(js_input);'.
+
+    WRITE '@KERNEL result.set(encrypted.toString("hex").toUpperCase());'.
   ENDMETHOD.
 
 ENDCLASS.
