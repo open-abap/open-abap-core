@@ -16,7 +16,7 @@ CLASS cl_document_bcs DEFINITION PUBLIC.
     METHODS add_attachment
       IMPORTING
         i_attachment_type    TYPE clike
-        i_attachment_subject TYPE string
+        i_attachment_subject TYPE clike
         i_attachment_size    TYPE i OPTIONAL
         i_att_content_text   TYPE any OPTIONAL
         i_att_content_hex    TYPE any OPTIONAL
