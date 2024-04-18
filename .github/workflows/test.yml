@@ -39,7 +39,7 @@ jobs:
       run: |
         npm install && npm run performance
         cp results.json results_after.json
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         ref: main
         path: before
@@ -65,7 +65,7 @@ jobs:
 
     - name: Find Comment
       if: steps.findPr.outputs.pr != ''
-      uses: peter-evans/find-comment@v2
+      uses: peter-evans/find-comment@v3
       id: fc
       with:
         issue-number: '${{steps.findPr.outputs.pr}}'
@@ -75,7 +75,7 @@ jobs:
 
     - name: Create comment
       if: steps.findPr.outputs.pr != ''
-      uses: peter-evans/create-or-update-comment@v3
+      uses: peter-evans/create-or-update-comment@v4
       id: create-comment
       with:
         issue-number: '${{steps.findPr.outputs.pr}}'
