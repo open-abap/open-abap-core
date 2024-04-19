@@ -56,6 +56,7 @@ CONSTANTS icon_message_information TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_message_question TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_message_warning_small TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_move TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_next_object TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_no_status TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_object_list TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_okay TYPE c LENGTH 4 VALUE 'ICON'.
@@ -66,6 +67,7 @@ CONSTANTS icon_parameter_result TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_plant TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_pm_insert TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_pm_press TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_previous_object TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_profit_center TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_protocol TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_question TYPE c LENGTH 4 VALUE 'ICON'.
@@ -81,6 +83,9 @@ CONSTANTS icon_set_state TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_simulate TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_space TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_stack TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_status_booked TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_status_open TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_status_reverse TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_store_location TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_structure TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_sym_log_server TYPE c LENGTH 4 VALUE 'ICON'.
