@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "abaplint",
     "unit": "rm -rf output && abap_transpile && echo RUNNING && node --expose-gc output/index.mjs && echo OK",
-    "flame": "0x -- node --expose-gc test/performance.mjs",
+    "flame": "0x -o -- node --expose-gc test/performance.mjs",
     "performance": "rm -rf output && abap_transpile ./abap_transpile_test.json && node --expose-gc test/performance.mjs",
     "integration": "rm -rf output && abap_transpile ./abap_transpile_test.json && node --expose-gc output/index.mjs",
     "test": "npm run lint && npm run unit"
