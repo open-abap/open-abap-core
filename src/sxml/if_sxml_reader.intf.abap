@@ -38,13 +38,13 @@ INTERFACE if_sxml_reader PUBLIC.
 
   METHODS get_nsuri_by_prefix
     IMPORTING
-      !prefix TYPE string
+      !prefix      TYPE string
     RETURNING
       VALUE(nsuri) TYPE string.
 
   METHODS get_prefix_by_nsuri
     IMPORTING
-      !nsuri TYPE string
+      !nsuri        TYPE string
     RETURNING
       VALUE(prefix) TYPE string.
 

@@ -31,7 +31,7 @@ INTERFACE if_ixml_stream_factory PUBLIC.
 
   METHODS create_istream_cstring
     IMPORTING
-      string TYPE string
+      string      TYPE string
     RETURNING
       VALUE(rval) TYPE REF TO if_ixml_istream.
 

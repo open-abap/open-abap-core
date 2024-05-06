@@ -56,10 +56,10 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
 
     CLASS-METHODS td_subtract
       IMPORTING
-        date1 TYPE d
-        time1 TYPE t
-        date2 TYPE d
-        time2 TYPE t
+        date1    TYPE d
+        time1    TYPE t
+        date2    TYPE d
+        time2    TYPE t
       EXPORTING
         res_secs TYPE numeric
       RAISING

@@ -78,7 +78,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
   PRIVATE SECTION.
 
     METHODS render_ixml
-      IMPORTING ii_doc TYPE REF TO if_ixml_document
+      IMPORTING ii_doc        TYPE REF TO if_ixml_document
       RETURNING VALUE(rv_xml) TYPE string.
 
     METHODS test1_xml FOR TESTING RAISING cx_static_check.
@@ -98,7 +98,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS to_string_array FOR TESTING RAISING cx_static_check.
 
     METHODS convert_json_to_sxml
-      IMPORTING iv_json TYPE string
+      IMPORTING iv_json       TYPE string
       RETURNING VALUE(rv_xml) TYPE string
       RAISING cx_static_check.
 
@@ -278,7 +278,7 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
   METHOD test3_json_table.
     TYPES: BEGIN OF ty_message,
              field TYPE i,
-             val TYPE string,
+             val   TYPE string,
            END OF ty_message.
     DATA tab TYPE STANDARD TABLE OF ty_message WITH DEFAULT KEY.
     DATA row LIKE LINE OF tab.

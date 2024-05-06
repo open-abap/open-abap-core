@@ -13,7 +13,7 @@ CLASS cl_http_utility DEFINITION PUBLIC.
 
     CLASS-METHODS decode_x_base64
       IMPORTING
-        encoded TYPE string
+        encoded        TYPE string
       RETURNING
         VALUE(decoded) TYPE xstring.
 

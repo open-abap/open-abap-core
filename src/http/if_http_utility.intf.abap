@@ -26,13 +26,13 @@ INTERFACE if_http_utility PUBLIC.
 
   CLASS-METHODS encode_base64
     IMPORTING
-      unencoded TYPE string
+      unencoded      TYPE string
     RETURNING
       VALUE(encoded) TYPE string.
 
   CLASS-METHODS fields_to_string
     IMPORTING
-      fields TYPE tihttpnvp
+      fields        TYPE tihttpnvp
     RETURNING
       VALUE(string) TYPE string.
 

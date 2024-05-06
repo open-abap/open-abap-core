@@ -8,7 +8,7 @@ CLASS cl_abap_datadescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
 
     METHODS applies_to_data
       IMPORTING
-        p_data TYPE data
+        p_data        TYPE data
       RETURNING
         VALUE(p_flag) TYPE abap_bool.
 ENDCLASS.

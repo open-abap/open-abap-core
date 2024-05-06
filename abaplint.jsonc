@@ -13,7 +13,7 @@
   "rules": {
     "check_include": false, // todo
     "uncaught_exception": false, // todo
-    "align_type_expressions": false, // todo
+    "align_type_expressions": true,
     "dynpro_checks": true,
     "easy_to_find_messages": false,
     "invalid_table_index": true,

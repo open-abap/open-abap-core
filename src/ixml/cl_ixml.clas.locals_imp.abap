@@ -2,13 +2,13 @@ CLASS lcl_escape DEFINITION.
   PUBLIC SECTION.
     CLASS-METHODS unescape_value
       IMPORTING
-        iv_value TYPE string
+        iv_value        TYPE string
       RETURNING
         VALUE(rv_value) TYPE string.
 
     CLASS-METHODS escape_value
       IMPORTING
-        iv_value TYPE string
+        iv_value        TYPE string
       RETURNING
         VALUE(rv_value) TYPE string.
 ENDCLASS.

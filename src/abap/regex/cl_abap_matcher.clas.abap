@@ -3,9 +3,9 @@ CLASS cl_abap_matcher DEFINITION PUBLIC.
   PUBLIC SECTION.
     METHODS constructor
       IMPORTING
-        pattern TYPE clike
+        pattern     TYPE clike
         ignore_case TYPE abap_bool
-        text TYPE clike.
+        text        TYPE clike.
 
     METHODS find_all
       RETURNING
@@ -17,7 +17,7 @@ CLASS cl_abap_matcher DEFINITION PUBLIC.
 
     METHODS get_submatch
       IMPORTING
-        index TYPE i
+        index        TYPE i
       RETURNING
         VALUE(match) TYPE string.
 

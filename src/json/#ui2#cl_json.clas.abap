@@ -35,8 +35,8 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
 
     CLASS-METHODS generate
       IMPORTING
-        json        TYPE string
-        pretty_name TYPE string OPTIONAL
+        json           TYPE string
+        pretty_name    TYPE string OPTIONAL
       RETURNING
         VALUE(rr_data) TYPE REF TO data.
 
@@ -49,9 +49,9 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
 
     METHODS constructor
       IMPORTING
-        compress TYPE abap_bool DEFAULT abap_false
-        pretty_name TYPE pretty_name_mode DEFAULT pretty_mode-none
-        assoc_arrays TYPE abap_bool DEFAULT abap_false
+        compress      TYPE abap_bool DEFAULT abap_false
+        pretty_name   TYPE pretty_name_mode DEFAULT pretty_mode-none
+        assoc_arrays  TYPE abap_bool DEFAULT abap_false
         ts_as_iso8601 TYPE abap_bool DEFAULT abap_false.
 
   PROTECTED SECTION.
@@ -64,8 +64,8 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
 
     METHODS is_compressable
       IMPORTING
-        type_descr TYPE REF TO cl_abap_typedescr
-        name       TYPE string
+        type_descr       TYPE REF TO cl_abap_typedescr
+        name             TYPE string
       RETURNING
       VALUE(rv_compress) TYPE abap_bool.
 

@@ -42,7 +42,7 @@ CLASS cl_bcs DEFINITION PUBLIC.
       IMPORTING
         i_with_error_screen TYPE abap_bool DEFAULT abap_false
       RETURNING
-        VALUE(result) TYPE abap_bool
+        VALUE(result)       TYPE abap_bool
       RAISING
         cx_bcs.
 

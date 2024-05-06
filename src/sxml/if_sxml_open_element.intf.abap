@@ -14,10 +14,10 @@ INTERFACE if_sxml_open_element PUBLIC.
 
   METHODS set_attribute
     IMPORTING
-      name   TYPE string
-      nsuri  TYPE string OPTIONAL
-      prefix TYPE string OPTIONAL
-      value  TYPE string OPTIONAL
+      name             TYPE string
+      nsuri            TYPE string OPTIONAL
+      prefix           TYPE string OPTIONAL
+      value            TYPE string OPTIONAL
     RETURNING
       VALUE(attribute) TYPE REF TO if_sxml_attribute
     RAISING
@@ -35,8 +35,8 @@ INTERFACE if_sxml_open_element PUBLIC.
 
   METHODS get_attribute_value
     IMPORTING
-      !name TYPE string
-      !nsuri TYPE string OPTIONAL
+      !name        TYPE string
+      !nsuri       TYPE string OPTIONAL
     RETURNING
       VALUE(value) TYPE REF TO if_sxml_value.
 ENDINTERFACE.

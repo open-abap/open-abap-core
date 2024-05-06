@@ -1,7 +1,7 @@
 CLASS kernel_json_to_ixml DEFINITION PUBLIC.
   PUBLIC SECTION.
     CLASS-METHODS build
-      IMPORTING iv_json TYPE string
+      IMPORTING iv_json       TYPE string
       RETURNING VALUE(ri_doc) TYPE REF TO if_ixml_document.
 ENDCLASS.
 

@@ -9,7 +9,7 @@ CLASS cl_shm_service DEFINITION PUBLIC.
 
     CLASS-METHODS get_auto_build_class_name
       IMPORTING
-        area_name TYPE shm_area_name
+        area_name                    TYPE shm_area_name
       RETURNING
         VALUE(auto_build_class_name) TYPE shm_auto_build_class_name
       RAISING
@@ -18,7 +18,7 @@ CLASS cl_shm_service DEFINITION PUBLIC.
 
     CLASS-METHODS trace_get_service
       IMPORTING
-        !area_name TYPE shm_area_name OPTIONAL
+        !area_name           TYPE shm_area_name OPTIONAL
       RETURNING
         VALUE(trace_service) TYPE REF TO if_shm_trace.
 

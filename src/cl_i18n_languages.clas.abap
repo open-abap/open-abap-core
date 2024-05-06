@@ -10,7 +10,7 @@ CLASS cl_i18n_languages DEFINITION PUBLIC.
 
     CLASS-METHODS sap2_to_sap1
       IMPORTING
-        im_lang_sap2 TYPE laiso
+        im_lang_sap2        TYPE laiso
       RETURNING
         VALUE(re_lang_sap1) TYPE sy-langu
       EXCEPTIONS

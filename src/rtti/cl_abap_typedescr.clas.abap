@@ -3,13 +3,13 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
   PUBLIC SECTION.
     CLASS-METHODS
       describe_by_data
-        IMPORTING p_data TYPE any
+        IMPORTING p_data      TYPE any
         RETURNING VALUE(type) TYPE REF TO cl_abap_typedescr.
 
     CLASS-METHODS
       describe_by_name
         IMPORTING
-          p_name TYPE clike
+          p_name      TYPE clike
         RETURNING
           VALUE(type) TYPE REF TO cl_abap_typedescr
         EXCEPTIONS
@@ -17,13 +17,13 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
 
     CLASS-METHODS
       describe_by_data_ref
-        IMPORTING p_data_ref TYPE REF TO data
+        IMPORTING p_data_ref  TYPE REF TO data
         RETURNING VALUE(type) TYPE REF TO cl_abap_typedescr.
 
     CLASS-METHODS
       describe_by_object_ref
         IMPORTING
-          p_object_ref TYPE REF TO object
+          p_object_ref       TYPE REF TO object
         RETURNING
           VALUE(p_descr_ref) TYPE REF TO cl_abap_typedescr
         EXCEPTIONS
@@ -107,11 +107,11 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CLASS-DATA gv_counter TYPE n LENGTH 10.
 
     CLASS-METHODS describe_by_dashes
-      IMPORTING p_name TYPE clike
+      IMPORTING p_name      TYPE clike
       RETURNING VALUE(type) TYPE REF TO cl_abap_typedescr.
 
     CLASS-METHODS is_deep
-      IMPORTING  io_struct TYPE REF TO cl_abap_structdescr
+      IMPORTING  io_struct     TYPE REF TO cl_abap_structdescr
       RETURNING VALUE(rv_deep) TYPE abap_bool.
 ENDCLASS.
 
