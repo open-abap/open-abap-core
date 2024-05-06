@@ -11,8 +11,18 @@
     "errorNamespace": "."
   },
   "rules": {
-    "check_include": false, // todo
     "uncaught_exception": false, // todo
+    "check_include": true,
+
+    "align_type_expressions": true,
+    "dynpro_checks": true,
+    "easy_to_find_messages": false,
+    "invalid_table_index": true,
+    "no_prefixes": false,
+    "prefer_pragmas": true,
+    "reduce_procedural_code": false,
+    "smim_consistency": true,
+    "sql_value_conversion": true,
     "cds_comment_style": true,
     "change_if_to_case": false,
     "expand_macros": true,

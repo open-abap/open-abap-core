@@ -14,7 +14,7 @@ CLASS cl_abap_conv_in_ce DEFINITION PUBLIC.
     CLASS-METHODS
       uccpi
         IMPORTING
-          value TYPE i
+          value      TYPE i
         RETURNING
           VALUE(ret) TYPE string.
 
@@ -34,9 +34,9 @@ CLASS cl_abap_conv_in_ce DEFINITION PUBLIC.
 
     METHODS read
       IMPORTING
-        n     TYPE i OPTIONAL
+        n    TYPE i OPTIONAL
       EXPORTING
-        data  TYPE string.
+        data TYPE string.
   PRIVATE SECTION.
     DATA mv_input TYPE xstring.
     DATA mv_js_encoding TYPE string.

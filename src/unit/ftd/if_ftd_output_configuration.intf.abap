@@ -11,8 +11,8 @@ INTERFACE if_ftd_output_configuration PUBLIC.
 
   METHODS set_table_parameter
     IMPORTING
-      name  TYPE abap_parmname
-      value TYPE any
+      name        TYPE abap_parmname
+      value       TYPE any
     RETURNING
       VALUE(self) TYPE REF TO if_ftd_output_configuration
     RAISING

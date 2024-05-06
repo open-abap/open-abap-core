@@ -18,7 +18,7 @@ CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
 
     CLASS-METHODS
       construct_from_data
-        IMPORTING data TYPE any
+        IMPORTING data         TYPE any
         RETURNING VALUE(descr) TYPE REF TO cl_abap_tabledescr.
 
     METHODS get_table_line_type
@@ -26,7 +26,7 @@ CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
         VALUE(type) TYPE REF TO cl_abap_datadescr.
 
     CLASS-METHODS get
-      IMPORTING type TYPE REF TO cl_abap_typedescr
+      IMPORTING type       TYPE REF TO cl_abap_typedescr
       RETURNING VALUE(val) TYPE REF TO cl_abap_tabledescr.
 
     CLASS-METHODS get_with_keys
@@ -44,7 +44,7 @@ CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
         p_key        TYPE abap_keydescr_tab OPTIONAL
         p_key_kind   TYPE abap_keydefkind DEFAULT keydefkind_default
       RETURNING
-        VALUE(ref) TYPE REF TO cl_abap_tabledescr.
+        VALUE(ref)   TYPE REF TO cl_abap_tabledescr.
 
     METHODS get_keys
       RETURNING

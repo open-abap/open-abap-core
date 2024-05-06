@@ -2,13 +2,13 @@ CLASS kernel_internal_name DEFINITION PUBLIC.
   PUBLIC SECTION.
     CLASS-METHODS internal_to_rtti
       IMPORTING
-        iv_internal TYPE string
+        iv_internal    TYPE string
       RETURNING
         VALUE(rv_rtti) TYPE string.
 
     CLASS-METHODS rtti_to_internal
       IMPORTING
-        iv_rtti TYPE string
+        iv_rtti            TYPE string
       RETURNING
         VALUE(rv_internal) TYPE string.
 ENDCLASS.

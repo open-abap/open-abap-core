@@ -40,7 +40,7 @@ INTERFACE if_http_server PUBLIC.
       path        TYPE string OPTIONAL
       querystring TYPE string OPTIONAL
     RETURNING
-      VALUE(url) TYPE string.
+      VALUE(url)  TYPE string.
 
   METHODS create_rel_url
     IMPORTING
@@ -70,19 +70,19 @@ INTERFACE if_http_server PUBLIC.
 
   CLASS-METHODS encode_base64
     IMPORTING
-      unencoded TYPE string
+      unencoded      TYPE string
     RETURNING
       VALUE(encoded) TYPE string.
 
   CLASS-METHODS escape_html
     IMPORTING
-      unescaped TYPE string
+      unescaped      TYPE string
     RETURNING
       VALUE(escaped) TYPE string.
 
   CLASS-METHODS escape_url
     IMPORTING
-      unescaped TYPE string
+      unescaped      TYPE string
     RETURNING
       VALUE(escaped) TYPE string.
 
@@ -90,13 +90,13 @@ INTERFACE if_http_server PUBLIC.
     IMPORTING
       extension_class TYPE string OPTIONAL
     EXPORTING
-      urls TYPE string_table.
+      urls            TYPE string_table.
 
   CLASS-METHODS get_extension_url
     IMPORTING
       extension_class TYPE string
     EXPORTING
-      urls TYPE string_table.
+      urls            TYPE string_table.
 
   METHODS get_last_error
     RETURNING
@@ -110,12 +110,12 @@ INTERFACE if_http_server PUBLIC.
       server              TYPE REF TO if_http_server OPTIONAL
       use_ticket_protocol TYPE abap_bool DEFAULT abap_true
     EXPORTING
-      host TYPE string
-      port TYPE string
-      out_protocol TYPE string
-      vh_switch TYPE abap_bool
+      host                TYPE string
+      port                TYPE string
+      out_protocol        TYPE string
+      vh_switch           TYPE abap_bool
     RETURNING
-      VALUE(url_part) TYPE string.
+      VALUE(url_part)     TYPE string.
 
   CLASS-METHODS get_location_exception
     IMPORTING

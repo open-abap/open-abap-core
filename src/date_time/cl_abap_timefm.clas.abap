@@ -5,10 +5,10 @@ CLASS cl_abap_timefm DEFINITION PUBLIC.
 
     CLASS-METHODS conv_time_ext_to_int
       IMPORTING
-        time_ext        TYPE csequence
-        is_24_allowed   TYPE abap_bool DEFAULT abap_false
+        time_ext      TYPE csequence
+        is_24_allowed TYPE abap_bool DEFAULT abap_false
       EXPORTING
-        time_int        TYPE t
+        time_int      TYPE t
       RAISING
         cx_abap_timefm_invalid.
 

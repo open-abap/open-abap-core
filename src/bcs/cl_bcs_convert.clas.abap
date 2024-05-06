@@ -23,8 +23,8 @@ CLASS cl_bcs_convert DEFINITION PUBLIC.
 
     CLASS-METHODS solix_to_xstring
       IMPORTING
-        it_solix TYPE solix_tab
-        iv_size TYPE i OPTIONAL
+        it_solix          TYPE solix_tab
+        iv_size           TYPE i OPTIONAL
       RETURNING
         VALUE(ev_xstring) TYPE xstring.
 

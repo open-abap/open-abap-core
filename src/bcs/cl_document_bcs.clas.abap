@@ -4,10 +4,10 @@ CLASS cl_document_bcs DEFINITION PUBLIC.
 
     CLASS-METHODS create_document
       IMPORTING
-        i_type    TYPE clike
-        i_subject TYPE clike
-        i_text    TYPE any OPTIONAL
-        i_length  TYPE i OPTIONAL
+        i_type        TYPE clike
+        i_subject     TYPE clike
+        i_text        TYPE any OPTIONAL
+        i_length      TYPE i OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO cl_document_bcs
       RAISING

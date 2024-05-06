@@ -2,12 +2,12 @@ CLASS lcl_heap DEFINITION.
   PUBLIC SECTION.
     METHODS add_object
       IMPORTING
-        iv_ref      TYPE any
+        iv_ref       TYPE any
       RETURNING
         VALUE(rv_id) TYPE string.
     METHODS add_data
       IMPORTING
-        iv_ref      TYPE any
+        iv_ref       TYPE any
       RETURNING
         VALUE(rv_id) TYPE string.
     METHODS serialize
@@ -262,7 +262,7 @@ CLASS lcl_object_to_sxml DEFINITION.
 
     CLASS-METHODS traverse_write_type
       IMPORTING
-        iv_ref TYPE REF TO data
+        iv_ref         TYPE REF TO data
       RETURNING
         VALUE(rv_type) TYPE string.
 ENDCLASS.
@@ -372,8 +372,8 @@ CLASS lcl_object_to_string DEFINITION.
   PUBLIC SECTION.
     CLASS-METHODS run
       IMPORTING
-        is_options TYPE kernel_call_transformation=>ty_options
-        source     TYPE any
+        is_options       TYPE kernel_call_transformation=>ty_options
+        source           TYPE any
       RETURNING
         VALUE(rv_result) TYPE string.
   PRIVATE SECTION.

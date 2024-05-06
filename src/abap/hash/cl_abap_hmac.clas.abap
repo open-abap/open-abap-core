@@ -2,14 +2,14 @@ CLASS cl_abap_hmac DEFINITION PUBLIC.
   PUBLIC SECTION.
     CLASS-METHODS calculate_hmac_for_raw
       IMPORTING
-        if_algorithm   TYPE string DEFAULT 'SHA1'
-        if_key         TYPE xstring
-        if_data        TYPE xstring
-        if_length      TYPE i OPTIONAL
+        if_algorithm     TYPE string DEFAULT 'SHA1'
+        if_key           TYPE xstring
+        if_data          TYPE xstring
+        if_length        TYPE i OPTIONAL
       EXPORTING
-        ef_hmacstring     TYPE string
-        ef_hmacxstring    TYPE xstring
-        ef_hmacb64string  TYPE string
+        ef_hmacstring    TYPE string
+        ef_hmacxstring   TYPE xstring
+        ef_hmacb64string TYPE string
       RAISING
         cx_abap_message_digest.
 
@@ -27,7 +27,7 @@ CLASS cl_abap_hmac DEFINITION PUBLIC.
 
     CLASS-METHODS string_to_xstring
       IMPORTING
-        if_input TYPE string
+        if_input         TYPE string
       RETURNING
         VALUE(er_output) TYPE xstring
       RAISING

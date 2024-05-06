@@ -65,7 +65,7 @@ CLASS lcl_stack IMPLEMENTATION.
     FIELD-SYMBOLS <ls_data> LIKE LINE OF mt_stack.
     lv_index = lines( mt_stack ).
     IF lv_index > 0.
-      READ TABLE mt_stack ASSIGNING <ls_data> INDEX lv_index.     "#EC CI_SUBRC
+      READ TABLE mt_stack ASSIGNING <ls_data> INDEX lv_index ##SUBRC_OK.
       rv_name = <ls_data>-name.
       DELETE mt_stack INDEX lv_index.
     ENDIF.
@@ -101,7 +101,7 @@ CLASS lcl_parser DEFINITION.
         VALUE(rv_value) TYPE i.
     METHODS value_string
       IMPORTING
-        iv_path             TYPE string
+        iv_path         TYPE string
       RETURNING
         VALUE(rv_value) TYPE string.
     METHODS get_type
@@ -121,12 +121,12 @@ CLASS lcl_parser DEFINITION.
         VALUE(rv_path) TYPE string.
   PRIVATE SECTION.
     TYPES: BEGIN OF ty_data,
-         parent    TYPE string,
-         name      TYPE string,
-         full_name TYPE string,
+         parent          TYPE string,
+         name            TYPE string,
+         full_name       TYPE string,
          full_name_upper TYPE string,
-         value     TYPE string,
-         type      TYPE string,
+         value           TYPE string,
+         type            TYPE string,
        END OF ty_data.
 
     TYPES ty_data_tt TYPE STANDARD TABLE OF ty_data WITH DEFAULT KEY

@@ -7,21 +7,21 @@ INTERFACE if_ixml PUBLIC.
       VALUE(stream) TYPE REF TO if_ixml_stream_factory.
   METHODS create_renderer
     IMPORTING
-      ostream  TYPE REF TO if_ixml_ostream
-      document TYPE REF TO if_ixml_document
+      ostream         TYPE REF TO if_ixml_ostream
+      document        TYPE REF TO if_ixml_document
     RETURNING
       VALUE(renderer) TYPE REF TO if_ixml_renderer.
   METHODS create_parser
     IMPORTING
-      stream_factory  TYPE REF TO if_ixml_stream_factory
-      istream  TYPE REF TO if_ixml_istream
-      document TYPE REF TO if_ixml_document
+      stream_factory TYPE REF TO if_ixml_stream_factory
+      istream        TYPE REF TO if_ixml_istream
+      document       TYPE REF TO if_ixml_document
     RETURNING
-      VALUE(parser) TYPE REF TO if_ixml_parser.
+      VALUE(parser)  TYPE REF TO if_ixml_parser.
   METHODS create_encoding
     IMPORTING
       byte_order    TYPE i
       character_set TYPE string
     RETURNING
-      VALUE(rval) TYPE REF TO if_ixml_encoding.
+      VALUE(rval)   TYPE REF TO if_ixml_encoding.
 ENDINTERFACE.

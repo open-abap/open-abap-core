@@ -24,48 +24,48 @@ INTERFACE if_ixml_element PUBLIC.
       RETURNING VALUE(val) TYPE REF TO if_ixml_node_iterator,
     find_from_name_ns
       IMPORTING
-        name      TYPE string
-        namespace TYPE string OPTIONAL
-        uri       TYPE string OPTIONAL
-        depth     TYPE i OPTIONAL
+        name               TYPE string
+        namespace          TYPE string OPTIONAL
+        uri                TYPE string OPTIONAL
+        depth              TYPE i OPTIONAL
       RETURNING VALUE(val) TYPE REF TO if_ixml_element,
     find_from_name
       IMPORTING
-        name      TYPE string
-        namespace TYPE string OPTIONAL
-        depth     TYPE i OPTIONAL
+        name               TYPE string
+        namespace          TYPE string OPTIONAL
+        depth              TYPE i OPTIONAL
       RETURNING VALUE(val) TYPE REF TO if_ixml_element,
     get_attribute_node
-      IMPORTING name TYPE string
+      IMPORTING name       TYPE string
       RETURNING VALUE(val) TYPE REF TO if_ixml_attribute,
     get_attribute_ns
       IMPORTING
-        name TYPE string
-        uri TYPE string OPTIONAL
+        name       TYPE string
+        uri        TYPE string OPTIONAL
       RETURNING
         VALUE(val) TYPE string,
     get_attribute
       IMPORTING
-        name TYPE string
-        namespace TYPE string OPTIONAL
+        name               TYPE string
+        namespace          TYPE string OPTIONAL
       RETURNING VALUE(val) TYPE string,
     get_children
       RETURNING VALUE(val) TYPE REF TO if_ixml_node_list,
     get_elements_by_tag_name
       IMPORTING
-        name TYPE string
+        name       TYPE string
       RETURNING
         VALUE(val) TYPE REF TO if_ixml_node_collection,
     get_elements_by_tag_name_ns
       IMPORTING
-        name TYPE string
-        uri  TYPE string OPTIONAL
+        name       TYPE string
+        uri        TYPE string OPTIONAL
       RETURNING
         VALUE(val) TYPE REF TO if_ixml_node_collection,
     get_attribute_node_ns
         IMPORTING
-        name TYPE string
-        uri  TYPE string OPTIONAL
+        name       TYPE string
+        uri        TYPE string OPTIONAL
       RETURNING
         VALUE(val) TYPE REF TO if_ixml_attribute,
     get_first_child
@@ -95,7 +95,7 @@ INTERFACE if_ixml_element PUBLIC.
         value  TYPE string OPTIONAL,
     set_value
       IMPORTING
-        value TYPE string
+        value     TYPE string
       RETURNING
         VALUE(rc) TYPE i.
 ENDINTERFACE.

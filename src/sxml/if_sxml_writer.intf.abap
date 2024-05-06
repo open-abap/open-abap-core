@@ -60,9 +60,9 @@ INTERFACE if_sxml_writer PUBLIC.
 
   CLASS-METHODS new_open_element
     IMPORTING
-      name   TYPE string
-      nsuri  TYPE string OPTIONAL
-      prefix TYPE string OPTIONAL
+      name           TYPE string
+      nsuri          TYPE string OPTIONAL
+      prefix         TYPE string OPTIONAL
     RETURNING
       VALUE(element) TYPE REF TO if_sxml_open_element
     RAISING

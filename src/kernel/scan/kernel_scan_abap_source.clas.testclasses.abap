@@ -21,10 +21,10 @@ CLASS ltcl_scan DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     DATA statements TYPE STANDARD TABLE OF sstmnt WITH DEFAULT KEY.
     METHODS scan IMPORTING source TYPE string.
     METHODS dump_tokens
-      IMPORTING tokens TYPE kernel_scan_abap_source=>ty_stokesx
+      IMPORTING tokens      TYPE kernel_scan_abap_source=>ty_stokesx
       RETURNING VALUE(dump) TYPE string.
     METHODS dump_statements
-      IMPORTING statements TYPE kernel_scan_abap_source=>ty_sstmnt
+      IMPORTING statements  TYPE kernel_scan_abap_source=>ty_sstmnt
       RETURNING VALUE(dump) TYPE string.
 ENDCLASS.
 

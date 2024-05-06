@@ -8,7 +8,7 @@ CLASS ltcl_json_to_ixml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHOR
         VALUE(rv_dump) TYPE string.
     METHODS dump
       IMPORTING
-        iv_json TYPE string
+        iv_json        TYPE string
       RETURNING
         VALUE(rv_dump) TYPE string.
 

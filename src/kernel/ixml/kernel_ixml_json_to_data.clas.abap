@@ -7,7 +7,7 @@ CLASS kernel_ixml_json_to_data DEFINITION PUBLIC.
         ii_doc  TYPE REF TO if_ixml_document.
   PRIVATE SECTION.
     CLASS-METHODS get_field_name
-      IMPORTING ii_node TYPE REF TO if_ixml_node
+      IMPORTING ii_node        TYPE REF TO if_ixml_node
       RETURNING VALUE(rv_name) TYPE string.
     CLASS-METHODS traverse
       IMPORTING

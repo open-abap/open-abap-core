@@ -3,7 +3,7 @@ CLASS cl_abap_zip DEFINITION PUBLIC.
   PUBLIC SECTION.
     METHODS add
       IMPORTING
-        name TYPE string
+        name    TYPE string
         content TYPE xstring.
 
     METHODS save
@@ -29,7 +29,7 @@ CLASS cl_abap_zip DEFINITION PUBLIC.
         zip_index_error.
 
     CLASS-METHODS crc32
-      IMPORTING content TYPE xstring
+      IMPORTING content    TYPE xstring
       RETURNING VALUE(crc) TYPE i.
 
     TYPES: BEGIN OF t_file,
@@ -41,10 +41,10 @@ CLASS cl_abap_zip DEFINITION PUBLIC.
 
   PRIVATE SECTION.
     TYPES: BEGIN OF ty_contents,
-             name          TYPE string,
+             name       TYPE string,
 * todo, optimize memory usage, dont store both compressed and original,
-             content       TYPE xstring,
-             compressed    TYPE xstring,
+             content    TYPE xstring,
+             compressed TYPE xstring,
            END OF ty_contents.
     DATA mt_contents TYPE STANDARD TABLE OF ty_contents WITH DEFAULT KEY.
 

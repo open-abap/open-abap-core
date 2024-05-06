@@ -2,7 +2,7 @@ CLASS cl_message_helper DEFINITION PUBLIC.
   PUBLIC SECTION.
     CLASS-METHODS set_msg_vars_for_if_msg
       IMPORTING
-        text TYPE REF TO if_message
+        text          TYPE REF TO if_message
       EXPORTING
         VALUE(string) TYPE string.
 
@@ -12,7 +12,7 @@ CLASS cl_message_helper DEFINITION PUBLIC.
 
     CLASS-METHODS get_text_for_message
       IMPORTING
-        text TYPE REF TO if_message
+        text          TYPE REF TO if_message
       RETURNING
         VALUE(result) TYPE string.
 

@@ -2,7 +2,7 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
   PUBLIC SECTION.
     CLASS-METHODS
       construct_from_data
-        IMPORTING data TYPE any
+        IMPORTING data         TYPE any
         RETURNING VALUE(descr) TYPE REF TO cl_abap_structdescr.
 
     TYPES component       TYPE abap_componentdescr.

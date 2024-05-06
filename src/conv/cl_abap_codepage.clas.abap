@@ -16,7 +16,7 @@ CLASS cl_abap_codepage DEFINITION PUBLIC.
 
     CLASS-METHODS sap_codepage
       IMPORTING
-        encoding TYPE string
+        encoding        TYPE string
       RETURNING
         VALUE(codepage) TYPE abap_encoding.
 ENDCLASS.

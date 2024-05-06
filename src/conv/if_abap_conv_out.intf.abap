@@ -2,7 +2,7 @@ INTERFACE if_abap_conv_out PUBLIC.
 
   METHODS convert
     IMPORTING
-      source TYPE string
+      source        TYPE string
     RETURNING
       VALUE(result) TYPE xstring
     RAISING

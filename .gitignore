@@ -4,3 +4,5 @@ package-lock.json
 output_test
 foo.zip
 results*.json
+*.0x
+isolate*

@@ -4,6 +4,6 @@ INTERFACE if_message PUBLIC.
 
   METHODS get_longtext
     IMPORTING preserve_newlines TYPE abap_bool OPTIONAL
-    RETURNING VALUE(result) TYPE string.
+    RETURNING VALUE(result)     TYPE string.
 
 ENDINTERFACE.

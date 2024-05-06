@@ -20,7 +20,7 @@ CLASS ltcl_json DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
         iv_key   TYPE string OPTIONAL
         iv_value TYPE string OPTIONAL.
     METHODS dump_nodes
-      IMPORTING iv_json TYPE string
+      IMPORTING iv_json         TYPE string
       RETURNING VALUE(rt_nodes) TYPE ty_nodes.
 
     METHODS empty_object FOR TESTING RAISING cx_static_check.
