@@ -19,7 +19,7 @@ INTERFACE if_http_entity PUBLIC.
 
   METHODS get_header_field
     IMPORTING
-      name TYPE string
+      name         TYPE string
     RETURNING
       VALUE(value) TYPE string.
 
@@ -42,11 +42,11 @@ INTERFACE if_http_entity PUBLIC.
     IMPORTING
       suppress_content_length TYPE abap_bool DEFAULT abap_false
     RETURNING
-      VALUE(entity) TYPE REF TO if_http_entity.
+      VALUE(entity)           TYPE REF TO if_http_entity.
 
   METHODS append_cdata IMPORTING data TYPE clike.
 
-  METHODS get_form_field IMPORTING name TYPE string RETURNING VALUE(value) TYPE string.
+  METHODS get_form_field IMPORTING name                                                                                                                                             TYPE string RETURNING VALUE(value) TYPE string.
 
   METHODS get_cdata RETURNING VALUE(data) TYPE string.
 
@@ -56,7 +56,7 @@ INTERFACE if_http_entity PUBLIC.
 
   METHODS get_serialized_message_length
     EXPORTING
-      VALUE(body_length) TYPE i
+      VALUE(body_length)   TYPE i
       VALUE(header_length) TYPE i.
 
   METHODS set_content_type
@@ -119,8 +119,8 @@ INTERFACE if_http_entity PUBLIC.
 
   METHODS get_cookie
     IMPORTING
-      name TYPE string
-      path TYPE string DEFAULT ``
+      name    TYPE string
+      path    TYPE string DEFAULT ``
     EXPORTING
       value   TYPE string
       domain  TYPE string
@@ -129,10 +129,10 @@ INTERFACE if_http_entity PUBLIC.
 
   METHODS get_cookie_field
     IMPORTING
-      cookie_name TYPE string
-      cookie_path TYPE string OPTIONAL
-      field_name  TYPE string
-      base64      TYPE i DEFAULT 1
+      cookie_name        TYPE string
+      cookie_path        TYPE string OPTIONAL
+      field_name         TYPE string
+      base64             TYPE i DEFAULT 1
     RETURNING
       VALUE(field_value) TYPE string.
 
@@ -161,7 +161,7 @@ INTERFACE if_http_entity PUBLIC.
 
   METHODS get_multipart
     IMPORTING
-      index TYPE i
+      index         TYPE i
     RETURNING
       VALUE(entity) TYPE REF TO if_http_entity.
 

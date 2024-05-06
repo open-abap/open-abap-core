@@ -17,9 +17,9 @@ CLASS cl_abap_gzip DEFINITION PUBLIC.
 
     CLASS-METHODS decompress_text
       IMPORTING
-        gzip_in     TYPE xsequence
-        gzip_in_len TYPE i DEFAULT -1
-        conversion  TYPE abap_encod DEFAULT 'DEFAULT'
+        gzip_in      TYPE xsequence
+        gzip_in_len  TYPE i DEFAULT -1
+        conversion   TYPE abap_encod DEFAULT 'DEFAULT'
       EXPORTING
         text_out     TYPE csequence
         text_out_len TYPE i
@@ -36,8 +36,8 @@ CLASS cl_abap_gzip DEFINITION PUBLIC.
         compress_level TYPE i DEFAULT 6
         conversion     TYPE abap_encod DEFAULT 'DEFAULT'
       EXPORTING
-        gzip_out TYPE xsequence
-        gzip_out_len TYPE i
+        gzip_out       TYPE xsequence
+        gzip_out_len   TYPE i
       RAISING
         cx_parameter_invalid_range
         cx_sy_buffer_overflow

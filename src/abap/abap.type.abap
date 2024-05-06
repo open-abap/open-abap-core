@@ -136,25 +136,25 @@ TYPES: BEGIN OF abap_methdescr,
 TYPES abap_methdescr_tab TYPE STANDARD TABLE OF abap_methdescr WITH KEY name.
 
 TYPES: BEGIN OF abap_attrdescr,
-         length         TYPE i,
-         decimals       TYPE i,
-         name           TYPE abap_attrname,
-         type_kind      TYPE abap_typekind,
-         visibility     TYPE abap_visibility,
-         is_interface   TYPE abap_bool,
-         is_inherited   TYPE abap_bool,
-         is_class       TYPE abap_bool,
-         is_constant    TYPE abap_bool,
-         is_virtual     TYPE abap_bool,
-         is_read_only   TYPE abap_bool,
-         alias_for      TYPE abap_attrname,
+         length       TYPE i,
+         decimals     TYPE i,
+         name         TYPE abap_attrname,
+         type_kind    TYPE abap_typekind,
+         visibility   TYPE abap_visibility,
+         is_interface TYPE abap_bool,
+         is_inherited TYPE abap_bool,
+         is_class     TYPE abap_bool,
+         is_constant  TYPE abap_bool,
+         is_virtual   TYPE abap_bool,
+         is_read_only TYPE abap_bool,
+         alias_for    TYPE abap_attrname,
        END OF abap_attrdescr.
 TYPES abap_attrdescr_tab TYPE STANDARD TABLE OF abap_attrdescr WITH KEY name.
 
 
 TYPES: BEGIN OF abap_intfdescr,
-         name           TYPE abap_intfname,
-         is_inherited   TYPE abap_bool,
+         name         TYPE abap_intfname,
+         is_inherited TYPE abap_bool,
        END OF abap_intfdescr.
 TYPES abap_intfdescr_tab TYPE STANDARD TABLE OF abap_intfdescr WITH KEY name.
 

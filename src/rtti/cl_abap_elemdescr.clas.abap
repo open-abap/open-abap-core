@@ -20,7 +20,7 @@ CLASS cl_abap_elemdescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
 
     METHODS get_ddic_field
       IMPORTING
-        p_langu TYPE sy-langu DEFAULT sy-langu
+        p_langu           TYPE sy-langu DEFAULT sy-langu
       RETURNING
         VALUE(p_flddescr) TYPE dfies
       EXCEPTIONS
@@ -37,23 +37,23 @@ CLASS cl_abap_elemdescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
     CLASS-METHODS get_string RETURNING VALUE(p_result) TYPE REF TO cl_abap_elemdescr.
     CLASS-METHODS get_c
       IMPORTING
-        p_length TYPE i
+        p_length        TYPE i
       RETURNING
         VALUE(p_result) TYPE REF TO cl_abap_elemdescr.
     CLASS-METHODS get_p
       IMPORTING
-        p_length   TYPE i
-        p_decimals TYPE i
+        p_length        TYPE i
+        p_decimals      TYPE i
       RETURNING
         VALUE(p_result) TYPE REF TO cl_abap_elemdescr.
     CLASS-METHODS get_n
       IMPORTING
-        p_length TYPE i
+        p_length        TYPE i
       RETURNING
         VALUE(p_result) TYPE REF TO cl_abap_elemdescr.
     CLASS-METHODS get_x
       IMPORTING
-        p_length TYPE i
+        p_length        TYPE i
       RETURNING
         VALUE(p_result) TYPE REF TO cl_abap_elemdescr.
     CLASS-METHODS get_xstring

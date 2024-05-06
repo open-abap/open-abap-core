@@ -87,9 +87,9 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
     CLASS-METHODS
       assert_false
         IMPORTING
-          act TYPE abap_bool
-          msg TYPE csequence OPTIONAL
-          quit TYPE i OPTIONAL
+          act   TYPE abap_bool
+          msg   TYPE csequence OPTIONAL
+          quit  TYPE i OPTIONAL
           level TYPE i OPTIONAL.
 
     CLASS-METHODS

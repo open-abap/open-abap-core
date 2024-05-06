@@ -34,7 +34,7 @@ CLASS kernel_unit_runner DEFINITION PUBLIC.
 
     CLASS-METHODS run
       IMPORTING
-        it_input TYPE ty_input
+        it_input         TYPE ty_input
       RETURNING
         VALUE(rs_result) TYPE ty_result.
   PRIVATE SECTION.
@@ -46,16 +46,16 @@ CLASS kernel_unit_runner DEFINITION PUBLIC.
 
     CLASS-METHODS unique_classes
       IMPORTING
-       it_input TYPE ty_input
+       it_input           TYPE ty_input
       RETURNING
         VALUE(rt_classes) TYPE ty_classes.
 
     CLASS-METHODS to_json
-      IMPORTING it_list TYPE ty_result-list
+      IMPORTING it_list        TYPE ty_result-list
       RETURNING VALUE(rv_json) TYPE string.
 
     CLASS-METHODS get_location
-      IMPORTING ix_error TYPE REF TO cx_root
+      IMPORTING ix_error           TYPE REF TO cx_root
       RETURNING VALUE(rv_location) TYPE string.
 ENDCLASS.
 

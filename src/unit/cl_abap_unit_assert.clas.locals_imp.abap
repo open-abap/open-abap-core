@@ -2,11 +2,11 @@
 CLASS lcl_dump DEFINITION.
   PUBLIC SECTION.
     CLASS-METHODS to_string
-      IMPORTING iv_val TYPE any
+      IMPORTING iv_val        TYPE any
       RETURNING VALUE(rv_str) TYPE string.
   PRIVATE SECTION.
     CLASS-METHODS dump_structure
-      IMPORTING iv_val TYPE any
+      IMPORTING iv_val        TYPE any
       RETURNING VALUE(rv_str) TYPE string.
 ENDCLASS.
 

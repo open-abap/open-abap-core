@@ -13,6 +13,7 @@
   "rules": {
     "check_include": false, // todo
     "uncaught_exception": false, // todo
+    "align_type_expressions": false, // todo
     "cds_comment_style": true,
     "change_if_to_case": false,
     "expand_macros": true,
