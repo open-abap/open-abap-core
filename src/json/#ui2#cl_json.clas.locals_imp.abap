@@ -65,7 +65,7 @@ CLASS lcl_stack IMPLEMENTATION.
     FIELD-SYMBOLS <ls_data> LIKE LINE OF mt_stack.
     lv_index = lines( mt_stack ).
     IF lv_index > 0.
-      READ TABLE mt_stack ASSIGNING <ls_data> INDEX lv_index.     "#EC CI_SUBRC
+      READ TABLE mt_stack ASSIGNING <ls_data> INDEX lv_index ##SUBRC_OK.
       rv_name = <ls_data>-name.
       DELETE mt_stack INDEX lv_index.
     ENDIF.
