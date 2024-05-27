@@ -1,5 +1,7 @@
 INTERFACE if_t100_dyn_msg PUBLIC.
 
+  INTERFACES if_t100_message.
+
   DATA msgty TYPE symsgty.
 
   DATA msgv1 TYPE symsgv.
