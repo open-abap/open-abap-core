@@ -5,6 +5,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS md5 FOR TESTING RAISING cx_static_check.
     METHODS hmac_md5 FOR TESTING RAISING cx_static_check.
     METHODS sha256 FOR TESTING RAISING cx_static_check.
+    METHODS char FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -97,6 +98,10 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_hash
       exp = '96F48F411FA2DD50FE9C75C973457C69' ).
+
+  ENDMETHOD.
+
+  METHOD char.
 
   ENDMETHOD.
 
