@@ -66,10 +66,23 @@ CLASS cl_abap_hmac IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD calculate_hmac_for_char.
-    ASSERT 1 = 'todo'.
+    DATA lv_xstr TYPE xstring.
+
+* convert to utf8
+    lv_xstr = string_to_xstring( if_data ).
+
+    calculate_hmac_for_raw(
+      EXPORTING
+        if_algorithm     = if_algorithm
+        if_key           = if_key
+        if_data          = lv_xstr
+      IMPORTING
+        ef_hmacstring    = ef_hmacstring
+        ef_hmacxstring   = ef_hmacxstring
+        ef_hmacb64string = ef_hmacb64string ).
   ENDMETHOD.
 
   METHOD string_to_xstring.
-    ASSERT 1 = 'todo'.
+    er_output = cl_abap_codepage=>convert_to( if_input ).
   ENDMETHOD.
 ENDCLASS.
