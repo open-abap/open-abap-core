@@ -103,6 +103,20 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD char.
 
+    DATA lv_hash  TYPE xstring.
+    DATA lv_empty TYPE xstring.
+
+    cl_abap_hmac=>calculate_hmac_for_char(
+      EXPORTING
+        if_data        = |hello world|
+        if_key         = lv_empty
+      IMPORTING
+        ef_hmacxstring = lv_hash ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_hash
+      exp = '2AAE6C35C94FCFB415DBE95F408B9CE91EE846ED' ).
+
   ENDMETHOD.
 
 ENDCLASS.
