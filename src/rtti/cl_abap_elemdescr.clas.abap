@@ -15,6 +15,8 @@ CLASS cl_abap_elemdescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
     DATA help_id TYPE abap_helpid READ-ONLY.
 
     METHODS get_ddic_fixed_values
+      IMPORTING
+        p_langu               TYPE sy-langu DEFAULT sy-langu
       RETURNING
         VALUE(p_fixed_values) TYPE fixvalues.
 
@@ -144,6 +146,8 @@ CLASS cl_abap_elemdescr IMPLEMENTATION.
     DATA lv_dummy TYPE string.
     DATA lv_name  TYPE string.
     DATA ls_row   LIKE LINE OF p_fixed_values.
+
+* todo: take P_LANGU into account
 
     SPLIT absolute_name AT '=' INTO lv_dummy lv_name.
 
