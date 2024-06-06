@@ -2,10 +2,11 @@ CLASS cl_abap_dyn_prg DEFINITION PUBLIC.
   PUBLIC SECTION.
     CLASS-METHODS check_table_name_str
       IMPORTING
-        val            TYPE csequence
-        packages       TYPE csequence
+        val               TYPE csequence
+        packages          TYPE csequence
+        incl_sub_packages TYPE abap_bool OPTIONAL
       RETURNING
-        VALUE(val_str) TYPE string
+        VALUE(val_str)    TYPE string
       RAISING
         cx_abap_not_a_table
         cx_abap_not_in_package.
