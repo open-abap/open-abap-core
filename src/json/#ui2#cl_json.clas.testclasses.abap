@@ -658,9 +658,36 @@ CLASS ltcl_serialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT F
     METHODS time_field FOR TESTING RAISING cx_static_check.
     METHODS numc_field FOR TESTING RAISING cx_static_check.
     METHODS numc_field2 FOR TESTING RAISING cx_static_check.
+    METHODS serialize_empty_xstring FOR TESTING RAISING cx_static_check.
+    METHODS serialize_xstring FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_serialize IMPLEMENTATION.
+
+  METHOD serialize_empty_xstring.
+    DATA: BEGIN OF is_metadata,
+            foo TYPE xstring,
+          END OF is_metadata.
+    DATA lv_json TYPE string.
+    lv_json = /ui2/cl_json=>serialize( is_metadata ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = '{"FOO":""}' ).
+  ENDMETHOD.
+
+  METHOD serialize_xstring.
+    DATA: BEGIN OF is_metadata,
+            foo TYPE xstring,
+          END OF is_metadata.
+    DATA lv_json TYPE string.
+    is_metadata-foo = 'AA'.
+    lv_json = /ui2/cl_json=>serialize( is_metadata ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = '{"FOO":"qg=="}' ).
+  ENDMETHOD.
 
   METHOD bool_false.
     DATA: BEGIN OF ls_data,
