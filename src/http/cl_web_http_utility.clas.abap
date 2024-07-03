@@ -18,9 +18,31 @@ CLASS cl_web_http_utility DEFINITION PUBLIC.
         unencoded      TYPE xstring
       RETURNING
         VALUE(encoded) TYPE string.
+
+    CLASS-METHODS decode_base64
+      IMPORTING
+        encoded        TYPE string
+      RETURNING
+        VALUE(decoded) TYPE string.
+
+    CLASS-METHODS encode_base64
+      IMPORTING
+        unencoded      TYPE string
+      RETURNING
+        VALUE(encoded) TYPE string.
+
 ENDCLASS.
 
 CLASS cl_web_http_utility IMPLEMENTATION.
+
+  METHOD decode_base64.
+    decoded = cl_abap_codepage=>convert_from( cl_http_utility=>decode_x_base64( encoded ) ).
+  ENDMETHOD.
+
+  METHOD encode_base64.
+    encoded = cl_http_utility=>encode_x_base64( cl_abap_codepage=>convert_to( unencoded ) ).
+  ENDMETHOD.
+
   METHOD unescape_url.
     unescaped = cl_http_utility=>unescape_url(
       escaped = escaped
