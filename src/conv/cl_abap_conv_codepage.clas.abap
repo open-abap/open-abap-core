@@ -3,6 +3,8 @@ CLASS cl_abap_conv_codepage DEFINITION PUBLIC FINAL CREATE PRIVATE.
   PUBLIC SECTION.
 
     CLASS-METHODS create_in
+      IMPORTING
+        codepage        TYPE abap_encoding DEFAULT 'UTF-8'
       RETURNING
         VALUE(instance) TYPE REF TO if_abap_conv_in
       RAISING
@@ -19,7 +21,7 @@ ENDCLASS.
 CLASS cl_abap_conv_codepage IMPLEMENTATION.
 
   METHOD create_in.
-    CREATE OBJECT instance TYPE lcl_in.
+    CREATE OBJECT instance TYPE lcl_in EXPORTING codepage = codepage.
   ENDMETHOD.
 
   METHOD create_out.

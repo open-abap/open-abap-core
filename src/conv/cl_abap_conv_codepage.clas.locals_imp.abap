@@ -1,12 +1,19 @@
 CLASS lcl_in DEFINITION.
   PUBLIC SECTION.
+    METHODS constructor IMPORTING codepage TYPE abap_encoding.
     INTERFACES if_abap_conv_in.
+  PRIVATE SECTION.
+    DATA mv_encoding TYPE abap_encoding.
 ENDCLASS.
 
 CLASS lcl_in IMPLEMENTATION.
+  METHOD constructor.
+    mv_encoding = codepage.
+  ENDMETHOD.
+
   METHOD if_abap_conv_in~convert.
     DATA conv TYPE REF TO cl_abap_conv_in_ce.
-    conv = cl_abap_conv_in_ce=>create( encoding = 'UTF-8' ).
+    conv = cl_abap_conv_in_ce=>create( encoding = mv_encoding ).
     conv->convert(
       EXPORTING
         input = source
