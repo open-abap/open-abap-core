@@ -1,0 +1,7 @@
+CLASS cx_sy_regex DEFINITION PUBLIC INHERITING FROM cx_dynamic_check.
+
+ENDCLASS.
+
+CLASS cx_sy_regex IMPLEMENTATION.
+
+ENDCLASS.
