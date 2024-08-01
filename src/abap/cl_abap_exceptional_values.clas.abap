@@ -16,10 +16,13 @@ ENDCLASS.
 CLASS cl_abap_exceptional_values IMPLEMENTATION.
 
   METHOD get_max_value.
-    DATA lv_type     TYPE c LENGTH 1.
-    DATA lv_length   TYPE i.
-    DATA lv_decimals TYPE i.
-    FIELD-SYMBOLS <out> TYPE any.
+    DATA lv_type                  TYPE c LENGTH 1.
+    DATA lv_length                TYPE i.
+    DATA lv_decimals              TYPE i.
+    DATA lv_digits_before_decimal TYPE i.
+    DATA lv_integer_part          TYPE string.
+    DATA lv_decimal_part          TYPE string.
+    FIELD-SYMBOLS <out>           TYPE any.
 
     DESCRIBE FIELD in TYPE lv_type.
 
@@ -32,15 +35,20 @@ CLASS cl_abap_exceptional_values IMPLEMENTATION.
         CREATE DATA out TYPE p LENGTH lv_length DECIMALS lv_decimals.
         ASSIGN out->* TO <out>.
 
-        IF lv_length = 3 AND lv_decimals = 1.
-          <out> = '9999.9'.
-        ELSEIF lv_length = 4 AND lv_decimals = 1.
-          <out> = '999999.9'.
-        ELSEIF lv_length = 7 AND lv_decimals = 3.
-          <out> = '9999999999.999'.
-        ELSE.
-          ASSERT 1 = 'todo'.
+        lv_digits_before_decimal = lv_length * 2 - 1 - lv_decimals.
+
+        DO lv_digits_before_decimal TIMES.
+          lv_integer_part = lv_integer_part && '9'.
+        ENDDO.
+
+        IF lv_decimals > 0.
+          lv_decimal_part = '.'.
+          DO lv_decimals TIMES.
+            lv_decimal_part = lv_decimal_part && '9'.
+          ENDDO.
         ENDIF.
+
+        <out> = lv_integer_part && lv_decimal_part.
       WHEN OTHERS.
         WRITE '@KERNEL console.dir(INPUT);'.
         ASSERT 1 = 'todo'.
