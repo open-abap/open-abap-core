@@ -26,18 +26,20 @@ INTERFACE if_mr_api PUBLIC.
 
   METHODS create_folder
     IMPORTING
-      i_url                     TYPE csequence
-      i_language                TYPE langu DEFAULT sy-langu
-      i_description             TYPE csequence OPTIONAL
-      i_check_authority         TYPE abap_bool DEFAULT abap_true
-      i_suppress_package_dialog TYPE abap_bool DEFAULT space
-      i_dev_package             TYPE devclass OPTIONAL
-      i_genflag                 TYPE abap_bool DEFAULT abap_false
-      i_corr_number             TYPE trkorr OPTIONAL
-      i_folder_loio             TYPE any OPTIONAL
-      i_suppress_dialogs        TYPE abap_bool OPTIONAL
+      i_url                         TYPE csequence
+      i_language                    TYPE langu DEFAULT sy-langu
+      i_description                 TYPE csequence OPTIONAL
+      i_check_authority             TYPE abap_bool DEFAULT abap_true
+      i_suppress_package_dialog     TYPE abap_bool DEFAULT space
+      i_dev_package                 TYPE devclass OPTIONAL
+      i_genflag                     TYPE abap_bool DEFAULT abap_false
+      i_corr_number                 TYPE trkorr OPTIONAL
+      i_folder_loio                 TYPE any OPTIONAL
+      i_suppress_dialogs            TYPE abap_bool OPTIONAL
+      i_folder_role                 TYPE any OPTIONAL
+      i_new_folder_role_description TYPE any OPTIONAL
     EXPORTING
-      e_folder_io               TYPE skwf_io
+      e_folder_io                   TYPE skwf_io
     EXCEPTIONS
       parameter_missing
       error_occured
@@ -57,6 +59,7 @@ INTERFACE if_mr_api PUBLIC.
       i_genflag                 TYPE abap_bool DEFAULT abap_false
       i_corr_number             TYPE trkorr OPTIONAL
       i_new_loio                TYPE any OPTIONAL
+      i_virus_profile           TYPE any OPTIONAL
       i_suppress_dialogs        TYPE abap_bool OPTIONAL
     EXCEPTIONS
       parameter_missing
