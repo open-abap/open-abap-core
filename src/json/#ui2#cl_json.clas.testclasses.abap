@@ -676,7 +676,7 @@ CLASS ltcl_serialize IMPLEMENTATION.
       ts_as_iso8601 = abap_true ).
     cl_abap_unit_assert=>assert_text_matches(
       text    = lv_json
-      pattern = '\{"TS":"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d.\d\d\d\d\d\d\dZ"\}' ).
+      pattern = '\{"TS":"\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d\d\d\d\d\d\dZ"\}' ).
   ENDMETHOD.
 
   METHOD serialize_empty_xstring.

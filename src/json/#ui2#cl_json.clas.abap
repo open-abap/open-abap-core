@@ -136,8 +136,11 @@ CLASS /ui2/cl_json IMPLEMENTATION.
                 OR lo_type->absolute_name = `\TYPE=TIMESTAMPL` ).
               IF data IS INITIAL.
                 r_json = |""|.
-              ELSE.
+              ELSEIF lo_type->absolute_name = `\TYPE=TIMESTAMP`.
                 r_json = |"{ data TIMESTAMP = ISO }.0000000Z"|.
+              ELSE.
+                r_json = |"{ data TIMESTAMP = ISO }Z"|.
+                REPLACE ',' IN r_json WITH '.'.
               ENDIF.
             ELSE.
               r_json = |{ data }|.
