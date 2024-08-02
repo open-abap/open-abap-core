@@ -6,6 +6,15 @@ CLASS cl_mime_repository_api DEFINITION PUBLIC FINAL CREATE PRIVATE.
 ENDCLASS.
 
 CLASS cl_mime_repository_api IMPLEMENTATION.
+
+  METHOD if_mr_api~get_by_io.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_mr_api~get_url_for_io.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_mr_api~get_api.
     ASSERT 1 = 'todo'.
   ENDMETHOD.

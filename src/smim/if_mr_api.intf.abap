@@ -8,15 +8,16 @@ INTERFACE if_mr_api PUBLIC.
 
   METHODS get
     IMPORTING
-      i_url             TYPE csequence
-      i_check_authority TYPE abap_bool DEFAULT abap_true
+      i_url                  TYPE csequence
+      i_check_authority      TYPE abap_bool DEFAULT abap_true
     EXPORTING
-      e_is_folder       TYPE abap_bool
-      e_content         TYPE xstring
-      e_mime_type       TYPE csequence
-      e_loio            TYPE skwf_io
+      e_is_folder            TYPE abap_bool
+      e_content              TYPE xstring
+      e_mime_type            TYPE csequence
+      e_loio                 TYPE skwf_io
+      e_content_last_changed TYPE any
     CHANGING
-      c_language        TYPE langu OPTIONAL
+      c_language             TYPE langu OPTIONAL
     EXCEPTIONS
       parameter_missing
       error_occured
@@ -33,7 +34,7 @@ INTERFACE if_mr_api PUBLIC.
       i_dev_package             TYPE devclass OPTIONAL
       i_genflag                 TYPE abap_bool DEFAULT abap_false
       i_corr_number             TYPE trkorr OPTIONAL
-      i_folder_loio             TYPE skwf_io OPTIONAL
+      i_folder_loio             TYPE any OPTIONAL
       i_suppress_dialogs        TYPE abap_bool OPTIONAL
     EXPORTING
       e_folder_io               TYPE skwf_io
@@ -55,7 +56,7 @@ INTERFACE if_mr_api PUBLIC.
       i_dev_package             TYPE devclass OPTIONAL
       i_genflag                 TYPE abap_bool DEFAULT abap_false
       i_corr_number             TYPE trkorr OPTIONAL
-      i_new_loio                TYPE skwf_io OPTIONAL
+      i_new_loio                TYPE any OPTIONAL
       i_suppress_dialogs        TYPE abap_bool OPTIONAL
     EXCEPTIONS
       parameter_missing
@@ -124,5 +125,25 @@ INTERFACE if_mr_api PUBLIC.
       parameter_missing
       error_occured
       not_found.
+
+  METHODS get_by_io
+    IMPORTING
+      i_loio                 TYPE any
+      i_check_authority      TYPE abap_bool DEFAULT abap_true
+    EXPORTING
+      e_is_folder            TYPE abap_bool
+      e_content              TYPE xstring
+      e_content_last_changed TYPE any
+      e_mime_type            TYPE csequence
+      e_phio_id              TYPE any
+    CHANGING
+      c_language             TYPE spras OPTIONAL.
+
+  METHODS get_url_for_io
+    IMPORTING
+      i_loio      TYPE any
+    EXPORTING
+      e_url       TYPE string
+      e_is_folder TYPE abap_bool.
 
 ENDINTERFACE.
