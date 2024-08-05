@@ -12,10 +12,19 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS output_length_int FOR TESTING RAISING cx_static_check.
     METHODS sylangu_mask1 FOR TESTING RAISING cx_static_check.
     METHODS sylangu_mask2 FOR TESTING RAISING cx_static_check.
+    METHODS get_uctlong FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
+
+  METHOD get_uctlong.
+    DATA lo_descr TYPE REF TO cl_abap_elemdescr.
+    lo_descr = cl_abap_elemdescr=>get_utclong( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_descr->type_kind
+      exp = cl_abap_typedescr=>typekind_utclong ).
+  ENDMETHOD.
 
   METHOD sylangu_mask1.
     DATA typedescr TYPE REF TO cl_abap_typedescr.

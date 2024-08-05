@@ -37,6 +37,7 @@ CLASS cl_abap_elemdescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
     CLASS-METHODS get_decfloat16 RETURNING VALUE(r_result) TYPE REF TO cl_abap_elemdescr.
     CLASS-METHODS get_decfloat34 RETURNING VALUE(r_result) TYPE REF TO cl_abap_elemdescr.
     CLASS-METHODS get_string RETURNING VALUE(p_result) TYPE REF TO cl_abap_elemdescr.
+    CLASS-METHODS get_utclong RETURNING VALUE(p_result) TYPE REF TO cl_abap_elemdescr.
     CLASS-METHODS get_c
       IMPORTING
         p_length        TYPE i
@@ -138,6 +139,12 @@ CLASS cl_abap_elemdescr IMPLEMENTATION.
   METHOD get_c.
     DATA foo TYPE REF TO data.
     CREATE DATA foo TYPE c LENGTH p_length.
+    p_result ?= cl_abap_typedescr=>describe_by_data_ref( foo ).
+  ENDMETHOD.
+
+  METHOD get_utclong.
+    DATA foo TYPE REF TO data.
+    CREATE DATA foo TYPE utclong.
     p_result ?= cl_abap_typedescr=>describe_by_data_ref( foo ).
   ENDMETHOD.
 
