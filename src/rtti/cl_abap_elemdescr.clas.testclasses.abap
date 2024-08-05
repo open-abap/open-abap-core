@@ -22,7 +22,7 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lo_descr TYPE REF TO cl_abap_elemdescr.
     lo_descr = cl_abap_elemdescr=>get_utclong( ).
     cl_abap_unit_assert=>assert_equals(
-      act = lo_descr->kind
+      act = lo_descr->type_kind
       exp = cl_abap_typedescr=>typekind_utclong ).
   ENDMETHOD.
 
