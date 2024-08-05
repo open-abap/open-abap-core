@@ -145,6 +145,8 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
         CREATE DATA dref TYPE xstring.
       WHEN cl_abap_typedescr=>typekind_int.
         CREATE DATA dref TYPE i.
+      WHEN cl_abap_typedescr=>typekind_utclong.
+        CREATE DATA dref TYPE utclong.
       WHEN cl_abap_typedescr=>typekind_date.
         CREATE DATA dref TYPE d.
       WHEN cl_abap_typedescr=>typekind_hex.
