@@ -104,7 +104,9 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     WRITE '@KERNEL   }'.
     WRITE '@KERNEL }'.
     IF lv_result = abap_true.
-      lv_result = lcl_string_to_string=>run( lv_dummy ).
+      lv_result = lcl_string_to_string=>run(
+        source  = lv_dummy
+        options = ms_options ).
       WRITE '@KERNEL   INPUT.resultXML.set(lv_result);'.
       RETURN.
     ENDIF.

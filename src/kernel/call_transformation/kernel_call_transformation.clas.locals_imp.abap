@@ -541,6 +541,7 @@ CLASS lcl_string_to_string DEFINITION.
     CLASS-METHODS run
       IMPORTING
         source        TYPE any
+        options       TYPE kernel_call_transformation=>ty_options
       RETURNING
         VALUE(result) TYPE string.
 ENDCLASS.
@@ -549,5 +550,9 @@ CLASS lcl_string_to_string IMPLEMENTATION.
   METHOD run.
 * this is not right, but works for the unit test
     WRITE '@KERNEL result.set(INPUT.source.get());'.
+
+    IF options-xml_header = 'no'.
+      REPLACE FIRST OCCURRENCE OF REGEX '<?.*?>' IN result WITH ''.
+    ENDIF.
   ENDMETHOD.
 ENDCLASS.
