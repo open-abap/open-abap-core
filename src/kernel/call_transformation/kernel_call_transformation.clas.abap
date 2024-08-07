@@ -3,6 +3,7 @@ CLASS kernel_call_transformation DEFINITION PUBLIC.
   PUBLIC SECTION.
     TYPES: BEGIN OF ty_options,
              initial_components TYPE string,
+             xml_header         TYPE string,
            END OF ty_options.
 
     CONSTANTS: BEGIN OF gc_options,
@@ -92,6 +93,19 @@ CLASS kernel_call_transformation IMPLEMENTATION.
       lcl_object_to_sxml=>run(
         ii_writer = li_writer
         source    = lv_dummy ).
+      RETURN.
+    ENDIF.
+
+* input = string, output = string
+    WRITE '@KERNEL if (INPUT.resultXML && INPUT.resultXML.constructor.name === "String") {'.
+    WRITE '@KERNEL   if (INPUT.sourceXML && INPUT.sourceXML.constructor.name === "String") {'.
+    WRITE '@KERNEL     lv_result.set("X");'.
+    WRITE '@KERNEL     lv_dummy = INPUT.sourceXML;'.
+    WRITE '@KERNEL   }'.
+    WRITE '@KERNEL }'.
+    IF lv_result = abap_true.
+      lv_result = lcl_string_to_string=>run( lv_dummy ).
+      WRITE '@KERNEL   INPUT.resultXML.set(lv_result);'.
       RETURN.
     ENDIF.
 

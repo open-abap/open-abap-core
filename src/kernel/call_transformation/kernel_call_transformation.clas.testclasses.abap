@@ -126,6 +126,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS suppress1 FOR TESTING RAISING cx_static_check.
     METHODS suppress2 FOR TESTING RAISING cx_static_check.
     METHODS suppress3 FOR TESTING RAISING cx_static_check.
+    METHODS xml_to_xml FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
@@ -1078,6 +1079,24 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = lv_xml
       exp = '*<asx:values><FOO/></asx:values>*' ).
+
+  ENDMETHOD.
+
+  METHOD xml_to_xml.
+
+    DATA lv_xml TYPE string.
+
+    lv_xml = |<foo>2</foo>|.
+
+    CALL TRANSFORMATION id
+      SOURCE XML lv_xml
+      RESULT XML lv_xml
+      OPTIONS xml_header = 'no'.
+
+* there might be a byte order mark,
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_xml
+      exp = '*<foo>2</foo>*' ).
 
   ENDMETHOD.
 
