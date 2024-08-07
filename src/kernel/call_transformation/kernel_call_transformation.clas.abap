@@ -3,6 +3,7 @@ CLASS kernel_call_transformation DEFINITION PUBLIC.
   PUBLIC SECTION.
     TYPES: BEGIN OF ty_options,
              initial_components TYPE string,
+             xml_header         TYPE string,
            END OF ty_options.
 
     CONSTANTS: BEGIN OF gc_options,
