@@ -178,16 +178,19 @@ CLASS ltcl_xml IMPLEMENTATION.
       name   = 'moo'
       parent = mi_document ).
     lo_element->set_attribute(
-      name  = 'b'
+      name  = 't'
       value = 'value' ).
     lo_element->set_attribute(
-      name  = 'a'
+      name  = 'si'
+      value = 'value' ).
+    lo_element->set_attribute(
+      name  = 'ref'
       value = 'value' ).
     lv_xml = render( ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lv_xml
-      exp = '<?xml version="1.0" encoding="utf-16"?><hello:moo b="value" a="value"/>' ).
+      exp = '<?xml version="1.0" encoding="utf-16"?><hello:moo t="value" si="value" ref="value"/>' ).
   ENDMETHOD.
 
   METHOD render_element_and_attribute.
