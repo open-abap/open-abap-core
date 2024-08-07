@@ -129,6 +129,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS xml_to_xml FOR TESTING RAISING cx_static_check.
     METHODS xml_to_xml_rm_header FOR TESTING RAISING cx_static_check.
     METHODS xml_to_xml_rm_header_bom FOR TESTING RAISING cx_static_check.
+    METHODS xml_to_xml_sort_attributes FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
@@ -1139,6 +1140,21 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_xml
       exp = lv_str_bom ).
+
+  ENDMETHOD.
+
+  METHOD xml_to_xml_sort_attributes.
+
+    DATA lv_xml     TYPE string.
+    DATA lv_str_bom TYPE string.
+    DATA lv_hex_bom TYPE xstring.
+
+    lv_xml = |<hello:moo t="value" si="value" ref="value"/>|.
+    CALL TRANSFORMATION id SOURCE XML lv_xml RESULT XML lv_xml OPTIONS xml_header = 'no'.
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_xml
+      exp = '*<hello:moo ref="value" si="value" t="value"/>*' ).
 
   ENDMETHOD.
 
