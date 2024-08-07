@@ -127,6 +127,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS suppress2 FOR TESTING RAISING cx_static_check.
     METHODS suppress3 FOR TESTING RAISING cx_static_check.
     METHODS xml_to_xml FOR TESTING RAISING cx_static_check.
+    METHODS xml_to_xml_rm_header FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
@@ -1090,13 +1091,31 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
 
     CALL TRANSFORMATION id
       SOURCE XML lv_xml
-      RESULT XML lv_xml
-      OPTIONS xml_header = 'no'.
+      RESULT XML lv_xml.
 
 * there might be a byte order mark,
     cl_abap_unit_assert=>assert_char_cp(
       act = lv_xml
       exp = '*<foo>2</foo>*' ).
+
+  ENDMETHOD.
+
+  METHOD xml_to_xml_rm_header.
+
+    DATA lv_xml TYPE string.
+    DATA lv_bom TYPE xstring.
+
+    lv_xml = |<?xml version="1.0" encoding="UTF-8" standalone="yes" ?><foo>2</foo>|.
+    CALL TRANSFORMATION id SOURCE XML lv_xml RESULT XML lv_xml OPTIONS xml_header = 'no'.
+
+    lv_bom = cl_abap_char_utilities=>byte_order_mark_little.
+    REPLACE FIRST OCCURRENCE OF cl_abap_codepage=>convert_from(
+      source   = lv_bom
+      codepage = 'UTF-16' ) IN lv_xml WITH ''.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_xml
+      exp = '<foo>2</foo>' ).
 
   ENDMETHOD.
 
