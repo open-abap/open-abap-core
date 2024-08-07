@@ -102,12 +102,15 @@ CLASS cl_abap_conv_in_ce IMPLEMENTATION.
 
     " Try TextDecoder first, if it runs in browser,
     WRITE '@KERNEL const decoder = TextDecoder || await import("util").TextDecoder;'.
-    WRITE '@KERNEL const td = new decoder(this.mv_js_encoding.get(), {fatal: this.mv_ignore_cerr.get() !== "X"});'.
+* https://stackoverflow.com/questions/62334608/textdecoder-prototype-ignorebom-not-working-as-expected
+    WRITE '@KERNEL const td = new decoder(this.mv_js_encoding.get(), {fatal: this.mv_ignore_cerr.get() !== "X", ignoreBOM: true});'.
     WRITE '@KERNEL try {'.
+    " WRITE '@KERNEL   console.dir(buf);'.
     WRITE '@KERNEL   data.set(td.decode(buf));'.
+    " WRITE '@KERNEL   console.dir(td.decode(buf).charCodeAt( 0 ));'.
     WRITE '@KERNEL } catch (e) {'.
-    WRITE '@KERNEL   console.dir(e);'.
-    WRITE '@KERNEL   console.dir(this.mv_js_encoding.get());'.
+*    WRITE '@KERNEL   console.dir(e);'.
+*    WRITE '@KERNEL   console.dir(this.mv_js_encoding.get());'.
     lv_error = abap_true.
     WRITE '@KERNEL }'.
 

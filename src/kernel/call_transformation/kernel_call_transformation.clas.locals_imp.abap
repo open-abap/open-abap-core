@@ -548,11 +548,22 @@ ENDCLASS.
 
 CLASS lcl_string_to_string IMPLEMENTATION.
   METHOD run.
+    DATA lv_str_bom TYPE string.
+    DATA lv_hex_bom TYPE xstring.
+
 * this is not right, but works for the unit test
     WRITE '@KERNEL result.set(INPUT.source.get());'.
 
+    lv_hex_bom = cl_abap_char_utilities=>byte_order_mark_little.
+    lv_str_bom = cl_abap_codepage=>convert_from(
+      source   = lv_hex_bom
+      codepage = 'UTF-16' ).
+
     IF options-xml_header = 'no'.
-      REPLACE FIRST OCCURRENCE OF REGEX '<?.*?>' IN result WITH ''.
+      REPLACE FIRST OCCURRENCE OF REGEX '<\?.*\?>' IN result WITH ''.
+      " WRITE '@KERNEL console.dir(lv_str_bom);'.
+      CONCATENATE lv_str_bom result INTO result.
+      " WRITE '@KERNEL console.dir(result);'.
     ENDIF.
   ENDMETHOD.
 ENDCLASS.
