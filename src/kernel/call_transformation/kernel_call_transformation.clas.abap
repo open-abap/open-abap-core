@@ -95,6 +95,19 @@ CLASS kernel_call_transformation IMPLEMENTATION.
       RETURN.
     ENDIF.
 
+* input = string, output = string
+    WRITE '@KERNEL if (INPUT.resultXML && INPUT.resultXML.constructor.name === "String") {'.
+    WRITE '@KERNEL   if (INPUT.sourceXML && INPUT.sourceXML.constructor.name === "String") {'.
+    WRITE '@KERNEL     lv_result.set("X");'.
+    WRITE '@KERNEL     lv_dummy = INPUT.sourceXML;'.
+    WRITE '@KERNEL   }'.
+    WRITE '@KERNEL }'.
+    IF lv_result = abap_true.
+      lv_result = lcl_string_to_string=>run( lv_dummy ).
+      WRITE '@KERNEL   INPUT.resultXML.set(lv_result);'.
+      RETURN.
+    ENDIF.
+
 * input = object, output = string
     WRITE '@KERNEL if (INPUT.resultXML && INPUT.resultXML.constructor.name === "String") {'.
     WRITE '@KERNEL   lv_result.set("X");'.

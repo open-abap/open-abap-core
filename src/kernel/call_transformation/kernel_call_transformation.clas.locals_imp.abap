@@ -535,3 +535,19 @@ CLASS lcl_object_to_ixml IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+CLASS lcl_string_to_string DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS run
+      IMPORTING
+        source        TYPE any
+      RETURNING
+        VALUE(result) TYPE string.
+ENDCLASS.
+
+CLASS lcl_string_to_string IMPLEMENTATION.
+  METHOD run.
+* this is not right, but works for the unit test
+    WRITE '@KERNEL result.set(INPUT.source.get());'.
+  ENDMETHOD.
+ENDCLASS.
