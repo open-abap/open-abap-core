@@ -105,7 +105,9 @@ CLASS cl_abap_conv_in_ce IMPLEMENTATION.
     WRITE '@KERNEL const td = new decoder(this.mv_js_encoding.get(), {fatal: this.mv_ignore_cerr.get() !== "X"});'.
     WRITE '@KERNEL try {'.
     WRITE '@KERNEL   data.set(td.decode(buf));'.
-    WRITE '@KERNEL } catch {'.
+    WRITE '@KERNEL } catch (e) {'.
+    WRITE '@KERNEL   console.dir(e);'.
+    WRITE '@KERNEL   console.dir(this.mv_js_encoding.get());'.
     lv_error = abap_true.
     WRITE '@KERNEL }'.
 
