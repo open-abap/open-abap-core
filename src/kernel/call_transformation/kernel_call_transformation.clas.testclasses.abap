@@ -1087,7 +1087,11 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     DATA lv_xml TYPE string.
 
     lv_xml = |<foo>2</foo>|.
-    CALL TRANSFORMATION id SOURCE XML lv_xml RESULT XML lv_xml OPTIONS xml_header = 'no'.
+
+    CALL TRANSFORMATION id
+      SOURCE XML lv_xml
+      RESULT XML lv_xml
+      OPTIONS xml_header = 'no'.
 
 * there might be a byte order mark,
     cl_abap_unit_assert=>assert_char_cp(
