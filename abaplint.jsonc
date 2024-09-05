@@ -14,6 +14,12 @@
     "uncaught_exception": false, // todo
 
     "check_include": true,
+    "add_test_attributes": true,
+    "empty_event": true,
+    "implicit_start_of_selection": true,
+    "tables_declared_locally": true,
+    "unused_macros": true,
+    "macro_naming": true,
     "align_type_expressions": true,
     "align_pseudo_comments": true,
     "dynpro_checks": true,
