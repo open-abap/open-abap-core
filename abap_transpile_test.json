@@ -7,7 +7,6 @@
   "options": {
     "ignoreSyntaxCheck": false,
     "addFilenames": true,
-    "keywords": [],
     "addCommonJS": true,
     "extraSetup": "../test/setup.mjs"
   }
