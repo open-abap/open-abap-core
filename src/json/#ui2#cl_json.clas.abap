@@ -23,15 +23,16 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
 
     CLASS-METHODS serialize
       IMPORTING
-        data          TYPE data
-        compress      TYPE abap_bool OPTIONAL
-        pretty_name   TYPE string OPTIONAL
-        assoc_arrays  TYPE abap_bool OPTIONAL
-        ts_as_iso8601 TYPE abap_bool OPTIONAL
-        type_descr    TYPE REF TO cl_abap_typedescr OPTIONAL
-        format_output TYPE abap_bool OPTIONAL
+        data             TYPE data
+        compress         TYPE abap_bool OPTIONAL
+        pretty_name      TYPE string OPTIONAL
+        assoc_arrays     TYPE abap_bool OPTIONAL
+        assoc_arrays_opt TYPE abap_bool OPTIONAL
+        ts_as_iso8601    TYPE abap_bool OPTIONAL
+        type_descr       TYPE REF TO cl_abap_typedescr OPTIONAL
+        format_output    TYPE abap_bool OPTIONAL
       RETURNING
-        VALUE(r_json) TYPE string.
+        VALUE(r_json)    TYPE string.
 
     CLASS-METHODS generate
       IMPORTING
