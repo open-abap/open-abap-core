@@ -1,6 +1,6 @@
 {
   "global": {
-    "files": "/{src,test}/**/*.*",
+    "files": ["/src/**/*.*", "/test/**/*.*"],
     "noIssues": ["zcl_shma_area"],
     "skipGeneratedGatewayClasses": true,
     "skipGeneratedPersistentClasses": true,
