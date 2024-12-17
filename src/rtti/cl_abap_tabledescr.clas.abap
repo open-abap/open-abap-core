@@ -26,7 +26,7 @@ CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
         VALUE(type) TYPE REF TO cl_abap_datadescr.
 
     CLASS-METHODS get
-      IMPORTING type       TYPE REF TO cl_abap_typedescr
+      IMPORTING type       TYPE REF TO cl_abap_datadescr
       RETURNING VALUE(val) TYPE REF TO cl_abap_tabledescr.
 
     CLASS-METHODS get_with_keys
