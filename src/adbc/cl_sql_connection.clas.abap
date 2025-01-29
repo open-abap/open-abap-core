@@ -13,11 +13,19 @@ CLASS cl_sql_connection DEFINITION PUBLIC.
         connection_type   TYPE clike
       RETURNING
         VALUE(connection) TYPE REF TO cl_sql_connection.
+
+    METHODS create_statement
+      RETURNING
+        VALUE(statement) TYPE REF TO cl_sql_statement.
 ENDCLASS.
 
 CLASS cl_sql_connection IMPLEMENTATION.
+  METHOD create_statement.
+    CREATE OBJECT statement.
+  ENDMETHOD.
+
   METHOD get_connection.
-    RETURN. " todo, implement method
+    CREATE OBJECT connection.
   ENDMETHOD.
 
   METHOD get_abap_connection.
