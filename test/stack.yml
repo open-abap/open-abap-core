@@ -18,4 +18,4 @@ services:
     image: kennethreitz/httpbin
     container_name: httpbin
     ports:
-      - '80:8080'
+      - '8080:80'
