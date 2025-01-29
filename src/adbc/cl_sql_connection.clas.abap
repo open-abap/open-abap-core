@@ -32,13 +32,14 @@ CLASS cl_sql_connection IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD create_statement.
-    CREATE OBJECT statement.
+    CREATE OBJECT statement EXPORTING con_ref = me.
   ENDMETHOD.
 
   METHOD get_connection.
     " only supported for now,
     ASSERT sharable = abap_true.
     CREATE OBJECT connection.
+    connection->mv_con_name = con_name.
   ENDMETHOD.
 
   METHOD get_abap_connection.
