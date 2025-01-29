@@ -136,7 +136,8 @@ CLASS ltcl_test IMPLEMENTATION.
       IMPORTING
         client = li_client ).
 
-    li_client->authenticate( username = 'sdf' password = 'sdf' ).
+    li_client->authenticate( username = 'sdf'
+                             password = 'sdf' ).
     li_client->send( ).
     li_client->receive( ).
 
@@ -177,11 +178,13 @@ CLASS ltcl_test IMPLEMENTATION.
     ASSERT li_client->request->get_method( ) = ''.
     ASSERT li_client->request->get_header_field( 'sdfds' ) = ''.
 
-    li_client->authenticate( username = 'sdf' password = 'sdf' ).
+    li_client->authenticate( username = 'sdf'
+                             password = 'sdf' ).
     ASSERT li_client->request->get_header_field( 'Authorization' ) = 'Basic c2RmOnNkZg=='.
     ASSERT li_client->request->get_header_field( 'authorizaTION' ) = 'Basic c2RmOnNkZg=='.
 
-    li_client->request->set_header_field( name = 'FOObar' value = '42' ).
+    li_client->request->set_header_field( name = 'FOObar'
+                                          value = '42' ).
 
     li_client->request->get_header_fields( CHANGING fields = fields ).
     ASSERT lines( fields ) = 3.
@@ -223,7 +226,8 @@ CLASS ltcl_test IMPLEMENTATION.
         ssl_id = 'ANONYM'
       IMPORTING
         client = li_client ).
-    li_client->request->set_form_field( name = 'foo' value = 'bar' ).
+    li_client->request->set_form_field( name = 'foo'
+                                        value = 'bar' ).
     li_client->send( ).
     li_client->receive( ).
 
@@ -357,7 +361,8 @@ CLASS ltcl_test IMPLEMENTATION.
         ssl_id = 'ANONYM'
       IMPORTING
         client = li_client ).
-    li_client->request->set_header_field( name = '~request_uri' value = lv_uri ).
+    li_client->request->set_header_field( name = '~request_uri'
+                                          value = lv_uri ).
     lv_val = li_client->request->get_header_field( name = '~request_uri' ).
     cl_abap_unit_assert=>assert_equals(
       act = lv_uri
@@ -398,8 +403,10 @@ CLASS ltcl_test IMPLEMENTATION.
       IMPORTING
         client = li_client ).
     li_client->request->set_method( 'POST' ).
-    li_client->request->set_form_field( name = 'foo1' value = 'bar1' ).
-    li_client->request->set_form_field( name = 'foo2' value = 'bar2' ).
+    li_client->request->set_form_field( name = 'foo1'
+                                        value = 'bar1' ).
+    li_client->request->set_form_field( name = 'foo2'
+                                        value = 'bar2' ).
     li_client->request->set_content_type( 'application/x-www-form-urlencoded' ).
 
     li_client->send( ).

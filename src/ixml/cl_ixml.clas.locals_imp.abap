@@ -410,7 +410,8 @@ CLASS lcl_node IMPLEMENTATION.
     li_children = if_ixml_node~get_children( ).
 
     IF mv_name <> '#text' AND ostream->get_pretty_print( ) = abap_true.
-      ostream->write_string( repeat( val = | | occ = ostream->get_indent( ) ) ).
+      ostream->write_string( repeat( val = | |
+                                     occ = ostream->get_indent( ) ) ).
     ENDIF.
 
     IF mv_name <> '#text'.
@@ -439,7 +440,8 @@ CLASS lcl_node IMPLEMENTATION.
       ostream->write_string( lcl_escape=>escape_value( mv_value ) ).
       IF mv_name <> '#text'.
         IF ostream->get_pretty_print( ) = abap_true AND has_direct_text( ) = abap_false.
-          ostream->write_string( repeat( val = | | occ = ostream->get_indent( ) ) ).
+          ostream->write_string( repeat( val = | |
+                                         occ = ostream->get_indent( ) ) ).
         ENDIF.
         ostream->write_string( '</' && lv_ns && mv_name && '>' ).
       ENDIF.

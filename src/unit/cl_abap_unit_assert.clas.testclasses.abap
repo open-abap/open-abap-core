@@ -118,12 +118,16 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD equals.
     DATA bar TYPE i.
-    cl_abap_unit_assert=>assert_equals( act = bar exp = bar ).
+    cl_abap_unit_assert=>assert_equals( act = bar
+                                        exp = bar ).
     bar = 2.
-    cl_abap_unit_assert=>assert_equals( act = bar exp = bar ).
+    cl_abap_unit_assert=>assert_equals( act = bar
+                                        exp = bar ).
 
-    cl_abap_unit_assert=>assert_equals( act = 2 exp = 2 ).
-    cl_abap_unit_assert=>assert_equals( act = 'hello' exp = 'hello' ).
+    cl_abap_unit_assert=>assert_equals( act = 2
+                                        exp = 2 ).
+    cl_abap_unit_assert=>assert_equals( act = 'hello'
+                                        exp = 'hello' ).
   ENDMETHOD.
 
   METHOD equals_date.

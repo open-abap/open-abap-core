@@ -284,7 +284,8 @@ CLASS lcl_object_to_sxml IMPLEMENTATION.
     WRITE '@KERNEL     result.assign(INPUT.source[name]);'.
     WRITE '@KERNEL   }'.
     mi_writer->open_element( name = 'str' ).
-    mi_writer->write_attribute( name = 'name' value = to_upper( lv_name ) ).
+    mi_writer->write_attribute( name = 'name'
+                                value = to_upper( lv_name ) ).
     traverse_write( result ).
     mi_writer->close_element( ).
     WRITE '@KERNEL }'.
@@ -334,7 +335,8 @@ CLASS lcl_object_to_sxml IMPLEMENTATION.
           ASSIGN COMPONENT ls_compo-name OF STRUCTURE <any> TO <field>.
           GET REFERENCE OF <field> INTO lv_ref.
           mi_writer->open_element( name = traverse_write_type( lv_ref ) ).
-          mi_writer->write_attribute( name = 'name' value = to_upper( ls_compo-name ) ).
+          mi_writer->write_attribute( name = 'name'
+                                      value = to_upper( ls_compo-name ) ).
           traverse_write( lv_ref ).
           mi_writer->close_element( ).
         ENDLOOP.
