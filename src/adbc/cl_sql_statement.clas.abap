@@ -73,8 +73,7 @@ CLASS cl_sql_statement IMPLEMENTATION.
     DATA lv_sql_message TYPE string.
 
     ASSERT statement IS NOT INITIAL.
-
-    WRITE / mv_connection.
+    ASSERT mv_connection IS NOT INITIAL.
 
     WRITE '@KERNEL if (abap.context.databaseConnections[this.mv_connection.get()] === undefined) {'.
     lv_sql_message = 'not connected to db'.
