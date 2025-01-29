@@ -31,8 +31,11 @@ ENDCLASS.
 CLASS cl_sql_statement IMPLEMENTATION.
 
   METHOD constructor.
-* todo,
-    ASSERT con_ref IS INITIAL.
+    IF con_ref IS INITIAL.
+      lv_connection = 'DEFAULT'.
+    ELSE.
+      lv_connection = con_ref->get_con_name( ).
+    ENDIF.
   ENDMETHOD.
 
   METHOD execute_ddl.
