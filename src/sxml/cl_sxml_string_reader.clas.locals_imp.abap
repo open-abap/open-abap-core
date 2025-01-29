@@ -89,9 +89,11 @@ CLASS lcl_json_parser IMPLEMENTATION.
 
     CASE lv_type.
       WHEN 'object'.
-        traverse_object( iv_json = iv_json iv_key = iv_key ).
+        traverse_object( iv_json = iv_json
+                         iv_key = iv_key ).
       WHEN 'array'.
-        traverse_array( iv_json = iv_json iv_key = iv_key ).
+        traverse_array( iv_json = iv_json
+                        iv_key = iv_key ).
       WHEN 'string' OR 'boolean' OR 'number' OR 'null'.
         WRITE '@KERNEL iv_json = iv_json.value + "";'.
 

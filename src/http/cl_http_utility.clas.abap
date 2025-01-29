@@ -111,7 +111,8 @@ CLASS cl_http_utility IMPLEMENTATION.
       str = ls_field-name && '=' && ls_field-value.
       APPEND str TO tab.
     ENDLOOP.
-    string = concat_lines_of( table = tab sep = '&' ).
+    string = concat_lines_of( table = tab
+                              sep = '&' ).
   ENDMETHOD.
 
   METHOD encode_x_base64.

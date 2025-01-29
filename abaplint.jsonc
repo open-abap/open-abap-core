@@ -118,7 +118,7 @@
     "inline_data_old_versions": false,
     "intf_referencing_clas": false,
     "keep_single_parameter_on_one_line": true,
-    "line_break_multiple_parameters": false,
+    "line_break_multiple_parameters": true,
     "line_break_style": false,
     "msag_consistency": true,
     "nesting": true,
@@ -182,7 +182,16 @@
     "check_ddic": true,
     "implement_methods": true,
     "indentation": true,
-    "keyword_case": true,
+    "keyword_case": {
+      "style": "upper",
+      "ignoreExceptions": false,
+      "ignoreLowerClassImplmentationStatement": false,
+      "ignoreGlobalClassDefinition": false,
+      "ignoreGlobalInterface": false,
+      "ignoreFunctionModuleName": false,
+      "ignoreGlobalClassBoundaries": false,
+      "ignoreKeywords": []
+    },
     "when_others_last": true,
     "newline_between_methods": true,
     "avoid_use": {

@@ -37,8 +37,12 @@ CLASS ltcl_test_datfm IMPLEMENTATION.
         ex_datint    = date_internal_actual
         ex_datfmused = format_used_actual ).
 
-    cl_abap_unit_assert=>assert_equals( exp = christmas act = date_internal_actual ).
-    cl_abap_unit_assert=>assert_equals( exp = gregorian_dot_seperated act = format_used_actual ).
+    cl_abap_unit_assert=>assert_equals(
+      exp = christmas
+      act = date_internal_actual ).
+    cl_abap_unit_assert=>assert_equals(
+      exp = gregorian_dot_seperated
+      act = format_used_actual ).
   ENDMETHOD.
 
   METHOD acc_conv_ext_to_int_infinity.
@@ -55,8 +59,10 @@ CLASS ltcl_test_datfm IMPLEMENTATION.
         ex_datint    = date_internal_actual
         ex_datfmused = format_used_actual ).
 
-    cl_abap_unit_assert=>assert_equals( exp = infinity act = date_internal_actual ).
-    cl_abap_unit_assert=>assert_equals( exp = gregorian_dot_seperated act = format_used_actual ).
+    cl_abap_unit_assert=>assert_equals( exp = infinity
+                                        act = date_internal_actual ).
+    cl_abap_unit_assert=>assert_equals( exp = gregorian_dot_seperated
+                                        act = format_used_actual ).
   ENDMETHOD.
 
   METHOD acc_conv_ext_to_int_initial.
@@ -73,8 +79,10 @@ CLASS ltcl_test_datfm IMPLEMENTATION.
         ex_datint    = date_internal_actual
         ex_datfmused = format_used_actual ).
 
-    cl_abap_unit_assert=>assert_equals( exp = initial act = date_internal_actual ).
-    cl_abap_unit_assert=>assert_equals( exp = gregorian_dot_seperated act = format_used_actual ).
+    cl_abap_unit_assert=>assert_equals( exp = initial
+                                        act = date_internal_actual ).
+    cl_abap_unit_assert=>assert_equals( exp = gregorian_dot_seperated
+                                        act = format_used_actual ).
   ENDMETHOD.
 
 

@@ -116,12 +116,14 @@ CLASS /ui2/cl_json IMPLEMENTATION.
             ELSEIF data IS INITIAL.
               r_json = '""'.
             ELSE.
-              r_json = '"' && escape( val = |{ data }| format = cl_abap_format=>e_json_string )  && '"'.
+              r_json = '"' && escape( val = |{ data }|
+                                      format = cl_abap_format=>e_json_string )  && '"'.
             ENDIF.
           WHEN cl_abap_typedescr=>typekind_xstring.
             r_json = '"' && cl_http_utility=>encode_x_base64( data ) && '"'.
           WHEN cl_abap_typedescr=>typekind_string.
-            r_json = '"' && escape( val = data format = cl_abap_format=>e_json_string ) && '"'.
+            r_json = '"' && escape( val = data
+                                    format = cl_abap_format=>e_json_string ) && '"'.
           WHEN cl_abap_typedescr=>typekind_int.
             r_json = |{ data }|.
           WHEN cl_abap_typedescr=>typekind_num.
@@ -191,7 +193,9 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           r_json = r_json && ','.
         ENDLOOP.
         IF r_json CP '*,'.
-          r_json = substring( val = r_json off = 0 len = strlen( r_json ) - 1 ).
+          r_json = substring( val = r_json
+                              off = 0
+                              len = strlen( r_json ) - 1 ).
         ENDIF.
         r_json = r_json && '}'.
       WHEN cl_abap_typedescr=>kind_ref.

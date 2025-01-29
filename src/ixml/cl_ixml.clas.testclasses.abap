@@ -481,7 +481,8 @@ CLASS ltcl_xml IMPLEMENTATION.
     lv_xml = |<?xml version="1.0" encoding="utf-16"?><abapGit vers="abc" foo="2"></abapGit>|.
     li_doc = parse( lv_xml ).
 
-    li_node ?= li_doc->find_from_name_ns( depth = 0 name = 'abapGit' ).
+    li_node ?= li_doc->find_from_name_ns( depth = 0
+                                          name = 'abapGit' ).
     li_version = li_node->get_attributes( )->get_named_item_ns( 'vers' ).
 
     cl_abap_unit_assert=>assert_not_initial( li_version ).
@@ -503,7 +504,8 @@ CLASS ltcl_xml IMPLEMENTATION.
     lv_xml = |<?xml version="1.0" encoding="utf-16"?><abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL"></abapGit>|.
     li_doc = parse( lv_xml ).
 
-    li_element ?= li_doc->find_from_name_ns( depth = 0 name = 'abapGit' ).
+    li_element ?= li_doc->find_from_name_ns( depth = 0
+                                             name = 'abapGit' ).
     cl_abap_unit_assert=>assert_not_initial( li_element ).
 
     cl_abap_unit_assert=>assert_equals(
@@ -523,7 +525,8 @@ CLASS ltcl_xml IMPLEMENTATION.
     lv_xml = |<?xml version="1.0" encoding="utf-16"?><abapGit></abapGit>|.
     li_doc = parse( lv_xml ).
 
-    li_element ?= li_doc->find_from_name_ns( depth = 0 name = 'abapGit' ).
+    li_element ?= li_doc->find_from_name_ns( depth = 0
+                                             name = 'abapGit' ).
     cl_abap_unit_assert=>assert_not_initial( li_element ).
 
 * not found, should return blank
@@ -544,7 +547,8 @@ CLASS ltcl_xml IMPLEMENTATION.
     lv_xml = |<?xml version="1.0" encoding="utf-16"?><DATA href="#o1"/>|.
     li_doc = parse( lv_xml ).
 
-    li_element ?= li_doc->find_from_name_ns( depth = 0 name = 'DATA' ).
+    li_element ?= li_doc->find_from_name_ns( depth = 0
+                                             name = 'DATA' ).
     cl_abap_unit_assert=>assert_not_initial( li_element ).
 
 * not found, should return blank
@@ -564,10 +568,12 @@ CLASS ltcl_xml IMPLEMENTATION.
     lv_xml = |<?xml version="1.0" encoding="utf-16"?><moo>&amp;&lt;&gt;&quot;&apos;</moo>|.
     li_doc = parse( lv_xml ).
 
-    li_element ?= li_doc->find_from_name_ns( depth = 0 name = 'moo' ).
+    li_element ?= li_doc->find_from_name_ns( depth = 0
+                                             name = 'moo' ).
     cl_abap_unit_assert=>assert_not_initial( li_element ).
 
-    li_element ?= mi_document->find_from_name_ns( depth = 0 name = 'moo' ).
+    li_element ?= mi_document->find_from_name_ns( depth = 0
+                                                  name = 'moo' ).
 
     cl_abap_unit_assert=>assert_equals(
       act = li_element->get_value( )
@@ -585,10 +591,12 @@ CLASS ltcl_xml IMPLEMENTATION.
     lv_xml = |<?xml version="1.0" encoding="utf-16"?><moo> A </moo>|.
     li_doc = parse( lv_xml ).
 
-    li_element ?= li_doc->find_from_name_ns( depth = 0 name = 'moo' ).
+    li_element ?= li_doc->find_from_name_ns( depth = 0
+                                             name = 'moo' ).
     cl_abap_unit_assert=>assert_not_initial( li_element ).
 
-    li_element ?= mi_document->find_from_name_ns( depth = 0 name = 'moo' ).
+    li_element ?= mi_document->find_from_name_ns( depth = 0
+                                                  name = 'moo' ).
 
     " todo
     " cl_abap_unit_assert=>assert_equals(

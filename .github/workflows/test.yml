@@ -19,13 +19,13 @@ jobs:
   integration:
     needs: unit
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     env:
       HTTP_BIN_HOST: http://localhost:8080
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
-    - run: docker run -d -p8080:80 kennethreitz/httpbin
+    - run: npm run docker:start
     - run: npm install
     - run: npm run integration
   performance:

@@ -9,14 +9,17 @@
     "flame": "0x -o -- node --expose-gc test/performance.mjs",
     "performance": "rm -rf output && abap_transpile ./abap_transpile_test.json && node --expose-gc test/performance.mjs",
     "integration": "rm -rf output && abap_transpile ./abap_transpile_test.json && node --expose-gc output/index.mjs",
+    "postgres:init": "cat test/adbc/init.sql | docker exec -i postgresql psql -U postgres -d postgres",
+    "docker:start": "docker compose -p open-abap -f test/stack.yml up -d --wait && npm run postgres:init",
     "test": "npm run lint && npm run unit"
   },
   "license": "MIT",
   "dependencies": {
-    "@abaplint/cli": "^2.113.91",
-    "@abaplint/database-sqlite": "^2.10.20",
-    "@abaplint/runtime": "^2.10.23",
-    "@abaplint/transpiler-cli": "^2.10.23",
+    "@abaplint/cli": "^2.113.99",
+    "@abaplint/database-pg": "^2.10.24",
+    "@abaplint/database-sqlite": "^2.10.24",
+    "@abaplint/runtime": "^2.10.24",
+    "@abaplint/transpiler-cli": "^2.10.24",
     "0x": "^5.8.0"
   }
 }

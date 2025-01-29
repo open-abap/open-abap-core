@@ -24,7 +24,8 @@ CLASS ltcl_json IMPLEMENTATION.
     intf ?= writer.
     intf->open_element( name = 'object' ).
     intf->open_element( name = 'str' ).
-    intf->write_attribute( name = 'name' value = 'text' ).
+    intf->write_attribute( name = 'name'
+                           value = 'text' ).
     intf->write_value( 'moo' ).
     intf->close_element( ).
     intf->close_element( ).
@@ -97,11 +98,13 @@ CLASS ltcl_json IMPLEMENTATION.
     intf ?= writer.
     intf->open_element( name = 'object' ).
     intf->open_element( name = 'str' ).
-    intf->write_attribute( name = 'name' value = 'text' ).
+    intf->write_attribute( name = 'name'
+                           value = 'text' ).
     intf->write_value( 'moo' ).
     intf->close_element( ).
     intf->open_element( name = 'str' ).
-    intf->write_attribute( name = 'name' value = 'next' ).
+    intf->write_attribute( name = 'name'
+                           value = 'next' ).
     intf->write_value( 'moo' ).
     intf->close_element( ).
     intf->close_element( ).
