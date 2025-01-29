@@ -14,5 +14,6 @@ export async function setup(abap, schemas, insert) {
     password: "postgres",
     port: 5432,
     trace: true,
+    lazy: true,
   });
 }
