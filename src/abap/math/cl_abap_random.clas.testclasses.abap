@@ -21,7 +21,9 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lv_int TYPE i.
     lo_random = cl_abap_random=>create( ).
     DO 10 TIMES.
-      lv_int = lo_random->intinrange( low = 10 high = 20 ).
+      lv_int = lo_random->intinrange(
+        low  = 10
+        high = 20 ).
       cl_abap_unit_assert=>assert_number_between(
         lower  = 10
         upper  = 20

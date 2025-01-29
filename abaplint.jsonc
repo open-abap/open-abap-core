@@ -118,7 +118,7 @@
     "inline_data_old_versions": false,
     "intf_referencing_clas": false,
     "keep_single_parameter_on_one_line": true,
-    "line_break_multiple_parameters": false,
+    "line_break_multiple_parameters": true,
     "line_break_style": false,
     "msag_consistency": true,
     "nesting": true,
