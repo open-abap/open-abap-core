@@ -25,16 +25,16 @@ CLASS cl_sql_statement DEFINITION PUBLIC.
         cx_sql_exception.
 
   PRIVATE SECTION.
-    DATA lv_connection TYPE string.
+    DATA mv_connection TYPE string.
 ENDCLASS.
 
 CLASS cl_sql_statement IMPLEMENTATION.
 
   METHOD constructor.
     IF con_ref IS INITIAL.
-      lv_connection = 'DEFAULT'.
+      mv_connection = 'DEFAULT'.
     ELSE.
-      lv_connection = con_ref->get_con_name( ).
+      mv_connection = con_ref->get_con_name( ).
     ENDIF.
   ENDMETHOD.
 
