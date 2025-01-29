@@ -88,7 +88,7 @@ CLASS cl_sql_statement IMPLEMENTATION.
     WRITE '@KERNEL   lv_sql_message.set(e + "");'.
     WRITE '@KERNEL }'.
     IF lv_sql_message IS NOT INITIAL.
-      RAISE EXCEPTION TYPE cx_sql_exception.
+      RAISE EXCEPTION TYPE cx_sql_exception EXPORTING sql_message = lv_sql_message.
     ENDIF.
 
   ENDMETHOD.
