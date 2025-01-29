@@ -1,7 +1,8 @@
 CLASS cl_sql_statement DEFINITION PUBLIC.
   PUBLIC SECTION.
     METHODS constructor
-      IMPORTING con_ref TYPE REF TO object OPTIONAL.
+      IMPORTING
+        con_ref TYPE REF TO cl_sql_connection OPTIONAL.
 
     METHODS execute_update
       IMPORTING
@@ -22,6 +23,9 @@ CLASS cl_sql_statement DEFINITION PUBLIC.
         statement TYPE string
       RAISING
         cx_sql_exception.
+
+  PRIVATE SECTION.
+    DATA lv_connection TYPE string.
 ENDCLASS.
 
 CLASS cl_sql_statement IMPLEMENTATION.
