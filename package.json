@@ -16,10 +16,10 @@
   "license": "MIT",
   "dependencies": {
     "@abaplint/cli": "^2.113.99",
-    "@abaplint/database-pg": "^2.10.20",
-    "@abaplint/database-sqlite": "^2.10.20",
-    "@abaplint/runtime": "^2.10.23",
-    "@abaplint/transpiler-cli": "^2.10.23",
+    "@abaplint/database-pg": "^2.10.24",
+    "@abaplint/database-sqlite": "^2.10.24",
+    "@abaplint/runtime": "^2.10.24",
+    "@abaplint/transpiler-cli": "^2.10.24",
     "0x": "^5.8.0"
   }
 }
