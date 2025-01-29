@@ -25,6 +25,8 @@ CLASS cl_sql_connection IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_connection.
+    " only supported for now,
+    ASSERT sharable = abap_true.
     CREATE OBJECT connection.
   ENDMETHOD.
 
