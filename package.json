@@ -9,11 +9,12 @@
     "flame": "0x -o -- node --expose-gc test/performance.mjs",
     "performance": "rm -rf output && abap_transpile ./abap_transpile_test.json && node --expose-gc test/performance.mjs",
     "integration": "rm -rf output && abap_transpile ./abap_transpile_test.json && node --expose-gc output/index.mjs",
+    "docker:start": "docker compose -p open-abap -f test/stack.yml up -d --wait",
     "test": "npm run lint && npm run unit"
   },
   "license": "MIT",
   "dependencies": {
-    "@abaplint/cli": "^2.113.91",
+    "@abaplint/cli": "^2.113.99",
     "@abaplint/database-sqlite": "^2.10.20",
     "@abaplint/runtime": "^2.10.23",
     "@abaplint/transpiler-cli": "^2.10.23",
