@@ -48,7 +48,7 @@ CLASS cl_sql_statement IMPLEMENTATION.
 
     ASSERT statement IS NOT INITIAL.
 
-    WRITE '@KERNEL if (abap.context.databaseConnections["DEFAULT"] === undefined) {'.
+    WRITE '@KERNEL if (abap.context.databaseConnections[this.mv_connection.get()] === undefined) {'.
     lv_sql_message = 'not connected to db'.
     WRITE '@KERNEL }'.
     IF lv_sql_message IS NOT INITIAL.
@@ -56,7 +56,7 @@ CLASS cl_sql_statement IMPLEMENTATION.
     ENDIF.
 
     WRITE '@KERNEL try {'.
-    WRITE '@KERNEL   await abap.context.databaseConnections["DEFAULT"].execute(statement.get());'.
+    WRITE '@KERNEL   await abap.context.databaseConnections[this.mv_connection.get()].execute(statement.get());'.
     WRITE '@KERNEL } catch(e) {'.
     WRITE '@KERNEL   lv_sql_message.set(e + "");'.
     WRITE '@KERNEL }'.
@@ -71,7 +71,7 @@ CLASS cl_sql_statement IMPLEMENTATION.
 
     ASSERT statement IS NOT INITIAL.
 
-    WRITE '@KERNEL if (abap.context.databaseConnections["DEFAULT"] === undefined) {'.
+    WRITE '@KERNEL if (abap.context.databaseConnections[this.mv_connection.get()] === undefined) {'.
     lv_sql_message = 'not connected to db'.
     WRITE '@KERNEL }'.
     IF lv_sql_message IS NOT INITIAL.
@@ -81,7 +81,7 @@ CLASS cl_sql_statement IMPLEMENTATION.
     CREATE OBJECT result_set.
 
     WRITE '@KERNEL try {'.
-    WRITE '@KERNEL   const res = await abap.context.databaseConnections["DEFAULT"].select({select: statement.get()});'.
+    WRITE '@KERNEL   const res = await abap.context.databaseConnections[this.mv_connection.get()].select({select: statement.get()});'.
 *    WRITE '@KERNEL   console.dir(res.rows);'.
     WRITE '@KERNEL   result_set.get().mv_magic = res.rows;'.
     WRITE '@KERNEL } catch(e) {'.
