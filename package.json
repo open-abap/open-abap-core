@@ -9,7 +9,8 @@
     "flame": "0x -o -- node --expose-gc test/performance.mjs",
     "performance": "rm -rf output && abap_transpile ./abap_transpile_test.json && node --expose-gc test/performance.mjs",
     "integration": "rm -rf output && abap_transpile ./abap_transpile_test.json && node --expose-gc output/index.mjs",
-    "docker:start": "docker compose -p open-abap -f test/stack.yml up -d --wait",
+    "postgres:init": "cat test/adbc/init.sql | docker exec -i postgresql psql -U postgres -d postgres",
+    "docker:start": "docker compose -p open-abap -f test/stack.yml up -d --wait && npm run postgres:init",
     "test": "npm run lint && npm run unit"
   },
   "license": "MIT",
