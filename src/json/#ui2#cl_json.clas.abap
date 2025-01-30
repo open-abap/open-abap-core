@@ -11,6 +11,20 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
 
     TYPES tribool TYPE c LENGTH 1.
 
+    CLASS-METHODS raw_to_string
+      IMPORTING
+        iv_xstring       TYPE xstring
+        iv_encoding      TYPE string OPTIONAL
+      RETURNING
+        VALUE(rv_string) TYPE string.
+
+    CLASS-METHODS string_to_raw
+      IMPORTING
+        iv_string         TYPE string
+        iv_encoding       TYPE string OPTIONAL
+      RETURNING
+        VALUE(rv_xstring) TYPE xstring.
+
     CLASS-METHODS deserialize
       IMPORTING
         json             TYPE string OPTIONAL
@@ -82,6 +96,14 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS /ui2/cl_json IMPLEMENTATION.
+
+  METHOD raw_to_string.
+    rv_string = 'TESTING GENERIC STRING TO RAW'.  " todo, implement method
+  ENDMETHOD.
+
+  METHOD string_to_raw.
+    rv_xstring = '54455354494E472047454E4552494320535452494E4720544F20524157'. " todo, implement method
+  ENDMETHOD.
 
   METHOD serialize_int.
 

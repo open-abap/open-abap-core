@@ -31,10 +31,26 @@ CLASS ltcl_deserialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
     METHODS deserialize_float_to_ref FOR TESTING RAISING cx_static_check.
     METHODS deserialize_packed_empty FOR TESTING RAISING cx_static_check.
     METHODS refs_something FOR TESTING RAISING cx_static_check.
+    METHODS raw_to_string FOR TESTING RAISING cx_static_check.
+    METHODS string_to_raw FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_deserialize IMPLEMENTATION.
+
+  METHOD string_to_raw.
+    DATA generic_string TYPE string VALUE 'TESTING GENERIC STRING TO RAW'.
+    cl_abap_unit_assert=>assert_equals(
+      act = /ui2/cl_json=>string_to_raw( generic_string )
+      exp = '54455354494E472047454E4552494320535452494E4720544F20524157' ).
+  ENDMETHOD.
+
+  METHOD raw_to_string.
+    DATA generic_string TYPE xstring VALUE '54455354494E472047454E4552494320535452494E4720544F20524157'.
+    cl_abap_unit_assert=>assert_equals(
+      act = /ui2/cl_json=>raw_to_string( generic_string )
+      exp = 'TESTING GENERIC STRING TO RAW' ).
+  ENDMETHOD.
 
   METHOD deserialize_date1.
     DATA: BEGIN OF ls_data,
