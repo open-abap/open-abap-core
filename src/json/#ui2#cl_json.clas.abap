@@ -11,6 +11,18 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
 
     TYPES tribool TYPE c LENGTH 1.
 
+    CLASS-METHODS raw_to_string
+      IMPORTING
+        iv_xstring       TYPE xstring
+      RETURNING
+        VALUE(rv_string) TYPE string.
+
+    CLASS-METHODS string_to_raw
+      IMPORTING
+        iv_string         TYPE string
+      RETURNING
+        VALUE(rv_xstring) TYPE xstring.
+
     CLASS-METHODS deserialize
       IMPORTING
         json             TYPE string OPTIONAL
@@ -82,6 +94,14 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS /ui2/cl_json IMPLEMENTATION.
+
+  METHOD raw_to_string.
+    rv_string = cl_abap_codepage=>convert_from( iv_xstring ).
+  ENDMETHOD.
+
+  METHOD string_to_raw.
+    rv_xstring = cl_abap_codepage=>convert_to( iv_string ).
+  ENDMETHOD.
 
   METHOD serialize_int.
 
