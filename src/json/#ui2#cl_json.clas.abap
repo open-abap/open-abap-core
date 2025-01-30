@@ -14,14 +14,12 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
     CLASS-METHODS raw_to_string
       IMPORTING
         iv_xstring       TYPE xstring
-        iv_encoding      TYPE string OPTIONAL
       RETURNING
         VALUE(rv_string) TYPE string.
 
     CLASS-METHODS string_to_raw
       IMPORTING
         iv_string         TYPE string
-        iv_encoding       TYPE string OPTIONAL
       RETURNING
         VALUE(rv_xstring) TYPE xstring.
 
@@ -98,11 +96,11 @@ ENDCLASS.
 CLASS /ui2/cl_json IMPLEMENTATION.
 
   METHOD raw_to_string.
-    rv_string = 'TESTING GENERIC STRING TO RAW'.  " todo, implement method
+    rv_string = cl_abap_codepage=>convert_from( iv_xstring ).
   ENDMETHOD.
 
   METHOD string_to_raw.
-    rv_xstring = '54455354494E472047454E4552494320535452494E4720544F20524157'. " todo, implement method
+    rv_xstring = cl_abap_codepage=>convert_to( iv_string ).
   ENDMETHOD.
 
   METHOD serialize_int.
