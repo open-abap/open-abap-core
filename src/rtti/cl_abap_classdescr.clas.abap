@@ -1,5 +1,9 @@
 CLASS cl_abap_classdescr DEFINITION PUBLIC INHERITING FROM cl_abap_objectdescr.
   PUBLIC SECTION.
+
+    DATA class_kind TYPE string.
+    DATA create_visibility TYPE string.
+
     CLASS-METHODS get_class_name
       IMPORTING
         p_object      TYPE REF TO object
