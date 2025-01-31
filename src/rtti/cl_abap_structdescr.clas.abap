@@ -10,6 +10,8 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
     TYPES included_view   TYPE abap_component_view_tab.
     TYPES symbol_table    TYPE abap_component_symbol_tab.
 
+    DATA has_include TYPE abap_bool READ-ONLY.
+
     METHODS
       get_components
         RETURNING

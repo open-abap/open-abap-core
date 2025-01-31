@@ -14,6 +14,9 @@ CLASS cl_abap_objectdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
     DATA methods    TYPE abap_methdescr_tab READ-ONLY.
     DATA interfaces TYPE abap_intfdescr_tab READ-ONLY.
 
+    DATA types TYPE abap_typedef_tab READ-ONLY.
+    DATA events TYPE abap_evntdescr_tab READ-ONLY.
+
     METHODS constructor
       IMPORTING
         p_object TYPE any OPTIONAL.

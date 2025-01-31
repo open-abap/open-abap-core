@@ -16,6 +16,8 @@ CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
     CONSTANTS keydefkind_user TYPE c LENGTH 1 VALUE 'U'.
     CONSTANTS keydefkind_empty TYPE c LENGTH 1 VALUE 'E'.
 
+    DATA initial_size TYPE i READ-ONLY.
+
     CLASS-METHODS
       construct_from_data
         IMPORTING data         TYPE any
