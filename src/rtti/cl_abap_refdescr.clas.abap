@@ -15,9 +15,7 @@ CLASS cl_abap_refdescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
       IMPORTING
         !p_referenced_type TYPE REF TO cl_abap_typedescr
       RETURNING
-        VALUE(p_result) TYPE REF TO cl_abap_refdescr.
-    RAISING
-      cx_sy_creation.
+        VALUE(p_result)    TYPE REF TO cl_abap_refdescr.
 
   PRIVATE SECTION.
     DATA referenced TYPE REF TO cl_abap_typedescr.

@@ -171,21 +171,21 @@ TYPES: BEGIN OF abap_keydescr,
 TYPES abap_keydescr_tab TYPE STANDARD TABLE OF abap_keydescr WITH KEY name.
 
 TYPES: BEGIN OF abap_typedef,
-    name           TYPE abap_typename,
-    alias_for      TYPE abap_typename,
-    visibility     TYPE abap_visibility,
-    is_interface   TYPE abap_bool,
-    is_inherited   TYPE abap_bool,
+    name         TYPE abap_typename,
+    alias_for    TYPE abap_typename,
+    visibility   TYPE abap_visibility,
+    is_interface TYPE abap_bool,
+    is_inherited TYPE abap_bool,
   END OF abap_typedef,
-  abap_typedef_tab TYPE STANDARD TABLE OF abap_typedef WITH key name.
+  abap_typedef_tab TYPE STANDARD TABLE OF abap_typedef WITH KEY name.
 
 TYPES: BEGIN OF abap_evntdescr,
-    parameters    TYPE abap_parmdescr_tab,
-    name          TYPE abap_evntname,
-    visibility    TYPE abap_visibility,
-    is_interface  TYPE abap_bool,
-    is_inherited  TYPE abap_bool,
-    is_class      TYPE abap_bool,
-    alias_for     TYPE abap_evntname,
+    parameters   TYPE abap_parmdescr_tab,
+    name         TYPE abap_evntname,
+    visibility   TYPE abap_visibility,
+    is_interface TYPE abap_bool,
+    is_inherited TYPE abap_bool,
+    is_class     TYPE abap_bool,
+    alias_for    TYPE abap_evntname,
   END OF abap_evntdescr,
-  abap_evntdescr_tab TYPE STANDARD TABLE OF abap_evntdescr WITH key name.
+  abap_evntdescr_tab TYPE STANDARD TABLE OF abap_evntdescr WITH KEY name.
