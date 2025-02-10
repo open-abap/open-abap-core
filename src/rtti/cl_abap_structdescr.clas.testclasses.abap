@@ -17,6 +17,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS get_included_view2 FOR TESTING RAISING cx_static_check.
     METHODS get_included_view3 FOR TESTING RAISING cx_static_check.
     METHODS length FOR TESTING RAISING cx_static_check.
+    METHODS get_components_include FOR TESTING RAISING cx_static_check.
+    METHODS get_symbols FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -352,6 +354,66 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       exp = 1
       act = ls_type-length ).
+
+  ENDMETHOD.
+
+  METHOD get_components_include.
+
+    TYPES: BEGIN OF ty_struc,
+            b TYPE c LENGTH 1,
+           END OF ty_struc.
+
+    TYPES BEGIN OF ty_struc_root.
+            INCLUDE TYPE ty_struc AS nest RENAMING WITH SUFFIX _n.
+    TYPES:
+             a TYPE c LENGTH 1,
+           END OF ty_struc_root.
+
+    DATA ls_data        TYPE ty_struc_root.
+    DATA lo_struct      TYPE REF TO cl_abap_structdescr.
+    DATA lt_components  TYPE cl_abap_structdescr=>component_table.
+
+    lo_struct ?= cl_abap_structdescr=>describe_by_data( ls_data ).
+    lt_components = lo_struct->get_components( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      exp = 2
+      act = lines( lt_components ) ).
+
+  ENDMETHOD.
+
+  METHOD get_symbols.
+
+    TYPES: BEGIN OF ty_struc,
+            b TYPE c LENGTH 1,
+           END OF ty_struc.
+
+    TYPES BEGIN OF ty_struc_root.
+          INCLUDE TYPE ty_struc AS nest RENAMING WITH SUFFIX _n.
+    TYPES:
+             a TYPE c LENGTH 1,
+           END OF ty_struc_root.
+
+    DATA ls_data     TYPE ty_struc_root.
+    DATA lo_struct   TYPE REF TO cl_abap_structdescr.
+    DATA lt_symbols  TYPE cl_abap_structdescr=>symbol_table.
+
+    lo_struct ?= cl_abap_structdescr=>describe_by_data( ls_data ).
+    lt_symbols = lo_struct->get_symbols( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      exp = 3
+      act = lines( lt_symbols ) ).
+
+    READ TABLE lt_symbols WITH KEY name = 'A' TRANSPORTING NO FIELDS.
+    cl_abap_unit_assert=>assert_subrc(
+      exp = 0
+      act = sy-subrc ).
+
+    READ TABLE lt_symbols WITH KEY name = 'B_N' TRANSPORTING NO FIELDS.
+    cl_abap_unit_assert=>assert_subrc(
+        exp = 0
+        act = sy-subrc ).
 
   ENDMETHOD.
 

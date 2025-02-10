@@ -69,12 +69,39 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
     METHODS update_components.
 
     DATA mt_refs TYPE component_table.
+    DATA mt_refs_comp TYPE component_table.
 ENDCLASS.
 
 CLASS cl_abap_structdescr IMPLEMENTATION.
 
   METHOD get_symbols.
-    ASSERT 1 = 'todo'.
+    DATA lt_components  TYPE component_table.
+    DATA ls_symbol      LIKE LINE OF p_result.
+    DATA lt_symbols     TYPE symbol_table.
+    DATA lo_structdescr TYPE REF TO cl_abap_structdescr.
+
+    FIELD-SYMBOLS <ls_component> LIKE LINE OF lt_components.
+    FIELD-SYMBOLS <ls_symbol>    LIKE LINE OF lt_symbols.
+
+    lt_components = get_components( ).
+    LOOP AT lt_components ASSIGNING <ls_component>.
+      IF <ls_component>-name IS NOT INITIAL.
+        ls_symbol-name = <ls_component>-name.
+        ls_symbol-type = <ls_component>-type.
+        INSERT ls_symbol INTO TABLE p_result.
+      ENDIF.
+      IF <ls_component>-as_include = abap_true.
+        lo_structdescr ?= <ls_component>-type.
+        lt_symbols = lo_structdescr->get_symbols( ).
+        LOOP AT lt_symbols ASSIGNING <ls_symbol>.
+          CONCATENATE <ls_symbol>-name <ls_component>-suffix INTO ls_symbol-name.
+          CONCATENATE <ls_symbol>-name <ls_component>-suffix INTO ls_symbol-name.
+          ls_symbol-type = <ls_symbol>-type.
+          INSERT ls_symbol INTO TABLE p_result.
+        ENDLOOP.
+      ENDIF.
+    ENDLOOP.
+
   ENDMETHOD.
 
   METHOD get.
@@ -113,21 +140,14 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_included_view.
-    DATA ls_component LIKE LINE OF components.
     DATA ls_view      LIKE LINE OF p_result.
     DATA ls_ref       LIKE LINE OF mt_refs.
 
-    LOOP AT components INTO ls_component.
+    LOOP AT mt_refs INTO ls_ref WHERE as_include = abap_false.
       CLEAR ls_view.
 
-      ls_view-name = ls_component-name.
-      READ TABLE mt_refs WITH KEY name = ls_component-name INTO ls_ref.
-      IF sy-subrc = 0.
-        ls_view-type = ls_ref-type.
-      ENDIF.
-      IF ls_ref-as_include = abap_true.
-        CONTINUE.
-      ENDIF.
+      ls_view-name = ls_ref-name.
+      ls_view-type = ls_ref-type.
 
       INSERT ls_view INTO TABLE p_result.
     ENDLOOP.
@@ -196,8 +216,9 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     WRITE '@KERNEL }'.
     ls_ref-as_include = lv_as_include.
 
-    WRITE '@KERNEL if (INPUT.data?.getSuffix) {'.
-    WRITE '@KERNEL   lv_as_include.set(INPUT.data?.getSuffix()?.[name.toLowerCase()] || "");'.
+    WRITE '@KERNEL if (INPUT.data?.getRenamingSuffix) {'.
+    WRITE '@KERNEL   lv_suffix.set(INPUT.data?.getRenamingSuffix()?.[name.toLowerCase()] || "");'.
+    TRANSLATE lv_suffix TO UPPER CASE.
     WRITE '@KERNEL }'.
     ls_ref-suffix = lv_suffix.
 
@@ -208,10 +229,17 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD update_components.
-    DATA ls_component LIKE LINE OF components.
+    DATA ls_component   LIKE LINE OF components.
+    DATA lo_structdescr TYPE REF TO cl_abap_structdescr.
+    DATA lt_components TYPE abap_component_tab.
+    DATA lv_name TYPE string.
     FIELD-SYMBOLS <ls_ref> LIKE LINE OF mt_refs.
+    FIELD-SYMBOLS <ls_component> LIKE LINE OF lt_components.
 
     CLEAR components.
+
+    mt_refs_comp = mt_refs.
+
     LOOP AT mt_refs ASSIGNING <ls_ref>.
       ls_component-name = <ls_ref>-name.
       ls_component-type_kind = <ls_ref>-type->type_kind.
@@ -219,10 +247,22 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
       ls_component-decimals = <ls_ref>-type->decimals.
       APPEND ls_component TO components.
     ENDLOOP.
+
+* the mt_refs contain really everything available in runtime
+* the mt_ref_comp contains only the components that are not added as "as include" (needed for get_components)
+    LOOP AT mt_refs ASSIGNING <ls_ref> WHERE as_include = abap_true.
+      lo_structdescr ?= <ls_ref>-type.
+      lt_components = lo_structdescr->get_components( ).
+      LOOP AT lt_components ASSIGNING <ls_component>.
+        CONCATENATE <ls_component>-name <ls_ref>-suffix INTO lv_name.
+        DELETE mt_refs_comp WHERE name = lv_name.
+      ENDLOOP.
+    ENDLOOP.
+
   ENDMETHOD.
 
   METHOD get_components.
-    rt_components = mt_refs.
+    rt_components = mt_refs_comp.
   ENDMETHOD.
 
   METHOD get_component_type.
