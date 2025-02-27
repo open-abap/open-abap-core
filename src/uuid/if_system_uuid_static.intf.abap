@@ -11,6 +11,12 @@ INTERFACE if_system_uuid_static PUBLIC.
     RAISING
       cx_uuid_error.
 
+  CLASS-METHODS create_uuid_c36
+    RETURNING
+      VALUE(uuid) TYPE sysuuid_c36
+    RAISING
+      cx_uuid_error.
+
   CLASS-METHODS create_uuid_c22
     RETURNING
       VALUE(uuid) TYPE sysuuid_c22
