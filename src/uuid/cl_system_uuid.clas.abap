@@ -4,6 +4,7 @@ CLASS cl_system_uuid DEFINITION PUBLIC.
     INTERFACES if_system_uuid_static.
 
     ALIASES create_uuid_c32_static FOR if_system_uuid_static~create_uuid_c32.
+    ALIASES create_uuid_c36_static FOR if_system_uuid_static~create_uuid_c36.
     ALIASES create_uuid_x16_static FOR if_system_uuid_static~create_uuid_x16.
   PRIVATE SECTION.
     CLASS-METHODS random RETURNING VALUE(rv_str) TYPE string.
@@ -35,6 +36,13 @@ CLASS cl_system_uuid IMPLEMENTATION.
     REPLACE ALL OCCURRENCES OF '-' IN lv_str WITH ''.
     uuid = lv_str(32).
     TRANSLATE uuid TO UPPER CASE.
+  ENDMETHOD.
+
+  METHOD if_system_uuid_static~create_uuid_c36.
+    DATA lv_str TYPE string.
+    lv_str = random( ).
+    TRANSLATE lv_str TO UPPER CASE.
+    uuid = lv_str.
   ENDMETHOD.
 
   METHOD if_system_uuid_rfc4122_static~create_uuid_c36_by_version.
