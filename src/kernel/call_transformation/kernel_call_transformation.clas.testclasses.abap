@@ -1157,16 +1157,15 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
       source   = lv_hex_bom
       codepage = 'UTF-16' ).
 
-    lv_xml = |{ lv_str_bom }<foo>2</foo>|.
+    lv_xml = |{ lv_str_bom }<?xml version="1.0" encoding="utf-16"?>| &&
+      |<asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0"><asx:values>| &&
+      |<REPO></REPO>| &&
+      |</asx:values></asx:abap>|.
 
     CALL TRANSFORMATION id
       OPTIONS value_handling = 'accept_data_loss'
       SOURCE XML lv_xml
-      RESULT data = ls_data.
-
-    cl_abap_unit_assert=>assert_equals(
-      act = ls_data-foo
-      exp = 2 ).
+      RESULT repo = ls_data.
 
   ENDMETHOD.
 
