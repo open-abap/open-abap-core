@@ -8,6 +8,7 @@ CLASS ltcl_test DEFINITION FOR TESTING DURATION SHORT RISK LEVEL HARMLESS FINAL.
     METHODS tags        FOR TESTING RAISING cx_static_check.
     METHODS find_hello  FOR TESTING RAISING cx_static_check.
     METHODS pcre        FOR TESTING RAISING cx_static_check.
+    METHODS replace_oo  FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -154,6 +155,25 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_matcher->match( )
       exp = abap_false ).
+
+  ENDMETHOD.
+
+  METHOD replace_oo.
+
+    DATA lv_line  TYPE string.
+    DATA lo_regex TYPE REF TO cl_abap_regex.
+
+    lv_line = 'hello'.
+
+    CREATE OBJECT lo_regex
+      EXPORTING
+        pattern = 'hello'.
+
+    REPLACE FIRST OCCURRENCE OF REGEX lo_regex IN lv_line WITH ``.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_line
+      exp = '' ).
 
   ENDMETHOD.
 
