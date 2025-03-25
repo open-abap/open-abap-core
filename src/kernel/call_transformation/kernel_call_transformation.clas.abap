@@ -42,15 +42,21 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     DATA lv_dummy  TYPE string.
     DATA li_writer TYPE REF TO if_sxml_writer.
     DATA li_doc    TYPE REF TO if_ixml_document.
-    DATA lv_str_bom TYPE string.
-    DATA lv_hex_bom TYPE xstring.
+    DATA lv_bom_big TYPE string.
+    DATA lv_bom_little TYPE string.
+    DATA lv_xstring TYPE xstring.
 
 
     CLEAR mi_doc.
 
-    lv_hex_bom = cl_abap_char_utilities=>byte_order_mark_big.
-    lv_str_bom = cl_abap_codepage=>convert_from(
-      source   = lv_hex_bom
+    lv_xstring = cl_abap_char_utilities=>byte_order_mark_big.
+    lv_bom_big = cl_abap_codepage=>convert_from(
+      source   = lv_xstring
+      codepage = 'UTF-16' ).
+
+    lv_xstring = cl_abap_char_utilities=>byte_order_mark_little.
+    lv_bom_little = cl_abap_codepage=>convert_from(
+      source   = lv_xstring
       codepage = 'UTF-16' ).
 
 *    WRITE '@KERNEL console.dir(INPUT);'.
@@ -65,7 +71,8 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     WRITE '@KERNEL if (INPUT.sourceXML?.constructor.name === "ABAPObject") this.mi_doc.set(INPUT.sourceXML);'.
     WRITE '@KERNEL if (INPUT.sourceXML?.constructor.name === "String") lv_source.set(INPUT.sourceXML);'.
     IF lv_source IS NOT INITIAL.
-      IF lv_source(1) = '<' OR ( strlen( lv_source ) > 1 AND lv_source(1) = lv_str_bom AND lv_source+1(1) = '<' ).
+      IF lv_source(1) = '<'
+          OR ( strlen( lv_source ) > 1 AND ( lv_source(1) = lv_bom_big OR lv_source(1) = lv_bom_little ) AND lv_source+1(1) = '<' ).
         lv_type = 'XML'.
         parse_xml( lv_source ).
       ELSEIF lv_source(1) = '{' OR lv_source(1) = '['.
