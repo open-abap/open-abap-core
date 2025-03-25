@@ -129,7 +129,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS xml_to_xml FOR TESTING RAISING cx_static_check.
     METHODS xml_to_xml_rm_header FOR TESTING RAISING cx_static_check.
     METHODS xml_to_xml_rm_header_bom FOR TESTING RAISING cx_static_check.
-    METHODS byte_order_mark FOR TESTING RAISING cx_static_check.
+    METHODS byte_order_mark_big FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
@@ -1143,7 +1143,7 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD byte_order_mark.
+  METHOD byte_order_mark_big.
 
     DATA: BEGIN OF ls_data,
             foo TYPE i,
