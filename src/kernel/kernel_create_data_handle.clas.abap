@@ -31,7 +31,9 @@ ENDCLASS.
 CLASS kernel_create_data_handle IMPLEMENTATION.
 
   METHOD call.
-    ASSERT handle IS BOUND.
+    IF handle IS NOT BOUND.
+      RAISE EXCEPTION TYPE cx_sy_ref_is_initial.
+    ENDIF.
 
     WRITE '@KERNEL if (dref.constructor.name === "FieldSymbol") {'.
     WRITE '@KERNEL   dref = dref.getPointer();'.
