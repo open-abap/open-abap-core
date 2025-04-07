@@ -2,6 +2,7 @@ CLASS lcl_handler DEFINITION FINAL.
   PUBLIC SECTION.
     INTERFACES if_apc_wsp_event_handler.
     DATA message TYPE xstring.
+    DATA error_reason TYPE string.
 ENDCLASS.
 
 CLASS lcl_handler IMPLEMENTATION.
@@ -19,7 +20,7 @@ CLASS lcl_handler IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_apc_wsp_event_handler~on_error.
-    WRITE / 'on_error'.
+    error_reason = i_reason.
   ENDMETHOD.
 ENDCLASS.
 
@@ -30,6 +31,7 @@ CLASS ltcl_tcp DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION MEDIUM FINAL.
 
     METHODS port_80 FOR TESTING RAISING cx_static_check.
     METHODS port_443 FOR TESTING RAISING cx_static_check.
+    METHODS on_error FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -77,6 +79,33 @@ CLASS ltcl_tcp IMPLEMENTATION.
 
   METHOD port_443.
     test_port( '443' ).
+  ENDMETHOD.
+
+  METHOD on_error.
+
+    DATA lo_handler         TYPE REF TO lcl_handler.
+    DATA li_client          TYPE REF TO if_apc_wsp_client.
+    DATA ls_frame           TYPE if_abap_channel_types=>ty_apc_tcp_frame.
+    DATA li_message_manager TYPE REF TO if_apc_wsp_message_manager.
+    DATA li_message         TYPE REF TO if_apc_wsp_message.
+
+    CREATE OBJECT lo_handler.
+
+    ls_frame-frame_type   = if_apc_tcp_frame_types=>co_frame_type_fixed_length.
+    ls_frame-fixed_length = 10.
+
+    li_client = cl_apc_tcp_client_manager=>create(
+      i_host          = 'somethingerror.org'
+      i_port          = '12345'
+      i_frame         = ls_frame
+      i_event_handler = lo_handler ).
+
+    " li_client->connect( ).
+
+    " cl_abap_unit_assert=>assert_equals(
+    "   act = lo_handler->error_reason
+    "   exp = 'todo' ).
+
   ENDMETHOD.
 
 ENDCLASS.
