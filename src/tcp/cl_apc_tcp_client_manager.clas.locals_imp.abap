@@ -63,8 +63,8 @@ CLASS lcl_client IMPLEMENTATION.
 *    WRITE '@KERNEL   console.dir(data);'.
     WRITE '@KERNEL   await this.mo_handler.get().if_apc_wsp_event_handler$on_message({i_message: msg});'.
     WRITE '@KERNEL });'.
-    WRITE '@KERNEL this.client.on("end",   async () => {this.mo_handler.get().if_apc_wsp_event_handler$on_close();});'.
-    WRITE '@KERNEL this.client.on("error", async (e) => {this.mo_handler.get().if_apc_wsp_event_handler$on_error();});'.
+    WRITE '@KERNEL this.client.on("end",   async () => {this.mo_handler.get().if_apc_wsp_event_handler$on_close({"i_reason": "connection closed"});});'.
+    WRITE '@KERNEL this.client.on("error", async (e) => {console.dir("IF_APC_WSP_CLIENT~CONNECT"); console.dir(e); this.mo_handler.get().if_apc_wsp_event_handler$on_error({"i_reason": e.toString()});});'.
     WRITE '@KERNEL await new Promise(resolve => this.client.once("connect", resolve));'.
   ENDMETHOD.
 
