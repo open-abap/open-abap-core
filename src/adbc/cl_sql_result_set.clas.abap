@@ -52,8 +52,9 @@ CLASS cl_sql_result_set IMPLEMENTATION.
       mv_ref->* = lv_value.
     ENDIF.
 
-    mv_index = mv_index + 1.
     rows_ret = lv_total - mv_index.
+
+    mv_index = mv_index + 1.
   ENDMETHOD.
 
   METHOD close.
