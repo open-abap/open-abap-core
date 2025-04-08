@@ -398,8 +398,13 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD assert_number_between.
+    DATA lv_msg TYPE string.
+
     IF number < lower OR number > upper.
-      RAISE EXCEPTION TYPE kernel_cx_assert.
+      lv_msg = msg.
+      RAISE EXCEPTION TYPE kernel_cx_assert
+        EXPORTING
+          msg = lv_msg.
     ENDIF.
   ENDMETHOD.
 
