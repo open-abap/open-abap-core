@@ -47,7 +47,10 @@ CLASS cl_sql_result_set IMPLEMENTATION.
     WRITE '@KERNEL const current = this.mv_magic[this.mv_index.get()];'.
     WRITE '@KERNEL lv_value.set(Object.values(current)[0]);'.
 
-    mv_ref->* = lv_value.
+
+    IF mv_ref IS NOT INITIAL.
+      mv_ref->* = lv_value.
+    ENDIF.
 
     mv_index = mv_index + 1.
     rows_ret = lv_total - mv_index.
