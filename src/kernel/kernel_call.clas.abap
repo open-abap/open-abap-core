@@ -19,6 +19,9 @@ CLASS kernel_call IMPLEMENTATION.
     IF name = 'RFCControl'.
       uuid = cl_system_uuid=>if_system_uuid_static~create_uuid_x16( ).
       WRITE '@KERNEL INPUT.uuid.set(uuid);'.
+    ELSE.
+      WRITE: / 'unknown kernel function:', name.
+      ASSERT 1 = 2.
     ENDIF.
 
   ENDMETHOD.
