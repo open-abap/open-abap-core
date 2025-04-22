@@ -27,6 +27,9 @@ CLASS kernel_call IMPLEMENTATION.
           input  = input
         IMPORTING
           output = magic.
+    ELSEIF name = 'zcsa/installed_languages'.
+* todo, this is all wrong as the "name" overlaps
+      RETURN.
     ELSE.
       WRITE / |Unknown kernel function: { name }|.
       ASSERT 1 = 2.
