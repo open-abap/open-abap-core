@@ -6,6 +6,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS alpha_input_aa FOR TESTING RAISING cx_static_check.
     METHODS alpha_input_dash FOR TESTING RAISING cx_static_check.
     METHODS alpha_input_spaces FOR TESTING RAISING cx_static_check.
+    METHODS installed_languages FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -85,6 +86,21 @@ CLASS ltcl_test IMPLEMENTATION.
       act = lv_output
       exp = 'foo  bar' ).
 
+  ENDMETHOD.
+
+  METHOD installed_languages.
+    DATA lv_instal_langu TYPE c LENGTH 60.
+    DATA lv_par_name TYPE c LENGTH 60.
+
+    lv_par_name = 'zcsa/installed_languages'.
+
+    CALL 'C_SAPGPARAM'
+      ID 'NAME' FIELD lv_par_name
+      ID 'VALUE' FIELD lv_instal_langu.
+
+    " cl_abap_unit_assert=>assert_equals(
+    "   act = lv_instal_langu
+    "   exp = 'E' ).
   ENDMETHOD.
 
 ENDCLASS.
