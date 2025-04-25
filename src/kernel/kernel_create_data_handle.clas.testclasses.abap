@@ -17,6 +17,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS hex2 FOR TESTING RAISING cx_static_check.
     METHODS reference_table FOR TESTING RAISING cx_static_check.
     METHODS keep_absolute FOR TESTING RAISING cx_static_check.
+    METHODS keep_absolute_struct FOR TESTING RAISING cx_static_check.
 
     METHODS ref_test1 CHANGING foo TYPE REF TO data.
     METHODS ref_test2 FOR TESTING RAISING cx_static_check.
@@ -323,6 +324,40 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_descr->absolute_name
       exp = '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL' ).
+  ENDMETHOD.
+
+  METHOD keep_absolute_struct.
+    TYPES: BEGIN OF ty,
+             foo TYPE i,
+           END OF ty.
+
+    DATA lo_before TYPE REF TO cl_abap_structdescr.
+    DATA lo_after TYPE REF TO cl_abap_structdescr.
+    DATA lo_tabletype TYPE REF TO cl_abap_tabledescr.
+    DATA tab TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+
+    DATA ref TYPE REF TO data.
+    GET REFERENCE OF tab INTO ref.
+
+    lo_tabletype ?= cl_abap_typedescr=>describe_by_data_ref( ref ).
+
+    lo_before ?= lo_tabletype->get_table_line_type( ).
+    cl_abap_unit_assert=>assert_not_initial( lo_before->absolute_name ).
+    cl_abap_unit_assert=>assert_not_initial( lo_before->get_relative_name( ) ).
+
+    CREATE DATA ref TYPE HANDLE lo_before.
+
+    lo_after ?= cl_abap_structdescr=>describe_by_data_ref( ref ).
+    cl_abap_unit_assert=>assert_not_initial( lo_after->absolute_name ).
+    cl_abap_unit_assert=>assert_not_initial( lo_after->get_relative_name( ) ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_after->absolute_name
+      exp = lo_before->absolute_name ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_after->get_relative_name( )
+      exp = lo_before->get_relative_name( ) ).
   ENDMETHOD.
 
 ENDCLASS.
