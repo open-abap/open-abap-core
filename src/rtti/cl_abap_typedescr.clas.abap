@@ -62,6 +62,10 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     DATA absolute_name TYPE abap_abstypename.
     DATA relative_name TYPE string.
 
+    "! these are internal open-abap types, may change anytime
+    DATA internal_qualified_name TYPE string.
+    DATA internal_ddic_name TYPE string.
+
     CONSTANTS typekind_any TYPE abap_typekind VALUE '~'.
     CONSTANTS typekind_char TYPE abap_typekind VALUE 'C'.
     CONSTANTS typekind_class TYPE abap_typekind VALUE '*'.
@@ -419,6 +423,9 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     WRITE '@KERNEL lv_ddicname.set(p_data.getDDICName ? p_data.getDDICName() || "" : "");'.
     WRITE '@KERNEL lv_convexit.set(p_data.getConversionExit ? p_data.getConversionExit() || "" : "");'.
     WRITE '@KERNEL lv_qualified.set(p_data.getQualifiedName ? p_data.getQualifiedName() || "" : "");'.
+
+    type->internal_qualified_name = lv_qualified.
+    type->internal_ddic_name = lv_ddicname.
 
     IF lv_qualified NA '-'.
       type->absolute_name = lv_qualified.
