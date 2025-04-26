@@ -95,7 +95,7 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
       lv_name = to_lower( <ls_component>-name ).
       WRITE '@KERNEL obj[lv_name.get()] = field.getPointer();'.
     ENDLOOP.
-    WRITE '@KERNEL dref.assign(new abap.types.Structure(obj, lo_struct.get().internal_qualified_name.get()));'.
+    WRITE '@KERNEL dref.assign(new abap.types.Structure(obj, lo_struct.get().internal_qualified_name.get(), lo_struct.get().internal_ddic_name.get()));'.
   ENDMETHOD.
 
   METHOD table.
