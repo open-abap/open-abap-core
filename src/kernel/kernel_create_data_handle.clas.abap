@@ -95,7 +95,7 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
       lv_name = to_lower( <ls_component>-name ).
       WRITE '@KERNEL obj[lv_name.get()] = field.getPointer();'.
     ENDLOOP.
-    WRITE '@KERNEL dref.assign(new abap.types.Structure(obj, lo_struct.get().relative_name.get()));'.
+    WRITE '@KERNEL dref.assign(new abap.types.Structure(obj, lo_struct.get().internal_qualified_name.get(), lo_struct.get().internal_ddic_name.get()));'.
   ENDMETHOD.
 
   METHOD table.
@@ -158,8 +158,7 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
       WHEN cl_abap_typedescr=>typekind_char.
         lv_half = handle->length / 2.
         CREATE DATA dref TYPE c LENGTH lv_half.
-* todo, this needs some redesign to work properly,
-        WRITE '@KERNEL dref.getPointer().extra = {"qualifiedName": handle.get().relative_name};'.
+        WRITE '@KERNEL dref.getPointer().extra = {"qualifiedName": handle.get().internal_qualified_name};'.
       WHEN cl_abap_typedescr=>typekind_num.
         lv_half = handle->length / 2.
         CREATE DATA dref TYPE n LENGTH lv_half.
