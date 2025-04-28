@@ -12,7 +12,6 @@ CLASS cl_function_test_environment DEFINITION PUBLIC.
   PRIVATE SECTION.
     TYPES: BEGIN OF ty_backup,
              name   TYPE sxco_fm_name,
-             backup TYPE i,
              double TYPE REF TO if_function_testdouble,
            END OF ty_backup.
     CLASS-DATA gt_backup TYPE SORTED TABLE OF ty_backup WITH UNIQUE KEY name.
@@ -26,16 +25,18 @@ CLASS cl_function_test_environment IMPLEMENTATION.
 
     ASSERT lines( function_modules ) > 0.
 
+    CREATE OBJECT function_test_environment TYPE cl_function_test_environment.
+    WRITE '@KERNEL function_test_environment.value.REVERT = {};'.
+
     LOOP AT function_modules INTO lv_module.
       ls_row-name = lv_module.
       CREATE OBJECT ls_row-double TYPE lcl_double
         EXPORTING
           iv_name = lv_module.
-      WRITE '@KERNEL ls_row.get().backup = abap.FunctionModules[lv_module.get().trimEnd()];'.
+      WRITE '@KERNEL function_test_environment.value.REVERT[lv_module.get().trimEnd()] = abap.FunctionModules[lv_module.get().trimEnd()];'.
       INSERT ls_row INTO gt_backup.
     ENDLOOP.
 
-    CREATE OBJECT function_test_environment TYPE cl_function_test_environment.
   ENDMETHOD.
 
   METHOD if_function_test_environment~get_double.
@@ -51,7 +52,7 @@ CLASS cl_function_test_environment IMPLEMENTATION.
     FIELD-SYMBOLS <ls_row> LIKE LINE OF gt_backup.
 
     LOOP AT gt_backup ASSIGNING <ls_row>.
-      WRITE '@KERNEL abap.FunctionModules[fs_ls_row_.get().name.get().trimEnd()] = fs_ls_row_.get().backup;'.
+      WRITE '@KERNEL abap.FunctionModules[fs_ls_row_.get().name.get().trimEnd()] = this.REVERT[fs_ls_row_.get().name.get().trimEnd()];'.
     ENDLOOP.
     CLEAR gt_backup.
   ENDMETHOD.
