@@ -5,9 +5,9 @@ ENDCLASS.
 
 CLASS cl_conversion_exit_input IMPLEMENTATION.
   METHOD run.
-    DATA lv_value TYPE c length 10.
+    DATA lv_value TYPE c LENGTH 10.
 
-    DO 16000 TIMES.
+    DO 500000 TIMES.
       lv_value = '1'.
       CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
         EXPORTING
