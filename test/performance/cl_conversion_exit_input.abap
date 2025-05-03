@@ -8,7 +8,7 @@ CLASS cl_conversion_exit_input IMPLEMENTATION.
     DATA lv_value TYPE c length 10.
 
     DO 16000 TIMES.
-      CLEAR lv_value.
+      lv_value = '1'.
       CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
         EXPORTING
           input  = lv_value
