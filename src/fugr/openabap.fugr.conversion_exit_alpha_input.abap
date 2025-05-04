@@ -36,9 +36,8 @@ FUNCTION conversion_exit_alpha_input.
     RETURN.
   ENDIF.
 
-  DO lv_len - strlen( lv_tmp ) TIMES.
-    lv_tmp = |0| && lv_tmp.
-  ENDDO.
+  lv_tmp = repeat( val = '0'
+                   occ = lv_len - strlen( lv_tmp ) ) && lv_tmp.
 
   output = lv_tmp.
 
