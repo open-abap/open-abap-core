@@ -30,6 +30,7 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
         pretty_name      TYPE string OPTIONAL
         assoc_arrays     TYPE abap_bool OPTIONAL
         assoc_arrays_opt TYPE abap_bool OPTIONAL
+        conversion_exits TYPE abap_bool OPTIONAL
       CHANGING
         data             TYPE data.
 
