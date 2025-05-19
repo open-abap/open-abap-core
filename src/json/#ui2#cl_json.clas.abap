@@ -10,6 +10,7 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
                END OF pretty_mode.
 
     TYPES tribool TYPE c LENGTH 1.
+    TYPES bool TYPE c LENGTH 1.
 
     CLASS-METHODS raw_to_string
       IMPORTING
