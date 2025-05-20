@@ -74,6 +74,9 @@ CLASS kernel_call_transformation IMPLEMENTATION.
       IF lv_source(1) = '<'
           OR ( strlen( lv_source ) > 1 AND ( lv_source(1) = lv_bom_big OR lv_source(1) = lv_bom_little ) AND lv_source+1(1) = '<' ).
         lv_type = 'XML'.
+        IF lv_source(1) = lv_bom_big OR lv_source(1) = lv_bom_little.
+          lv_source = lv_source+1.
+        ENDIF.
         parse_xml( lv_source ).
       ELSEIF lv_source(1) = '{' OR lv_source(1) = '['.
         lv_type = 'JSON'.
