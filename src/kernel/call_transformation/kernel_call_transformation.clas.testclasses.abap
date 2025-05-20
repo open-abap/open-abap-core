@@ -131,6 +131,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS xml_to_xml_rm_header_bom FOR TESTING RAISING cx_static_check.
     METHODS byte_order_mark_big FOR TESTING RAISING cx_static_check.
     METHODS byte_order_mark_little FOR TESTING RAISING cx_static_check.
+    METHODS dot_abapgit FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
@@ -1193,6 +1194,47 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
       OPTIONS value_handling = 'accept_data_loss'
       SOURCE XML lv_xml
       RESULT repo = ls_data.
+
+  ENDMETHOD.
+
+  METHOD dot_abapgit.
+
+    DATA lv_xml TYPE string.
+    DATA: BEGIN OF rs_data,
+            starting_folder TYPE string,
+          END OF rs_data.
+    DATA lv_str_bom TYPE string.
+    DATA lv_hex_bom TYPE xstring.
+
+    lv_hex_bom = cl_abap_char_utilities=>byte_order_mark_big.
+    lv_str_bom = cl_abap_codepage=>convert_from(
+      source   = lv_hex_bom
+      codepage = 'UTF-16' ).
+
+    lv_xml = |{ lv_str_bom }<?xml version="1.0" encoding="utf-8"?>| &&
+             |<asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">| &&
+             | <asx:values>| &&
+             |  <DATA>| &&
+             |   <MASTER_LANGUAGE>E</MASTER_LANGUAGE>| &&
+             |   <STARTING_FOLDER>/src/</STARTING_FOLDER>| &&
+             |   <FOLDER_LOGIC>PREFIX</FOLDER_LOGIC>| &&
+             |   <IGNORE>| &&
+             |    <item>/LICENSE</item>| &&
+             |    <item>/README.md</item>| &&
+             |    <item>/abaplint.json</item>| &&
+             |   </IGNORE>| &&
+             |  </DATA>| &&
+             | </asx:values>| &&
+             |</asx:abap>|.
+
+    CALL TRANSFORMATION id
+      OPTIONS value_handling = 'accept_data_loss'
+      SOURCE XML lv_xml
+      RESULT data = rs_data.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = rs_data-starting_folder
+      exp = '/src/' ).
 
   ENDMETHOD.
 
