@@ -87,7 +87,8 @@ ENDCLASS.
 CLASS cl_abap_tstmp IMPLEMENTATION.
 
   METHOD utclong2tstmp_short.
-    RETURN. " todo, implement method
+* wonder if this works?
+    timestamp = utclong.
   ENDMETHOD.
 
   METHOD td_add.
