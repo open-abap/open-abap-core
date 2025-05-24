@@ -129,7 +129,8 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS xml_to_xml FOR TESTING RAISING cx_static_check.
     METHODS xml_to_xml_rm_header FOR TESTING RAISING cx_static_check.
     METHODS xml_to_xml_rm_header_bom FOR TESTING RAISING cx_static_check.
-    METHODS xml_to_xml_sort_attributes FOR TESTING RAISING cx_static_check.
+    METHODS xml_to_xml_sort_attributes1 FOR TESTING RAISING cx_static_check.
+    METHODS xml_to_xml_sort_attributes2 FOR TESTING RAISING cx_static_check.
     METHODS byte_order_mark_big FOR TESTING RAISING cx_static_check.
     METHODS byte_order_mark_little FOR TESTING RAISING cx_static_check.
     METHODS dot_abapgit FOR TESTING RAISING cx_static_check.
@@ -1198,7 +1199,7 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD xml_to_xml_sort_attributes.
+  METHOD xml_to_xml_sort_attributes1.
 
     DATA lv_xml TYPE string.
 
@@ -1208,6 +1209,19 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_xml
       exp = |<c r="R2C1"><f ref="A2:A4" si="0" t="shared">A2</f></c>| ).
+
+  ENDMETHOD.
+
+  METHOD xml_to_xml_sort_attributes2.
+
+    DATA lv_xml TYPE string.
+
+    lv_xml = |<c r="R3C1"><f si="0" t="shared"/></c>|.
+    CALL TRANSFORMATION id SOURCE XML lv_xml RESULT XML lv_xml OPTIONS xml_header = 'no'.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_xml
+      exp = |<c r="R3C1"><f si="0" t="shared"/></c>| ).
 
   ENDMETHOD.
 
