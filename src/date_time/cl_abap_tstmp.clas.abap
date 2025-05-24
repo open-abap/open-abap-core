@@ -74,9 +74,22 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
         syst_time TYPE t
       RAISING
         cx_parameter_invalid_range.
+
+    CLASS-METHODS utclong2tstmp_short
+      IMPORTING
+        utclong          TYPE utclong
+      RETURNING
+        VALUE(timestamp) TYPE timestamp
+      RAISING
+        cx_sy_conversion_no_date_time.
 ENDCLASS.
 
 CLASS cl_abap_tstmp IMPLEMENTATION.
+
+  METHOD utclong2tstmp_short.
+* wonder if this works?
+    timestamp = utclong.
+  ENDMETHOD.
 
   METHOD td_add.
     ASSERT 1 = 'todo'.
