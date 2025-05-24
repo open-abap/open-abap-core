@@ -563,9 +563,22 @@ CLASS lcl_string_to_string IMPLEMENTATION.
 
     IF options-xml_header = 'no'.
       REPLACE FIRST OCCURRENCE OF REGEX '<\?.*\?>' IN result WITH ''.
+      IF sy-subrc = 0.
       " WRITE '@KERNEL console.dir(lv_str_bom);'.
-      CONCATENATE lv_str_bom result INTO result.
+        CONCATENATE lv_str_bom result INTO result.
       " WRITE '@KERNEL console.dir(result);'.
+      ENDIF.
     ENDIF.
+
+* sort attribute names, todo: rewrite
+    WRITE '@KERNEL result.set(result.get().replace(/<(\w+:?\w*)([^>]*)>/g, function(match, p1, p2) {'.
+    WRITE '@KERNEL   const attrs = p2.match(/(\w+)="([^"]*)"/g);'.
+    WRITE '@KERNEL   if (attrs) {'.
+    WRITE '@KERNEL     attrs.sort();'.
+    WRITE '@KERNEL     return `<${p1} ${attrs.join(" ")}>`;'.
+    WRITE '@KERNEL   } else {'.
+    WRITE '@KERNEL     return `<${p1}>`;'.
+    WRITE '@KERNEL   }'.
+    WRITE '@KERNEL }));'.
   ENDMETHOD.
 ENDCLASS.

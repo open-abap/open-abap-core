@@ -9,6 +9,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS render_element_and_attribute FOR TESTING RAISING cx_static_check.
     METHODS render_element_and_two_attribu FOR TESTING RAISING cx_static_check.
     METHODS render_attribute FOR TESTING RAISING cx_static_check.
+    METHODS render_attribute_multi FOR TESTING RAISING cx_static_check.
     METHODS render_value FOR TESTING RAISING cx_static_check.
     METHODS render_escape FOR TESTING RAISING cx_static_check.
     METHODS render_nested FOR TESTING RAISING cx_static_check.
@@ -183,6 +184,30 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_xml
       exp = '<?xml version="1.0" encoding="utf-16"?><moo xmlns="bar"/>' ).
+  ENDMETHOD.
+
+  METHOD render_attribute_multi.
+    DATA lo_element TYPE REF TO if_ixml_element.
+    DATA lv_xml     TYPE string.
+
+    lo_element = mi_document->create_simple_element_ns(
+      prefix = 'hello'
+      name   = 'moo'
+      parent = mi_document ).
+    lo_element->set_attribute(
+      name  = 't'
+      value = 'value' ).
+    lo_element->set_attribute(
+      name  = 'si'
+      value = 'value' ).
+    lo_element->set_attribute(
+      name  = 'ref'
+      value = 'value' ).
+    lv_xml = render( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_xml
+      exp = '<?xml version="1.0" encoding="utf-16"?><hello:moo t="value" si="value" ref="value"/>' ).
   ENDMETHOD.
 
   METHOD render_element_and_two_attribu.
