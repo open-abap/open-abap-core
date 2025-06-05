@@ -88,6 +88,10 @@ CLASS lcl_named_node_map DEFINITION.
 ENDCLASS.
 
 CLASS lcl_named_node_map IMPLEMENTATION.
+  METHOD if_ixml_named_node_map~get_item.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_named_node_map~create_iterator.
     CREATE OBJECT iterator TYPE lcl_node_iterator
       EXPORTING it_list = mt_list.
@@ -188,6 +192,10 @@ CLASS lcl_node DEFINITION.
 ENDCLASS.
 
 CLASS lcl_node IMPLEMENTATION.
+  METHOD if_ixml_node~num_children.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD constructor.
     CREATE OBJECT mo_children TYPE lcl_node_list.
     CREATE OBJECT mi_attributes TYPE lcl_named_node_map.
@@ -604,6 +612,9 @@ CLASS lcl_document DEFINITION.
 ENDCLASS.
 
 CLASS lcl_document IMPLEMENTATION.
+  METHOD if_ixml_node~num_children.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD constructor.
     CREATE OBJECT mi_node TYPE lcl_node.

@@ -76,4 +76,8 @@ INTERFACE if_ixml_node PUBLIC.
   METHODS clone
     RETURNING
       VALUE(rval) TYPE REF TO if_ixml_node.
+
+  METHODS num_children
+    RETURNING
+      VALUE(rval) TYPE i.
 ENDINTERFACE.
