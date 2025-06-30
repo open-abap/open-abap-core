@@ -9,8 +9,14 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
                  camel_case TYPE string VALUE 'camel_case',
                END OF pretty_mode.
 
-    TYPES tribool TYPE c LENGTH 1.
     TYPES bool TYPE c LENGTH 1.
+
+    CONSTANTS: BEGIN OF c_bool,
+                 true  TYPE bool VALUE `X`,
+                 false TYPE bool VALUE ``,
+               END OF c_bool.
+
+    TYPES tribool TYPE c LENGTH 1.
 
     CLASS-METHODS raw_to_string
       IMPORTING

@@ -38,8 +38,10 @@ INTERFACE if_http_client PUBLIC.
 
   METHODS get_last_error
     EXPORTING
-      code    TYPE i
-      message TYPE string.
+      code           TYPE sysubrc
+      message        TYPE string
+      message_class  TYPE t100-arbgb
+      message_number TYPE t100-msgnr.
 
   METHODS refresh_request.
 
