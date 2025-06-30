@@ -17,9 +17,17 @@ CLASS cl_demo_output DEFINITION PUBLIC.
       IMPORTING
         data TYPE any OPTIONAL
         name TYPE string OPTIONAL PREFERRED PARAMETER data.
+
+    CLASS-METHODS display_html
+      IMPORTING
+        html TYPE csequence.
 ENDCLASS.
 
 CLASS cl_demo_output IMPLEMENTATION.
+  METHOD display_html.
+    ASSERT 1 = 'not supported'.
+  ENDMETHOD.
+
   METHOD write.
     ASSERT 1 = 'not supported'.
   ENDMETHOD.
