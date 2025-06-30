@@ -25,9 +25,17 @@ CLASS cl_demo_output DEFINITION PUBLIC.
     CLASS-METHODS display_text
       IMPORTING
         text TYPE clike.
+
+    CLASS-METHODS display_json
+      IMPORTING
+        json TYPE simple.
 ENDCLASS.
 
 CLASS cl_demo_output IMPLEMENTATION.
+  METHOD display_json.
+    ASSERT 1 = 'not supported'.
+  ENDMETHOD.
+
   METHOD display_text.
     ASSERT 1 = 'not supported'.
   ENDMETHOD.
