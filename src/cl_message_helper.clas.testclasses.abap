@@ -50,7 +50,7 @@ CLASS ltcl_message_helper DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SH
   PRIVATE SECTION.
     METHODS set_msg_vars_for_clike FOR TESTING RAISING cx_static_check.
     METHODS set_msg_vars_for_clike_space FOR TESTING RAISING cx_static_check.
-    METHODS set_msg_vars_for_if_msg_initial FOR TESTING RAISING cx_static_check.
+    METHODS set_msg_vars_for_if_msg_init FOR TESTING RAISING cx_static_check.
     METHODS set_msg_vars_for_if_msg_text FOR TESTING RAISING cx_static_check.
     METHODS set_msg_vars_for_if_msg_dyn FOR TESTING RAISING cx_static_check.
     METHODS check_msg_kind FOR TESTING RAISING cx_static_check.
@@ -67,7 +67,7 @@ CLASS ltcl_message_helper IMPLEMENTATION.
     ASSERT 1 = 'unexpected call'.
   ENDMETHOD.
 
-  METHOD set_msg_vars_for_if_msg_initial.
+  METHOD set_msg_vars_for_if_msg_init.
     DATA lv_str TYPE string.
     DATA li_text TYPE REF TO if_message.
     TRY.
