@@ -69,6 +69,15 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
       RETURNING
         VALUE(r_json) TYPE string.
 
+    METHODS deserialize_int
+      IMPORTING
+        json  TYPE string OPTIONAL
+        jsonx TYPE xstring OPTIONAL
+      CHANGING
+        data  TYPE data
+      RAISING
+        cx_sy_move_cast_error.
+
     METHODS constructor
       IMPORTING
         compress      TYPE abap_bool DEFAULT abap_false
@@ -103,6 +112,9 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS /ui2/cl_json IMPLEMENTATION.
+  METHOD deserialize_int.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD raw_to_string.
     rv_string = cl_abap_codepage=>convert_from( iv_xstring ).
