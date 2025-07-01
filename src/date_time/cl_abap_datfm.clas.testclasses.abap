@@ -1,7 +1,7 @@
 CLASS ltcl_test_datfm DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
-    METHODS acc_convert_external_to_internal FOR TESTING RAISING cx_static_check.
+    METHODS acc_convert_external_to_int FOR TESTING RAISING cx_static_check.
     METHODS acc_conv_ext_to_int_infinity FOR TESTING RAISING cx_static_check.
     METHODS acc_conv_ext_to_int_initial FOR TESTING RAISING cx_static_check.
     METHODS fails_not_gregorian_dot_sep FOR TESTING RAISING cx_static_check.
@@ -25,7 +25,7 @@ ENDCLASS.
 
 CLASS ltcl_test_datfm IMPLEMENTATION.
 
-  METHOD acc_convert_external_to_internal.
+  METHOD acc_convert_external_to_int.
     DATA date_internal_actual TYPE d.
     DATA format_used_actual   TYPE c.
 

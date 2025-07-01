@@ -2,18 +2,18 @@ CLASS ltcl_fugr DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
     METHODS system_installed_languages FOR TESTING RAISING cx_static_check.
-    METHODS conversion_exit_isola_output FOR TESTING RAISING cx_static_check.
-    METHODS conversion_exit_isola_output_empty FOR TESTING RAISING cx_static_check.
-    METHODS conversion_exit_isola_input FOR TESTING RAISING cx_static_check.
-    METHODS conversion_exit_isola_input_fr FOR TESTING RAISING cx_static_check.
-    METHODS conversion_exit_alpha_output_string FOR TESTING RAISING cx_static_check.
-    METHODS conversion_exit_alpha_output_char FOR TESTING RAISING cx_static_check.
-    METHODS conversion_exit_alpha_input FOR TESTING RAISING cx_static_check.
-    METHODS conversion_exit_alpha_input_st FOR TESTING RAISING cx_static_check.
-    METHODS conversion_exit_alpha_input_dats FOR TESTING RAISING cx_static_check.
-    METHODS conversion_exit_alpha_input_empty FOR TESTING RAISING cx_static_check.
-    METHODS conversion_exit_alpha_input_str FOR TESTING RAISING cx_static_check.
-    METHODS conversion_exit_alpha_input_str_in FOR TESTING RAISING cx_static_check.
+    METHODS cexit_isola_output FOR TESTING RAISING cx_static_check.
+    METHODS cexit_isola_output_empty FOR TESTING RAISING cx_static_check.
+    METHODS cexit_isola_input FOR TESTING RAISING cx_static_check.
+    METHODS cexit_isola_input_fr FOR TESTING RAISING cx_static_check.
+    METHODS cexit_alpha_output_string FOR TESTING RAISING cx_static_check.
+    METHODS cexit_alpha_output_char FOR TESTING RAISING cx_static_check.
+    METHODS cexit_alpha_input FOR TESTING RAISING cx_static_check.
+    METHODS cexit_alpha_input_st FOR TESTING RAISING cx_static_check.
+    METHODS cexit_alpha_input_dats FOR TESTING RAISING cx_static_check.
+    METHODS cexit_alpha_input_empty FOR TESTING RAISING cx_static_check.
+    METHODS cexit_alpha_input_str FOR TESTING RAISING cx_static_check.
+    METHODS cexit_alpha_input_str_in FOR TESTING RAISING cx_static_check.
     METHODS generate_sec_random FOR TESTING RAISING cx_static_check.
     METHODS text_split1 FOR TESTING RAISING cx_static_check.
     METHODS text_split2 FOR TESTING RAISING cx_static_check.
@@ -87,7 +87,7 @@ CLASS ltcl_fugr IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD conversion_exit_alpha_input.
+  METHOD cexit_alpha_input.
 
     DATA lv_input TYPE c LENGTH 10.
     DATA lv_output TYPE c LENGTH 10.
@@ -105,7 +105,7 @@ CLASS ltcl_fugr IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD conversion_exit_alpha_output_char.
+  METHOD cexit_alpha_output_char.
 
     DATA lv_input TYPE c LENGTH 10.
     DATA lv_output TYPE c LENGTH 10.
@@ -123,7 +123,7 @@ CLASS ltcl_fugr IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD conversion_exit_alpha_output_string.
+  METHOD cexit_alpha_output_string.
 
     DATA lv_input TYPE c LENGTH 10.
     DATA lv_output TYPE string.
@@ -158,7 +158,7 @@ CLASS ltcl_fugr IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD conversion_exit_isola_input.
+  METHOD cexit_isola_input.
     DATA lv_lang TYPE spras.
 
     CALL FUNCTION 'CONVERSION_EXIT_ISOLA_INPUT'
@@ -175,7 +175,7 @@ CLASS ltcl_fugr IMPLEMENTATION.
     cl_abap_unit_assert=>assert_initial( lv_lang ).
   ENDMETHOD.
 
-  METHOD conversion_exit_isola_input_fr.
+  METHOD cexit_isola_input_fr.
     DATA lv_lang TYPE spras.
 
     CALL FUNCTION 'CONVERSION_EXIT_ISOLA_INPUT'
@@ -194,7 +194,7 @@ CLASS ltcl_fugr IMPLEMENTATION.
       act = lv_lang ).
   ENDMETHOD.
 
-  METHOD conversion_exit_isola_output.
+  METHOD cexit_isola_output.
     DATA lv_lang TYPE laiso.
 
     CALL FUNCTION 'CONVERSION_EXIT_ISOLA_OUTPUT'
@@ -239,7 +239,7 @@ CLASS ltcl_fugr IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD conversion_exit_alpha_input_st.
+  METHOD cexit_alpha_input_st.
     DATA str TYPE string.
     DATA res TYPE string.
     str = '1'.
@@ -253,7 +253,7 @@ CLASS ltcl_fugr IMPLEMENTATION.
       exp = '1' ).
   ENDMETHOD.
 
-  METHOD conversion_exit_alpha_input_dats.
+  METHOD cexit_alpha_input_dats.
     DATA lv_dats TYPE d.
     DATA lv_str  TYPE string.
     lv_str = '20230529'.
@@ -395,7 +395,7 @@ CLASS ltcl_fugr IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD conversion_exit_alpha_input_empty.
+  METHOD cexit_alpha_input_empty.
 
     DATA val TYPE c LENGTH 30.
 
@@ -411,7 +411,7 @@ CLASS ltcl_fugr IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD conversion_exit_alpha_input_str.
+  METHOD cexit_alpha_input_str.
 
     DATA val TYPE c LENGTH 10.
     DATA str TYPE string.
@@ -430,7 +430,7 @@ CLASS ltcl_fugr IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD conversion_exit_alpha_input_str_in.
+  METHOD cexit_alpha_input_str_in.
 
     DATA lv_str TYPE string.
     DATA lv_ret TYPE c LENGTH 10.
@@ -449,7 +449,7 @@ CLASS ltcl_fugr IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD conversion_exit_isola_output_empty.
+  METHOD cexit_isola_output_empty.
 
     DATA lv_lang TYPE laiso.
 
