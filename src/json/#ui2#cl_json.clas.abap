@@ -64,6 +64,7 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
     METHODS serialize_int
       IMPORTING
         data          TYPE data
+        name          TYPE string OPTIONAL
         type_descr    TYPE REF TO cl_abap_typedescr OPTIONAL
       RETURNING
         VALUE(r_json) TYPE string.
@@ -123,6 +124,8 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     FIELD-SYMBOLS <ls_component> LIKE LINE OF lt_components.
     FIELD-SYMBOLS <any> TYPE any.
     FIELD-SYMBOLS <tab> TYPE ANY TABLE.
+
+    ASSERT name IS INITIAL. " todo
 
     IF type_descr IS INITIAL.
       lo_type = cl_abap_typedescr=>describe_by_data( data ).
