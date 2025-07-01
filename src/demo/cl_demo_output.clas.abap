@@ -29,9 +29,17 @@ CLASS cl_demo_output DEFINITION PUBLIC.
     CLASS-METHODS display_json
       IMPORTING
         json TYPE simple.
+
+    CLASS-METHODS begin_section
+      IMPORTING
+        title TYPE clike OPTIONAL.
 ENDCLASS.
 
 CLASS cl_demo_output IMPLEMENTATION.
+  METHOD begin_section.
+    ASSERT 1 = 'not supported'.
+  ENDMETHOD.
+
   METHOD display_json.
     ASSERT 1 = 'not supported'.
   ENDMETHOD.
