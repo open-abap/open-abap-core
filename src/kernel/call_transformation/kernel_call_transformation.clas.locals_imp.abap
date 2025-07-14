@@ -296,7 +296,10 @@ CLASS lcl_object_to_sxml IMPLEMENTATION.
 
   METHOD traverse_write_type.
     DATA lo_type TYPE REF TO cl_abap_typedescr.
-    lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
+    FIELD-SYMBOLS <any> TYPE any.
+
+    ASSIGN iv_ref->* TO <any>.
+    lo_type = cl_abap_typedescr=>describe_by_data( <any> ).
     CASE lo_type->type_kind.
       WHEN cl_abap_typedescr=>typekind_int
           OR cl_abap_typedescr=>typekind_int1
@@ -324,7 +327,8 @@ CLASS lcl_object_to_sxml IMPLEMENTATION.
     FIELD-SYMBOLS <field> TYPE any.
 
 *     WRITE '@KERNEL console.dir(iv_ref.getPointer());'.
-    lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
+    ASSIGN iv_ref->* TO <any>.
+    lo_type = cl_abap_typedescr=>describe_by_data( <any> ).
 *    WRITE '@KERNEL console.dir(lo_type.get().kind.get());'.
     CASE lo_type->kind.
       WHEN cl_abap_typedescr=>kind_struct.
@@ -332,7 +336,7 @@ CLASS lcl_object_to_sxml IMPLEMENTATION.
 
         lo_struc ?= lo_type.
         lt_comps = lo_struc->get_components( ).
-        ASSIGN iv_ref->* TO <any>.
+
         LOOP AT lt_comps INTO ls_compo.
           ASSIGN COMPONENT ls_compo-name OF STRUCTURE <any> TO <field>.
           GET REFERENCE OF <field> INTO lv_ref.
@@ -345,7 +349,7 @@ CLASS lcl_object_to_sxml IMPLEMENTATION.
 
         mi_writer->close_element( ).
       WHEN cl_abap_typedescr=>kind_elem.
-        mi_writer->write_value( iv_ref->* ).
+        mi_writer->write_value( <any> ).
       WHEN cl_abap_typedescr=>kind_table.
         mi_writer->open_element( name = 'array' ).
 
