@@ -77,11 +77,12 @@ CLASS kernel_ixml_json_to_data IMPLEMENTATION.
     FIELD-SYMBOLS <field> TYPE any.
     FIELD-SYMBOLS <tab>   TYPE ANY TABLE.
 
-    lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
+    ASSIGN iv_ref->* TO <any>.
+    lo_type = cl_abap_typedescr=>describe_by_data( <any> ).
+
     CASE lo_type->kind.
       WHEN cl_abap_typedescr=>kind_struct.
         ASSERT ii_node->get_name( ) = 'object'.
-        ASSIGN iv_ref->* TO <any>.
         li_iterator = ii_node->get_children( )->create_iterator( ).
         DO.
           li_child = li_iterator->get_next( ).
@@ -99,7 +100,6 @@ CLASS kernel_ixml_json_to_data IMPLEMENTATION.
       WHEN cl_abap_typedescr=>kind_elem.
         li_child = ii_node->get_first_child( ).
         ASSERT li_child->get_name( ) = '#text'.
-        ASSIGN iv_ref->* TO <any>.
         <any> = li_child->get_value( ).
 
         IF lo_type->type_kind = cl_abap_typedescr=>typekind_char
@@ -119,7 +119,7 @@ CLASS kernel_ixml_json_to_data IMPLEMENTATION.
           CREATE DATA lv_ref LIKE LINE OF <tab>.
           ASSIGN lv_ref->* TO <any>.
           traverse( ii_node = li_child
-                  iv_ref  = lv_ref ).
+                    iv_ref  = lv_ref ).
           INSERT <any> INTO TABLE <tab>.
         ENDDO.
       WHEN OTHERS.
