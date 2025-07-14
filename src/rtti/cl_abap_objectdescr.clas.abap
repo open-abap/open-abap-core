@@ -140,10 +140,12 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
 
   METHOD get_method_parameter_type.
     DATA ls_row LIKE LINE OF mt_parameter_types.
+    FIELD-SYMBOLS <type> TYPE any.
 *    WRITE '@KERNEL   this.mt_parameter_types.array().map(e => console.dir(e.get()));'.
     READ TABLE mt_parameter_types INTO ls_row WITH KEY method = p_method_name parameter = p_parameter_name.
     IF sy-subrc = 0.
-      p_descr_ref ?= describe_by_data( ls_row-type->* ).
+      ASSIGN ls_row-type->* TO <type>.
+      p_descr_ref ?= describe_by_data( <type> ).
     ELSE.
       RAISE parameter_not_found.
     ENDIF.

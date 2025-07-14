@@ -87,8 +87,10 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
     FIELD-SYMBOLS <any>   TYPE any.
     FIELD-SYMBOLS <field> TYPE any.
     FIELD-SYMBOLS <tab>   TYPE ANY TABLE.
+    FIELD-SYMBOLS <ref>   TYPE any.
 
-    lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
+    ASSIGN iv_ref->* TO <ref>.
+    lo_type = cl_abap_typedescr=>describe_by_data( <ref> ).
     CASE lo_type->kind.
       WHEN cl_abap_typedescr=>kind_struct.
         ASSIGN iv_ref->* TO <any>.
@@ -184,7 +186,7 @@ CLASS kernel_ixml_xml_to_data IMPLEMENTATION.
 
             " WRITE '@KERNEL console.dir(lv_ref);'.
             traverse( ii_node = li_child
-                      iv_ref  = lv_ref->* ).
+                      iv_ref  = <any> ).
           ENDIF.
         ELSE.
           ASSERT 1 = 'todo_ref2'.

@@ -306,6 +306,9 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
     DATA lv_act TYPE string.
     DATA lv_msg TYPE string.
 
+    FIELD-SYMBOLS <act> TYPE any.
+    FIELD-SYMBOLS <exp> TYPE any.
+
     DESCRIBE FIELD act TYPE type1.
     DESCRIBE FIELD exp TYPE type2.
     " WRITE '@KERNEL console.dir(type1.get());'.
@@ -339,9 +342,11 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
         RAISE EXCEPTION TYPE kernel_cx_assert.
       ENDIF.
     ELSEIF type1 = 'l'.
+      ASSIGN act->* TO <act>.
+      ASSIGN exp->* TO <exp>.
       assert_equals(
-        act = act->*
-        exp = exp->* ).
+        act = <act>
+        exp = <exp> ).
     ELSEIF act <> exp.
       lv_act = lcl_dump=>to_string( act ).
       lv_exp = lcl_dump=>to_string( exp ).
