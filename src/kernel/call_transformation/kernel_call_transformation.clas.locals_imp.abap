@@ -356,11 +356,11 @@ CLASS lcl_object_to_sxml IMPLEMENTATION.
         ASSIGN iv_ref->* TO <table>.
         LOOP AT <table> ASSIGNING <any>.
           GET REFERENCE OF <any> INTO lv_ref.
-          IF cl_abap_typedescr=>describe_by_data( lv_ref->* )->kind = cl_abap_typedescr=>kind_elem.
+          IF cl_abap_typedescr=>describe_by_data( <any> )->kind = cl_abap_typedescr=>kind_elem.
             mi_writer->open_element( name = traverse_write_type( lv_ref ) ).
           ENDIF.
           traverse_write( lv_ref ).
-          IF cl_abap_typedescr=>describe_by_data( lv_ref->* )->kind = cl_abap_typedescr=>kind_elem.
+          IF cl_abap_typedescr=>describe_by_data( <any> )->kind = cl_abap_typedescr=>kind_elem.
             mi_writer->close_element( ).
           ENDIF.
         ENDLOOP.
