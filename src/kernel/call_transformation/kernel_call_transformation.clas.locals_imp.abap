@@ -504,13 +504,13 @@ CLASS lcl_object_to_ixml IMPLEMENTATION.
     FIELD-SYMBOLS <table> TYPE ANY TABLE.
     FIELD-SYMBOLS <field> TYPE any.
 
-    lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
+    ASSIGN iv_ref->* TO <any>.
+    lo_type = cl_abap_typedescr=>describe_by_data( <any> ).
 
     CASE lo_type->kind.
       WHEN cl_abap_typedescr=>kind_struct.
         lo_struc ?= lo_type.
         lt_comps = lo_struc->get_components( ).
-        ASSIGN iv_ref->* TO <any>.
 
         LOOP AT lt_comps INTO ls_compo.
           li_element = ii_doc->create_element( ls_compo-name ).
@@ -523,7 +523,7 @@ CLASS lcl_object_to_ixml IMPLEMENTATION.
           ii_parent->append_child( li_element ).
         ENDLOOP.
       WHEN cl_abap_typedescr=>kind_elem.
-        ii_parent->set_value( |{ iv_ref->* }| ).
+        ii_parent->set_value( |{ <any> }| ).
       WHEN cl_abap_typedescr=>kind_table.
         ASSIGN iv_ref->* TO <table>.
 
