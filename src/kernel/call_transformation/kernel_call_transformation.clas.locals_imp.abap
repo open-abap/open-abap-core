@@ -169,9 +169,11 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
     FIELD-SYMBOLS <any>   TYPE any.
     FIELD-SYMBOLS <table> TYPE ANY TABLE.
     FIELD-SYMBOLS <field> TYPE any.
+    FIELD-SYMBOLS <ref>   TYPE any.
 
 
-    lo_type = cl_abap_typedescr=>describe_by_data( iv_ref->* ).
+    ASSIGN iv_ref->* TO <ref>.
+    lo_type = cl_abap_typedescr=>describe_by_data( <ref> ).
 
     CASE lo_type->kind.
       WHEN cl_abap_typedescr=>kind_struct.
@@ -194,16 +196,16 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
         ENDLOOP.
         rv_xml = rv_xml && |</{ iv_name }>|.
       WHEN cl_abap_typedescr=>kind_elem.
-        IF ms_options-initial_components = kernel_call_transformation=>gc_options-suppress AND iv_ref->* IS INITIAL.
+        IF ms_options-initial_components = kernel_call_transformation=>gc_options-suppress AND <ref> IS INITIAL.
           RETURN.
         ENDIF.
 
-        IF lo_type->type_kind = cl_abap_typedescr=>typekind_string AND iv_ref->* IS INITIAL.
+        IF lo_type->type_kind = cl_abap_typedescr=>typekind_string AND <ref> IS INITIAL.
           rv_xml = rv_xml && |<{ iv_name }/>|.
         ELSE.
           rv_xml = rv_xml &&
             |<{ iv_name }>| &&
-            iv_ref->* &&
+            <ref> &&
             |</{ iv_name }>|.
         ENDIF.
       WHEN cl_abap_typedescr=>kind_table.
@@ -225,16 +227,16 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
       WHEN cl_abap_typedescr=>kind_ref.
         CASE lo_type->type_kind.
           WHEN cl_abap_typedescr=>typekind_oref.
-            IF iv_ref->* IS INITIAL.
+            IF <ref> IS INITIAL.
               rv_xml = |<{ iv_name }/>|.
             ELSE.
-              rv_xml = |<{ iv_name } href="#o{ mo_heap->add_object( iv_ref->* ) }"/>|.
+              rv_xml = |<{ iv_name } href="#o{ mo_heap->add_object( <ref> ) }"/>|.
             ENDIF.
           WHEN OTHERS.
-            IF iv_ref->* IS INITIAL.
+            IF <ref> IS INITIAL.
               rv_xml = |<{ iv_name }/>|.
             ELSE.
-              rv_xml = |<{ iv_name } href="#d{ mo_heap->add_data( iv_ref->* ) }"/>|.
+              rv_xml = |<{ iv_name } href="#d{ mo_heap->add_data( <ref> ) }"/>|.
             ENDIF.
         ENDCASE.
       WHEN OTHERS.
