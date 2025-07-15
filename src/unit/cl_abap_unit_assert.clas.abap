@@ -38,10 +38,12 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
     CLASS-METHODS
       assert_not_initial
         IMPORTING
-          act   TYPE any
-          msg   TYPE csequence OPTIONAL
-          quit  TYPE i OPTIONAL
-          level TYPE i OPTIONAL.
+          act                     TYPE any
+          msg                     TYPE csequence OPTIONAL
+          quit                    TYPE i OPTIONAL
+          level                   TYPE i OPTIONAL
+        RETURNING
+          VALUE(assertion_failed) TYPE abap_bool.
 
     CLASS-METHODS
       assert_initial
