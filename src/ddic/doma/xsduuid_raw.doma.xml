@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DOMA" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD01V>
+    <DOMNAME>XSDUUID_RAW</DOMNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DATATYPE>RAW</DATATYPE>
+    <LENG>000016</LENG>
+    <OUTPUTLEN>000032</OUTPUTLEN>
+    <DDTEXT>XSD-UUID: hhhhhhhh-hhhh-hhhh-hhhh-hhhhhhhhhhhh [ext.]</DDTEXT>
+   </DD01V>
+  </asx:values>
+ </asx:abap>
+</abapGit>
