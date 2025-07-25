@@ -172,9 +172,14 @@ ENDCLASS.
 CLASS lcl_node DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_element.
+
     METHODS constructor
       IMPORTING
         ii_parent TYPE REF TO if_ixml_node OPTIONAL.
+
+    METHODS set_parent
+      IMPORTING
+        ii_parent TYPE REF TO if_ixml_node.
 
   PRIVATE SECTION.
     DATA mv_name       TYPE string.
@@ -192,6 +197,10 @@ CLASS lcl_node DEFINITION.
 ENDCLASS.
 
 CLASS lcl_node IMPLEMENTATION.
+  METHOD set_parent.
+    mi_parent = ii_parent.
+  ENDMETHOD.
+
   METHOD if_ixml_node~num_children.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
@@ -664,7 +673,7 @@ CLASS lcl_document IMPLEMENTATION.
   METHOD if_ixml_node~append_child.
     DATA lo_node TYPE REF TO lcl_node.
     lo_node ?= new_child.
-    lo_node->mi_parent = me.
+    lo_node->set_parent( me ).
 
     mi_node->if_ixml_node~append_child( new_child ).
   ENDMETHOD.
