@@ -107,16 +107,19 @@ CLASS cl_abap_conv_out_ce IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD convert.
-    DATA lv_str TYPE string.
+    DATA lv_str   TYPE string.
+    DATA encoding TYPE string.
+
+    encoding = mv_js_encoding.
 
     WRITE '@KERNEL let result = "";'.
 *    WRITE '@KERNEL console.dir(n);'.
     IF n IS SUPPLIED.
       lv_str = data.
       lv_str = lv_str(n).
-      WRITE '@KERNEL result = Buffer.from(lv_str.get(), this.mv_js_encoding.get()).toString("hex");'.
+      WRITE '@KERNEL result = Buffer.from(lv_str.get(), encoding.get()).toString("hex");'.
     ELSE.
-      WRITE '@KERNEL result = Buffer.from(data.get(), this.mv_js_encoding.get()).toString("hex");'.
+      WRITE '@KERNEL result = Buffer.from(data.get(), encoding.get()).toString("hex");'.
     ENDIF.
     WRITE '@KERNEL buffer.set(result.toUpperCase());'.
   ENDMETHOD.
