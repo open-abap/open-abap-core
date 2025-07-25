@@ -24,9 +24,10 @@ CLASS cl_sql_result_set DEFINITION PUBLIC.
       RAISING
         cx_sql_exception
         cx_parameter_invalid_type.
+
+    DATA mv_magic TYPE x LENGTH 1. " todo, move to private somehow
+    DATA mv_index TYPE i. " todo, move to private somehow
   PRIVATE SECTION.
-    DATA mv_magic TYPE x LENGTH 1.
-    DATA mv_index TYPE i.
     DATA mv_ref   TYPE REF TO data.
 ENDCLASS.
 

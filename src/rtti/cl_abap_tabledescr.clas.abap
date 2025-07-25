@@ -152,8 +152,8 @@ CLASS cl_abap_tabledescr IMPLEMENTATION.
     ELSE.
 * EMPTY KEY currently not supported in open-abap
       descr->key_defkind = keydefkind_default.
-      IF descr->mo_line_type->kind = kind_struct.
-        lo_struct ?= descr->mo_line_type.
+      IF descr->get_table_line_type( )->kind = kind_struct.
+        lo_struct ?= descr->get_table_line_type( ).
         lt_components = lo_struct->get_components( ).
         LOOP AT lt_components INTO ls_component.
           ls_key-name = ls_component-name.

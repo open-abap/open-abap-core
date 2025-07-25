@@ -172,9 +172,17 @@ ENDCLASS.
 CLASS lcl_node DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_element.
+
     METHODS constructor
       IMPORTING
         ii_parent TYPE REF TO if_ixml_node OPTIONAL.
+
+    METHODS set_parent
+      IMPORTING
+        ii_parent TYPE REF TO if_ixml_node.
+    METHODS get_parent
+      RETURNING
+        VALUE(ri_parent) TYPE REF TO if_ixml_node.
 
   PRIVATE SECTION.
     DATA mv_name       TYPE string.
@@ -192,6 +200,14 @@ CLASS lcl_node DEFINITION.
 ENDCLASS.
 
 CLASS lcl_node IMPLEMENTATION.
+  METHOD get_parent.
+    ri_parent = mi_parent.
+  ENDMETHOD.
+
+  METHOD set_parent.
+    mi_parent = ii_parent.
+  ENDMETHOD.
+
   METHOD if_ixml_node~num_children.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
@@ -264,13 +280,15 @@ CLASS lcl_node IMPLEMENTATION.
 
   METHOD if_ixml_element~append_child.
     DATA lo_node TYPE REF TO lcl_node.
+    DATA new_parent TYPE REF TO lcl_node.
     lo_node ?= new_child.
 
-    IF lo_node->mi_parent IS NOT INITIAL.
-      lo_node->mi_parent->remove_child( lo_node ).
+    new_parent ?= lo_node->get_parent( ).
+    IF new_parent IS NOT INITIAL.
+      new_parent->if_ixml_node~remove_child( lo_node ).
     ENDIF.
 
-    lo_node->mi_parent = me.
+    lo_node->set_parent( me ).
 
     mo_children->append( new_child ).
   ENDMETHOD.
@@ -664,7 +682,7 @@ CLASS lcl_document IMPLEMENTATION.
   METHOD if_ixml_node~append_child.
     DATA lo_node TYPE REF TO lcl_node.
     lo_node ?= new_child.
-    lo_node->mi_parent = me.
+    lo_node->set_parent( me ).
 
     mi_node->if_ixml_node~append_child( new_child ).
   ENDMETHOD.
@@ -972,8 +990,8 @@ CLASS lcl_istream DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_istream.
     METHODS constructor IMPORTING iv_xml TYPE string.
-  PRIVATE SECTION.
     DATA mv_xml TYPE string.
+  PRIVATE SECTION.
 ENDCLASS.
 
 CLASS lcl_istream IMPLEMENTATION.
@@ -1081,6 +1099,7 @@ CLASS lcl_parser IMPLEMENTATION.
     DATA lv_tag       TYPE string.
     DATA ls_match     TYPE match_result.
     DATA ls_submatch  LIKE LINE OF ls_match-submatches.
+    DATA stream LIKE mi_istream.
 
     DATA lo_parent TYPE REF TO lcl_node.
     DATA lo_node   TYPE REF TO lcl_node.
@@ -1089,7 +1108,8 @@ CLASS lcl_parser IMPLEMENTATION.
     lo_parent ?= mi_document->get_root( ).
 
 * get the private value from istream,
-    WRITE '@KERNEL lv_xml.set(this.mi_istream.get().mv_xml);'.
+    stream = mi_istream.
+    WRITE '@KERNEL lv_xml.set(stream.get().mv_xml);'.
 
     REPLACE ALL OCCURRENCES OF |\n| IN lv_xml WITH ||.
 

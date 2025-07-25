@@ -28,7 +28,8 @@ CLASS cl_abap_refdescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD create.
-    "todo
+    CREATE OBJECT p_result.
+    p_result->referenced = p_referenced_type.
   ENDMETHOD.
 
   METHOD get_referenced_type.

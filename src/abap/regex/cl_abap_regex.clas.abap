@@ -1,6 +1,11 @@
 CLASS cl_abap_regex DEFINITION PUBLIC.
 
   PUBLIC SECTION.
+    DATA pattern TYPE string READ-ONLY.
+
+    DATA mv_pattern     TYPE string. " TODO: remove this variable
+    DATA mv_ignore_case TYPE abap_bool. " TODO: fix this variable, its not supposed to be there
+
     METHODS constructor
       IMPORTING
         pattern     TYPE clike
@@ -20,8 +25,6 @@ CLASS cl_abap_regex DEFINITION PUBLIC.
         VALUE(regex) TYPE REF TO cl_abap_regex.
 
   PRIVATE SECTION.
-    DATA mv_pattern     TYPE string.
-    DATA mv_ignore_case TYPE abap_bool.
 
 ENDCLASS.
 
@@ -29,6 +32,7 @@ CLASS cl_abap_regex IMPLEMENTATION.
 
   METHOD constructor.
     mv_pattern = pattern.
+    me->pattern = pattern.
     mv_ignore_case = ignore_case.
   ENDMETHOD.
 

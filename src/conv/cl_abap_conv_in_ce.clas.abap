@@ -96,14 +96,20 @@ CLASS cl_abap_conv_in_ce IMPLEMENTATION.
 
   METHOD convert.
     DATA lv_error TYPE abap_bool.
+    DATA encoding LIKE mv_js_encoding.
+    DATA ignore_cerr LIKE mv_ignore_cerr.
 
     ASSERT mv_js_encoding IS NOT INITIAL.
     WRITE '@KERNEL let buf = Buffer.from(input.get(), "hex");'.
 
+    " workaround # js private
+    encoding = mv_js_encoding.
+    ignore_cerr = mv_ignore_cerr.
+
     " Try TextDecoder first, if it runs in browser,
     WRITE '@KERNEL const decoder = TextDecoder || await import("util").TextDecoder;'.
 * https://stackoverflow.com/questions/62334608/textdecoder-prototype-ignorebom-not-working-as-expected
-    WRITE '@KERNEL const td = new decoder(this.mv_js_encoding.get(), {fatal: this.mv_ignore_cerr.get() !== "X", ignoreBOM: true});'.
+    WRITE '@KERNEL const td = new decoder(encoding.get(), {fatal: ignore_cerr.get() !== "X", ignoreBOM: true});'.
     WRITE '@KERNEL try {'.
     " WRITE '@KERNEL   console.dir(buf);'.
     WRITE '@KERNEL   data.set(td.decode(buf));'.

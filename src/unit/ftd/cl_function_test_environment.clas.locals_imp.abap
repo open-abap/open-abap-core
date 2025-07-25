@@ -160,6 +160,8 @@ CLASS lcl_double IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ftd_output_config_setter~then_answer.
-    WRITE '@KERNEL abap.FunctionModules[this.mv_name.get().trimEnd()] = (INPUT) => lcl_invoker.invoke({fminput: INPUT, answer});'.
+    DATA name LIKE mv_name.
+    name = mv_name.
+    WRITE '@KERNEL abap.FunctionModules[name.get().trimEnd()] = (INPUT) => lcl_invoker.invoke({fminput: INPUT, answer});'.
   ENDMETHOD.
 ENDCLASS.
