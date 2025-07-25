@@ -265,8 +265,8 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
   METHOD describe_by_data.
 
     DATA lo_elem      TYPE REF TO cl_abap_elemdescr.
-    DATA lo_ref       TYPE REF TO cl_abap_refdescr.
     DATA lo_struct    TYPE REF TO cl_abap_structdescr.
+    DATA lo_referenced TYPE REF TO cl_abap_typedescr.
     DATA lv_any       TYPE string.
     DATA lv_convexit  TYPE string.
     DATA lv_ddicname  TYPE string.
@@ -382,37 +382,33 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type = describe_by_data( lv_name ).
         RETURN.
       WHEN 'ABAPObject'.
-        CREATE OBJECT type TYPE cl_abap_refdescr.
-        type->type_kind = typekind_oref.
-        type->kind = kind_ref.
-
-        lo_ref ?= type.
         IF p_data IS INITIAL.
 * note: using the name doesnt work for local classes
           WRITE '@KERNEL lv_rtti_name.set(p_data.RTTIName || "");'.
           IF lv_rtti_name CP '\CLASS-POOL=*'.
 * convert to internal name,
             lv_rtti_name = kernel_internal_name=>rtti_to_internal( lv_rtti_name ).
-            lo_ref->referenced = describe_by_name( lv_rtti_name ).
+            lo_referenced = describe_by_name( lv_rtti_name ).
           ELSE.
             WRITE '@KERNEL lv_name.set(p_data.qualifiedName || "");'.
-            lo_ref->referenced = describe_by_name( lv_name ).
+            lo_referenced = describe_by_name( lv_name ).
           ENDIF.
         ELSE.
-          lo_ref->referenced = describe_by_object_ref( p_data ).
+          lo_referenced = describe_by_object_ref( p_data ).
         ENDIF.
+
+        type = cl_abap_refdescr=>create( lo_referenced ).
+        type->type_kind = typekind_oref.
+        type->kind = kind_ref.
       WHEN 'UTCLong'.
         CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_utclong.
         type->kind = kind_elem.
       WHEN 'DataReference'.
-        CREATE OBJECT type TYPE cl_abap_refdescr.
+        WRITE '@KERNEL lv_any = p_data.type;'.
+        type = cl_abap_refdescr=>create( describe_by_data( lv_any ) ).
         type->type_kind = typekind_dref.
         type->kind = kind_ref.
-
-        lo_ref ?= type.
-        WRITE '@KERNEL lv_any = p_data.type;'.
-        lo_ref->referenced = describe_by_data( lv_any ).
       WHEN OTHERS.
         WRITE / lv_name.
         ASSERT 1 = 'todo_cl_abap_typedescr'.
