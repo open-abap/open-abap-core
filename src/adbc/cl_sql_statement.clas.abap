@@ -47,10 +47,12 @@ CLASS cl_sql_statement IMPLEMENTATION.
   METHOD execute_update.
 
     DATA lv_sql_message TYPE string.
+    DATA connection LIKE mv_connection.
 
     ASSERT statement IS NOT INITIAL.
+    connection = mv_connection.
 
-    WRITE '@KERNEL if (abap.context.databaseConnections[this.mv_connection.get()] === undefined) {'.
+    WRITE '@KERNEL if (abap.context.databaseConnections[connection.get()] === undefined) {'.
     lv_sql_message = 'not connected to db'.
     WRITE '@KERNEL }'.
     IF lv_sql_message IS NOT INITIAL.
@@ -58,7 +60,7 @@ CLASS cl_sql_statement IMPLEMENTATION.
     ENDIF.
 
     WRITE '@KERNEL try {'.
-    WRITE '@KERNEL   await abap.context.databaseConnections[this.mv_connection.get()].execute(statement.get());'.
+    WRITE '@KERNEL   await abap.context.databaseConnections[connection.get()].execute(statement.get());'.
     WRITE '@KERNEL } catch(e) {'.
     WRITE '@KERNEL   lv_sql_message.set(e + "");'.
     WRITE '@KERNEL }'.
@@ -72,10 +74,14 @@ CLASS cl_sql_statement IMPLEMENTATION.
     DATA lx_osql        TYPE REF TO cx_sy_dynamic_osql_semantics.
     DATA lv_sql_message TYPE string.
 
+    DATA connection LIKE mv_connection.
+
+    connection = mv_connection.
+
     ASSERT statement IS NOT INITIAL.
     ASSERT mv_connection IS NOT INITIAL.
 
-    WRITE '@KERNEL if (abap.context.databaseConnections[this.mv_connection.get()] === undefined) {'.
+    WRITE '@KERNEL if (abap.context.databaseConnections[connection.get()] === undefined) {'.
     lv_sql_message = 'not connected to db'.
     WRITE '@KERNEL }'.
     IF lv_sql_message IS NOT INITIAL.
@@ -85,7 +91,7 @@ CLASS cl_sql_statement IMPLEMENTATION.
     CREATE OBJECT result_set.
 
     TRY.
-        WRITE '@KERNEL   const res = await abap.context.databaseConnections[this.mv_connection.get()].select({select: statement.get()});'.
+        WRITE '@KERNEL   const res = await abap.context.databaseConnections[connection.get()].select({select: statement.get()});'.
 *    WRITE '@KERNEL   console.dir(res.rows);'.
         WRITE '@KERNEL   result_set.get().mv_magic = res.rows;'.
       CATCH cx_sy_dynamic_osql_semantics INTO lx_osql.
