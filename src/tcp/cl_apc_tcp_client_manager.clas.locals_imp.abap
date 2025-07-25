@@ -33,11 +33,11 @@ CLASS lcl_client DEFINITION.
         iv_port     TYPE i
         io_handler  TYPE REF TO if_apc_wsp_event_handler
         iv_protocol TYPE i.
-  PRIVATE SECTION.
     DATA mv_host    TYPE string.
     DATA mv_port    TYPE i.
     DATA mo_handler TYPE REF TO if_apc_wsp_event_handler.
     DATA mv_protocol TYPE i.
+  PRIVATE SECTION.
 ENDCLASS.
 
 CLASS lcl_client IMPLEMENTATION.

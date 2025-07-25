@@ -112,6 +112,7 @@ CLASS cl_http_client IMPLEMENTATION.
     DATA lt_form_fields   TYPE tihttpnvp.
     DATA lt_header_fields TYPE tihttpnvp.
     DATA ls_field         LIKE LINE OF lt_header_fields.
+    DATA lo_entity        TYPE REF TO cl_http_entity.
 
     lv_method = if_http_client~request->get_method( ).
     IF lv_method IS INITIAL.
@@ -202,10 +203,11 @@ CLASS cl_http_client IMPLEMENTATION.
       value = lv_value ).
     WRITE '@KERNEL }'.
 
+    lo_entity ?= if_http_client~response.
 
-    WRITE '@KERNEL this.if_http_client$response.get().mv_content_type.set(response.headers["content-type"] || "");'.
-    WRITE '@KERNEL this.if_http_client$response.get().mv_status.set(response.statusCode);'.
-    WRITE '@KERNEL this.if_http_client$response.get().mv_data.set(response.body.toString("hex").toUpperCase());'.
+    WRITE '@KERNEL lo_entity.get().mv_content_type.set(response.headers["content-type"] || "");'.
+    WRITE '@KERNEL lo_entity.get().mv_status.set(response.statusCode);'.
+    WRITE '@KERNEL lo_entity.get().mv_data.set(response.body.toString("hex").toUpperCase());'.
 *    WRITE '@KERNEL console.dir(this.if_http_client$response.get().mv_data);'.
 
     lv_value = if_http_client~response->get_header_field( 'content-encoding' ).

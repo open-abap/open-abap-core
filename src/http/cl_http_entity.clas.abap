@@ -9,9 +9,9 @@ CLASS cl_http_entity DEFINITION PUBLIC CREATE PRIVATE.
     ALIASES set_cdata FOR if_http_entity~set_cdata.
     ALIASES get_header_field FOR if_http_entity~get_header_field.
     ALIASES set_header_field FOR if_http_entity~set_header_field.
-  PROTECTED SECTION.
+*  PROTECTED SECTION.
     DATA m_last_error TYPE i.
-  PRIVATE SECTION.
+*  PRIVATE SECTION. todo
     DATA mv_status       TYPE i.
     DATA mv_reason       TYPE string.
     DATA mv_content_type TYPE string.
