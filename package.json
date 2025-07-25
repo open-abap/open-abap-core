@@ -15,6 +15,7 @@
   },
   "license": "MIT",
   "dependencies": {
+
     "@abaplint/cli": "^2.113.149",
     "@abaplint/database-pg": "^2.10.24",
     "@abaplint/database-sqlite": "^2.10.24",
