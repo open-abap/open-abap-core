@@ -108,8 +108,9 @@ CLASS cl_abap_conv_out_ce IMPLEMENTATION.
 
   METHOD convert.
     DATA lv_str   TYPE string.
-    DATA encoding TYPE string.
+    DATA encoding LIKE mv_js_encoding.
 
+    " workaround private # fields in js
     encoding = mv_js_encoding.
 
     WRITE '@KERNEL let result = "";'.
@@ -121,6 +122,7 @@ CLASS cl_abap_conv_out_ce IMPLEMENTATION.
     ELSE.
       WRITE '@KERNEL result = Buffer.from(data.get(), encoding.get()).toString("hex");'.
     ENDIF.
+
     WRITE '@KERNEL buffer.set(result.toUpperCase());'.
   ENDMETHOD.
 ENDCLASS.
