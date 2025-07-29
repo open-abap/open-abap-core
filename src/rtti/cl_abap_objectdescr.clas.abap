@@ -152,7 +152,9 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_interface_type.
-    ASSERT 1 = 'todo'.
+
+    p_descr_ref ?= cl_abap_intfdescr=>describe_by_name( p_name ).
+
   ENDMETHOD.
 
   METHOD get_attribute_type.
