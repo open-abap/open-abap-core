@@ -275,14 +275,14 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD method_via_describe_by_name.
 
-    " DATA lo_objdescr TYPE REF TO cl_abap_objectdescr.
-    " DATA ls_method   TYPE abap_methdescr.
+    DATA lo_objdescr TYPE REF TO cl_abap_objectdescr.
+    DATA ls_method   TYPE abap_methdescr.
 
-    " lo_objdescr ?= cl_abap_typedescr=>describe_by_name( 'CL_ABAP_OBJECTDESCR' ).
+    lo_objdescr ?= cl_abap_typedescr=>describe_by_name( 'CL_ABAP_OBJECTDESCR' ).
 
-    " READ TABLE lo_objdescr->methods INTO ls_method WITH KEY name = 'GET_METHOD_PARAMETER_TYPE'.
-    " cl_abap_unit_assert=>assert_subrc( ).
-    " cl_abap_unit_assert=>assert_not_initial( ls_method ).
+    READ TABLE lo_objdescr->methods INTO ls_method WITH KEY name = 'GET_METHOD_PARAMETER_TYPE'.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_not_initial( ls_method ).
 
   ENDMETHOD.
 
