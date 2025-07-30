@@ -181,20 +181,20 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD pcre_slashes.
 
-    " DATA lo_regex    TYPE REF TO cl_abap_regex.
-    " DATA lv_basepath TYPE string.
+    DATA lo_regex    TYPE REF TO cl_abap_regex.
+    DATA lv_basepath TYPE string.
 
-    " lo_regex = cl_abap_regex=>create_pcre(
-    "   pattern     = '^(.*)\/list$'
-    "   ignore_case = abap_true ).
+    lo_regex = cl_abap_regex=>create_pcre(
+      pattern     = '^(.*)\/list$'
+      ignore_case = abap_true ).
 
-    " FIND FIRST OCCURRENCE OF REGEX lo_regex IN 'core/api/List' SUBMATCHES lv_basepath.
+    FIND FIRST OCCURRENCE OF REGEX lo_regex IN 'core/api/List' SUBMATCHES lv_basepath.
 
-    " cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_subrc( ).
 
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = lv_basepath
-    "   exp = 'core/api' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_basepath
+      exp = 'core/api' ).
 
   ENDMETHOD.
 
