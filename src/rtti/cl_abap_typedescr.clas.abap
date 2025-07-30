@@ -177,7 +177,10 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         objectdescr->mv_object_name = to_upper( p_name ). " todo, this should give syntax error, as they are not friends
         objectdescr->mv_object_type = oo_type. " todo, this should give syntax error, as they are not friends
       WHEN 'CLAS'.
-        CREATE OBJECT type TYPE cl_abap_classdescr.
+*        WRITE '@KERNEL console.dir(p_name);'.
+        CREATE OBJECT type TYPE cl_abap_classdescr
+          EXPORTING
+            p_object = lv_any.
         type->type_kind = typekind_class.
         type->kind = kind_class.
         type->relative_name = to_upper( p_name ).
