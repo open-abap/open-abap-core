@@ -103,6 +103,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS is_class FOR TESTING RAISING cx_static_check.
     METHODS relative_name FOR TESTING RAISING cx_static_check.
     METHODS method_and_parameter FOR TESTING RAISING cx_static_check.
+    METHODS method_via_describe_by_name FOR TESTING RAISING cx_static_check.
     METHODS method_and_parameter_char30 FOR TESTING RAISING cx_static_check.
     METHODS from_interface FOR TESTING RAISING cx_static_check.
     METHODS nested_orefs FOR TESTING RAISING cx_static_check.
@@ -269,6 +270,19 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_datadescr->kind
       exp = cl_abap_typedescr=>kind_elem ).
+
+  ENDMETHOD.
+
+  METHOD method_via_describe_by_name.
+
+    DATA lo_objdescr TYPE REF TO cl_abap_objectdescr.
+    DATA ls_method   TYPE abap_methdescr.
+
+    lo_objdescr ?= cl_abap_typedescr=>describe_by_name( 'CL_ABAP_OBJECTDESCR' ).
+
+    READ TABLE lo_objdescr->methods INTO ls_method WITH KEY name = 'GET_METHOD_PARAMETER_TYPE'.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_not_initial( ls_method ).
 
   ENDMETHOD.
 
