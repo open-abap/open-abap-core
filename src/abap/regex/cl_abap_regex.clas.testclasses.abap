@@ -1,14 +1,16 @@
 CLASS ltcl_test DEFINITION FOR TESTING DURATION SHORT RISK LEVEL HARMLESS FINAL.
 
   PRIVATE SECTION.
-    METHODS test01      FOR TESTING RAISING cx_static_check.
-    METHODS match_true  FOR TESTING RAISING cx_static_check.
-    METHODS match_false FOR TESTING RAISING cx_static_check.
-    METHODS no_next     FOR TESTING RAISING cx_static_check.
-    METHODS tags        FOR TESTING RAISING cx_static_check.
-    METHODS find_hello  FOR TESTING RAISING cx_static_check.
-    METHODS pcre        FOR TESTING RAISING cx_static_check.
-    METHODS replace_oo  FOR TESTING RAISING cx_static_check.
+    METHODS test01       FOR TESTING RAISING cx_static_check.
+    METHODS match_true   FOR TESTING RAISING cx_static_check.
+    METHODS match_false  FOR TESTING RAISING cx_static_check.
+    METHODS no_next      FOR TESTING RAISING cx_static_check.
+    METHODS tags         FOR TESTING RAISING cx_static_check.
+    METHODS find_hello   FOR TESTING RAISING cx_static_check.
+    METHODS pcre         FOR TESTING RAISING cx_static_check.
+    METHODS replace_oo   FOR TESTING RAISING cx_static_check.
+    METHODS pcre_slashes FOR TESTING RAISING cx_static_check.
+    METHODS classic_slashes FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -174,6 +176,45 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_line
       exp = '' ).
+
+  ENDMETHOD.
+
+  METHOD pcre_slashes.
+
+    DATA lo_regex    TYPE REF TO cl_abap_regex.
+    DATA lv_basepath TYPE string.
+
+    lo_regex = cl_abap_regex=>create_pcre(
+      pattern     = '^(.*)\/list$'
+      ignore_case = abap_true ).
+
+    FIND FIRST OCCURRENCE OF REGEX lo_regex IN 'core/api/List' SUBMATCHES lv_basepath.
+
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_basepath
+      exp = 'core/api' ).
+
+  ENDMETHOD.
+
+  METHOD classic_slashes.
+
+    DATA lo_regex    TYPE REF TO cl_abap_regex.
+    DATA lv_basepath TYPE string.
+
+    CREATE OBJECT lo_regex
+      EXPORTING
+        pattern     = '^(.*)\/list$'
+        ignore_case = abap_true.
+
+    FIND FIRST OCCURRENCE OF REGEX lo_regex IN 'core/api/List' SUBMATCHES lv_basepath.
+
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_basepath
+      exp = 'core/api' ).
 
   ENDMETHOD.
 
