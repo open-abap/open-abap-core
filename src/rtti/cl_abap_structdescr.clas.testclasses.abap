@@ -19,6 +19,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS length FOR TESTING RAISING cx_static_check.
     METHODS get_components_include FOR TESTING RAISING cx_static_check.
     METHODS get_symbols FOR TESTING RAISING cx_static_check.
+    METHODS two_grouped FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -414,6 +415,41 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_subrc(
         exp = 0
         act = sy-subrc ).
+
+  ENDMETHOD.
+
+  METHOD two_grouped.
+
+    TYPES: BEGIN OF ty1,
+         foo TYPE c LENGTH 2,
+       END OF ty1.
+
+    TYPES: BEGIN OF ty2,
+         bar TYPE c LENGTH 2,
+       END OF ty2.
+
+    TYPES BEGIN OF ty.
+    INCLUDE TYPE ty1 AS g1.
+    INCLUDE TYPE ty2 AS g2.
+    TYPES END OF ty.
+
+    DATA data TYPE ty.
+
+    DATA lo_struct TYPE REF TO cl_abap_structdescr.
+    lo_struct ?= cl_abap_structdescr=>describe_by_data( data ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_struct->get_component_type( 'FOO' )->kind
+      exp = cl_abap_typedescr=>kind_elem ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_struct->get_component_type( 'BAR' )->kind
+      exp = cl_abap_typedescr=>kind_elem ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_struct->get_component_type( 'G1' )->kind
+      exp = cl_abap_typedescr=>kind_struct ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_struct->get_component_type( 'G2' )->kind
+      exp = cl_abap_typedescr=>kind_struct ).
 
   ENDMETHOD.
 
