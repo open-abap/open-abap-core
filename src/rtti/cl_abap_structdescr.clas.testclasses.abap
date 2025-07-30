@@ -433,10 +433,30 @@ CLASS ltcl_test IMPLEMENTATION.
     INCLUDE TYPE ty2 AS g2.
     TYPES END OF ty.
 
+    DATA ref TYPE REF TO data.
     DATA data TYPE ty.
-
     DATA lo_struct TYPE REF TO cl_abap_structdescr.
+    FIELD-SYMBOLS <fs> TYPE any.
+
     lo_struct ?= cl_abap_structdescr=>describe_by_data( data ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_struct->get_component_type( 'FOO' )->kind
+      exp = cl_abap_typedescr=>kind_elem ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_struct->get_component_type( 'BAR' )->kind
+      exp = cl_abap_typedescr=>kind_elem ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_struct->get_component_type( 'G1' )->kind
+      exp = cl_abap_typedescr=>kind_struct ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_struct->get_component_type( 'G2' )->kind
+      exp = cl_abap_typedescr=>kind_struct ).
+
+* pass it through CREATE DATA and check the same again,
+    CREATE DATA ref TYPE HANDLE lo_struct.
+    ASSIGN ref->* TO <fs>.
+    lo_struct ?= cl_abap_structdescr=>describe_by_data( <fs> ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lo_struct->get_component_type( 'FOO' )->kind
