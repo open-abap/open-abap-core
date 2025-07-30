@@ -85,6 +85,8 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
     lo_struct ?= handle.
     lt_components = lo_struct->get_components( ).
     WRITE '@KERNEL let obj = {};'.
+    WRITE '@KERNEL let suffix = {};'.
+    WRITE '@KERNEL let asInclude = {};'.
     LOOP AT lt_components ASSIGNING <ls_component>.
 *      WRITE '@KERNEL console.dir(ls_component.get().name);'.
       call(
@@ -94,8 +96,11 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
           dref   = field ).
       lv_name = to_lower( <ls_component>-name ).
       WRITE '@KERNEL obj[lv_name.get()] = field.getPointer();'.
+      IF <ls_component>-as_include = abap_true.
+        WRITE '@KERNEL asInclude[lv_name.get()] = true;'.
+      ENDIF.
     ENDLOOP.
-    WRITE '@KERNEL dref.assign(new abap.types.Structure(obj, lo_struct.get().internal_qualified_name.get(), lo_struct.get().internal_ddic_name.get()));'.
+    WRITE '@KERNEL dref.assign(new abap.types.Structure(obj, lo_struct.get().internal_qualified_name.get(), lo_struct.get().internal_ddic_name.get(), suffix, asInclude));'.
   ENDMETHOD.
 
   METHOD table.
