@@ -1,4 +1,7 @@
 INTERFACE if_ixml_parse_error PUBLIC.
+
+  CONSTANTS co_info TYPE i VALUE 1.
+
   METHODS get_reason
     RETURNING
       VALUE(reason) TYPE string.
