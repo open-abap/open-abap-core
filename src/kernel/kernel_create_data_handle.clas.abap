@@ -79,12 +79,15 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
     DATA field         TYPE REF TO data.
     DATA lv_name       TYPE string.
+    DATA lv_suffix       TYPE string.
 
     FIELD-SYMBOLS <ls_component> LIKE LINE OF lt_components.
 
     lo_struct ?= handle.
     lt_components = lo_struct->get_components( ).
     WRITE '@KERNEL let obj = {};'.
+    WRITE '@KERNEL let suffix = {};'.
+    WRITE '@KERNEL let asInclude = {};'.
     LOOP AT lt_components ASSIGNING <ls_component>.
 *      WRITE '@KERNEL console.dir(ls_component.get().name);'.
       call(
@@ -94,8 +97,15 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
           dref   = field ).
       lv_name = to_lower( <ls_component>-name ).
       WRITE '@KERNEL obj[lv_name.get()] = field.getPointer();'.
+      IF <ls_component>-as_include = abap_true.
+        WRITE '@KERNEL asInclude[lv_name.get()] = true;'.
+      ENDIF.
+      IF <ls_component>-suffix IS NOT INITIAL.
+        lv_suffix = to_lower( <ls_component>-suffix ).
+        WRITE '@KERNEL suffix[lv_name.get()] = lv_suffix.get();'.
+      ENDIF.
     ENDLOOP.
-    WRITE '@KERNEL dref.assign(new abap.types.Structure(obj, lo_struct.get().internal_qualified_name.get(), lo_struct.get().internal_ddic_name.get()));'.
+    WRITE '@KERNEL dref.assign(new abap.types.Structure(obj, lo_struct.get().internal_qualified_name.get(), lo_struct.get().internal_ddic_name.get(), suffix, asInclude));'.
   ENDMETHOD.
 
   METHOD table.
