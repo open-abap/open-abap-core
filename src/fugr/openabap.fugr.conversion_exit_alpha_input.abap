@@ -17,6 +17,7 @@ FUNCTION conversion_exit_alpha_input.
   ENDIF.
 
   lv_tmp = input.
+* hmm, perhaps this CONDENSE can be removed?
   CONDENSE lv_tmp.
 
   DESCRIBE FIELD input TYPE lv_type.
