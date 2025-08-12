@@ -24,7 +24,8 @@ CLASS cl_bcs DEFINITION PUBLIC.
 
     METHODS set_status_attributes
       IMPORTING
-        i_requested_status TYPE any.
+        i_requested_status TYPE any
+        i_status_mail      TYPE any OPTIONAL.
 
     METHODS set_document
       IMPORTING
