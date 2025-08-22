@@ -70,6 +70,7 @@ CLASS cl_oa2c_config_writer_api DEFINITION PUBLIC.
         e_token_endpoint           TYPE string
         es_oa2c_admin              TYPE string
         et_profiles                TYPE string
+        et_configured_scopes       TYPE string_table
         e_configured_granttype     TYPE oa2c_granttype.
 
     METHODS set_profiles
