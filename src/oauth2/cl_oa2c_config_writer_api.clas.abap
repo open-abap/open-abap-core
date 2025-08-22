@@ -32,10 +32,19 @@ CLASS cl_oa2c_config_writer_api DEFINITION PUBLIC.
     METHODS read
       EXPORTING
         e_client_id              TYPE string
+        e_client_uuid            TYPE string
         e_authorization_endpoint TYPE string
         e_token_endpoint         TYPE string
         e_target_path            TYPE string
         e_configured_granttype   TYPE oa2c_granttype.
+
+    METHODS set_profiles
+      IMPORTING
+        it_profiles TYPE any.
+
+    METHODS set_client_secret
+      IMPORTING
+        i_client_secret TYPE string.
 
   PRIVATE SECTION.
     TYPES: BEGIN OF ty_config,
@@ -55,6 +64,14 @@ CLASS cl_oa2c_config_writer_api DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS cl_oa2c_config_writer_api IMPLEMENTATION.
+
+  METHOD set_client_secret.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD set_profiles.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD create.
     ASSERT i_configured_granttype = c_granttype_cc.
