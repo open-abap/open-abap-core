@@ -49,6 +49,7 @@ CLASS cl_oa2c_config_writer_api DEFINITION PUBLIC.
         e_authorization_endpoint TYPE string
         e_token_endpoint         TYPE string
         e_target_path            TYPE string
+        e_configuration          TYPE string
         e_configured_granttype   TYPE oa2c_granttype.
 
     METHODS set_profiles
