@@ -32,6 +32,7 @@ CLASS cl_oa2c_config_writer_api DEFINITION PUBLIC.
 
     CLASS-METHODS load
       IMPORTING
+        i_profile                   TYPE oa2c_profile OPTIONAL
         i_configuration             TYPE oa2c_configuration OPTIONAL
       RETURNING
         VALUE(ro_config_writer_api) TYPE REF TO cl_oa2c_config_writer_api
@@ -44,13 +45,32 @@ CLASS cl_oa2c_config_writer_api DEFINITION PUBLIC.
 
     METHODS read
       EXPORTING
-        e_client_id              TYPE string
-        e_client_uuid            TYPE string
-        e_authorization_endpoint TYPE string
-        e_token_endpoint         TYPE string
-        e_target_path            TYPE string
-        e_configuration          TYPE string
-        e_configured_granttype   TYPE oa2c_granttype.
+        e_auth_code_allowed        TYPE abap_bool
+        e_authentication_method    TYPE string
+        e_authorization_endpoint   TYPE string
+        e_client_id                TYPE string
+        e_client_uuid              TYPE string
+        e_clock_skew_tolerance     TYPE i
+        e_configuration            TYPE string
+        e_configured_grant_type    TYPE oa2c_granttype
+        e_proxy_host               TYPE string
+        e_proxy_port               TYPE string
+        e_proxy_user               TYPE string
+        e_redirect_uri             TYPE string
+        e_redirect_uri_host        TYPE string
+        e_redirect_uri_path        TYPE string
+        e_redirect_uri_port        TYPE i
+        e_rs_authentication_method TYPE string
+        e_rt_validity              TYPE i
+        e_saml20_allowed           TYPE abap_bool
+        e_saml20_audience          TYPE string
+        e_saml20_nameid_email      TYPE string
+        e_saml20_recipient         TYPE string
+        e_target_path              TYPE string
+        e_token_endpoint           TYPE string
+        es_oa2c_admin              TYPE string
+        et_profiles                TYPE string
+        e_configured_granttype     TYPE oa2c_granttype.
 
     METHODS set_profiles
       IMPORTING

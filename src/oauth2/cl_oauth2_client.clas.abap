@@ -28,7 +28,7 @@ CLASS cl_oauth2_client IMPLEMENTATION.
     WRITE '@KERNEL lv_scope.set(scopes[0]);'.
 
     CREATE OBJECT lo_client.
-    lo_client->mo_config_writer_api = cl_oa2c_config_writer_api=>load( i_configuration ).
+    lo_client->mo_config_writer_api = cl_oa2c_config_writer_api=>load( i_configuration = i_configuration ).
     lo_client->mv_scope = lv_scope.
 
     ro_oauth2_client ?= lo_client.
