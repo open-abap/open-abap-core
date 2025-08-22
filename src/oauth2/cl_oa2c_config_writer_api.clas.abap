@@ -4,14 +4,27 @@ CLASS cl_oa2c_config_writer_api DEFINITION PUBLIC.
 
     CLASS-METHODS create
       IMPORTING
-        i_profile                   TYPE oa2c_profile
-        i_configuration             TYPE oa2c_configuration OPTIONAL
         i_client_id                 TYPE string
         i_client_secret             TYPE string
+        i_profile                   TYPE oa2c_profile
+        i_auth_code_allowed         TYPE abap_bool OPTIONAL
+        i_authentication_method     TYPE any OPTIONAL
         i_authorization_endpoint    TYPE string OPTIONAL
-        i_token_endpoint            TYPE string OPTIONAL
-        i_target_path               TYPE string OPTIONAL
+        i_clock_skew_tolerance      TYPE i OPTIONAL
+        i_configuration             TYPE oa2c_configuration OPTIONAL
         i_configured_granttype      TYPE oa2c_granttype DEFAULT 0
+        i_proxy_host                TYPE string OPTIONAL
+        i_proxy_port                TYPE string OPTIONAL
+        i_proxy_user                TYPE string OPTIONAL
+        i_redirection_uri_server    TYPE string OPTIONAL
+        i_rs_authentication_method  TYPE any OPTIONAL
+        i_rt_validity               TYPE i OPTIONAL
+        i_saml20_allowed            TYPE abap_bool OPTIONAL
+        i_saml20_audience           TYPE string OPTIONAL
+        i_saml20_nameid_email_num   TYPE any OPTIONAL
+        i_target_path               TYPE string OPTIONAL
+        i_token_endpoint            TYPE string OPTIONAL
+        it_configured_scopes        TYPE string_table OPTIONAL
       RETURNING
         VALUE(ro_config_writer_api) TYPE REF TO cl_oa2c_config_writer_api
       RAISING
@@ -36,6 +49,7 @@ CLASS cl_oa2c_config_writer_api DEFINITION PUBLIC.
         e_authorization_endpoint TYPE string
         e_token_endpoint         TYPE string
         e_target_path            TYPE string
+        e_configuration          TYPE string
         e_configured_granttype   TYPE oa2c_granttype.
 
     METHODS set_profiles
