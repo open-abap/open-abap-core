@@ -1,0 +1,3 @@
+INTERFACE if_fdt_types PUBLIC.
+  TYPES element_number TYPE n LENGTH 34.
+ENDINTERFACE.
