@@ -31,9 +31,20 @@ CLASS cl_web_http_utility DEFINITION PUBLIC.
       RETURNING
         VALUE(encoded) TYPE string.
 
+    CLASS-METHODS decode_utf8
+      IMPORTING
+        encoded          TYPE xstring
+      RETURNING
+        VALUE(unencoded) TYPE string.
+      " RAISING
+      "   cx_web_http_conversion_failed.
+
 ENDCLASS.
 
 CLASS cl_web_http_utility IMPLEMENTATION.
+  METHOD decode_utf8.
+    unencoded = cl_abap_codepage=>convert_from( encoded ).
+  ENDMETHOD.
 
   METHOD decode_base64.
     decoded = cl_abap_codepage=>convert_from( cl_http_utility=>decode_x_base64( encoded ) ).
