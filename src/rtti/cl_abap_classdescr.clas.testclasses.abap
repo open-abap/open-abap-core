@@ -4,6 +4,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS absolute_name FOR TESTING RAISING cx_static_check.
     METHODS get_class_name FOR TESTING RAISING cx_static_check.
     METHODS get_interface_type FOR TESTING RAISING cx_static_check.
+    METHODS describe_by_object_ref FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -46,6 +47,16 @@ CLASS ltcl_test IMPLEMENTATION.
     CREATE OBJECT ref.
     objdescr ?= cl_abap_objectdescr=>describe_by_object_ref( ref ).
     intfdescr ?= objdescr->get_interface_type( 'IF_MESSAGE' ).
+
+  ENDMETHOD.
+
+  METHOD describe_by_object_ref.
+
+    DATA ref TYPE REF TO cl_abap_typedescr.
+
+* just check there is no infinite recursion
+    ref = cl_abap_typedescr=>describe_by_data( 1 ).
+    cl_abap_objectdescr=>describe_by_object_ref( ref ).
 
   ENDMETHOD.
 
