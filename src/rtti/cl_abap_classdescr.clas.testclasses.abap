@@ -56,6 +56,8 @@ CLASS ltcl_test IMPLEMENTATION.
 
 * just check there is no infinite recursion
     ref = cl_abap_typedescr=>describe_by_data( 1 ).
+    ref = cl_abap_objectdescr=>describe_by_object_ref( ref ).
+* describe the described description
     cl_abap_objectdescr=>describe_by_object_ref( ref ).
 
   ENDMETHOD.
