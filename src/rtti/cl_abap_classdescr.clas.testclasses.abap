@@ -1,10 +1,26 @@
+CLASS lcl_structdescr DEFINITION.
+  PUBLIC SECTION.
+    DATA structdescr_properties TYPE REF TO cl_abap_structdescr.
+
+    METHODS get_flat_structure
+      IMPORTING
+        structdescr         TYPE REF TO cl_abap_structdescr
+      RETURNING
+        VALUE(symbol_table) TYPE cl_abap_structdescr=>symbol_table.
+ENDCLASS.
+CLASS lcl_structdescr IMPLEMENTATION.
+  METHOD get_flat_structure.
+  ENDMETHOD.
+ENDCLASS.
+
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
     METHODS absolute_name FOR TESTING RAISING cx_static_check.
     METHODS get_class_name FOR TESTING RAISING cx_static_check.
     METHODS get_interface_type FOR TESTING RAISING cx_static_check.
-    METHODS describe_by_object_ref FOR TESTING RAISING cx_static_check.
+    METHODS describe_by_object_ref1 FOR TESTING RAISING cx_static_check.
+    METHODS describe_by_object_ref2 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -50,7 +66,7 @@ CLASS ltcl_test IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD describe_by_object_ref.
+  METHOD describe_by_object_ref1.
 
     DATA ref TYPE REF TO cl_abap_typedescr.
 
@@ -58,6 +74,16 @@ CLASS ltcl_test IMPLEMENTATION.
     ref = cl_abap_typedescr=>describe_by_data( 1 ).
     ref = cl_abap_objectdescr=>describe_by_object_ref( ref ).
 * describe the described description
+    cl_abap_objectdescr=>describe_by_object_ref( ref ).
+
+  ENDMETHOD.
+
+  METHOD describe_by_object_ref2.
+
+    DATA ref TYPE REF TO lcl_structdescr.
+
+* just check there is no infinite recursion
+    CREATE OBJECT ref.
     cl_abap_objectdescr=>describe_by_object_ref( ref ).
 
   ENDMETHOD.
