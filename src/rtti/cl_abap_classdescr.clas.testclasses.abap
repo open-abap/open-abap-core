@@ -72,11 +72,11 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD describe_by_object_ref2.
 
-"     DATA ref TYPE REF TO lcl_structdescr.
+    DATA ref TYPE REF TO lcl_structdescr.
 
-" * just check there is no infinite recursion
-"     CREATE OBJECT ref.
-"     cl_abap_objectdescr=>describe_by_object_ref( ref ).
+* just check there is no infinite recursion
+    CREATE OBJECT ref.
+    cl_abap_objectdescr=>describe_by_object_ref( ref ).
 
   ENDMETHOD.
 

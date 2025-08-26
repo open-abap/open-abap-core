@@ -50,6 +50,12 @@ CLASS cl_abap_objectdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
         interface_not_found.
 
   PROTECTED SECTION.
+    TYPES: BEGIN OF ty_cache,
+             name  TYPE string,
+             descr TYPE REF TO cl_abap_objectdescr,
+           END OF ty_cache.
+    CLASS-DATA mt_cache TYPE SORTED TABLE OF ty_cache WITH UNIQUE KEY name.
+
     DATA mv_object_name TYPE string.
     DATA mv_object_type TYPE string.
 
@@ -82,11 +88,19 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     FIELD-SYMBOLS <atype>     LIKE LINE OF mt_attribute_types.
     FIELD-SYMBOLS <ptype>     LIKE LINE OF mt_parameter_types.
 
+    WRITE '@KERNEL lv_name.set(p_object.INTERNAL_NAME);'.
+    READ TABLE mt_cache INTO DATA(ls_cache) WITH KEY name = lv_name.
+    IF sy-subrc = 0.
+      descr = ls_cache-descr.
+      RETURN.
+    ENDIF.
+
     WRITE '@KERNEL if (p_object.INTERNAL_TYPE === "CLAS") {'.
     CREATE OBJECT descr TYPE cl_abap_classdescr.
     WRITE '@KERNEL } else {'.
     CREATE OBJECT descr TYPE cl_abap_intfdescr.
     WRITE '@KERNEL }'.
+    INSERT VALUE #( name = lv_name descr = descr ) INTO TABLE mt_cache.
 
 * set attributes
     WRITE '@KERNEL for (const a in p_object?.ATTRIBUTES || []) {'.
