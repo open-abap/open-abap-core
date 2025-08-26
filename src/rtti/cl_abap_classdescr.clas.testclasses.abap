@@ -5,6 +5,13 @@ ENDCLASS.
 CLASS lcl_structdescr IMPLEMENTATION.
 ENDCLASS.
 
+CLASS lcl_intfattr DEFINITION.
+  PUBLIC SECTION.
+    DATA attr TYPE REF TO if_message.
+ENDCLASS.
+CLASS lcl_intfattr IMPLEMENTATION.
+ENDCLASS.
+
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
@@ -13,6 +20,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS get_interface_type FOR TESTING RAISING cx_static_check.
     METHODS describe_by_object_ref1 FOR TESTING RAISING cx_static_check.
     METHODS describe_by_object_ref2 FOR TESTING RAISING cx_static_check.
+    METHODS describe_by_object_ref3 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -75,6 +83,16 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA ref TYPE REF TO lcl_structdescr.
 
 * just check there is no infinite recursion
+    CREATE OBJECT ref.
+    cl_abap_objectdescr=>describe_by_object_ref( ref ).
+
+  ENDMETHOD.
+
+  METHOD describe_by_object_ref3.
+
+    DATA ref TYPE REF TO lcl_intfattr.
+
+* just check it doesnt crash
     CREATE OBJECT ref.
     cl_abap_objectdescr=>describe_by_object_ref( ref ).
 
