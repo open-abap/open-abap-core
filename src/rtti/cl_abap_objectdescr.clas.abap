@@ -117,15 +117,15 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     WRITE '@KERNEL   lv_char1.set(p_object.ATTRIBUTES[a].visibility);'.
     <attr>-visibility = lv_char1.
     WRITE '@KERNEL   lv_any = p_object.ATTRIBUTES[a].type();'.
-    WRITE '@KERNEL   if (lv_any.constructor.name === "ABAPObject") {'.
-* avoid recursion into objects
-    <attr>-type_kind = cl_abap_typedescr=>typekind_oref.
-    WRITE '@KERNEL   } else {'.
+"     WRITE '@KERNEL   if (lv_any.constructor.name === "ABAPObject") {'.
+" * avoid recursion into objects
+"     <attr>-type_kind = cl_abap_typedescr=>typekind_oref.
+"     WRITE '@KERNEL   } else {'.
     <atype>-type ?= describe_by_data( lv_any ).
     <attr>-type_kind = <atype>-type->type_kind.
     <attr>-length = <atype>-type->length.
     <attr>-decimals = <atype>-type->decimals.
-    WRITE '@KERNEL   }'.
+    " WRITE '@KERNEL   }'.
     WRITE '@KERNEL }'.
     SORT descr->attributes BY is_interface DESCENDING name ASCENDING.
 
@@ -154,15 +154,15 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     <ptype>-parameter = lv_name.
     WRITE '@KERNEL   lv_any = p_object.METHODS[a].parameters[p].type();'.
     GET REFERENCE OF lv_any INTO <ptype>-type.
-    WRITE '@KERNEL   if (lv_any.constructor.name === "ABAPObject") {'.
-* avoid recursion into objects
-    <parameter>-type_kind = cl_abap_typedescr=>typekind_oref.
-    WRITE '@KERNEL   } else {'.
+"     WRITE '@KERNEL   if (lv_any.constructor.name === "ABAPObject") {'.
+" * avoid recursion into objects
+"     <parameter>-type_kind = cl_abap_typedescr=>typekind_oref.
+"     WRITE '@KERNEL   } else {'.
     lo_type = describe_by_data( lv_any ).
     <parameter>-type_kind = lo_type->type_kind.
     <parameter>-length = lo_type->length.
     <parameter>-decimals = lo_type->decimals.
-    WRITE '@KERNEL   }'.
+    " WRITE '@KERNEL   }'.
 " * todo, set PARAM_KIND
     WRITE '@KERNEL }'.
     WRITE '@KERNEL }'.
