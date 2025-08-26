@@ -168,6 +168,7 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     WRITE '@KERNEL }'.
     SORT descr->methods BY name ASCENDING.
 
+
   ENDMETHOD.
 
   METHOD get_method_parameter_type.
