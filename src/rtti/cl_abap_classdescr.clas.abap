@@ -16,15 +16,9 @@ CLASS cl_abap_classdescr DEFINITION PUBLIC INHERITING FROM cl_abap_objectdescr.
       EXCEPTIONS
         super_class_not_found.
 
-    METHODS constructor
-      IMPORTING
-        p_object TYPE any OPTIONAL.
 ENDCLASS.
 
 CLASS cl_abap_classdescr IMPLEMENTATION.
-  METHOD constructor.
-    super->constructor( p_object ).
-  ENDMETHOD.
 
   METHOD get_class_name.
     DATA lv_name TYPE string.

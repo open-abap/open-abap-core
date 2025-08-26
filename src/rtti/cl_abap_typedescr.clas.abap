@@ -166,9 +166,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 
     CASE oo_type.
       WHEN 'INTF'.
-        CREATE OBJECT type TYPE cl_abap_intfdescr
-          EXPORTING
-            p_object = lv_any.
+        type = cl_abap_intfdescr=>_construct( lv_any ).
         type->type_kind = typekind_intf.
         type->kind = kind_intf.
         type->relative_name = to_upper( p_name ).
@@ -178,9 +176,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         objectdescr->mv_object_type = oo_type. " todo, this should give syntax error, as they are not friends
       WHEN 'CLAS'.
 *        WRITE '@KERNEL console.dir(p_name);'.
-        CREATE OBJECT type TYPE cl_abap_classdescr
-          EXPORTING
-            p_object = lv_any.
+        type = cl_abap_classdescr=>_construct( lv_any ).
         type->type_kind = typekind_class.
         type->kind = kind_class.
         type->relative_name = to_upper( p_name ).
@@ -231,9 +227,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 
     WRITE '@KERNEL lv_any = p_object_ref.get().constructor;'.
 
-    CREATE OBJECT lo_cdescr TYPE cl_abap_classdescr
-      EXPORTING
-        p_object = lv_any.
+    lo_cdescr ?= cl_abap_classdescr=>_construct( lv_any ).
     lo_cdescr->type_kind = typekind_class.
     lo_cdescr->kind = kind_class.
 

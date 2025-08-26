@@ -17,9 +17,11 @@ CLASS cl_abap_objectdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
     DATA types TYPE abap_typedef_tab READ-ONLY.
     DATA events TYPE abap_evntdescr_tab READ-ONLY.
 
-    METHODS constructor
+    CLASS-METHODS _construct
       IMPORTING
-        p_object TYPE any OPTIONAL.
+        p_object     TYPE any OPTIONAL
+      RETURNING
+        VALUE(descr) TYPE REF TO cl_abap_objectdescr.
 
     METHODS get_attribute_type
       IMPORTING
@@ -67,7 +69,7 @@ ENDCLASS.
 
 CLASS cl_abap_objectdescr IMPLEMENTATION.
 
-  METHOD constructor.
+  METHOD _construct.
     DATA lv_name  TYPE abap_attrname.
     DATA lv_char1 TYPE c LENGTH 1.
     DATA lv_any   TYPE string.
@@ -80,11 +82,17 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     FIELD-SYMBOLS <atype>     LIKE LINE OF mt_attribute_types.
     FIELD-SYMBOLS <ptype>     LIKE LINE OF mt_parameter_types.
 
+    WRITE '@KERNEL if (p_object.INTERNAL_TYPE === "CLAS") {'.
+    CREATE OBJECT descr TYPE cl_abap_classdescr.
+    WRITE '@KERNEL } else {'.
+    CREATE OBJECT descr TYPE cl_abap_intfdescr.
+    WRITE '@KERNEL }'.
+
 * set attributes
     WRITE '@KERNEL for (const a in p_object?.ATTRIBUTES || []) {'.
     WRITE '@KERNEL   lv_name.set(a);'.
-    APPEND INITIAL LINE TO attributes ASSIGNING <attr>.
-    APPEND INITIAL LINE TO mt_attribute_types ASSIGNING <atype>.
+    APPEND INITIAL LINE TO descr->attributes ASSIGNING <attr>.
+    APPEND INITIAL LINE TO descr->mt_attribute_types ASSIGNING <atype>.
     <attr>-name = lv_name.
     <atype>-name = lv_name.
     <attr>-is_interface = boolc( lv_name CA '~' ).
@@ -105,26 +113,26 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     <attr>-decimals = <atype>-type->decimals.
     WRITE '@KERNEL   }'.
     WRITE '@KERNEL }'.
-    SORT attributes BY is_interface DESCENDING name ASCENDING.
+    SORT descr->attributes BY is_interface DESCENDING name ASCENDING.
 
 * set interfaces
     WRITE '@KERNEL for (const a of p_object?.IMPLEMENTED_INTERFACES || []) {'.
     WRITE '@KERNEL   lv_name.set(a);'.
-    APPEND INITIAL LINE TO interfaces ASSIGNING <intf>.
+    APPEND INITIAL LINE TO descr->interfaces ASSIGNING <intf>.
     <intf>-name = lv_name.
     WRITE '@KERNEL }'.
-    SORT interfaces BY name ASCENDING.
+    SORT descr->interfaces BY name ASCENDING.
 
 * set methods
     WRITE '@KERNEL for (const a in p_object?.METHODS || []) {'.
     WRITE '@KERNEL   lv_name.set(a);'.
-    APPEND INITIAL LINE TO methods ASSIGNING <method>.
+    APPEND INITIAL LINE TO descr->methods ASSIGNING <method>.
     <method>-name = lv_name.
     WRITE '@KERNEL   lv_char1.set(p_object.METHODS[a].visibility);'.
     <method>-visibility = lv_char1.
 * set parameters of methods
     WRITE '@KERNEL for (const p in p_object.METHODS[a].parameters || []) {'.
-    APPEND INITIAL LINE TO mt_parameter_types ASSIGNING <ptype>.
+    APPEND INITIAL LINE TO descr->mt_parameter_types ASSIGNING <ptype>.
     APPEND INITIAL LINE TO <method>-parameters ASSIGNING <parameter>.
     <ptype>-method = <method>-name.
     WRITE '@KERNEL   lv_name.set(p);'.
@@ -144,9 +152,8 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
 " * todo, set PARAM_KIND
     WRITE '@KERNEL }'.
     WRITE '@KERNEL }'.
-    SORT methods BY name ASCENDING.
+    SORT descr->methods BY name ASCENDING.
 
-    super->constructor( ).
   ENDMETHOD.
 
   METHOD get_method_parameter_type.
