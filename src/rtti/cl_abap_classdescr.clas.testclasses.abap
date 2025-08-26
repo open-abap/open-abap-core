@@ -1,16 +1,8 @@
 CLASS lcl_structdescr DEFINITION.
   PUBLIC SECTION.
-    DATA structdescr_properties TYPE REF TO cl_abap_structdescr.
-
-    METHODS get_flat_structure
-      IMPORTING
-        structdescr         TYPE REF TO cl_abap_structdescr
-      RETURNING
-        VALUE(symbol_table) TYPE cl_abap_structdescr=>symbol_table.
+    DATA property_instances TYPE STANDARD TABLE OF REF TO lcl_structdescr WITH DEFAULT KEY.
 ENDCLASS.
 CLASS lcl_structdescr IMPLEMENTATION.
-  METHOD get_flat_structure.
-  ENDMETHOD.
 ENDCLASS.
 
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
