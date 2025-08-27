@@ -269,6 +269,8 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA ref TYPE REF TO lcl_dummy.
     DATA rdata TYPE REF TO data.
     DATA(lo_handle) = CAST cl_abap_datadescr( cl_abap_typedescr=>describe_by_data( ref ) ).
+    ASSERT lo_handle->kind = cl_abap_typedescr=>kind_ref.
+    ASSERT lo_handle->type_kind = cl_abap_typedescr=>typekind_oref.
     CREATE DATA rdata TYPE HANDLE lo_handle.
   ENDMETHOD.
 

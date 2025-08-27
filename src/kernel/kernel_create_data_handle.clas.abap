@@ -59,19 +59,29 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD ref.
-    DATA lo_ref  TYPE REF TO cl_abap_refdescr.
-    DATA lo_data TYPE REF TO cl_abap_datadescr.
-    DATA field   TYPE REF TO data.
+    DATA lo_refdescr      TYPE REF TO cl_abap_refdescr.
+    DATA lo_datadescr     TYPE REF TO cl_abap_datadescr.
+    DATA lo_classdescr    TYPE REF TO cl_abap_classdescr.
+    DATA field            TYPE REF TO data.
+    DATA lv_relative_name TYPE string.
+    DATA lv_absolute_name TYPE string.
 
-    lo_ref ?= handle.
-    lo_data ?= lo_ref->get_referenced_type( ).
-    call(
-      EXPORTING
-        handle = lo_data
-      CHANGING
-        dref   = field ).
+    lo_refdescr ?= handle.
 
-    WRITE '@KERNEL dref.assign(new abap.types.DataReference(field.getPointer()));'.
+    CASE lo_refdescr->type_kind.
+      WHEN cl_abap_typedescr=>typekind_oref.
+        lo_classdescr ?= lo_refdescr->get_referenced_type( ).
+        lv_relative_name = lo_classdescr->relative_name.
+        lv_absolute_name = lo_classdescr->absolute_name.
+        WRITE '@KERNEL dref.assign(new abap.types.ABAPObject({"qualifiedName": lv_relative_name.get(), "RTTIName": lv_absolute_name.get()}));'.
+      WHEN OTHERS.
+        lo_datadescr ?= lo_refdescr->get_referenced_type( ).
+        call(
+          EXPORTING handle = lo_datadescr
+          CHANGING dref   = field ).
+
+        WRITE '@KERNEL dref.assign(new abap.types.DataReference(field.getPointer()));'.
+    ENDCASE.
   ENDMETHOD.
 
   METHOD struct.
@@ -79,7 +89,7 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
     DATA field         TYPE REF TO data.
     DATA lv_name       TYPE string.
-    DATA lv_suffix       TYPE string.
+    DATA lv_suffix     TYPE string.
 
     FIELD-SYMBOLS <ls_component> LIKE LINE OF lt_components.
 
