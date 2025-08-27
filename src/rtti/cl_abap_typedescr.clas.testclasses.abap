@@ -56,6 +56,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS describe_by_object_ref2 FOR TESTING.
     METHODS describe_by_object_empty FOR TESTING.
     METHODS describe_by_data_ref_str FOR TESTING.
+    METHODS describe_by_name_empty FOR TESTING.
 
     METHODS is_ddic_type_true1 FOR TESTING.
     METHODS is_ddic_type_true2 FOR TESTING.
@@ -505,6 +506,17 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = sy-subrc
       exp = 16 ).
+  ENDMETHOD.
+
+  METHOD describe_by_name_empty.
+    cl_abap_typedescr=>describe_by_name(
+      EXPORTING
+        p_name = ''
+      EXCEPTIONS
+        type_not_found = 1 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = sy-subrc
+      exp = 1 ).
   ENDMETHOD.
 
   METHOD constant_field_absolute.

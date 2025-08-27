@@ -71,6 +71,7 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
     CASE lo_refdescr->type_kind.
       WHEN cl_abap_typedescr=>typekind_oref.
         lo_classdescr ?= lo_refdescr->get_referenced_type( ).
+        " todo, call the methods in class "kernel_internal_name" ?
         lv_relative_name = lo_classdescr->relative_name.
         lv_absolute_name = lo_classdescr->absolute_name.
         WRITE '@KERNEL dref.assign(new abap.types.ABAPObject({"qualifiedName": lv_relative_name.get(), "RTTIName": lv_absolute_name.get()}));'.
