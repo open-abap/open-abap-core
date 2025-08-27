@@ -1,3 +1,8 @@
+CLASS lcl_dummy DEFINITION.
+ENDCLASS.
+CLASS lcl_dummy IMPLEMENTATION.
+ENDCLASS.
+
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
@@ -21,6 +26,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
     METHODS ref_test1 CHANGING foo TYPE REF TO data.
     METHODS ref_test2 FOR TESTING RAISING cx_static_check.
+    METHODS ref_class FOR TESTING RAISING cx_static_check.
 
     METHODS method1 FOR TESTING.
     METHODS method2 CHANGING data TYPE data.
@@ -257,6 +263,13 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = <any>
       exp = '' ).
+  ENDMETHOD.
+
+  METHOD ref_class.
+    DATA ref TYPE REF TO lcl_dummy.
+    DATA rdata TYPE REF TO data.
+    DATA(lo_handle) = CAST cl_abap_datadescr( cl_abap_typedescr=>describe_by_data( ref ) ).
+    CREATE DATA rdata TYPE HANDLE lo_handle.
   ENDMETHOD.
 
   METHOD method1.
