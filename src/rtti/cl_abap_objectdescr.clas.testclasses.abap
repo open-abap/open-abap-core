@@ -359,8 +359,8 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD method_type_clike.
-    DATA ref TYPE REF TO lcl_clike_parameter.
-    DATA lo_objdescr TYPE REF TO cl_abap_objectdescr.
+    DATA ref          TYPE REF TO lcl_clike_parameter.
+    DATA lo_objdescr  TYPE REF TO cl_abap_objectdescr.
     DATA lo_datadescr TYPE REF TO cl_abap_datadescr.
 
     CREATE OBJECT ref.
