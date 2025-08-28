@@ -104,6 +104,19 @@ CLASS lcl_generics IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.
 
+CLASS lcl_param_kinds DEFINITION.
+  PUBLIC SECTION.
+    METHODS name
+      IMPORTING importing        TYPE i
+      EXPORTING exporting        TYPE i
+      CHANGING changing          TYPE i
+      RETURNING VALUE(returning) TYPE i.
+ENDCLASS.
+CLASS lcl_param_kinds IMPLEMENTATION.
+  METHOD name.
+  ENDMETHOD.
+ENDCLASS.
+
 ************************************************************************************
 
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
@@ -121,6 +134,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS nested_orefs FOR TESTING RAISING cx_static_check.
     METHODS deferred FOR TESTING RAISING cx_static_check.
     METHODS method_type_generics FOR TESTING RAISING cx_static_check.
+    METHODS parm_kind FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -381,6 +395,45 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_datadescr->type_kind
       exp = cl_abap_typedescr=>typekind_csequence ).
+  ENDMETHOD.
+
+  METHOD parm_kind.
+
+    DATA ref          TYPE REF TO lcl_param_kinds.
+    DATA lo_objdescr  TYPE REF TO cl_abap_objectdescr.
+    DATA lo_datadescr TYPE REF TO cl_abap_datadescr.
+    DATA ls_method    TYPE abap_methdescr.
+    DATA ls_parameter TYPE abap_parmdescr.
+
+    CREATE OBJECT ref.
+    lo_objdescr ?= cl_abap_typedescr=>describe_by_object_ref( ref ).
+
+    READ TABLE lo_objdescr->methods INDEX 1 INTO ls_method.
+
+    READ TABLE ls_method-parameters WITH KEY name = 'IMPORTING' INTO ls_parameter.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_parameter-parm_kind
+      exp = cl_abap_objectdescr=>importing ).
+
+    READ TABLE ls_method-parameters WITH KEY name = 'EXPORTING' INTO ls_parameter.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_parameter-parm_kind
+      exp = cl_abap_objectdescr=>exporting ).
+
+    READ TABLE ls_method-parameters WITH KEY name = 'CHANGING' INTO ls_parameter.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_parameter-parm_kind
+      exp = cl_abap_objectdescr=>changing ).
+
+    READ TABLE ls_method-parameters WITH KEY name = 'RETURNING' INTO ls_parameter.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_parameter-parm_kind
+      exp = cl_abap_objectdescr=>returning ).
+
   ENDMETHOD.
 
 ENDCLASS.

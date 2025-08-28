@@ -82,6 +82,7 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     DATA lv_any       TYPE string.
     DATA lo_type      TYPE REF TO cl_abap_typedescr.
     DATA lv_type_name TYPE string.
+    DATA lv_parm_kind  TYPE abap_parmkind.
 
     FIELD-SYMBOLS <attr>      TYPE abap_attrdescr.
     FIELD-SYMBOLS <intf>      TYPE abap_intfdescr.
@@ -156,6 +157,7 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     <ptype>-parameter = lv_name.
     WRITE '@KERNEL   lv_any = p_object.METHODS[a].parameters[p].type();'.
     WRITE '@KERNEL   lv_type_name = p_object.METHODS[a].parameters[p].type_name;'.
+    WRITE '@KERNEL   lv_parm_kind = p_object.METHODS[a].parameters[p].parm_kind;'.
 
     IF lv_type_name = 'CLikeType'.
       <parameter>-type_kind = cl_abap_typedescr=>typekind_clike.
@@ -175,7 +177,7 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
       <parameter>-decimals = lo_type->decimals.
       WRITE '@KERNEL   }'.
     ENDIF.
-" * todo, set PARAM_KIND
+    <parameter>-parm_kind = lv_parm_kind.
     WRITE '@KERNEL }'.
     WRITE '@KERNEL }'.
     SORT descr->methods BY name ASCENDING.
