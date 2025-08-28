@@ -382,13 +382,19 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         IF p_data IS INITIAL.
 * note: using the name doesnt work for local classes
           WRITE '@KERNEL lv_rtti_name.set(p_data.RTTIName || "");'.
+          WRITE '@KERNEL lv_name.set(p_data.qualifiedName || "");'.
           IF lv_rtti_name CP '\CLASS-POOL=*'.
 * convert to internal name,
             lv_rtti_name = kernel_internal_name=>rtti_to_internal( lv_rtti_name ).
             lo_referenced = describe_by_name( lv_rtti_name ).
-          ELSE.
-            WRITE '@KERNEL lv_name.set(p_data.qualifiedName || "");'.
+          ELSEIF lv_name IS NOT INITIAL.
             lo_referenced = describe_by_name( lv_name ).
+          ELSE.
+* its a generic object reference
+            CREATE OBJECT lo_referenced TYPE cl_abap_objectdescr.
+            lo_referenced->type_kind = typekind_class.
+            lo_referenced->kind = kind_class.
+            lo_referenced->absolute_name = '\CLASS=OBJECT'.
           ENDIF.
         ELSE.
           lo_referenced = describe_by_object_ref( p_data ).
