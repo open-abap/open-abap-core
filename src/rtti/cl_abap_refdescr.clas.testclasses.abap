@@ -70,13 +70,24 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD generic_object_reference.
-    DATA ref TYPE REF TO object.
+    DATA ref   TYPE REF TO object.
     DATA descr TYPE REF TO cl_abap_refdescr.
+
     descr ?= cl_abap_typedescr=>describe_by_data( ref ).
-    ASSERT descr->type_kind = cl_abap_typedescr=>typekind_oref.
-    ASSERT descr->kind = cl_abap_typedescr=>kind_ref.
-    ASSERT descr->absolute_name IS NOT INITIAL.
-    ASSERT descr->get_relative_name( ) = ''.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = descr->type_kind
+      exp = cl_abap_typedescr=>typekind_oref ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = descr->kind
+      exp = cl_abap_typedescr=>kind_ref ).
+
+    cl_abap_unit_assert=>assert_not_initial( descr->absolute_name ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = descr->get_relative_name( )
+      exp = '' ).
   ENDMETHOD.
 
 ENDCLASS.
