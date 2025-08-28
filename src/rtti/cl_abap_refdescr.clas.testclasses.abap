@@ -5,6 +5,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS absolute_name FOR TESTING RAISING cx_static_check.
     METHODS get_ref_to_data FOR TESTING RAISING cx_static_check.
     METHODS string_type FOR TESTING RAISING cx_static_check.
+    METHODS generic_object_reference FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -66,6 +67,16 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = refdescr->get_referenced_type( )->type_kind
       exp = cl_abap_typedescr=>typekind_string ).
+  ENDMETHOD.
+
+  METHOD generic_object_reference.
+    DATA ref TYPE REF TO object.
+    DATA descr TYPE REF TO cl_abap_refdescr.
+    descr ?= cl_abap_typedescr=>describe_by_data( ref ).
+    ASSERT descr->type_kind = cl_abap_typedescr=>typekind_oref.
+    ASSERT descr->kind = cl_abap_typedescr=>kind_ref.
+    ASSERT descr->absolute_name IS NOT INITIAL.
+    ASSERT descr->get_relative_name( ) = ''.
   ENDMETHOD.
 
 ENDCLASS.
