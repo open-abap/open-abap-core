@@ -92,14 +92,14 @@ ENDCLASS.
 CLASS lcl_ref2_deferred IMPLEMENTATION.
 ENDCLASS.
 
-CLASS lcl_clike_parameter DEFINITION.
+CLASS lcl_generics DEFINITION.
   PUBLIC SECTION.
     METHODS name
       EXPORTING
         foo TYPE clike
         bar TYPE csequence.
 ENDCLASS.
-CLASS lcl_clike_parameter IMPLEMENTATION.
+CLASS lcl_generics IMPLEMENTATION.
   METHOD name.
   ENDMETHOD.
 ENDCLASS.
@@ -120,7 +120,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS from_interface FOR TESTING RAISING cx_static_check.
     METHODS nested_orefs FOR TESTING RAISING cx_static_check.
     METHODS deferred FOR TESTING RAISING cx_static_check.
-    METHODS method_type_clike FOR TESTING RAISING cx_static_check.
+    METHODS method_type_generics FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -358,8 +358,8 @@ CLASS ltcl_test IMPLEMENTATION.
 
   ENDMETHOD.
 
-  METHOD method_type_clike.
-    DATA ref          TYPE REF TO lcl_clike_parameter.
+  METHOD method_type_generics.
+    DATA ref          TYPE REF TO lcl_generics.
     DATA lo_objdescr  TYPE REF TO cl_abap_objectdescr.
     DATA lo_datadescr TYPE REF TO cl_abap_datadescr.
 
