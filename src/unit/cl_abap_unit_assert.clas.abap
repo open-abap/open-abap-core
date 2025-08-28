@@ -285,18 +285,34 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD assert_true.
+    DATA lv_msg TYPE string.
+
     IF act <> abap_true.
+      IF msg <> ''.
+        lv_msg = msg.
+      ELSE.
+        lv_msg = |Expected abap_true|.
+      ENDIF.
+
       RAISE EXCEPTION TYPE kernel_cx_assert
         EXPORTING
-          msg = |Expected abap_true|.
+          msg = lv_msg.
     ENDIF.
   ENDMETHOD.
 
   METHOD assert_false.
+    DATA lv_msg TYPE string.
+
     IF act <> abap_false.
+      IF msg <> ''.
+        lv_msg = msg.
+      ELSE.
+        lv_msg = |Expected abap_false|.
+      ENDIF.
+
       RAISE EXCEPTION TYPE kernel_cx_assert
         EXPORTING
-          msg = |Expected abap_false|.
+          msg = lv_msg.
     ENDIF.
   ENDMETHOD.
 
