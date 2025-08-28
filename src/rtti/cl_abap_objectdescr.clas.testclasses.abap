@@ -92,6 +92,18 @@ ENDCLASS.
 CLASS lcl_ref2_deferred IMPLEMENTATION.
 ENDCLASS.
 
+CLASS lcl_clike_parameter DEFINITION.
+  PUBLIC SECTION.
+    METHODS name
+      EXPORTING
+        foo TYPE clike
+        bar TYPE csequence.
+ENDCLASS.
+CLASS lcl_clike_parameter IMPLEMENTATION.
+  METHOD name.
+  ENDMETHOD.
+ENDCLASS.
+
 ************************************************************************************
 
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
@@ -108,6 +120,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS from_interface FOR TESTING RAISING cx_static_check.
     METHODS nested_orefs FOR TESTING RAISING cx_static_check.
     METHODS deferred FOR TESTING RAISING cx_static_check.
+    METHODS method_type_clike FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -343,6 +356,29 @@ CLASS ltcl_test IMPLEMENTATION.
     CREATE OBJECT lo_ref.
     cl_abap_typedescr=>describe_by_object_ref( lo_ref ).
 
+  ENDMETHOD.
+
+  METHOD method_type_clike.
+    DATA ref TYPE REF TO lcl_clike_parameter.
+    DATA lo_objdescr TYPE REF TO cl_abap_objectdescr.
+    DATA lo_datadescr TYPE REF TO cl_abap_datadescr.
+
+    CREATE OBJECT ref.
+    lo_objdescr ?= cl_abap_typedescr=>describe_by_object_ref( ref ).
+
+    lo_datadescr = lo_objdescr->get_method_parameter_type(
+      p_method_name    = 'NAME'
+      p_parameter_name = 'FOO' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_datadescr->type_kind
+      exp = cl_abap_typedescr=>typekind_clike ).
+
+    lo_datadescr = lo_objdescr->get_method_parameter_type(
+      p_method_name    = 'NAME'
+      p_parameter_name = 'BAR' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_datadescr->type_kind
+      exp = cl_abap_typedescr=>typekind_csequence ).
   ENDMETHOD.
 
 ENDCLASS.
