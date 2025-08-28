@@ -363,6 +363,8 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lo_objdescr  TYPE REF TO cl_abap_objectdescr.
     DATA lo_datadescr TYPE REF TO cl_abap_datadescr.
 
+* todo: handle additional generics
+
     CREATE OBJECT ref.
     lo_objdescr ?= cl_abap_typedescr=>describe_by_object_ref( ref ).
 

@@ -69,6 +69,7 @@ CLASS cl_abap_objectdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
              method    TYPE string,
              parameter TYPE string,
              type      TYPE REF TO data,
+             type_kind TYPE abap_typekind,
            END OF ty_parameter_types.
     DATA mt_parameter_types TYPE STANDARD TABLE OF ty_parameter_types WITH DEFAULT KEY.
 ENDCLASS.
@@ -76,10 +77,11 @@ ENDCLASS.
 CLASS cl_abap_objectdescr IMPLEMENTATION.
 
   METHOD _construct.
-    DATA lv_name  TYPE abap_attrname.
-    DATA lv_char1 TYPE c LENGTH 1.
-    DATA lv_any   TYPE string.
-    DATA lo_type  TYPE REF TO cl_abap_typedescr.
+    DATA lv_name      TYPE abap_attrname.
+    DATA lv_char1     TYPE c LENGTH 1.
+    DATA lv_any       TYPE string.
+    DATA lo_type      TYPE REF TO cl_abap_typedescr.
+    DATA lv_type_name TYPE string.
 
     FIELD-SYMBOLS <attr>      TYPE abap_attrdescr.
     FIELD-SYMBOLS <intf>      TYPE abap_intfdescr.
@@ -153,16 +155,26 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     <parameter>-name = lv_name.
     <ptype>-parameter = lv_name.
     WRITE '@KERNEL   lv_any = p_object.METHODS[a].parameters[p].type();'.
-    GET REFERENCE OF lv_any INTO <ptype>-type.
-    WRITE '@KERNEL   if (lv_any.constructor.name === "ABAPObject") {'.
+    WRITE '@KERNEL   lv_type_name = p_object.METHODS[a].parameters[p].type_name;'.
+
+    IF lv_type_name = 'CLikeType'.
+      <parameter>-type_kind = cl_abap_typedescr=>typekind_clike.
+      <ptype>-type_kind = cl_abap_typedescr=>typekind_clike.
+    ELSEIF lv_type_name = 'CSequenceType'.
+      <parameter>-type_kind = cl_abap_typedescr=>typekind_csequence.
+      <ptype>-type_kind = cl_abap_typedescr=>typekind_csequence.
+    ELSE.
+      GET REFERENCE OF lv_any INTO <ptype>-type.
+      WRITE '@KERNEL   if (lv_any.constructor.name === "ABAPObject") {'.
 * avoid recursion into objects
-    <parameter>-type_kind = cl_abap_typedescr=>typekind_oref.
-    WRITE '@KERNEL   } else {'.
-    lo_type = describe_by_data( lv_any ).
-    <parameter>-type_kind = lo_type->type_kind.
-    <parameter>-length = lo_type->length.
-    <parameter>-decimals = lo_type->decimals.
-    WRITE '@KERNEL   }'.
+      <parameter>-type_kind = cl_abap_typedescr=>typekind_oref.
+      WRITE '@KERNEL   } else {'.
+      lo_type = describe_by_data( lv_any ).
+      <parameter>-type_kind = lo_type->type_kind.
+      <parameter>-length = lo_type->length.
+      <parameter>-decimals = lo_type->decimals.
+      WRITE '@KERNEL   }'.
+    ENDIF.
 " * todo, set PARAM_KIND
     WRITE '@KERNEL }'.
     WRITE '@KERNEL }'.
@@ -174,13 +186,25 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
   METHOD get_method_parameter_type.
     DATA ls_row LIKE LINE OF mt_parameter_types.
     FIELD-SYMBOLS <type> TYPE any.
-*    WRITE '@KERNEL   this.mt_parameter_types.array().map(e => console.dir(e.get()));'.
+
     READ TABLE mt_parameter_types INTO ls_row WITH KEY method = p_method_name parameter = p_parameter_name.
-    IF sy-subrc = 0.
+    IF sy-subrc <> 0.
+      RAISE parameter_not_found.
+    ENDIF.
+
+    IF ls_row-type_kind = cl_abap_typedescr=>typekind_clike.
+      CREATE OBJECT p_descr_ref TYPE cl_abap_elemdescr.
+      p_descr_ref->absolute_name = '\TYPE=CLIKE'.
+      p_descr_ref->kind = cl_abap_elemdescr=>kind_elem.
+      p_descr_ref->type_kind = cl_abap_typedescr=>typekind_clike.
+    ELSEIF ls_row-type_kind = cl_abap_typedescr=>typekind_csequence.
+      CREATE OBJECT p_descr_ref TYPE cl_abap_elemdescr.
+      p_descr_ref->absolute_name = '\TYPE=CSEQUENCE'.
+      p_descr_ref->kind = cl_abap_elemdescr=>kind_elem.
+      p_descr_ref->type_kind = cl_abap_typedescr=>typekind_csequence.
+    ELSE.
       ASSIGN ls_row-type->* TO <type>.
       p_descr_ref ?= describe_by_data( <type> ).
-    ELSE.
-      RAISE parameter_not_found.
     ENDIF.
   ENDMETHOD.
 
