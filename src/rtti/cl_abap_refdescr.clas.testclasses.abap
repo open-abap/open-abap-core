@@ -70,8 +70,8 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD generic_object_reference.
-    DATA ref   TYPE REF TO object.
-    DATA descr TYPE REF TO cl_abap_refdescr.
+    DATA ref        TYPE REF TO object.
+    DATA descr      TYPE REF TO cl_abap_refdescr.
     DATA referenced TYPE REF TO cl_abap_typedescr.
 
     descr ?= cl_abap_typedescr=>describe_by_data( ref ).
