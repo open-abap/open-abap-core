@@ -451,7 +451,9 @@ CLASS ltcl_test IMPLEMENTATION.
 
     CREATE OBJECT ref.
     lo_objdescr ?= cl_abap_typedescr=>describe_by_object_ref( ref ).
-    lo_objdescr->get_attribute_type( 'OREF' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_objdescr->get_attribute_type( 'OREF' )->type_kind
+      exp = cl_abap_typedescr=>typekind_oref ).
 
   ENDMETHOD.
 
