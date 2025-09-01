@@ -161,6 +161,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS get_attribute_type_oref FOR TESTING RAISING cx_static_check.
     METHODS get_param_type_iref FOR TESTING RAISING cx_static_check.
     METHODS get_attr_type_iref FOR TESTING RAISING cx_static_check.
+    METHODS namespaced FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -486,6 +487,21 @@ CLASS ltcl_test IMPLEMENTATION.
 
     DATA ref TYPE REF TO lcl_attr_iref.
     cl_abap_typedescr=>describe_by_data( ref ).
+
+  ENDMETHOD.
+
+  METHOD namespaced.
+
+    DATA ref          TYPE REF TO /ui2/cl_json.
+    DATA lo_typedescr TYPE REF TO cl_abap_typedescr.
+
+    lo_typedescr ?= cl_abap_typedescr=>describe_by_name( '/UI2/CL_JSON' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_typedescr->absolute_name
+      exp = '\CLASS=/UI2/CL_JSON' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_typedescr->get_relative_name( )
+      exp = '/UI2/CL_JSON' ).
 
   ENDMETHOD.
 
