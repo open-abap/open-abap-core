@@ -124,6 +124,22 @@ ENDCLASS.
 CLASS lcl_attr_oref IMPLEMENTATION.
 ENDCLASS.
 
+CLASS lcl_param_iref DEFINITION.
+  PUBLIC SECTION.
+    CLASS-METHODS bar IMPORTING val TYPE REF TO if_message.
+ENDCLASS.
+CLASS lcl_param_iref IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_attr_iref DEFINITION.
+  PUBLIC SECTION.
+    DATA bar TYPE REF TO if_message.
+ENDCLASS.
+CLASS lcl_attr_iref IMPLEMENTATION.
+ENDCLASS.
+
 ************************************************************************************
 
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
@@ -143,6 +159,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS method_type_generics FOR TESTING RAISING cx_static_check.
     METHODS parm_kind FOR TESTING RAISING cx_static_check.
     METHODS get_attribute_type_oref FOR TESTING RAISING cx_static_check.
+    METHODS get_param_type_iref FOR TESTING RAISING cx_static_check.
+    METHODS get_attr_type_iref FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -454,6 +472,20 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_objdescr->get_attribute_type( 'OREF' )->type_kind
       exp = cl_abap_typedescr=>typekind_oref ).
+
+  ENDMETHOD.
+
+  METHOD get_param_type_iref.
+
+    DATA ref TYPE REF TO lcl_param_iref.
+    cl_abap_typedescr=>describe_by_data( ref ).
+
+  ENDMETHOD.
+
+  METHOD get_attr_type_iref.
+
+    DATA ref TYPE REF TO lcl_attr_iref.
+    cl_abap_typedescr=>describe_by_data( ref ).
 
   ENDMETHOD.
 
