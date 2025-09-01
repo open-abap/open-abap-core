@@ -117,6 +117,13 @@ CLASS lcl_param_kinds IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.
 
+CLASS lcl_attr_oref DEFINITION.
+  PUBLIC SECTION.
+    DATA oref TYPE REF TO cl_abap_classdescr.
+ENDCLASS.
+CLASS lcl_attr_oref IMPLEMENTATION.
+ENDCLASS.
+
 ************************************************************************************
 
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
@@ -135,6 +142,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS deferred FOR TESTING RAISING cx_static_check.
     METHODS method_type_generics FOR TESTING RAISING cx_static_check.
     METHODS parm_kind FOR TESTING RAISING cx_static_check.
+    METHODS get_attribute_type_oref FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -433,6 +441,17 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = ls_parameter-parm_kind
       exp = cl_abap_objectdescr=>returning ).
+
+  ENDMETHOD.
+
+  METHOD get_attribute_type_oref.
+
+    DATA ref         TYPE REF TO lcl_attr_oref.
+    DATA lo_objdescr TYPE REF TO cl_abap_objectdescr.
+
+    CREATE OBJECT ref.
+    lo_objdescr ?= cl_abap_typedescr=>describe_by_object_ref( ref ).
+    lo_objdescr->get_attribute_type( 'OREF' ).
 
   ENDMETHOD.
 
