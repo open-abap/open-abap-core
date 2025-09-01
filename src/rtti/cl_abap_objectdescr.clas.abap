@@ -167,15 +167,15 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
       <ptype>-type_kind = cl_abap_typedescr=>typekind_csequence.
     ELSE.
       GET REFERENCE OF lv_any INTO <ptype>-type.
-      WRITE '@KERNEL   if (lv_any.constructor.name === "ABAPObject") {'.
-* avoid recursion into objects
-      <parameter>-type_kind = cl_abap_typedescr=>typekind_oref.
-      WRITE '@KERNEL   } else {'.
+"       WRITE '@KERNEL   if (lv_any.constructor.name === "ABAPObject") {'.
+" * avoid recursion into objects
+"       <parameter>-type_kind = cl_abap_typedescr=>typekind_oref.
+"       WRITE '@KERNEL   } else {'.
       lo_type = describe_by_data( lv_any ).
       <parameter>-type_kind = lo_type->type_kind.
       <parameter>-length = lo_type->length.
       <parameter>-decimals = lo_type->decimals.
-      WRITE '@KERNEL   }'.
+      " WRITE '@KERNEL   }'.
     ENDIF.
     <parameter>-parm_kind = lv_parm_kind.
     WRITE '@KERNEL }'.
