@@ -22,11 +22,17 @@ CLASS cl_sql_connection DEFINITION PUBLIC.
       RETURNING
         VALUE(con_name) TYPE string.
 
+    METHODS close.
+
   PRIVATE SECTION.
     DATA mv_con_name TYPE string.
 ENDCLASS.
 
 CLASS cl_sql_connection IMPLEMENTATION.
+  METHOD close.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD get_con_name.
     con_name = mv_con_name.
   ENDMETHOD.
