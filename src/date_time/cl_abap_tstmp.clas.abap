@@ -92,7 +92,13 @@ CLASS cl_abap_tstmp IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD td_add.
-    ASSERT 1 = 'todo'.
+
+    DATA(td) = add(
+      tstmp = |{ date }{ time }|
+      secs = secs ).
+
+    CONVERT TIME STAMP td INTO DATE res_date TIME res_time.
+
   ENDMETHOD.
 
   METHOD systemtstmp_utc2syst.
