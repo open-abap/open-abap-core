@@ -29,9 +29,13 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
         EXCEPTIONS
           reference_is_initial.
 
+    " hmm, todo
+    TYPES: BEGIN OF ty_ddic_header,
+             tabname TYPE c LENGTH 30,
+           END OF ty_ddic_header.
     METHODS get_ddic_header
       RETURNING
-        VALUE(p_header) TYPE abap_bool. " hmm, todo
+        VALUE(p_header) TYPE ty_ddic_header.
 
     METHODS
       get_relative_name
