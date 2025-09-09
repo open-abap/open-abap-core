@@ -3,12 +3,14 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
     CLASS-METHODS
       assert_equals
         IMPORTING
-          act   TYPE any
-          exp   TYPE any
-          msg   TYPE csequence OPTIONAL
-          tol   TYPE f OPTIONAL
-          quit  TYPE i OPTIONAL
-          level TYPE i OPTIONAL.
+          act                     TYPE any
+          exp                     TYPE any
+          msg                     TYPE csequence OPTIONAL
+          tol                     TYPE f OPTIONAL
+          quit                    TYPE i OPTIONAL
+          level                   TYPE i OPTIONAL
+        RETURNING
+          VALUE(assertion_failed) TYPE abap_bool.
 
     CLASS-METHODS abort
       IMPORTING
@@ -19,21 +21,25 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
     CLASS-METHODS
       assert_differs
         IMPORTING
-          act   TYPE simple
-          exp   TYPE simple
-          msg   TYPE csequence OPTIONAL
-          quit  TYPE i OPTIONAL
-          level TYPE i OPTIONAL.
+          act                     TYPE simple
+          exp                     TYPE simple
+          msg                     TYPE csequence OPTIONAL
+          quit                    TYPE i OPTIONAL
+          level                   TYPE i OPTIONAL
+        RETURNING
+          VALUE(assertion_failed) TYPE abap_bool.
 
     CLASS-METHODS
       assert_number_between
         IMPORTING
-          lower  TYPE i
-          upper  TYPE i
-          number TYPE i
-          msg    TYPE csequence OPTIONAL
-          quit   TYPE i OPTIONAL
-          level  TYPE i OPTIONAL.
+          lower                   TYPE i
+          upper                   TYPE i
+          number                  TYPE i
+          msg                     TYPE csequence OPTIONAL
+          quit                    TYPE i OPTIONAL
+          level                   TYPE i OPTIONAL
+        RETURNING
+          VALUE(assertion_failed) TYPE abap_bool.
 
     CLASS-METHODS
       assert_not_initial
@@ -48,11 +54,14 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
     CLASS-METHODS
       assert_initial
         IMPORTING
-          act   TYPE any
-          msg   TYPE csequence OPTIONAL
-          quit  TYPE i OPTIONAL
-          level TYPE i OPTIONAL.
+          act                     TYPE any
+          msg                     TYPE csequence OPTIONAL
+          quit                    TYPE i OPTIONAL
+          level                   TYPE i OPTIONAL
+        RETURNING
+          VALUE(assertion_failed) TYPE abap_bool.
 
+* huh?
     CLASS-METHODS
       skip
         IMPORTING
@@ -71,71 +80,87 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
     CLASS-METHODS
       assert_subrc
         IMPORTING
-          exp   TYPE i DEFAULT 0
-          act   TYPE i DEFAULT sy-subrc
-          msg   TYPE csequence OPTIONAL
-          quit  TYPE i OPTIONAL
-          level TYPE i OPTIONAL
-        PREFERRED PARAMETER act.
+          exp                     TYPE i DEFAULT 0
+          act                     TYPE i DEFAULT sy-subrc
+          msg                     TYPE csequence OPTIONAL
+          quit                    TYPE i OPTIONAL
+          level                   TYPE i OPTIONAL
+        PREFERRED PARAMETER act
+        RETURNING
+          VALUE(assertion_failed) TYPE abap_bool.
 
     CLASS-METHODS
       assert_true
         IMPORTING
-          act   TYPE abap_bool
-          msg   TYPE csequence OPTIONAL
-          quit  TYPE i OPTIONAL
-          level TYPE i OPTIONAL.
+          act                     TYPE abap_bool
+          msg                     TYPE csequence OPTIONAL
+          quit                    TYPE i OPTIONAL
+          level                   TYPE i OPTIONAL
+        RETURNING
+          VALUE(assertion_failed) TYPE abap_bool.
 
     CLASS-METHODS
       assert_false
         IMPORTING
-          act   TYPE abap_bool
-          msg   TYPE csequence OPTIONAL
-          quit  TYPE i OPTIONAL
-          level TYPE i OPTIONAL.
+          act                     TYPE abap_bool
+          msg                     TYPE csequence OPTIONAL
+          quit                    TYPE i OPTIONAL
+          level                   TYPE i OPTIONAL
+        RETURNING
+          VALUE(assertion_failed) TYPE abap_bool.
 
     CLASS-METHODS
       assert_char_cp
         IMPORTING
-          act   TYPE clike
-          exp   TYPE clike
-          msg   TYPE string OPTIONAL
-          quit  TYPE i OPTIONAL
-          level TYPE i OPTIONAL.
+          act                     TYPE clike
+          exp                     TYPE clike
+          msg                     TYPE string OPTIONAL
+          quit                    TYPE i OPTIONAL
+          level                   TYPE i OPTIONAL
+        RETURNING
+          VALUE(assertion_failed) TYPE abap_bool.
 
     CLASS-METHODS
       assert_char_np
         IMPORTING
-          act   TYPE clike
-          exp   TYPE clike
-          msg   TYPE csequence OPTIONAL
-          quit  TYPE i OPTIONAL
-          level TYPE i OPTIONAL.
+          act                     TYPE clike
+          exp                     TYPE clike
+          msg                     TYPE csequence OPTIONAL
+          quit                    TYPE i OPTIONAL
+          level                   TYPE i OPTIONAL
+        RETURNING
+          VALUE(assertion_failed) TYPE abap_bool.
 
     CLASS-METHODS
       assert_bound
         IMPORTING
-          act   TYPE any
-          msg   TYPE csequence OPTIONAL
-          quit  TYPE i OPTIONAL
-          level TYPE i OPTIONAL.
+          act                     TYPE any
+          msg                     TYPE csequence OPTIONAL
+          quit                    TYPE i OPTIONAL
+          level                   TYPE i OPTIONAL
+        RETURNING
+          VALUE(assertion_failed) TYPE abap_bool.
 
     CLASS-METHODS
       assert_not_bound
         IMPORTING
-          act   TYPE any
-          msg   TYPE csequence OPTIONAL
-          quit  TYPE i OPTIONAL
-          level TYPE i OPTIONAL.
+          act                     TYPE any
+          msg                     TYPE csequence OPTIONAL
+          quit                    TYPE i OPTIONAL
+          level                   TYPE i OPTIONAL
+        RETURNING
+          VALUE(assertion_failed) TYPE abap_bool.
 
     CLASS-METHODS
       assert_text_matches
         IMPORTING
-          pattern TYPE csequence
-          text    TYPE csequence
-          msg     TYPE csequence OPTIONAL
-          quit    TYPE i OPTIONAL
-          level   TYPE i OPTIONAL.
+          pattern                 TYPE csequence
+          text                    TYPE csequence
+          msg                     TYPE csequence OPTIONAL
+          quit                    TYPE i OPTIONAL
+          level                   TYPE i OPTIONAL
+        RETURNING
+          VALUE(assertion_failed) TYPE abap_bool.
 
   PRIVATE SECTION.
     CLASS-METHODS
