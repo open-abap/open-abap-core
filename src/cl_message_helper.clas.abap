@@ -34,11 +34,20 @@ CLASS cl_message_helper DEFINITION PUBLIC.
         obj    TYPE REF TO object
       CHANGING
         result TYPE string.
+
+    CLASS-METHODS get_text_params
+      IMPORTING
+        obj    TYPE REF TO object
+      EXPORTING
+        params TYPE any.
   PRIVATE SECTION.
     CONSTANTS gc_fallback TYPE string VALUE 'An exception was raised.'.
 ENDCLASS.
 
 CLASS cl_message_helper IMPLEMENTATION.
+  METHOD get_text_params.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD get_otr_text_raw.
     ASSERT 1 = 'todo'.
