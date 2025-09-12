@@ -5,6 +5,7 @@ INTERFACE if_http_client PUBLIC.
   DATA propertytype_logon_popup   TYPE i.
   DATA propertytype_accept_cookie TYPE i.
   DATA propertytype_redirect      TYPE i.
+  DATA propertytype_send_sap_passport TYPE i.
 
   CONSTANTS co_disabled TYPE i VALUE 0.
   CONSTANTS co_enabled  TYPE i VALUE 1.
