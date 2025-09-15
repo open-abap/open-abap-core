@@ -4,17 +4,10 @@ CLASS cl_http_server DEFINITION PUBLIC CREATE PRIVATE.
 
     ALIASES co_enabled FOR if_http_server~co_enabled.
     ALIASES append_field_url FOR if_http_server~append_field_url.
+    ALIASES get_location FOR if_http_server~get_location.
 
     CLASS-DATA c_compression_supported TYPE i.
     DATA m_protocol_version TYPE string READ-ONLY.
-
-    CLASS-METHODS get_location
-      IMPORTING
-        application  TYPE csequence OPTIONAL
-      EXPORTING
-        port         TYPE string
-        out_protocol TYPE string
-        host         TYPE string.
 
 ENDCLASS.
 
@@ -107,7 +100,4 @@ CLASS cl_http_server IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
-  METHOD get_location.
-    host = 'open-abap.org'.
-  ENDMETHOD.
 ENDCLASS.
