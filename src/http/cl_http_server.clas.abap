@@ -6,6 +6,7 @@ CLASS cl_http_server DEFINITION PUBLIC CREATE PRIVATE.
     ALIASES append_field_url FOR if_http_server~append_field_url.
     ALIASES get_location FOR if_http_server~get_location.
 
+
     CLASS-DATA c_compression_supported TYPE i.
     DATA m_protocol_version TYPE string READ-ONLY.
 
