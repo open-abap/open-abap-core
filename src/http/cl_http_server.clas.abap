@@ -65,7 +65,7 @@ CLASS cl_http_server IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_server~get_location.
-    ASSERT 1 = 'todo'.
+    host = 'localhost'.
   ENDMETHOD.
 
   METHOD if_http_server~get_location_exception.
