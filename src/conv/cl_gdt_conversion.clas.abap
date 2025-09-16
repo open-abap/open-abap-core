@@ -21,6 +21,7 @@ CLASS cl_gdt_conversion DEFINITION PUBLIC.
         im_currency_code TYPE clike
       EXPORTING
         ex_value         TYPE p
+        ex_currency_code TYPE isocd
       RAISING
         cx_gdt_conversion.
 
