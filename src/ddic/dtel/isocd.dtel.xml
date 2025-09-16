@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>ISOCD</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DOMNAME>ISOCD</DOMNAME>
+    <DATATYPE>CHAR</DATATYPE>
+    <HEADLEN>55</HEADLEN>
+    <SCRLEN1>10</SCRLEN1>
+    <SCRLEN2>15</SCRLEN2>
+    <SCRLEN3>20</SCRLEN3>
+    <DDTEXT>Iso</DDTEXT>
+    <REPTEXT>Iso</REPTEXT>
+    <SCRTEXT_S>ISOCD</SCRTEXT_S>
+    <SCRTEXT_M>ISOCD</SCRTEXT_M>
+    <SCRTEXT_L>ISOCD</SCRTEXT_L>
+    <DTELMASTER>E</DTELMASTER>
+    <LENG>000003</LENG>
+    <DECIMALS>000000</DECIMALS>
+    <REFKIND>D</REFKIND>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>

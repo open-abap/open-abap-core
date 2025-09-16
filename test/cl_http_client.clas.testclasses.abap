@@ -351,25 +351,28 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD request_uri_with_host.
 
     DATA li_client TYPE REF TO if_http_client.
-    DATA lv_uri TYPE string VALUE 'https://api.github.com/gists/7178e319d3b699dbc30ee963c1a35219'.
+    DATA lv_uri TYPE string VALUE 'https://gist.github.com/larshp/e87684cbef1555b98b97d8ef44d77739'.
     DATA lv_val TYPE string.
     DATA lv_code TYPE i.
 
     cl_http_client=>create_by_url(
       EXPORTING
-        url    = 'https://api.github.com'
+        url    = 'https://gist.github.com'
         ssl_id = 'ANONYM'
       IMPORTING
         client = li_client ).
     li_client->request->set_header_field( name = '~request_uri'
                                           value = lv_uri ).
+
     lv_val = li_client->request->get_header_field( name = '~request_uri' ).
     cl_abap_unit_assert=>assert_equals(
       act = lv_uri
       exp = lv_val ).
+
     li_client->send( ).
     li_client->receive( ).
     li_client->response->get_status( IMPORTING code = lv_code ).
+
     cl_abap_unit_assert=>assert_equals(
       act = lv_code
       exp = 200 ).
