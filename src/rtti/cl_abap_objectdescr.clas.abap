@@ -173,8 +173,15 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     FIELD-SYMBOLS <attr>  TYPE abap_attrdescr.
     FIELD-SYMBOLS <atype> LIKE LINE OF mt_attribute_types.
 
+    WRITE '@KERNEL const allAttributes = p_object?.ATTRIBUTES || [];'.
+    WRITE '@KERNEL let currentObj = p_object?.STATIC_SUPER;'.
+    WRITE '@KERNEL while (currentObj !== undefined) {'.
+    WRITE '@KERNEL   allAttributes.push(...currentObj.ATTRIBUTES);'.
+    WRITE '@KERNEL   currentObj = currentObj.STATIC_SUPER;'.
+    WRITE '@KERNEL }'.
+
 * set attributes
-    WRITE '@KERNEL for (const a in p_object?.ATTRIBUTES || []) {'.
+    WRITE '@KERNEL for (const a in allAttributes) {'.
     WRITE '@KERNEL   lv_name.set(a);'.
     APPEND INITIAL LINE TO descr->attributes ASSIGNING <attr>.
     APPEND INITIAL LINE TO descr->mt_attribute_types ASSIGNING <atype>.
