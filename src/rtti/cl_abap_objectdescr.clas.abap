@@ -72,6 +72,11 @@ CLASS cl_abap_objectdescr DEFINITION PUBLIC INHERITING FROM cl_abap_typedescr.
              type_kind TYPE abap_typekind,
            END OF ty_parameter_types.
     DATA mt_parameter_types TYPE STANDARD TABLE OF ty_parameter_types WITH DEFAULT KEY.
+
+    CLASS-METHODS add_attributes
+      IMPORTING
+        p_object TYPE any
+        descr    TYPE REF TO cl_abap_objectdescr.
 ENDCLASS.
 
 CLASS cl_abap_objectdescr IMPLEMENTATION.
@@ -84,11 +89,9 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     DATA lv_type_name TYPE string.
     DATA lv_parm_kind  TYPE abap_parmkind.
 
-    FIELD-SYMBOLS <attr>      TYPE abap_attrdescr.
     FIELD-SYMBOLS <intf>      TYPE abap_intfdescr.
     FIELD-SYMBOLS <method>    TYPE abap_methdescr.
     FIELD-SYMBOLS <parameter> TYPE abap_parmdescr.
-    FIELD-SYMBOLS <atype>     LIKE LINE OF mt_attribute_types.
     FIELD-SYMBOLS <ptype>     LIKE LINE OF mt_parameter_types.
 
     WRITE '@KERNEL lv_name.set(p_object.INTERNAL_NAME);'.
@@ -105,32 +108,8 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     WRITE '@KERNEL }'.
     INSERT VALUE #( name = lv_name descr = descr ) INTO TABLE mt_cache.
 
-* set attributes
-    WRITE '@KERNEL for (const a in p_object?.ATTRIBUTES || []) {'.
-    WRITE '@KERNEL   lv_name.set(a);'.
-    APPEND INITIAL LINE TO descr->attributes ASSIGNING <attr>.
-    APPEND INITIAL LINE TO descr->mt_attribute_types ASSIGNING <atype>.
-    <attr>-name = lv_name.
-    <atype>-name = lv_name.
-    <attr>-is_interface = boolc( lv_name CA '~' ).
-    WRITE '@KERNEL   lv_char1.set(p_object.ATTRIBUTES[a].is_constant);'.
-    <attr>-is_constant = lv_char1.
-    WRITE '@KERNEL   lv_char1.set(p_object.ATTRIBUTES[a].is_class || "");'.
-    <attr>-is_class = lv_char1.
-    WRITE '@KERNEL   lv_char1.set(p_object.ATTRIBUTES[a].visibility);'.
-    <attr>-visibility = lv_char1.
-    WRITE '@KERNEL   lv_any = p_object.ATTRIBUTES[a].type();'.
-"     WRITE '@KERNEL   if (lv_any.constructor.name === "ABAPObject") {'.
-" * avoid recursion into objects
-"     <attr>-type_kind = cl_abap_typedescr=>typekind_oref.
-"     WRITE '@KERNEL   } else {'.
-    <atype>-type ?= describe_by_data( lv_any ).
-    <attr>-type_kind = <atype>-type->type_kind.
-    <attr>-length = <atype>-type->length.
-    <attr>-decimals = <atype>-type->decimals.
-    " WRITE '@KERNEL   }'.
-    WRITE '@KERNEL }'.
-    SORT descr->attributes BY is_interface DESCENDING name ASCENDING.
+    add_attributes( p_object = p_object
+                    descr = descr ).
 
 * set interfaces
     WRITE '@KERNEL for (const a of p_object?.IMPLEMENTED_INTERFACES || []) {'.
@@ -182,6 +161,55 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     WRITE '@KERNEL }'.
     SORT descr->methods BY name ASCENDING.
 
+
+  ENDMETHOD.
+
+  METHOD add_attributes.
+
+    DATA lv_name  TYPE abap_attrname.
+    DATA lv_char1 TYPE c LENGTH 1.
+    DATA lv_any   TYPE string.
+
+    FIELD-SYMBOLS <attr>  TYPE abap_attrdescr.
+    FIELD-SYMBOLS <atype> LIKE LINE OF mt_attribute_types.
+
+    WRITE '@KERNEL let allAttributes = p_object?.ATTRIBUTES || {};'.
+    WRITE '@KERNEL let currentObj = p_object?.STATIC_SUPER;'.
+    WRITE '@KERNEL console.dir(currentObj);'.
+    WRITE '@KERNEL while (currentObj !== undefined) {'.
+    WRITE '@KERNEL   for (const a in currentObj.ATTRIBUTES) {'.
+    WRITE '@KERNEL     if (currentObj.ATTRIBUTES[a].visibility === "I") { continue; }'.
+    WRITE '@KERNEL     allAttributes[a] = currentObj.ATTRIBUTES[a];'.
+    WRITE '@KERNEL   }'.
+    WRITE '@KERNEL   currentObj = currentObj.STATIC_SUPER;'.
+    WRITE '@KERNEL }'.
+
+* set attributes
+    WRITE '@KERNEL for (const a in allAttributes) {'.
+    WRITE '@KERNEL   lv_name.set(a);'.
+    APPEND INITIAL LINE TO descr->attributes ASSIGNING <attr>.
+    APPEND INITIAL LINE TO descr->mt_attribute_types ASSIGNING <atype>.
+    <attr>-name = lv_name.
+    <atype>-name = lv_name.
+    <attr>-is_interface = boolc( lv_name CA '~' ).
+    WRITE '@KERNEL   lv_char1.set(p_object.ATTRIBUTES[a].is_constant);'.
+    <attr>-is_constant = lv_char1.
+    WRITE '@KERNEL   lv_char1.set(p_object.ATTRIBUTES[a].is_class || "");'.
+    <attr>-is_class = lv_char1.
+    WRITE '@KERNEL   lv_char1.set(p_object.ATTRIBUTES[a].visibility);'.
+    <attr>-visibility = lv_char1.
+    WRITE '@KERNEL   lv_any = p_object.ATTRIBUTES[a].type();'.
+"     WRITE '@KERNEL   if (lv_any.constructor.name === "ABAPObject") {'.
+" * avoid recursion into objects
+"     <attr>-type_kind = cl_abap_typedescr=>typekind_oref.
+"     WRITE '@KERNEL   } else {'.
+    <atype>-type ?= describe_by_data( lv_any ).
+    <attr>-type_kind = <atype>-type->type_kind.
+    <attr>-length = <atype>-type->length.
+    <attr>-decimals = <atype>-type->decimals.
+    " WRITE '@KERNEL   }'.
+    WRITE '@KERNEL }'.
+    SORT descr->attributes BY is_interface DESCENDING name ASCENDING.
 
   ENDMETHOD.
 
