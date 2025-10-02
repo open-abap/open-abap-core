@@ -64,8 +64,10 @@ INTERFACE if_http_entity PUBLIC.
       content_type TYPE string.
 
   METHODS get_data
+    IMPORTING
+      vscan_scan_always TYPE c OPTIONAL
     RETURNING
-      VALUE(data) TYPE xstring.
+      VALUE(data)       TYPE xstring.
 
   METHODS get_header_fields
     CHANGING
