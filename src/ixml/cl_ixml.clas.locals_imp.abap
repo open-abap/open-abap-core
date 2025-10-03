@@ -127,136 +127,6 @@ ENDCLASS.
 
 ****************************************************************
 
-CLASS lcl_attribute DEFINITION.
-  PUBLIC SECTION.
-    INTERFACES if_ixml_attribute.
-  PRIVATE SECTION.
-    DATA mv_name TYPE string.
-    DATA mv_prefix TYPE string.
-    DATA mv_value TYPE string.
-ENDCLASS.
-
-CLASS lcl_attribute IMPLEMENTATION.
-
-  METHOD if_ixml_node~append_child.
-    ASSERT 1 = 2.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~get_attributes.
-    ASSERT 1 = 2.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~get_first_child.
-    ASSERT 1 = 2.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~get_children.
-    ASSERT 1 = 2.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~query_interface.
-    ASSERT 1 = 2.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~remove_node.
-    ASSERT 1 = 2.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~get_parent.
-    ASSERT 1 = 2.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~replace_child.
-    ASSERT 1 = 2.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~get_name.
-    val = mv_name.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~get_depth.
-    ASSERT 1 = 2.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~is_leaf.
-    ASSERT 1 = 2.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~get_namespace.
-    ASSERT 1 = 2.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~get_value.
-    val = mv_value.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~get_type.
-    ASSERT 1 = 2.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~set_name.
-    mv_name = name.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~set_namespace_prefix.
-    mv_prefix = val.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~remove_child.
-    ASSERT 1 = 2.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~set_value.
-    mv_value = value.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~get_gid.
-    ASSERT 1 = 2.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~insert_child.
-    ASSERT 1 = 2.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~get_next.
-    ASSERT 1 = 2.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~get_namespace_prefix.
-    rv_prefix = mv_prefix.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~get_namespace_uri.
-    ASSERT 1 = 2.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~get_height.
-    ASSERT 1 = 2.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~create_filter_name_ns.
-    ASSERT 1 = 2.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~get_column.
-    ASSERT 1 = 2.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~create_iterator_filtered.
-    ASSERT 1 = 2.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~clone.
-    ASSERT 1 = 2.
-  ENDMETHOD.
-
-  METHOD if_ixml_node~num_children.
-    ASSERT 1 = 2.
-  ENDMETHOD.
-ENDCLASS.
-
-****************************************************************
-
 CLASS lcl_node_list DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_node_list.
@@ -914,7 +784,7 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~create_attribute_ns.
-    CREATE OBJECT rval TYPE lcl_attribute.
+    CREATE OBJECT rval TYPE lcl_node.
     rval->if_ixml_node~set_name( name ).
     rval->if_ixml_node~set_namespace_prefix( prefix ).
   ENDMETHOD.
