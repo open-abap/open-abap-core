@@ -80,7 +80,7 @@ INTERFACE if_ixml_element PUBLIC.
         ostream TYPE REF TO if_ixml_ostream,
     set_attribute_node_ns
       IMPORTING
-        attr TYPE any,
+        new_attr TYPE REF TO if_ixml_attribute,
     set_attribute
       IMPORTING
         name        TYPE string

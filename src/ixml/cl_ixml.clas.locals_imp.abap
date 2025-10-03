@@ -612,7 +612,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~set_attribute_node_ns.
-    ASSERT 1 = 'todo'.
+    mi_attributes->set_named_item_ns( new_attr ).
   ENDMETHOD.
 
   METHOD if_ixml_element~set_attribute.
