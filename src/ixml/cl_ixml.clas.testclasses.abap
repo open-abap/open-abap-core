@@ -49,6 +49,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS pretty4 FOR TESTING RAISING cx_static_check.
     METHODS pretty5 FOR TESTING RAISING cx_static_check.
     METHODS add_stuff FOR TESTING RAISING cx_static_check.
+    METHODS create_attribute_ns FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml     TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -1150,6 +1151,38 @@ CLASS ltcl_xml IMPLEMENTATION.
       act = lv_xml
       exp = '*<asx:abap><HELLO*' ).
 
+  ENDMETHOD.
+
+  METHOD create_attribute_ns.
+    DATA li_element TYPE REF TO if_ixml_element.
+    DATA li_top     TYPE REF TO if_ixml_element.
+    DATA lv_xml     TYPE string.
+    DATA li_attr    TYPE REF TO if_ixml_attribute.
+
+    li_top = mi_document->create_element_ns(
+      prefix = 'asx'
+      name   = 'abap' ).
+    mi_document->append_child( li_top ).
+
+    li_element = mi_document->create_element( 'HELLO' ).
+
+    li_attr = mi_document->create_attribute_ns( 'version' ).
+    li_attr->if_ixml_node~set_value( '1.0' ).
+    li_element->set_attribute_node_ns( li_attr ).
+
+    li_attr = mi_document->create_attribute_ns(
+      name   = 'asx'
+      prefix = 'xmlns' ).
+    li_attr->if_ixml_node~set_value( 'http://abapgit.org' ).
+    li_element->set_attribute_node_ns( li_attr ).
+
+    li_top->append_child( li_element ).
+
+    lv_xml = render( ).
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_xml
+      exp = '*<HELLO version="1.0" xmlns:asx="http://abapgit.org"/>*' ).
   ENDMETHOD.
 
 ENDCLASS.
