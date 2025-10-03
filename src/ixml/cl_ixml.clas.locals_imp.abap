@@ -482,7 +482,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~set_attribute_node_ns.
-    ASSERT 1 = 'todo'.
+    mi_attributes->set_named_item_ns( new_attr ).
   ENDMETHOD.
 
   METHOD if_ixml_element~set_attribute.
@@ -784,7 +784,9 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~create_attribute_ns.
-    ASSERT 1 = 'todo'.
+    CREATE OBJECT rval TYPE lcl_node.
+    rval->if_ixml_node~set_name( name ).
+    rval->if_ixml_node~set_namespace_prefix( prefix ).
   ENDMETHOD.
 
   METHOD if_ixml_document~create_element_ns.

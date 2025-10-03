@@ -24,10 +24,10 @@ INTERFACE if_ixml_document PUBLIC.
         VALUE(child) TYPE REF TO if_ixml_node,
     create_attribute_ns
       IMPORTING
-        name           TYPE string
-        prefix         TYPE string OPTIONAL
+        name        TYPE string
+        prefix      TYPE string OPTIONAL
       RETURNING
-        VALUE(element) TYPE REF TO if_ixml_attribute,
+        VALUE(rval) TYPE REF TO if_ixml_attribute,
     create_element_ns
       IMPORTING
         name           TYPE string
