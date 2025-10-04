@@ -8,6 +8,9 @@
     "ignoreSyntaxCheck": false,
     "addFilenames": true,
     "addCommonJS": true,
-    "extraSetup": "../test/setup.mjs"
+    "setup": {
+      "filename": "../test/setup.mjs",
+      "preFunction": "setup"
+    }
   }
 }
