@@ -103,7 +103,8 @@ CLASS cl_abap_dyn_prg IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD escape_quotes.
-    ASSERT 1 = 'todo'.
+    out = val.
+    REPLACE ALL OCCURRENCES OF `'` IN out WITH `''`.
   ENDMETHOD.
 
   METHOD escape_xss_xml_html.
