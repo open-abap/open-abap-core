@@ -7,6 +7,13 @@ CLASS cl_web_http_utility DEFINITION PUBLIC.
       RETURNING
         VALUE(unescaped) TYPE string.
 
+    CLASS-METHODS escape_url
+      IMPORTING
+        unescaped      TYPE string
+        options        TYPE i OPTIONAL
+      RETURNING
+        VALUE(escaped) TYPE string.
+
     CLASS-METHODS decode_x_base64
       IMPORTING
         encoded        TYPE string
@@ -58,6 +65,10 @@ CLASS cl_web_http_utility IMPLEMENTATION.
     unescaped = cl_http_utility=>unescape_url(
       escaped = escaped
       options = options ).
+  ENDMETHOD.
+
+  METHOD escape_url.
+    escaped = cl_http_utility=>escape_url( unescaped ).
   ENDMETHOD.
 
   METHOD decode_x_base64.
