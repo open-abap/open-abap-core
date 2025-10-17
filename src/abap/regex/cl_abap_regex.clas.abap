@@ -21,6 +21,7 @@ CLASS cl_abap_regex DEFINITION PUBLIC.
       IMPORTING
         pattern      TYPE clike
         ignore_case  TYPE abap_bool DEFAULT abap_false
+        extended     TYPE abap_bool DEFAULT abap_false
       RETURNING
         VALUE(regex) TYPE REF TO cl_abap_regex.
 
