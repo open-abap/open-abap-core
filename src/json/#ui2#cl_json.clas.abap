@@ -1,12 +1,12 @@
 CLASS /ui2/cl_json DEFINITION PUBLIC.
   PUBLIC SECTION.
 
-    TYPES pretty_name_mode TYPE string.
+    TYPES pretty_name_mode TYPE c LENGTH 1.
 
     CONSTANTS: BEGIN OF pretty_mode,
-                 none       TYPE string VALUE '',
-                 low_case   TYPE string VALUE 'low_case',
-                 camel_case TYPE string VALUE 'camel_case',
+                 none       TYPE pretty_name_mode VALUE '',
+                 low_case   TYPE pretty_name_mode VALUE 'L',
+                 camel_case TYPE pretty_name_mode VALUE 'X',
                END OF pretty_mode.
 
     TYPES bool TYPE c LENGTH 1.
@@ -34,7 +34,7 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
       IMPORTING
         json             TYPE string OPTIONAL
         jsonx            TYPE xstring OPTIONAL
-        pretty_name      TYPE string OPTIONAL
+        pretty_name      TYPE pretty_name_mode OPTIONAL
         assoc_arrays     TYPE abap_bool OPTIONAL
         assoc_arrays_opt TYPE abap_bool OPTIONAL
         conversion_exits TYPE abap_bool OPTIONAL
@@ -45,7 +45,7 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
       IMPORTING
         data             TYPE data
         compress         TYPE abap_bool OPTIONAL
-        pretty_name      TYPE string OPTIONAL
+        pretty_name      TYPE pretty_name_mode OPTIONAL
         assoc_arrays     TYPE abap_bool OPTIONAL
         assoc_arrays_opt TYPE abap_bool OPTIONAL
         ts_as_iso8601    TYPE abap_bool OPTIONAL
@@ -57,7 +57,7 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
     CLASS-METHODS generate
       IMPORTING
         json           TYPE string
-        pretty_name    TYPE string OPTIONAL
+        pretty_name    TYPE pretty_name_mode OPTIONAL
       RETURNING
         VALUE(rr_data) TYPE REF TO data.
 
@@ -105,7 +105,7 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
     CLASS-METHODS _deserialize
       IMPORTING
         VALUE(prefix) TYPE string
-        pretty_name   TYPE string OPTIONAL
+        pretty_name   TYPE pretty_name_mode
         io_type       TYPE REF TO cl_abap_typedescr
       CHANGING
         data          TYPE data.
