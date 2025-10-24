@@ -343,7 +343,6 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     FIELD-SYMBOLS <ls_component> LIKE LINE OF lt_components.
 
     prefix = mo_parsed->find_ignore_case( prefix ).
-
 *    WRITE '@KERNEL console.dir(lo_type.get());'.
     CASE io_type->kind.
       WHEN cl_abap_typedescr=>kind_elem.
@@ -368,6 +367,8 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           ELSE.
             data = lv_value.
           ENDIF.
+        ELSEIF io_type->type_kind = cl_abap_typedescr=>typekind_xstring.
+          data = cl_http_utility=>decode_x_base64( mo_parsed->value_string( prefix ) ).
         ELSEIF io_type->type_kind = cl_abap_typedescr=>typekind_time.
           lv_value = mo_parsed->value_string( prefix ).
           REPLACE ALL OCCURRENCES OF ':' IN lv_value WITH ''.
