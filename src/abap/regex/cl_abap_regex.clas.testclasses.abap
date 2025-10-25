@@ -10,8 +10,8 @@ CLASS ltcl_test DEFINITION FOR TESTING DURATION SHORT RISK LEVEL HARMLESS FINAL.
     METHODS pcre         FOR TESTING RAISING cx_static_check.
     METHODS replace_oo   FOR TESTING RAISING cx_static_check.
     METHODS pcre_slashes FOR TESTING RAISING cx_static_check.
+    METHODS digits       FOR TESTING RAISING cx_static_check.
     METHODS classic_slashes FOR TESTING RAISING cx_static_check.
-    METHODS digits FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
