@@ -33,6 +33,7 @@ CLASS ltcl_deserialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
     METHODS refs_something FOR TESTING RAISING cx_static_check.
     METHODS raw_to_string FOR TESTING RAISING cx_static_check.
     METHODS string_to_raw FOR TESTING RAISING cx_static_check.
+    METHODS top_tab FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -212,6 +213,30 @@ CLASS ltcl_deserialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = stru-foo
       exp = 2 ).
+  ENDMETHOD.
+
+  METHOD top_tab.
+
+    DATA lv_json TYPE string.
+    TYPES: BEGIN OF ty,
+         path     TYPE string,
+         filename TYPE string,
+         sha1     TYPE c LENGTH 10,
+         data     TYPE xstring,
+       END OF ty.
+    DATA tab TYPE STANDARD TABLE OF ty WITH DEFAULT KEY.
+    lv_json = '[{"path":"","filename":"","sha1":"","data":""}]'.
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = lv_json
+      CHANGING
+        data = tab ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( tab )
+      exp = 1 ).
+
   ENDMETHOD.
 
   METHOD structure_string.

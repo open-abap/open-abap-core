@@ -10,6 +10,7 @@ CLASS ltcl_test DEFINITION FOR TESTING DURATION SHORT RISK LEVEL HARMLESS FINAL.
     METHODS pcre         FOR TESTING RAISING cx_static_check.
     METHODS replace_oo   FOR TESTING RAISING cx_static_check.
     METHODS pcre_slashes FOR TESTING RAISING cx_static_check.
+    METHODS digits       FOR TESTING RAISING cx_static_check.
     METHODS classic_slashes FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
@@ -215,6 +216,27 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_basepath
       exp = 'core/api' ).
+
+  ENDMETHOD.
+
+  METHOD digits.
+
+    DATA l_offset  TYPE i.
+    DATA l_counter TYPE string.
+    DATA name      TYPE string.
+    DATA lo_regex  TYPE REF TO cl_abap_regex.
+
+    name = 'notFound'.
+    CREATE OBJECT lo_regex EXPORTING pattern = '([[:digit:]]*)$'.
+    FIND FIRST OCCURRENCE OF REGEX lo_regex IN name SUBMATCHES l_counter MATCH OFFSET l_offset.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = l_counter
+      exp = '' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = l_offset
+      exp = 8 ).
 
   ENDMETHOD.
 
