@@ -56,6 +56,7 @@ INTERFACE if_ixml_element PUBLIC.
     get_elements_by_tag_name
       IMPORTING
         name       TYPE string
+        namespace  TYPE string DEFAULT ''
       RETURNING
         VALUE(val) TYPE REF TO if_ixml_node_collection,
     get_elements_by_tag_name_ns
