@@ -1,6 +1,8 @@
 INTERFACE if_ixml_element PUBLIC.
   INTERFACES if_ixml_node.
 
+  ALIASES remove_child FOR if_ixml_node~remove_child.
+
   METHODS:
     remove_attribute_ns
       IMPORTING foo TYPE string,
