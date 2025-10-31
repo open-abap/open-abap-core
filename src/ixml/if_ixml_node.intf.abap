@@ -15,9 +15,6 @@ INTERFACE if_ixml_node PUBLIC.
       RETURNING VALUE(rval) TYPE REF TO if_ixml_unknown,
     remove_node,
     get_parent RETURNING VALUE(val) TYPE REF TO if_ixml_node,
-    replace_child IMPORTING
-      new_child TYPE string
-      old_child TYPE string,
     get_name RETURNING VALUE(val) TYPE string,
     get_depth RETURNING VALUE(val) TYPE i,
     is_leaf RETURNING VALUE(val) TYPE abap_bool,
@@ -26,8 +23,18 @@ INTERFACE if_ixml_node PUBLIC.
     get_type RETURNING VALUE(val) TYPE string,
     set_name IMPORTING name TYPE string,
     set_namespace_prefix IMPORTING val TYPE string,
-    remove_child IMPORTING child TYPE REF TO if_ixml_node,
-    set_value IMPORTING value TYPE string.
+    remove_child IMPORTING child TYPE REF TO if_ixml_node.
+
+  METHODS replace_child
+    IMPORTING
+      new_child TYPE REF TO if_ixml_node
+      old_child TYPE REF TO if_ixml_node.
+
+  METHODS set_value
+    IMPORTING
+      value       TYPE string
+    RETURNING
+      VALUE(rval) TYPE i.
 
   METHODS get_gid
     RETURNING

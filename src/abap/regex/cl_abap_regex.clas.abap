@@ -13,7 +13,8 @@ CLASS cl_abap_regex DEFINITION PUBLIC.
 
     METHODS create_matcher
       IMPORTING
-        text              TYPE clike
+        text              TYPE clike OPTIONAL
+        table             TYPE STANDARD TABLE OPTIONAL
       RETURNING
         VALUE(ro_matcher) TYPE REF TO cl_abap_matcher.
 
@@ -45,6 +46,9 @@ CLASS cl_abap_regex IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD create_matcher.
+    " this is a todo,
+    ASSERT table IS INITIAL.
+
     CREATE OBJECT ro_matcher
       EXPORTING
         pattern     = mv_pattern
