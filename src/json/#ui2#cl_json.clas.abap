@@ -17,6 +17,7 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
                END OF c_bool.
 
     TYPES tribool TYPE c LENGTH 1.
+    TYPES json TYPE string.
 
     CLASS-METHODS raw_to_string
       IMPORTING
