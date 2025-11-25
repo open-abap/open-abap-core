@@ -23,8 +23,7 @@ CLASS cl_apc_tcp_client_manager IMPLEMENTATION.
     lv_port = i_port.
 
 * i_ssl_id is not checked, STRUST is inherited from system in nodejs
-* this is the only frame type we support for now
-    ASSERT i_frame IS INITIAL.
+* i_frame is currently ignored, framing is handled by TCP
 
     CREATE OBJECT ri_client TYPE lcl_client
       EXPORTING
