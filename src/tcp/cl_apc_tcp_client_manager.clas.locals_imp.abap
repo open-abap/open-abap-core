@@ -74,7 +74,7 @@ CLASS lcl_client IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_apc_wsp_client~get_message_manager.
-    ri_manager = me.
+    r_message_manager = me.
   ENDMETHOD.
 
   METHOD if_apc_wsp_message_manager~create_message.
