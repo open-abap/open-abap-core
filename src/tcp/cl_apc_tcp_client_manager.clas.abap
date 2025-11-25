@@ -21,6 +21,11 @@ CLASS cl_apc_tcp_client_manager IMPLEMENTATION.
   METHOD create.
     DATA lv_port TYPE i.
     lv_port = i_port.
+
+* i_ssl_id is not checked, STRUST is inherited from system in nodejs
+* this is the only frame type we support for now
+    ASSERT i_frame IS INITIAL.
+
     CREATE OBJECT ri_client TYPE lcl_client
       EXPORTING
         iv_host     = i_host
