@@ -121,8 +121,10 @@ CLASS cl_abap_tstmp IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD subtract.
+* todo: this can be done easier and faster, just subtract the two values?
     DATA str      TYPE string.
     DATA lv_dummy TYPE string.
+
     str = |{ tstmp1 TIMESTAMP = ISO }|.
     IF str CA ','.
       SPLIT str AT ',' INTO str lv_dummy.
