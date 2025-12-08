@@ -46,8 +46,12 @@ CLASS cl_sql_result_set IMPLEMENTATION.
     WRITE '@KERNEL lv_total.set(this.mv_magic.length);'.
 *    WRITE '@KERNEL console.dir(this.mv_magic);'.
     WRITE '@KERNEL const current = this.mv_magic[this.mv_index.get()];'.
-    WRITE '@KERNEL lv_value.set(Object.values(current)[0]);'.
 
+    WRITE '@KERNEL if (typeof Object.values(current)[0] === "boolean") {'.
+    WRITE '@KERNEL   lv_value.set((Object.values(current)[0] === true) ? "X" : "");'.
+    WRITE '@KERNEL } else {'.
+    WRITE '@KERNEL   lv_value.set(Object.values(current)[0]);'.
+    WRITE '@KERNEL }'.
 
     IF mv_ref IS NOT INITIAL.
       mv_ref->* = lv_value.
