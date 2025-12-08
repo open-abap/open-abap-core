@@ -45,7 +45,7 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
       TRY.
           CREATE DATA ref TYPE (lv_table).
           ASSIGN ref->* TO <fs>.
-          SELECT SINGLE * FROM (lv_table) INTO <fs>.
+          SELECT SINGLE * FROM (lv_table) INTO @<fs>.
         CATCH cx_sy_create_data_error cx_sy_dynamic_osql_semantics.
           WRITE '@KERNEL throw new Error(`table ${lv_table.get().trimEnd()} invalid or does not exist`);'.
       ENDTRY.
@@ -124,7 +124,7 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
     READ TABLE mt_tables WITH KEY table_line = lv_table TRANSPORTING NO FIELDS.
     ASSERT sy-subrc = 0.
 
-    INSERT (lv_table) FROM TABLE i_data.
+    INSERT (lv_table) FROM TABLE @i_data.
     ASSERT sy-subrc = 0.
 
   ENDMETHOD.
