@@ -48,7 +48,7 @@ CLASS cl_sql_result_set IMPLEMENTATION.
     WRITE '@KERNEL const current = this.mv_magic[this.mv_index.get()];'.
 
     WRITE '@KERNEL if (typeof Object.values(current)[0] === "boolean") {'.
-    WRITE '@KERNEL   lv_value.set((Object.values(current)[0] === true) ? "X" : "");'.
+    WRITE '@KERNEL   lv_value.set(Object.values(current)[0] ? "X" : "");'.
     WRITE '@KERNEL } else {'.
     WRITE '@KERNEL   lv_value.set(Object.values(current)[0]);'.
     WRITE '@KERNEL }'.
