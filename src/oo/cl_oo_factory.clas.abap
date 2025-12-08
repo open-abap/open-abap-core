@@ -31,7 +31,7 @@ CLASS cl_oo_factory IMPLEMENTATION.
 
   METHOD if_oo_clif_source~get_source.
     DATA ls_data TYPE reposrc.
-    SELECT SINGLE * FROM reposrc INTO ls_data WHERE progname = mv_name.
+    SELECT SINGLE * FROM reposrc INTO @ls_data WHERE progname = @mv_name.
     SPLIT ls_data-data AT |\n| INTO TABLE source.
   ENDMETHOD.
 ENDCLASS.
