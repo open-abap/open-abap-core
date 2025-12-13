@@ -207,6 +207,9 @@
     "parser_error": true,
     "unknown_types": true,
     "global_class": true,
+    "identical_move": true,
+    "index_completely_contained": true,
+    "no_comments_between_methods": true,
     "check_syntax": true,
     "functional_writing": true,
     "obsolete_statement": {
