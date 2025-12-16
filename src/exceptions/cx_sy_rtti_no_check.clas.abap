@@ -1,0 +1,7 @@
+CLASS cx_sy_rtti_no_check DEFINITION PUBLIC INHERITING FROM cx_no_check.
+  PUBLIC SECTION.
+ENDCLASS.
+
+CLASS cx_sy_rtti_no_check IMPLEMENTATION.
+
+ENDCLASS.
