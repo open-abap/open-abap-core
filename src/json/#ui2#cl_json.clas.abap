@@ -344,7 +344,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     FIELD-SYMBOLS <ls_component> LIKE LINE OF lt_components.
 
     prefix = mo_parsed->find_ignore_case( prefix ).
-*    WRITE '@KERNEL console.dir(lo_type.get());'.
+*    WRITE '@KERNEL console.dir(io_type.get());'.
     CASE io_type->kind.
       WHEN cl_abap_typedescr=>kind_elem.
 *        WRITE '@KERNEL console.dir(lo_type.get().absolute_name);'.
@@ -467,6 +467,9 @@ CLASS /ui2/cl_json IMPLEMENTATION.
                 CREATE DATA data TYPE HANDLE cl_abap_typedescr=>describe_by_name( 'ABAP_BOOL' ).
               WHEN 'str'.
                 CREATE DATA data TYPE HANDLE cl_abap_elemdescr=>get_string( ).
+              WHEN 'null'.
+                CLEAR data.
+                RETURN.
               " WHEN OTHERS.
               "   ASSERT 1 = 'todo'.
             ENDCASE.

@@ -700,7 +700,7 @@ CLASS ltcl_deserialize IMPLEMENTATION.
 
     cl_abap_unit_assert=>assert_equals(
       act = lines( lt_log )
-      exp = 2 ).
+      exp = 1 ).
 
   ENDMETHOD.
 
