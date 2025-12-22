@@ -682,19 +682,10 @@ CLASS ltcl_deserialize IMPLEMENTATION.
 
     DATA(lv_json) = `[` && |\n| &&
       `  {` && |\n| &&
-      `    "type": "I",` && |\n| &&
-      `    "id": "",` && |\n| &&
-      `    "number": 0,` && |\n| &&
-      `    "text": ">>> Deserializing 1 object",` && |\n| &&
-      `    "objType": "",` && |\n| &&
-      `    "objName": "",` && |\n| &&
-      `    "exception": null` && |\n| &&
-      `  },` && |\n| &&
-      `  {` && |\n| &&
       `    "type": "S",` && |\n| &&
       `    "id": "",` && |\n| &&
       `    "number": 0,` && |\n| &&
-      `    "text": ">> Step 4 - Post-process Objects",` && |\n| &&
+      `    "text": "hello world",` && |\n| &&
       `    "objType": "",` && |\n| &&
       `    "objName": "",` && |\n| &&
       `    "exception": null` && |\n| &&
