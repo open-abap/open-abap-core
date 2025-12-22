@@ -218,6 +218,8 @@
       "sortByFS": true,
       "callTransformation": true,
       "pack": true,
+      "loopExtract": true,
+      "sortExtract": true,
       "selectWithoutInto": true,
       "clientSpecified": false,
       "commonPart": true,
