@@ -956,6 +956,12 @@ CLASS ltcl_serialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_json
       exp = 'null' ).
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = lv_json
+      CHANGING
+        data = ref ).
   ENDMETHOD.
 
   METHOD basic_ref.
