@@ -15,6 +15,12 @@ CLASS ltcl_dyn_prg DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FIN
     METHODS escape_xss_xml_html_script FOR TESTING RAISING cx_static_check.
     METHODS escape_xss_xml_html_empty FOR TESTING RAISING cx_static_check.
     METHODS escape_xss_xml_html_quotes FOR TESTING RAISING cx_static_check.
+    METHODS escape_xss_url_spaces FOR TESTING RAISING cx_static_check.
+    METHODS escape_xss_url_percent FOR TESTING RAISING cx_static_check.
+    METHODS escape_quotes_multiple FOR TESTING RAISING cx_static_check.
+    METHODS escape_quotes_empty FOR TESTING RAISING cx_static_check.
+    METHODS escape_quotes_str_empty FOR TESTING RAISING cx_static_check.
+    METHODS escape_xss_xml_html_newline FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -103,6 +109,42 @@ CLASS ltcl_dyn_prg IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = cl_abap_dyn_prg=>escape_xss_xml_html( `it's a "test"` )
       exp = `it&#x27;s&#x20;a&#x20;&#x22;test&#x22;` ).
+  ENDMETHOD.
+
+  METHOD escape_xss_url_spaces.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>escape_xss_url( 'hello world' )
+      exp = 'hello%20world' ).
+  ENDMETHOD.
+
+  METHOD escape_xss_url_percent.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>escape_xss_url( '100%' )
+      exp = '100%25' ).
+  ENDMETHOD.
+
+  METHOD escape_quotes_multiple.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>escape_quotes( `a''b` )
+      exp = `a''''b` ).
+  ENDMETHOD.
+
+  METHOD escape_quotes_empty.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>escape_quotes( '' )
+      exp = '' ).
+  ENDMETHOD.
+
+  METHOD escape_quotes_str_empty.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>escape_quotes_str( '' )
+      exp = '' ).
+  ENDMETHOD.
+
+  METHOD escape_xss_xml_html_newline.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>escape_xss_xml_html( |a{ cl_abap_char_utilities=>newline }b| )
+      exp = 'a&#xa;b' ).
   ENDMETHOD.
 
 ENDCLASS.
