@@ -137,7 +137,7 @@ CLASS cl_abap_dyn_prg IMPLEMENTATION.
         out = out && '&gt;'.
       ELSEIF lv_char = '&'.
         out = out && '&amp;'.
-      ELSEIF to_upper( lv_char ) CA sy-abcde OR lv_char CA '0123456789 '.
+      ELSEIF to_upper( lv_char ) CA sy-abcde OR lv_char CA '0123456789'.
         out = out && lv_char.
       ELSE.
         lv_hex = cl_abap_codepage=>convert_to( lv_char ).
