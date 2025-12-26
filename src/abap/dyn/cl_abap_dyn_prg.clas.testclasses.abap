@@ -43,7 +43,7 @@ CLASS ltcl_dyn_prg IMPLEMENTATION.
   METHOD escape_xss_url_script.
     cl_abap_unit_assert=>assert_equals(
       act = cl_abap_dyn_prg=>escape_xss_url( '<script>alert(1)</script>' )
-      exp = '%3Cscript%3Ealert%281%29%3C%2Fscript%3E' ).
+      exp = '%3cscript%3ealert%281%29%3c%2fscript%3e' ).
   ENDMETHOD.
 
   METHOD escape_xss_url_empty.
