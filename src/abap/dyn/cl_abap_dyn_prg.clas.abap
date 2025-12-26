@@ -100,7 +100,8 @@ CLASS cl_abap_dyn_prg IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD escape_xss_url.
-    WRITE '@KERNEL out.set(encodeURIComponent(val.get().trimEnd()).replace(/[!''()*]/g, c => "%" + c.charCodeAt(0).toString(16)).toLowerCase());'.
+* encodeURIComponent covers most cases; keep '*' unescaped per expected output
+    WRITE '@KERNEL out.set(encodeURIComponent(val.get().trimEnd()).replace(/[!''()]/g, c => "%" + c.charCodeAt(0).toString(16)).toLowerCase());'.
   ENDMETHOD.
 
   METHOD escape_quotes.
