@@ -100,7 +100,21 @@ CLASS cl_abap_dyn_prg IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD escape_xss_url.
-    ASSERT 1 = 'todo'.
+    DATA lv_index TYPE i.
+    DATA lv_char  TYPE string.
+    DATA lv_hex   TYPE string.
+
+    out = ''.
+    DO strlen( val ) TIMES.
+      lv_index = sy-index - 1.
+      lv_char = val+lv_index(1).
+      IF to_upper( lv_char ) CA sy-abcde OR lv_char CA '0123456789_.-~'.
+        out = out && lv_char.
+      ELSE.
+        lv_hex = cl_abap_codepage=>convert_to( lv_char ).
+        out = out && '%' && to_upper( lv_hex ).
+      ENDIF.
+    ENDDO.
   ENDMETHOD.
 
   METHOD escape_quotes.
