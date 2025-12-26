@@ -96,7 +96,7 @@ CLASS cl_abap_dyn_prg IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD quote.
-    ASSERT 1 = 'todo'.
+    out = `'` && escape_quotes( val ) && `'`.
   ENDMETHOD.
 
   METHOD escape_xss_url.

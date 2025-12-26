@@ -7,6 +7,9 @@ CLASS ltcl_dyn_prg DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FIN
     METHODS escape_xss_url_special FOR TESTING RAISING cx_static_check.
     METHODS escape_xss_url_script FOR TESTING RAISING cx_static_check.
     METHODS escape_xss_url_empty FOR TESTING RAISING cx_static_check.
+    METHODS quote_simple FOR TESTING RAISING cx_static_check.
+    METHODS quote_with_quotes FOR TESTING RAISING cx_static_check.
+    METHODS quote_empty FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -47,6 +50,24 @@ CLASS ltcl_dyn_prg IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = cl_abap_dyn_prg=>escape_xss_url( '' )
       exp = '' ).
+  ENDMETHOD.
+
+  METHOD quote_simple.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>quote( 'hello' )
+      exp = `'hello'` ).
+  ENDMETHOD.
+
+  METHOD quote_with_quotes.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>quote( `it's a test` )
+      exp = `'it''s a test'` ).
+  ENDMETHOD.
+
+  METHOD quote_empty.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>quote( '' )
+      exp = `''` ).
   ENDMETHOD.
 
 ENDCLASS.
