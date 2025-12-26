@@ -100,21 +100,7 @@ CLASS cl_abap_dyn_prg IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD escape_xss_url.
-    DATA lv_index TYPE i.
-    DATA lv_char  TYPE string.
-    DATA lv_hex   TYPE string.
-
-    out = ''.
-    DO strlen( val ) TIMES.
-      lv_index = sy-index - 1.
-      lv_char = val+lv_index(1).
-      IF to_upper( lv_char ) CA sy-abcde OR lv_char CA '0123456789_.-~'.
-        out = out && lv_char.
-      ELSE.
-        lv_hex = cl_abap_codepage=>convert_to( lv_char ).
-        out = out && '%' && to_lower( lv_hex ).
-      ENDIF.
-    ENDDO.
+    WRITE '@KERNEL out.set(encodeURIComponent(val.get().trimEnd()).replace(/[!''()*]/g, c => "%" + c.charCodeAt(0).toString(16)).toLowerCase());'.
   ENDMETHOD.
 
   METHOD escape_quotes.
@@ -124,24 +110,24 @@ CLASS cl_abap_dyn_prg IMPLEMENTATION.
 
   METHOD escape_xss_xml_html.
     DATA lv_index TYPE i.
-    DATA lv_char  TYPE string.
+    DATA lv_code  TYPE i.
     DATA lv_hex   TYPE string.
 
     out = ''.
     DO strlen( val ) TIMES.
       lv_index = sy-index - 1.
-      lv_char = val+lv_index(1).
-      IF lv_char = '<'.
+      WRITE '@KERNEL lv_code.set(val.get().charCodeAt(lv_index.get()));'.
+      IF lv_code = 60. " <
         out = out && '&lt;'.
-      ELSEIF lv_char = '>'.
+      ELSEIF lv_code = 62. " >
         out = out && '&gt;'.
-      ELSEIF lv_char = '&'.
+      ELSEIF lv_code = 38. " &
         out = out && '&amp;'.
-      ELSEIF to_upper( lv_char ) CA sy-abcde OR lv_char CA '0123456789'.
-        out = out && lv_char.
+      ELSEIF ( lv_code >= 65 AND lv_code <= 90 ) OR ( lv_code >= 97 AND lv_code <= 122 ) OR ( lv_code >= 48 AND lv_code <= 57 ).
+        WRITE '@KERNEL out.set(out.get() + String.fromCharCode(lv_code.get()));'.
       ELSE.
-        lv_hex = cl_abap_codepage=>convert_to( lv_char ).
-        out = out && '&#x' && to_lower( lv_hex ) && ';'.
+        WRITE '@KERNEL lv_hex.set(lv_code.get().toString(16));'.
+        out = out && '&#x' && lv_hex && ';'.
       ENDIF.
     ENDDO.
   ENDMETHOD.
