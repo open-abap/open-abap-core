@@ -10,6 +10,10 @@ CLASS ltcl_dyn_prg DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FIN
     METHODS quote_simple FOR TESTING RAISING cx_static_check.
     METHODS quote_with_quotes FOR TESTING RAISING cx_static_check.
     METHODS quote_empty FOR TESTING RAISING cx_static_check.
+    METHODS escape_xss_xml_html_simple FOR TESTING RAISING cx_static_check.
+    METHODS escape_xss_xml_html_special FOR TESTING RAISING cx_static_check.
+    METHODS escape_xss_xml_html_script FOR TESTING RAISING cx_static_check.
+    METHODS escape_xss_xml_html_empty FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -68,6 +72,30 @@ CLASS ltcl_dyn_prg IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = cl_abap_dyn_prg=>quote( '' )
       exp = `''` ).
+  ENDMETHOD.
+
+  METHOD escape_xss_xml_html_simple.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>escape_xss_xml_html( 'hello' )
+      exp = 'hello' ).
+  ENDMETHOD.
+
+  METHOD escape_xss_xml_html_special.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>escape_xss_xml_html( 'a<b>c"d&e' )
+      exp = 'a&lt;b&gt;c&#x22;d&amp;e' ).
+  ENDMETHOD.
+
+  METHOD escape_xss_xml_html_script.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>escape_xss_xml_html( '<script>alert(1)</script>' )
+      exp = '&lt;script&gt;alert&#x28;1&#x29;&lt;&#x2f;script&gt;' ).
+  ENDMETHOD.
+
+  METHOD escape_xss_xml_html_empty.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>escape_xss_xml_html( '' )
+      exp = '' ).
   ENDMETHOD.
 
 ENDCLASS.

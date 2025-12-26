@@ -123,7 +123,27 @@ CLASS cl_abap_dyn_prg IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD escape_xss_xml_html.
-    ASSERT 1 = 'todo'.
+    DATA lv_index TYPE i.
+    DATA lv_char  TYPE string.
+    DATA lv_hex   TYPE string.
+
+    out = ''.
+    DO strlen( val ) TIMES.
+      lv_index = sy-index - 1.
+      lv_char = val+lv_index(1).
+      IF lv_char = '<'.
+        out = out && '&lt;'.
+      ELSEIF lv_char = '>'.
+        out = out && '&gt;'.
+      ELSEIF lv_char = '&'.
+        out = out && '&amp;'.
+      ELSEIF to_upper( lv_char ) CA sy-abcde OR lv_char CA '0123456789 '.
+        out = out && lv_char.
+      ELSE.
+        lv_hex = cl_abap_codepage=>convert_to( lv_char ).
+        out = out && '&#x' && to_lower( lv_hex ) && ';'.
+      ENDIF.
+    ENDDO.
   ENDMETHOD.
 
 ENDCLASS.
