@@ -17,10 +17,13 @@ CLASS ltcl_dyn_prg DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FIN
     METHODS escape_xss_xml_html_quotes FOR TESTING RAISING cx_static_check.
     METHODS escape_xss_url_spaces FOR TESTING RAISING cx_static_check.
     METHODS escape_xss_url_percent FOR TESTING RAISING cx_static_check.
+    METHODS escape_xss_url_trailing_space FOR TESTING RAISING cx_static_check.
+    METHODS escape_xss_url_special_chars FOR TESTING RAISING cx_static_check.
     METHODS escape_quotes_multiple FOR TESTING RAISING cx_static_check.
     METHODS escape_quotes_empty FOR TESTING RAISING cx_static_check.
     METHODS escape_quotes_str_empty FOR TESTING RAISING cx_static_check.
     METHODS escape_xss_xml_html_newline FOR TESTING RAISING cx_static_check.
+    METHODS escape_xss_xml_html_tab FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -123,6 +126,18 @@ CLASS ltcl_dyn_prg IMPLEMENTATION.
       exp = '100%25' ).
   ENDMETHOD.
 
+  METHOD escape_xss_url_trailing_space.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>escape_xss_url( 'hello ' )
+      exp = 'hello' ).
+  ENDMETHOD.
+
+  METHOD escape_xss_url_special_chars.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>escape_xss_url( '!''()*' )
+      exp = '%21%27%28%29*' ).
+  ENDMETHOD.
+
   METHOD escape_quotes_multiple.
     cl_abap_unit_assert=>assert_equals(
       act = cl_abap_dyn_prg=>escape_quotes( `a''b` )
@@ -145,6 +160,12 @@ CLASS ltcl_dyn_prg IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = cl_abap_dyn_prg=>escape_xss_xml_html( |a{ cl_abap_char_utilities=>newline }b| )
       exp = 'a&#xa;b' ).
+  ENDMETHOD.
+
+  METHOD escape_xss_xml_html_tab.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>escape_xss_xml_html( |a{ cl_abap_char_utilities=>horizontal_tab }b| )
+      exp = 'a&#x9;b' ).
   ENDMETHOD.
 
 ENDCLASS.
