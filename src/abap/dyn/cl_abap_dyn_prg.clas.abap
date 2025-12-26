@@ -112,7 +112,7 @@ CLASS cl_abap_dyn_prg IMPLEMENTATION.
         out = out && lv_char.
       ELSE.
         lv_hex = cl_abap_codepage=>convert_to( lv_char ).
-        out = out && '%' && to_upper( lv_hex ).
+        out = out && '%' && to_lower( lv_hex ).
       ENDIF.
     ENDDO.
   ENDMETHOD.

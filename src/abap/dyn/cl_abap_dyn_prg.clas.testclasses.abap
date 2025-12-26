@@ -37,7 +37,7 @@ CLASS ltcl_dyn_prg IMPLEMENTATION.
   METHOD escape_xss_url_special.
     cl_abap_unit_assert=>assert_equals(
       act = cl_abap_dyn_prg=>escape_xss_url( 'a<b>c"d' )
-      exp = 'a%3Cb%3Ec%22d' ).
+      exp = 'a%3cb%3ec%22d' ).
   ENDMETHOD.
 
   METHOD escape_xss_url_script.
