@@ -96,11 +96,12 @@ CLASS cl_abap_dyn_prg IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD quote.
-    ASSERT 1 = 'todo'.
+    out = `'` && escape_quotes( val ) && `'`.
   ENDMETHOD.
 
   METHOD escape_xss_url.
-    ASSERT 1 = 'todo'.
+* encodeURIComponent covers most cases; keep '*' unescaped per expected output
+    WRITE '@KERNEL out.set(encodeURIComponent(val.get().trimEnd()).replace(/[!''()]/g, c => "%" + c.charCodeAt(0).toString(16)).toLowerCase());'.
   ENDMETHOD.
 
   METHOD escape_quotes.
@@ -109,7 +110,27 @@ CLASS cl_abap_dyn_prg IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD escape_xss_xml_html.
-    ASSERT 1 = 'todo'.
+    DATA lv_index TYPE i.
+    DATA lv_code  TYPE i.
+    DATA lv_hex   TYPE string.
+
+    out = ''.
+    DO strlen( val ) TIMES.
+      lv_index = sy-index - 1.
+      WRITE '@KERNEL lv_code.set(val.get().charCodeAt(lv_index.get()));'.
+      IF lv_code = 60. " <
+        out = out && '&lt;'.
+      ELSEIF lv_code = 62. " >
+        out = out && '&gt;'.
+      ELSEIF lv_code = 38. " &
+        out = out && '&amp;'.
+      ELSEIF ( lv_code >= 65 AND lv_code <= 90 ) OR ( lv_code >= 97 AND lv_code <= 122 ) OR ( lv_code >= 48 AND lv_code <= 57 ).
+        WRITE '@KERNEL out.set(out.get() + String.fromCharCode(lv_code.get()));'.
+      ELSE.
+        WRITE '@KERNEL lv_hex.set(lv_code.get().toString(16));'.
+        out = out && '&#x' && lv_hex && ';'.
+      ENDIF.
+    ENDDO.
   ENDMETHOD.
 
 ENDCLASS.
