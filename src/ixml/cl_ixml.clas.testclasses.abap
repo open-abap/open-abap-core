@@ -50,6 +50,11 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS pretty5 FOR TESTING RAISING cx_static_check.
     METHODS add_stuff FOR TESTING RAISING cx_static_check.
     METHODS create_attribute_ns FOR TESTING RAISING cx_static_check.
+    METHODS find_from_path_simple FOR TESTING RAISING cx_static_check.
+    METHODS find_from_path_nested FOR TESTING RAISING cx_static_check.
+    METHODS find_from_path_not_found FOR TESTING RAISING cx_static_check.
+    METHODS find_from_path_empty FOR TESTING RAISING cx_static_check.
+    METHODS find_from_path_root_only FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml     TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -1184,5 +1189,90 @@ CLASS ltcl_xml IMPLEMENTATION.
       act = lv_xml
       exp = '*<HELLO version="1.0" xmlns:asx="http://abapgit.org"/>*' ).
   ENDMETHOD.
+
+  METHOD find_from_path_simple.
+    DATA li_doc     TYPE REF TO if_ixml_document.
+    DATA li_element TYPE REF TO if_ixml_element.
+    DATA lv_xml     TYPE string.
+
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?><root><child>value</child></root>|.
+    li_doc = parse( lv_xml ).
+
+    li_element = li_doc->find_from_path( 'child' ).
+    cl_abap_unit_assert=>assert_not_initial( li_element ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_element->get_name( )
+      exp = 'child' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_element->get_value( )
+      exp = 'value' ).
+  ENDMETHOD.
+
+  METHOD find_from_path_nested.
+    DATA li_doc     TYPE REF TO if_ixml_document.
+    DATA li_element TYPE REF TO if_ixml_element.
+    DATA lv_xml     TYPE string.
+
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?><root><level1><level2><level3>deep</level3></level2></level1></root>|.
+    li_doc = parse( lv_xml ).
+
+    li_element = li_doc->find_from_path( 'level1/level2/level3' ).
+    cl_abap_unit_assert=>assert_not_initial( li_element ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_element->get_name( )
+      exp = 'level3' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_element->get_value( )
+      exp = 'deep' ).
+  ENDMETHOD.
+
+  METHOD find_from_path_not_found.
+    DATA li_doc     TYPE REF TO if_ixml_document.
+    DATA li_element TYPE REF TO if_ixml_element.
+    DATA lv_xml     TYPE string.
+
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?><root><child>value</child></root>|.
+    li_doc = parse( lv_xml ).
+
+    li_element = li_doc->find_from_path( 'nonexistent' ).
+    cl_abap_unit_assert=>assert_initial( li_element ).
+
+    li_element = li_doc->find_from_path( 'child/nonexistent' ).
+    cl_abap_unit_assert=>assert_initial( li_element ).
+  ENDMETHOD.
+
+  METHOD find_from_path_empty.
+    DATA li_doc     TYPE REF TO if_ixml_document.
+    DATA li_element TYPE REF TO if_ixml_element.
+    DATA lv_xml     TYPE string.
+
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?><root><child>value</child></root>|.
+    li_doc = parse( lv_xml ).
+
+    li_element = li_doc->find_from_path( '' ).
+    cl_abap_unit_assert=>assert_initial( li_element ).
+  ENDMETHOD.
+
+  METHOD find_from_path_root_only.
+    DATA li_doc     TYPE REF TO if_ixml_document.
+    DATA li_element TYPE REF TO if_ixml_element.
+    DATA lv_xml     TYPE string.
+
+    lv_xml = |<?xml version="1.0" encoding="utf-16"?><root><child1><subchild>val1</subchild></child1><child2>val2</child2></root>|.
+    li_doc = parse( lv_xml ).
+
+    li_element = li_doc->find_from_path( 'child2' ).
+    cl_abap_unit_assert=>assert_not_initial( li_element ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_element->get_value( )
+      exp = 'val2' ).
+
+    li_element = li_doc->find_from_path( 'child1/subchild' ).
+    cl_abap_unit_assert=>assert_not_initial( li_element ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_element->get_value( )
+      exp = 'val1' ).
+  ENDMETHOD.
+
 
 ENDCLASS.

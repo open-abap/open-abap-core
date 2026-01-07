@@ -856,7 +856,67 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~find_from_path.
-    ASSERT 1 = 'todo'.
+    DATA lt_path_segments TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA lv_segment TYPE string.
+    DATA li_current TYPE REF TO if_ixml_element.
+    DATA li_children TYPE REF TO if_ixml_node_list.
+    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+    DATA li_node TYPE REF TO if_ixml_node.
+    DATA lv_found TYPE abap_bool.
+
+    " Handle empty or initial path
+    IF path IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    " Split path by '/' to get individual segments
+    SPLIT path AT '/' INTO TABLE lt_path_segments.
+
+    " Remove any empty segments (in case path starts with / or has //)
+    DELETE lt_path_segments WHERE table_line IS INITIAL.
+
+    " Start from the root element
+    li_current = if_ixml_document~get_root_element( ).
+    IF li_current IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    " Navigate through path segments
+    LOOP AT lt_path_segments INTO lv_segment.
+      lv_found = abap_false.
+
+      " Get children of current element
+      li_children = li_current->get_children( ).
+      IF li_children IS INITIAL.
+        CLEAR val.
+        RETURN.
+      ENDIF.
+
+      " Iterate through children to find matching element
+      li_iterator = li_children->create_iterator( ).
+      DO.
+        li_node = li_iterator->get_next( ).
+        IF li_node IS INITIAL.
+          EXIT.
+        ENDIF.
+
+        " Check if this node's name matches the segment
+        IF li_node->get_name( ) = lv_segment.
+          li_current ?= li_node.
+          lv_found = abap_true.
+          EXIT.
+        ENDIF.
+      ENDDO.
+
+      " If segment not found in children, return initial
+      IF lv_found = abap_false.
+        CLEAR val.
+        RETURN.
+      ENDIF.
+    ENDLOOP.
+
+    " Return the element found at the end of the path
+    val = li_current.
   ENDMETHOD.
 
   METHOD if_ixml_document~get_elements_by_tag_name_ns.
