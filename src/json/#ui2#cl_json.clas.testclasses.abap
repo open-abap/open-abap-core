@@ -743,6 +743,7 @@ CLASS ltcl_serialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT F
     METHODS serialize_empty_xstring FOR TESTING RAISING cx_static_check.
     METHODS serialize_xstring FOR TESTING RAISING cx_static_check.
     METHODS xstring_identity FOR TESTING RAISING cx_static_check.
+    METHODS test_log FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_serialize IMPLEMENTATION.
@@ -1162,6 +1163,30 @@ CLASS ltcl_serialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_json
       exp = '2' ).
+
+  ENDMETHOD.
+
+  METHOD test_log.
+
+    TYPES: BEGIN OF ty_log_out,
+             type      TYPE sy-msgty,
+             id        TYPE sy-msgid,
+             number    TYPE sy-msgno,
+             text      TYPE string,
+             obj_type  TYPE tadir-object,
+             obj_name  TYPE tadir-obj_name,
+             exception TYPE REF TO cx_root,
+           END OF ty_log_out.
+    TYPES ty_log_outs TYPE STANDARD TABLE OF ty_log_out WITH NON-UNIQUE DEFAULT KEY.
+    DATA lt_log TYPE ty_log_outs.
+
+    INSERT INITIAL LINE INTO TABLE lt_log.
+
+    DATA(lv_json) = /ui2/cl_json=>serialize( lt_log ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = '[{"TYPE":"","ID":"","NUMBER":0,"TEXT":"","OBJ_TYPE":"","OBJ_NAME":"","EXCEPTION":null}]' ).
 
   ENDMETHOD.
 
