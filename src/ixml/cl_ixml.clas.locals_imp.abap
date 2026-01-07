@@ -888,7 +888,6 @@ CLASS lcl_document IMPLEMENTATION.
       " Get children of current element
       li_children = li_current->get_children( ).
       IF li_children IS INITIAL.
-        CLEAR val.
         RETURN.
       ENDIF.
 
@@ -900,17 +899,26 @@ CLASS lcl_document IMPLEMENTATION.
           EXIT.
         ENDIF.
 
+        " Skip text nodes
+        IF li_node->get_name( ) = '#text'.
+          CONTINUE.
+        ENDIF.
+
         " Check if this node's name matches the segment
         IF li_node->get_name( ) = lv_segment.
-          li_current ?= li_node.
-          lv_found = abap_true.
-          EXIT.
+          TRY.
+              li_current ?= li_node.
+              lv_found = abap_true.
+              EXIT.
+            CATCH cx_sy_move_cast_error.
+              " Node is not an element, continue searching
+              CONTINUE.
+          ENDTRY.
         ENDIF.
       ENDDO.
 
       " If segment not found in children, return initial
       IF lv_found = abap_false.
-        CLEAR val.
         RETURN.
       ENDIF.
     ENDLOOP.
