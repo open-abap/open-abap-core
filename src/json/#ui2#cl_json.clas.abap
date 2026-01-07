@@ -383,6 +383,9 @@ CLASS /ui2/cl_json IMPLEMENTATION.
         ENDIF.
       WHEN cl_abap_typedescr=>kind_table.
         lo_table ?= io_type.
+        IF mo_parsed->get_type( prefix && '/' ) <> 'array'.
+          RETURN.
+        ENDIF.
         lt_members = mo_parsed->members( prefix && '/' ).
         ASSIGN data TO <at>.
         LOOP AT lt_members INTO lv_member.

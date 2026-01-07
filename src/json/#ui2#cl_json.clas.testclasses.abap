@@ -35,6 +35,7 @@ CLASS ltcl_deserialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
     METHODS string_to_raw FOR TESTING RAISING cx_static_check.
     METHODS top_tab FOR TESTING RAISING cx_static_check.
     METHODS test_log FOR TESTING RAISING cx_static_check.
+    METHODS test_deser_no_match FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -701,6 +702,32 @@ CLASS ltcl_deserialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lines( lt_log )
       exp = 1 ).
+
+  ENDMETHOD.
+
+  METHOD test_deser_no_match.
+
+    TYPES: BEGIN OF ty_log_out,
+             type   TYPE sy-msgty,
+             id     TYPE sy-msgid,
+             number TYPE sy-msgno,
+           END OF ty_log_out.
+    TYPES ty_log_outs TYPE STANDARD TABLE OF ty_log_out WITH NON-UNIQUE DEFAULT KEY.
+
+    DATA lt_log TYPE ty_log_outs.
+
+    DATA(lv_json) = `{"success":true}`.
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = lv_json
+      CHANGING
+        data = lt_log ).
+
+    " note: the input json doesnt match the expected structure
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( lt_log )
+      exp = 0 ).
 
   ENDMETHOD.
 
