@@ -872,7 +872,7 @@ CLASS lcl_document IMPLEMENTATION.
     " Split path by '/' to get individual segments
     SPLIT path AT '/' INTO TABLE lt_path_segments.
 
-    " Remove any empty segments (in case path starts with / or has //)
+    " Remove any empty segments (e.g., from leading slash '/foo' or double slash 'foo//bar')
     DELETE lt_path_segments WHERE table_line IS INITIAL.
 
     " Start from the root element
@@ -899,7 +899,7 @@ CLASS lcl_document IMPLEMENTATION.
           EXIT.
         ENDIF.
 
-        " Skip text nodes
+        " Skip text nodes - they're not elements and can't be navigated
         IF li_node->get_name( ) = '#text'.
           CONTINUE.
         ENDIF.
