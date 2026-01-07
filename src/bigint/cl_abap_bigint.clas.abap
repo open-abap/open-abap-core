@@ -17,9 +17,59 @@ CLASS cl_abap_bigint DEFINITION PUBLIC FINAL CREATE PRIVATE.
       RETURNING
         VALUE(rv_string) TYPE string.
 
-    DATA mv_value TYPE string.
+    METHODS sub
+      IMPORTING
+        io_bigint        TYPE REF TO cl_abap_bigint
+      RETURNING
+        VALUE(ro_myself) TYPE REF TO cl_abap_bigint
+      RAISING
+        cx_sy_ref_is_initial.
+
+    METHODS mul
+      IMPORTING
+        io_bigint        TYPE REF TO cl_abap_bigint
+      RETURNING
+        VALUE(ro_myself) TYPE REF TO cl_abap_bigint
+      RAISING
+        cx_sy_ref_is_initial.
+
+    METHODS mod
+      IMPORTING
+        io_bigint        TYPE REF TO cl_abap_bigint
+      RETURNING
+        VALUE(ro_myself) TYPE REF TO cl_abap_bigint
+      RAISING
+        cx_sy_ref_is_initial
+        cx_sy_zerodivide.
+
+    METHODS clone
+      RETURNING
+        VALUE(ro_bigint) TYPE REF TO cl_abap_bigint.
+
+    METHODS sqrt
+      RETURNING
+        VALUE(ro_myself) TYPE REF TO cl_abap_bigint
+      RAISING
+        cx_sy_arg_out_of_domain.
+
+    METHODS is_equal
+      IMPORTING
+        io_bigint       TYPE REF TO cl_abap_bigint
+      RETURNING
+        VALUE(rv_equal) TYPE abap_bool
+      RAISING
+        cx_sy_ref_is_initial.
+
+    METHODS is_larger
+      IMPORTING
+        io_bigint        TYPE REF TO cl_abap_bigint
+      RETURNING
+        VALUE(rv_larger) TYPE abap_bool
+      RAISING
+        cx_sy_ref_is_initial.
 
   PRIVATE SECTION.
+    DATA mv_value TYPE string.
 
 ENDCLASS.
 
