@@ -32,9 +32,9 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
     CLASS-METHODS
       assert_number_between
         IMPORTING
-          lower                   TYPE i
-          upper                   TYPE i
-          number                  TYPE i
+          lower                   TYPE numeric
+          upper                   TYPE numeric
+          number                  TYPE numeric
           msg                     TYPE csequence OPTIONAL
           quit                    TYPE i OPTIONAL
           level                   TYPE i OPTIONAL
