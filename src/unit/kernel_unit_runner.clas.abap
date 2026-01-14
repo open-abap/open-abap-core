@@ -95,7 +95,7 @@ CLASS kernel_unit_runner IMPLEMENTATION.
       REPLACE ALL OCCURRENCES OF |"| IN lv_message WITH |\\"|.
       REPLACE ALL OCCURRENCES OF |\n| IN lv_message WITH |\\n|.
 
-      REPLACE ALL OCCURRENCES OF |"| IN ls_list-expected WITH |\"|.
+      REPLACE ALL OCCURRENCES OF |"| IN ls_list-expected WITH |\\"|.
       REPLACE ALL OCCURRENCES OF |\n| IN ls_list-expected WITH |\\n|.
 
       REPLACE ALL OCCURRENCES OF |"| IN ls_list-actual WITH |\\"|.
