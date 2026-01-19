@@ -92,16 +92,16 @@ CLASS kernel_unit_runner IMPLEMENTATION.
 
     LOOP AT it_list INTO ls_list.
       lv_message = ls_list-message.
-      REPLACE ALL OCCURRENCES OF |"| IN lv_message WITH |\"|.
+      REPLACE ALL OCCURRENCES OF |"| IN lv_message WITH |\\"|.
       REPLACE ALL OCCURRENCES OF |\n| IN lv_message WITH |\\n|.
 
-      REPLACE ALL OCCURRENCES OF |"| IN ls_list-expected WITH |\"|.
+      REPLACE ALL OCCURRENCES OF |"| IN ls_list-expected WITH |\\"|.
       REPLACE ALL OCCURRENCES OF |\n| IN ls_list-expected WITH |\\n|.
 
-      REPLACE ALL OCCURRENCES OF |"| IN ls_list-actual WITH |\"|.
+      REPLACE ALL OCCURRENCES OF |"| IN ls_list-actual WITH |\\"|.
       REPLACE ALL OCCURRENCES OF |\n| IN ls_list-actual WITH |\\n|.
 
-      REPLACE ALL OCCURRENCES OF |"| IN ls_list-console WITH |\"|.
+      REPLACE ALL OCCURRENCES OF |"| IN ls_list-console WITH |\\"|.
       REPLACE ALL OCCURRENCES OF |\n| IN ls_list-console WITH |\\n|.
 
       lv_string = |\{"class_name": "{ ls_list-class_name
