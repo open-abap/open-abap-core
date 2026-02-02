@@ -17,11 +17,22 @@ CLASS cl_abap_refdescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
       RETURNING
         VALUE(p_result)    TYPE REF TO cl_abap_refdescr.
 
+    CLASS-METHODS get
+      IMPORTING
+        p_referenced_type TYPE REF TO cl_abap_typedescr
+      RETURNING
+        VALUE(p_result)   TYPE REF TO cl_abap_refdescr
+      RAISING
+        cx_sy_ref_creation.
+
   PRIVATE SECTION.
     DATA referenced TYPE REF TO cl_abap_typedescr.
 ENDCLASS.
 
 CLASS cl_abap_refdescr IMPLEMENTATION.
+  METHOD get.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD get_ref_to_object.
     "todo
