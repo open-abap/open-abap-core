@@ -164,6 +164,8 @@
     "ambiguous_statement": true,
     "begin_single_include": true,
     "call_transaction_authority_check": true,
+    "fm_global_parameters_obsolete": true,
+    "parser_bad_exceptions": true,
     "7bit_ascii": true,
     "chain_mainly_declarations": true,
     "check_comments": false,
