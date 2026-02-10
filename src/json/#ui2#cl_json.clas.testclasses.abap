@@ -771,6 +771,7 @@ CLASS ltcl_serialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT F
     METHODS serialize_xstring FOR TESTING RAISING cx_static_check.
     METHODS xstring_identity FOR TESTING RAISING cx_static_check.
     METHODS test_log FOR TESTING RAISING cx_static_check.
+    METHODS test_exception FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_serialize IMPLEMENTATION.
@@ -1214,6 +1215,28 @@ CLASS ltcl_serialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_json
       exp = '[{"TYPE":"","ID":"","NUMBER":0,"TEXT":"","OBJ_TYPE":"","OBJ_NAME":"","EXCEPTION":null}]' ).
+
+  ENDMETHOD.
+
+  METHOD test_exception.
+
+    TYPES: BEGIN OF ty_log_out,
+             exception TYPE REF TO cx_sy_regex,
+           END OF ty_log_out.
+    TYPES ty_log_outs TYPE STANDARD TABLE OF ty_log_out WITH NON-UNIQUE DEFAULT KEY.
+
+    DATA lt_log TYPE ty_log_outs.
+    DATA ls_log LIKE LINE OF lt_log.
+
+    CREATE OBJECT ls_log-exception.
+    INSERT ls_log INTO TABLE lt_log.
+
+    DATA(lv_json) = /ui2/cl_json=>serialize( lt_log ).
+
+* todo: it should have more fields, but for now its okay
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = '[{"EXCEPTION":{"PREVIOUS":null,"TEXTID":""}}]' ).
 
   ENDMETHOD.
 

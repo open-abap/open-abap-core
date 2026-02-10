@@ -127,12 +127,15 @@ CLASS /ui2/cl_json IMPLEMENTATION.
 
   METHOD serialize_int.
 
-    DATA lo_type       TYPE REF TO cl_abap_typedescr.
-    DATA lo_struct     TYPE REF TO cl_abap_structdescr.
-    DATA lo_table      TYPE REF TO cl_abap_tabledescr.
-    DATA lt_components TYPE cl_abap_structdescr=>component_table.
-    DATA ref           TYPE REF TO data.
-    DATA lv_index      TYPE i.
+    DATA lo_type        TYPE REF TO cl_abap_typedescr.
+    DATA lo_struct      TYPE REF TO cl_abap_structdescr.
+    DATA lo_table       TYPE REF TO cl_abap_tabledescr.
+    DATA lo_objectdescr TYPE REF TO cl_abap_objectdescr.
+    DATA lo_refdescr    TYPE REF TO cl_abap_refdescr.
+    DATA lt_components  TYPE cl_abap_structdescr=>component_table.
+    DATA ref            TYPE REF TO data.
+    DATA ls_attribute   TYPE LINE OF abap_attrdescr_tab.
+    DATA lv_index       TYPE i.
 
     FIELD-SYMBOLS <ls_component> LIKE LINE OF lt_components.
     FIELD-SYMBOLS <any> TYPE any.
@@ -145,6 +148,8 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     ELSE.
       lo_type = type_descr.
     ENDIF.
+
+*    WRITE / |{ lo_type->kind } { lo_type->type_kind }|.
 
     CASE lo_type->kind.
       WHEN cl_abap_typedescr=>kind_elem.
@@ -247,8 +252,42 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           r_json = 'null'.
           RETURN.
         ENDIF.
-        ASSIGN data->* TO <any>.
-        r_json = serialize_int( data = <any> ).
+
+        CASE lo_type->type_kind.
+          WHEN cl_abap_typedescr=>typekind_iref.
+            ASSERT 1 = 'todo, ref to interface'.
+          WHEN cl_abap_typedescr=>typekind_oref.
+            lo_refdescr ?= lo_type.
+            lo_type = lo_refdescr->get_referenced_type( ).
+            lo_objectdescr ?= lo_type.
+
+            r_json = '{'.
+            LOOP AT lo_objectdescr->attributes INTO ls_attribute.
+              ASSIGN data->(ls_attribute-name) TO <any>.
+              ASSERT sy-subrc = 0.
+              IF mv_compress = abap_true AND <any> IS INITIAL.
+                CONTINUE.
+              ENDIF.
+              IF mv_pretty_name = pretty_mode-camel_case.
+                r_json = r_json && |"{ to_mixed( to_lower( ls_attribute-name ) ) }":|.
+              ELSEIF mv_pretty_name = pretty_mode-low_case.
+                r_json = r_json && |"{ to_lower( ls_attribute-name ) }":|.
+              ELSE.
+                r_json = r_json && |"{ ls_attribute-name }":|.
+              ENDIF.
+              r_json = r_json && serialize_int( <any> ).
+              r_json = r_json && ','.
+            ENDLOOP.
+            IF r_json CP '*,'.
+              r_json = substring( val = r_json
+                                  off = 0
+                                  len = strlen( r_json ) - 1 ).
+            ENDIF.
+            r_json = r_json && '}'.
+          WHEN OTHERS.
+            ASSIGN data->* TO <any>.
+            r_json = serialize_int( data = <any> ).
+        ENDCASE.
       WHEN OTHERS.
         ASSERT 1 = 'cl_json, unknown kind'.
     ENDCASE.
