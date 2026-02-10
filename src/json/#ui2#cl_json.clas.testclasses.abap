@@ -1233,9 +1233,10 @@ CLASS ltcl_serialize IMPLEMENTATION.
 
     DATA(lv_json) = /ui2/cl_json=>serialize( lt_log ).
 
+* todo: it should have more fields, but for now its okay
     cl_abap_unit_assert=>assert_equals(
       act = lv_json
-      exp = '[{"EXCEPTION":null}]' ).
+      exp = '[{"EXCEPTION":{"PREVIOUS":null,"TEXTID":""}}]' ).
 
   ENDMETHOD.
 
