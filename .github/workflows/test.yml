@@ -12,8 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
+      with:
+        node-version: '25'
     - run: npm install
     - run: npm test
   integration:
@@ -23,8 +25,8 @@ jobs:
     env:
       HTTP_BIN_HOST: http://localhost:8080
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
     - run: npm run docker:start
     - run: npm install
     - run: npm run integration
@@ -33,13 +35,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
     - name: Performance After
       run: |
         npm install && npm run performance
         cp results.json results_after.json
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         ref: main
         path: before
