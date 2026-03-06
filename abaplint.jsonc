@@ -14,6 +14,7 @@
     "uncaught_exception": false, // todo
 
     "check_include": true,
+    "aff_and_xml": true,
     "add_test_attributes": true,
     "empty_event": true,
     "implicit_start_of_selection": true,
