@@ -16,6 +16,7 @@
     "check_include": true,
     "aff_and_xml": true,
     "add_test_attributes": true,
+    "selection_screen_texts_missing": true,
     "empty_event": true,
     "implicit_start_of_selection": true,
     "tables_declared_locally": true,
