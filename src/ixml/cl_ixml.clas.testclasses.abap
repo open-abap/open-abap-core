@@ -50,6 +50,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS pretty5 FOR TESTING RAISING cx_static_check.
     METHODS add_stuff FOR TESTING RAISING cx_static_check.
     METHODS create_attribute_ns FOR TESTING RAISING cx_static_check.
+    METHODS spaces FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml     TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -1183,6 +1184,46 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = lv_xml
       exp = '*<HELLO version="1.0" xmlns:asx="http://abapgit.org"/>*' ).
+  ENDMETHOD.
+
+  METHOD spaces.
+
+    " Reproduces: when a leaf element's value is set via set_value(),
+    " pretty-printing injects indentation spaces BEFORE the closing tag
+    " because has_direct_text() returns false for values stored in mv_value
+    " (no #text child node is created).
+    " Expected: <FOO>hello</FOO>
+    " Actual:   <FOO>hello    </FOO>   <- indent spaces before closing tag
+
+    DATA li_ixml     TYPE REF TO if_ixml.
+    DATA li_doc      TYPE REF TO if_ixml_document.
+    DATA li_elem     TYPE REF TO if_ixml_element.
+    DATA li_renderer TYPE REF TO if_ixml_renderer.
+    DATA li_ostream  TYPE REF TO if_ixml_ostream.
+    DATA li_factory  TYPE REF TO if_ixml_stream_factory.
+    DATA lv_xml      TYPE string.
+
+    li_ixml     = cl_ixml=>create( ).
+    li_doc      = li_ixml->create_document( ).
+    li_factory  = li_ixml->create_stream_factory( ).
+    li_ostream  = li_factory->create_ostream_cstring( string = lv_xml ).
+    li_renderer = li_ixml->create_renderer(
+      ostream  = li_ostream
+      document = li_doc ).
+    li_renderer->set_normalizing( abap_true ).
+
+    li_elem = li_doc->create_element( 'FOO' ).
+    li_elem->set_value( 'hello' ).
+    li_doc->append_child( li_elem ).
+
+    li_renderer->render( ).
+
+    " Value must appear without indentation spaces before closing tag
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_xml
+      exp = '*<FOO>hello</FOO>*'
+      msg = 'Leaf element value must not have indent spaces before closing tag' ).
+
   ENDMETHOD.
 
 ENDCLASS.
