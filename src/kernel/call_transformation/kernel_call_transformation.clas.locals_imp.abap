@@ -438,9 +438,11 @@ CLASS lcl_object_to_ixml DEFINITION.
   PUBLIC SECTION.
     CLASS-METHODS run
       IMPORTING
-        ii_doc TYPE REF TO if_ixml_document
-        source TYPE any.
+        ii_doc     TYPE REF TO if_ixml_document
+        source     TYPE any
+        is_options TYPE kernel_call_transformation=>ty_options OPTIONAL.
   PRIVATE SECTION.
+    CLASS-DATA ms_options TYPE kernel_call_transformation=>ty_options.
     CLASS-METHODS traverse
       IMPORTING
         ii_parent TYPE REF TO if_ixml_element
@@ -458,6 +460,8 @@ CLASS lcl_object_to_ixml IMPLEMENTATION.
     DATA li_sub     TYPE REF TO if_ixml_element.
     DATA lt_stab    TYPE abap_trans_srcbind_tab.
     DATA ls_stab    LIKE LINE OF lt_stab.
+
+    ms_options = is_options.
 
 *    WRITE '@KERNEL console.dir(INPUT.source);'.
     WRITE '@KERNEL if (INPUT.source.constructor.name === "Table") {'.
@@ -513,8 +517,11 @@ CLASS lcl_object_to_ixml IMPLEMENTATION.
         lt_comps = lo_struc->get_components( ).
 
         LOOP AT lt_comps INTO ls_compo.
-          li_element = ii_doc->create_element( ls_compo-name ).
           ASSIGN COMPONENT ls_compo-name OF STRUCTURE <any> TO <field>.
+          IF ms_options-initial_components = kernel_call_transformation=>gc_options-suppress AND <field> IS INITIAL.
+            CONTINUE.
+          ENDIF.
+          li_element = ii_doc->create_element( ls_compo-name ).
           GET REFERENCE OF <field> INTO lv_ref.
           traverse(
             ii_parent = li_element
