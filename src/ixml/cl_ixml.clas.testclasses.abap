@@ -50,6 +50,8 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS pretty5 FOR TESTING RAISING cx_static_check.
     METHODS add_stuff FOR TESTING RAISING cx_static_check.
     METHODS create_attribute_ns FOR TESTING RAISING cx_static_check.
+    METHODS spaces FOR TESTING RAISING cx_static_check.
+    METHODS spaces_inner FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml     TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -1183,6 +1185,95 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = lv_xml
       exp = '*<HELLO version="1.0" xmlns:asx="http://abapgit.org"/>*' ).
+  ENDMETHOD.
+
+  METHOD spaces.
+
+    " Reproduces: when a leaf element's value is set via set_value(),
+    " pretty-printing injects indentation spaces BEFORE the closing tag
+    " because has_direct_text() returns false for values stored in mv_value
+    " (no #text child node is created).
+    " Expected: <FOO>hello</FOO>
+    " Actual:   <FOO>hello    </FOO>   <- indent spaces before closing tag
+
+    DATA li_ixml     TYPE REF TO if_ixml.
+    DATA li_doc      TYPE REF TO if_ixml_document.
+    DATA li_elem     TYPE REF TO if_ixml_element.
+    DATA li_renderer TYPE REF TO if_ixml_renderer.
+    DATA li_ostream  TYPE REF TO if_ixml_ostream.
+    DATA li_factory  TYPE REF TO if_ixml_stream_factory.
+    DATA lv_xml      TYPE string.
+
+    li_ixml     = cl_ixml=>create( ).
+    li_doc      = li_ixml->create_document( ).
+    li_factory  = li_ixml->create_stream_factory( ).
+    li_ostream  = li_factory->create_ostream_cstring( string = lv_xml ).
+    li_renderer = li_ixml->create_renderer(
+      ostream  = li_ostream
+      document = li_doc ).
+    li_renderer->set_normalizing( abap_true ).
+
+    li_elem = li_doc->create_element( 'FOO' ).
+    li_elem->set_value( 'hello' ).
+    li_doc->append_child( li_elem ).
+
+    li_renderer->render( ).
+
+    " Value must appear without indentation spaces before closing tag
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_xml
+      exp = '*<FOO>hello</FOO>*'
+      msg = 'Leaf element value must not have indent spaces before closing tag' ).
+
+  ENDMETHOD.
+
+  METHOD spaces_inner.
+
+    " Reproduces: pretty-printing injects indent spaces before the closing tag
+    " of a leaf element whose value was set via set_value() (not via a #text
+    " child node). has_direct_text() returns false in this case, so the
+    " renderer writes repeat(' ', indent) before </INNER>.
+    "
+    " At indent level 1 (INNER is inside OUTER), 1 space is injected:
+    "   actual:   <INNER>hello </INNER>
+    "   expected: <INNER>hello</INNER>
+
+    DATA li_ixml     TYPE REF TO if_ixml.
+    DATA li_doc      TYPE REF TO if_ixml_document.
+    DATA li_root     TYPE REF TO if_ixml_node.
+    DATA li_outer    TYPE REF TO if_ixml_element.
+    DATA li_inner    TYPE REF TO if_ixml_element.
+    DATA li_factory  TYPE REF TO if_ixml_stream_factory.
+    DATA li_ostream  TYPE REF TO if_ixml_ostream.
+    DATA li_renderer TYPE REF TO if_ixml_renderer.
+    DATA lv_xml      TYPE string.
+
+    li_ixml   = cl_ixml=>create( ).
+    li_doc    = li_ixml->create_document( ).
+
+    " Build: <OUTER><INNER>hello</INNER></OUTER>
+    li_outer = li_doc->create_element( 'OUTER' ).
+    li_inner = li_doc->create_element( 'INNER' ).
+    li_inner->set_value( 'hello' ).          " value in #mv_value, no #text child
+    li_outer->append_child( li_inner ).
+
+    li_root = li_doc->get_root( ).
+    li_root->append_child( li_outer ).       " OUTER is at indent=0, INNER at indent=1
+
+    li_factory  = li_ixml->create_stream_factory( ).
+    li_ostream  = li_factory->create_ostream_cstring( string = lv_xml ).
+    li_renderer = li_ixml->create_renderer(
+      ostream  = li_ostream
+      document = li_doc ).
+    li_renderer->set_normalizing( abap_true ).  " enables pretty_print
+    li_renderer->render( ).
+
+    " Fails because actual is: <INNER>hello </INNER>  (1 spurious space)
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_xml
+      exp = '*<INNER>hello</INNER>*'
+      msg = 'set_value() leaf must not get indent spaces before closing tag' ).
+
   ENDMETHOD.
 
 ENDCLASS.

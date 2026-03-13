@@ -393,8 +393,13 @@ CLASS lcl_node IMPLEMENTATION.
     DATA li_children TYPE REF TO if_ixml_node_list.
     DATA li_child    TYPE REF TO if_ixml_node.
 
-    li_children = if_ixml_node~get_children( ).
     rv_has = abap_false.
+    IF mv_value IS NOT INITIAL.
+      rv_has = abap_true.
+      RETURN.
+    ENDIF.
+
+    li_children = if_ixml_node~get_children( ).
     IF li_children->get_length( ) <> 1.
       RETURN.
     ENDIF.
