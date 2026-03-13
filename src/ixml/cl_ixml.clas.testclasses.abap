@@ -52,6 +52,8 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS create_attribute_ns FOR TESTING RAISING cx_static_check.
     METHODS spaces FOR TESTING RAISING cx_static_check.
     METHODS spaces_inner FOR TESTING RAISING cx_static_check.
+    METHODS top_attr FOR TESTING RAISING cx_static_check.
+    METHODS unqualified_attr FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml     TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -1273,6 +1275,99 @@ CLASS ltcl_xml IMPLEMENTATION.
       act = lv_xml
       exp = '*<INNER>hello</INNER>*'
       msg = 'set_value() leaf must not get indent spaces before closing tag' ).
+
+  ENDMETHOD.
+
+  METHOD top_attr.
+
+    DATA li_ixml      TYPE REF TO if_ixml.
+    DATA li_doc       TYPE REF TO if_ixml_document.
+    DATA li_root      TYPE REF TO if_ixml_element.
+    DATA li_abap      TYPE REF TO if_ixml_element.
+    DATA li_renderer  TYPE REF TO if_ixml_renderer.
+    DATA li_sf        TYPE REF TO if_ixml_stream_factory.
+    DATA li_ostream   TYPE REF TO if_ixml_ostream.
+    DATA lv_xxml      TYPE xstring.
+    DATA lv_xml       TYPE string.
+
+    li_ixml = cl_ixml=>create( ).
+    li_doc  = li_ixml->create_document( ).
+
+    li_root = li_doc->create_element( 'abapGit' ).
+    li_root->set_attribute( name = 'version'
+                            value = 'v1.0.0' ).
+    li_root->set_attribute( name = 'serializer'
+                            value = 'LCL_OBJECT_DOMA' ).
+    li_root->set_attribute( name = 'serializer_version'
+                            value = 'v1.0.0' ).
+
+    li_abap = li_doc->create_element_ns( name = 'abap'
+                                         prefix = 'asx' ).
+    li_abap->set_attribute_ns( name = 'version'
+                               value = '1.0' ).
+    li_abap->set_attribute_ns( name = 'xmlns:asx'
+                               value = 'http://www.sap.com/abapxml' ).
+
+    li_root->append_child( li_abap ).
+    li_doc->append_child( li_root ).
+
+    li_sf      = li_ixml->create_stream_factory( ).
+    li_ostream = li_sf->create_ostream_xstring( lv_xxml ).
+    li_renderer = li_ixml->create_renderer( document = li_doc
+                                            ostream = li_ostream ).
+    li_renderer->render( ).
+
+    lv_xml = cl_abap_conv_codepage=>create_in( )->convert( lv_xxml ).
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_xml
+      exp = '*<abapGit version="v1.0.0" serializer="LCL_OBJECT_DOMA" serializer_version="v1.0.0"*' ).
+
+  ENDMETHOD.
+
+  METHOD unqualified_attr.
+
+    DATA li_ixml TYPE REF TO if_ixml.
+    DATA li_doc TYPE REF TO if_ixml_document.
+    DATA li_sf TYPE REF TO if_ixml_stream_factory.
+    DATA li_is TYPE REF TO if_ixml_istream.
+    DATA li_parser TYPE REF TO if_ixml_parser.
+    DATA li_root TYPE REF TO if_ixml_element.
+    DATA lv_xml TYPE string.
+
+    lv_xml =
+      |<?xml version="1.0" encoding="utf-8"?>| &&
+      |<abapGit version="v1.0.0" serializer="LCL_OBJECT_DOMA" serializer_version="v1.0.0">| &&
+      |<asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0"><asx:values/></asx:abap>| &&
+      |</abapGit>|.
+
+    li_ixml = cl_ixml=>create( ).
+    li_doc = li_ixml->create_document( ).
+    li_sf = li_ixml->create_stream_factory( ).
+    li_is = li_sf->create_istream_string( lv_xml ).
+    li_parser = li_ixml->create_parser(
+      stream_factory = li_sf
+      istream        = li_is
+      document       = li_doc ).
+    li_parser->parse( ).
+
+    li_root ?= li_doc->find_from_name_ns(
+      depth = 0
+      name  = 'abapGit' ).
+
+    " Control: this should work
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_attribute( 'serializer' )
+      exp = 'LCL_OBJECT_DOMA' ).
+
+    " Reproducer: open-abap may fail here
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_attribute_ns( 'serializer' )
+      exp = 'LCL_OBJECT_DOMA' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_attribute_ns( 'serializer_version' )
+      exp = 'v1.0.0' ).
 
   ENDMETHOD.
 

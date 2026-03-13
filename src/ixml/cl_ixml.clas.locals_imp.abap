@@ -113,7 +113,7 @@ CLASS lcl_named_node_map IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_named_node_map~get_named_item.
-    ASSERT 1 = 'todo'.
+    val = if_ixml_named_node_map~get_named_item_ns( name ).
   ENDMETHOD.
 
   METHOD if_ixml_named_node_map~remove_named_item.
@@ -358,7 +358,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~get_attribute.
-    ASSERT 1 = 'todo'.
+    val = if_ixml_element~get_attribute_ns( name ).
   ENDMETHOD.
 
   METHOD if_ixml_element~get_children.
