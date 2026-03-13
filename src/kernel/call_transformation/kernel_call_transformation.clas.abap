@@ -95,8 +95,9 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     WRITE '@KERNEL }'.
     IF li_doc IS NOT INITIAL.
       lcl_object_to_ixml=>run(
-        ii_doc = li_doc
-        source = lv_dummy ).
+        ii_doc     = li_doc
+        source     = lv_dummy
+        is_options = ms_options ).
       RETURN.
     ENDIF.
 

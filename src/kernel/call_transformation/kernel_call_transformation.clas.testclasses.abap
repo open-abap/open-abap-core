@@ -134,6 +134,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS byte_order_mark_big FOR TESTING RAISING cx_static_check.
     METHODS byte_order_mark_little FOR TESTING RAISING cx_static_check.
     METHODS dot_abapgit FOR TESTING RAISING cx_static_check.
+    METHODS suppress_in_ixml_doc FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
@@ -1263,6 +1264,58 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = rs_data-starting_folder
       exp = '/src/' ).
+
+  ENDMETHOD.
+
+  METHOD suppress_in_ixml_doc.
+    " Reproduces: CALL TRANSFORMATION id OPTIONS initial_components = 'suppress'
+    " with RESULT XML <if_ixml_document> does NOT suppress initial values.
+    " LCL_OBJECT_TO_IXML ignores the option unlike LCL_DATA_TO_XML.
+
+    TYPES: BEGIN OF ty_data,
+             char_val TYPE c LENGTH 10,  " non-initial: 'HELLO'
+             date_val TYPE d,            " initial: '00000000' -> must be suppressed
+             numc_val TYPE n LENGTH 5,   " initial: '00000'    -> must be suppressed
+           END OF ty_data.
+
+    DATA ls_data   TYPE ty_data.
+    DATA lt_stab   TYPE abap_trans_srcbind_tab.
+    DATA ls_stab   TYPE abap_trans_srcbind.
+    DATA li_ixml   TYPE REF TO if_ixml.
+    DATA li_doc    TYPE REF TO if_ixml_document.
+    DATA li_found  TYPE REF TO if_ixml_element.
+
+    ls_data-char_val = 'HELLO'.
+
+    GET REFERENCE OF ls_data INTO ls_stab-value.
+    ls_stab-name = 'DATA'.
+    INSERT ls_stab INTO TABLE lt_stab.
+
+    li_ixml = cl_ixml=>create( ).
+    li_doc  = li_ixml->create_document( ).
+
+    CALL TRANSFORMATION id
+      OPTIONS initial_components = 'suppress'
+      SOURCE (lt_stab)
+      RESULT XML li_doc.
+
+    " Non-initial CHAR field must appear
+    li_found = li_doc->find_from_name( 'CHAR_VAL' ).
+    cl_abap_unit_assert=>assert_bound(
+      act = li_found
+      msg = 'CHAR_VAL (non-initial) must be in XML' ).
+
+    " Initial DATS field must be suppressed
+    li_found = li_doc->find_from_name( 'DATE_VAL' ).
+    cl_abap_unit_assert=>assert_not_bound(
+      act = li_found
+      msg = 'DATE_VAL (initial 00000000) must be suppressed' ).
+
+    " Initial NUMC field must be suppressed
+    li_found = li_doc->find_from_name( 'NUMC_VAL' ).
+    cl_abap_unit_assert=>assert_not_bound(
+      act = li_found
+      msg = 'NUMC_VAL (initial 00000) must be suppressed' ).
 
   ENDMETHOD.
 
