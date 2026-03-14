@@ -54,6 +54,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS spaces_inner FOR TESTING RAISING cx_static_check.
     METHODS top_attr FOR TESTING RAISING cx_static_check.
     METHODS unqualified_attr FOR TESTING RAISING cx_static_check.
+    METHODS attrs_test FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml     TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -1368,6 +1369,45 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = li_root->get_attribute_ns( 'serializer_version' )
       exp = 'v1.0.0' ).
+
+  ENDMETHOD.
+
+  METHOD attrs_test.
+
+    DATA: li_ixml      TYPE REF TO if_ixml,
+          li_doc       TYPE REF TO if_ixml_document,
+          li_element   TYPE REF TO if_ixml_element,
+          li_streamfac TYPE REF TO if_ixml_stream_factory,
+          li_ostream   TYPE REF TO if_ixml_ostream,
+          li_renderer  TYPE REF TO if_ixml_renderer,
+          lv_xml       TYPE string.
+
+    li_ixml = cl_ixml=>create( ).
+    li_doc  = li_ixml->create_document( ).
+
+    li_element = li_doc->create_element( 'abapGit' ).
+    li_element->set_attribute( name = 'version'
+                               value = 'v1.0.0' ).
+    li_element->set_attribute( name = 'serializer'
+                               value = 'LCL_OBJECT_DOMA' ).
+    li_element->set_attribute( name = 'serializer_version'
+                               value = 'v1.0.0' ).
+    li_doc->append_child( li_element ).
+
+    li_streamfac = li_ixml->create_stream_factory( ).
+    li_ostream   = li_streamfac->create_ostream_cstring( lv_xml ).
+    li_renderer  = li_ixml->create_renderer(
+      ostream  = li_ostream
+      document = li_doc ).
+    li_renderer->render( ).
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_xml
+      exp = '*serializer="LCL_OBJECT_DOMA"*' ).
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_xml
+      exp = '*serializer_version="v1.0.0"*' ).
 
   ENDMETHOD.
 
