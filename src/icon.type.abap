@@ -135,3 +135,5 @@ CONSTANTS icon_wf_workitem_completed TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_working_plan TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_xml_doc TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_yellow_light TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_product_group TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_retail_store TYPE c LENGTH 4 VALUE 'ICON'.
