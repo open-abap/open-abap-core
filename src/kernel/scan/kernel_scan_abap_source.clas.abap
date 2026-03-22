@@ -35,11 +35,11 @@ CLASS kernel_scan_abap_source DEFINITION PUBLIC.
                END OF gc_statement.
 
     CLASS-METHODS pass1
-      IMPORTING
-        source        TYPE string
       EXPORTING
         et_tokens     TYPE ty_stokesx
-        et_statements TYPE ty_sstmnt.
+        et_statements TYPE ty_sstmnt
+      CHANGING
+        source        TYPE string.
 
     CLASS-METHODS pass2
       CHANGING
@@ -87,11 +87,11 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
 * build tokens in sequence of occurence in the source
 * take care of chained statements
     pass1(
-      EXPORTING
-        source        = source
       IMPORTING
         et_tokens     = et_stokesx
-        et_statements = et_sstmnt ).
+        et_statements = et_sstmnt
+      CHANGING
+        source        = source ).
 
 * move comment tokens and add/change statements to comment type
     pass2(

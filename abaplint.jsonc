@@ -15,6 +15,9 @@
 
     "check_include": true,
     "aff_and_xml": true,
+    "cds_association_name": true,
+    "cds_field_order": true,
+    "cds_naming": true,
     "add_test_attributes": true,
     "selection_screen_texts_missing": true,
     "empty_event": true,
