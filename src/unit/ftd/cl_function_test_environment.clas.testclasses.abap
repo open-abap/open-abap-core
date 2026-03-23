@@ -73,6 +73,51 @@ ENDCLASS.
 
 *****************************************
 
+CLASS ltcl_changing DEFINITION FINAL FOR TESTING DURATION SHORT RISK LEVEL HARMLESS.
+  PUBLIC SECTION.
+    INTERFACES if_ftd_invocation_answer.
+  PRIVATE SECTION.
+    METHODS test FOR TESTING RAISING cx_static_check.
+ENDCLASS.
+
+CLASS ltcl_changing IMPLEMENTATION.
+
+  METHOD test.
+
+    DATA lt_deps  TYPE if_function_test_environment=>tt_function_dependencies.
+    DATA li_env   TYPE REF TO if_function_test_environment.
+    DATA lv_value TYPE string VALUE 'initial'.
+
+    INSERT 'CHANGING_FM' INTO TABLE lt_deps.
+    li_env = cl_function_test_environment=>create( lt_deps ).
+    li_env->get_double( 'CHANGING_FM' )->configure_call( )->ignore_all_parameters( )->then_answer( me ).
+
+    CALL FUNCTION 'CHANGING_FM'
+      CHANGING
+        value = lv_value.
+
+    li_env->clear_doubles( ).
+
+  ENDMETHOD.
+
+  METHOD if_ftd_invocation_answer~answer.
+
+    DATA ref TYPE REF TO data.
+    FIELD-SYMBOLS <fs> TYPE any.
+
+    ref = arguments->get_changing_parameter( 'VALUE' ).
+    ASSIGN ref->* TO <fs>.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = <fs>
+      exp = 'initial' ).
+
+  ENDMETHOD.
+
+ENDCLASS.
+
+*****************************************
+
 CLASS ltcl_no_parameters DEFINITION FINAL FOR TESTING DURATION SHORT RISK LEVEL HARMLESS.
   PUBLIC SECTION.
     INTERFACES if_ftd_invocation_answer.
