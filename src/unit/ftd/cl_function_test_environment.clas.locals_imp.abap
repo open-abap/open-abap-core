@@ -9,6 +9,7 @@ CLASS lcl_input_arguments DEFINITION.
 
     DATA mt_importing TYPE STANDARD TABLE OF ty_name_value WITH DEFAULT KEY.
     DATA mt_tables    TYPE STANDARD TABLE OF ty_name_value WITH DEFAULT KEY.
+    DATA mt_changing  TYPE STANDARD TABLE OF ty_name_value WITH DEFAULT KEY.
 ENDCLASS.
 
 CLASS lcl_input_arguments IMPLEMENTATION.
@@ -24,6 +25,15 @@ CLASS lcl_input_arguments IMPLEMENTATION.
   METHOD if_ftd_input_arguments~get_table_parameter.
     DATA ls_row LIKE LINE OF mt_tables.
     READ TABLE mt_tables INTO ls_row WITH KEY name = name.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_ftd_parameter_not_found.
+    ENDIF.
+    result = ls_row-value.
+  ENDMETHOD.
+
+  METHOD if_ftd_input_arguments~get_changing_parameter.
+    DATA ls_row LIKE LINE OF mt_changing.
+    READ TABLE mt_changing INTO ls_row WITH KEY name = name.
     IF sy-subrc <> 0.
       RAISE EXCEPTION TYPE cx_ftd_parameter_not_found.
     ENDIF.
@@ -96,6 +106,7 @@ CLASS lcl_invoker IMPLEMENTATION.
     DATA ls_exporting LIKE LINE OF lo_result->mt_exporting.
     DATA ls_importing LIKE LINE OF lo_arguments->mt_importing.
     DATA ls_table     LIKE LINE OF lo_arguments->mt_tables.
+    DATA ls_changing  LIKE LINE OF lo_arguments->mt_changing.
 
     CREATE OBJECT lo_result.
     li_result = lo_result.
@@ -114,6 +125,12 @@ CLASS lcl_invoker IMPLEMENTATION.
     WRITE '@KERNEL   ls_table.get().name.set(table.toUpperCase());'.
     WRITE '@KERNEL   ls_table.get().value.pointer = fminput.tables[table];'.
     INSERT ls_table INTO TABLE lo_arguments->mt_tables.
+    WRITE '@KERNEL }'.
+
+    WRITE '@KERNEL for (const changing in fminput?.changing || []) {'.
+    WRITE '@KERNEL   ls_changing.get().name.set(changing.toUpperCase());'.
+    WRITE '@KERNEL   ls_changing.get().value.pointer = fminput.changing[changing];'.
+    INSERT ls_changing INTO TABLE lo_arguments->mt_changing.
     WRITE '@KERNEL }'.
 
     answer->answer(
