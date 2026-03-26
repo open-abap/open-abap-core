@@ -1,5 +1,11 @@
 CLASS cl_abap_tstmp DEFINITION PUBLIC.
   PUBLIC SECTION.
+    TYPES operation_mode TYPE c LENGTH 1.
+    CONSTANTS:
+      op_mode_next TYPE operation_mode VALUE 'N',
+      op_mode_before TYPE operation_mode VALUE 'B',
+      op_mode_wallclock TYPE operation_mode VALUE 'W'.
+
     CLASS-METHODS subtract
       IMPORTING
         tstmp1        TYPE p
@@ -82,6 +88,19 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
         VALUE(timestamp) TYPE timestamp
       RAISING
         cx_sy_conversion_no_date_time.
+
+    CLASS-METHODS make_valid_time
+      IMPORTING
+        date_in     TYPE d
+        time_in     TYPE t
+        !time_zone  TYPE timezone
+        !mode       TYPE operation_mode DEFAULT op_mode_wallclock
+      EXPORTING
+        !date_valid TYPE d
+        !time_valid TYPE t
+      RAISING
+        cx_parameter_invalid_range
+        cx_tstmp_internal_error.
 ENDCLASS.
 
 CLASS cl_abap_tstmp IMPLEMENTATION.
@@ -176,5 +195,53 @@ CLASS cl_abap_tstmp IMPLEMENTATION.
     res_secs = subtract(
       tstmp1 = lv_stamp1
       tstmp2 = lv_stamp2 ).
+  ENDMETHOD.
+
+  METHOD make_valid_time.
+    DATA lv_out TYPE string.
+
+*   --- SAP timezone to IANA mapping ---
+    WRITE '@KERNEL const SAP_IANA={"UTC":"UTC","CET":"Europe/Berlin","WET":"Europe/London","EET":"Europe/Helsinki","MSK":"Europe/Moscow","EST":"America/New_York","CST":"America/Chicago","MST":"America/Denver","PST":"America/Los_Angeles","JST":"Asia/Tokyo","AEST":"Australia/Sydney","IST":"Asia/Kolkata","GST":"Asia/Dubai"};'.
+    WRITE '@KERNEL const zone=SAP_IANA[time_zone.get().trim()]||time_zone.get().trim()||"UTC";'.
+    WRITE '@KERNEL const d=date_in.get(),t=time_in.get(),input=d+t;'.
+
+*   --- Cached Intl formatter (reused by every fmt() call) ---
+    WRITE '@KERNEL const fmtr=new Intl.DateTimeFormat("sv",{timeZone:zone,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false});'.
+
+*   --- Format a UTC-ms value as "YYYYMMDDHHMMSS" in the target zone ---
+    WRITE '@KERNEL const fmt=ms=>fmtr.format(new Date(ms)).replace(/[^0-9]/g,"");'.
+
+*   --- Parse "YYYYMMDDHHMMSS" digits into UTC milliseconds ---
+    WRITE '@KERNEL const toMs=s=>Date.UTC(+s.slice(0,4),+s.slice(4,6)-1,+s.slice(6,8),+s.slice(8,10),+s.slice(10,12),+s.slice(12,14));'.
+
+*   --- Timezone offset (ms) at a UTC instant, like getTimezoneOffset() but for any zone ---
+    WRITE '@KERNEL const off=ms=>toMs(fmt(ms))-ms;'.
+
+*   --- Convert local time string to UTC ms (two-step refinement for DST accuracy) ---
+    WRITE '@KERNEL const toUTC=s=>{const ms=toMs(s);return ms-off(ms-off(ms));};'.
+
+*   --- Round-trip check: does this local time actually exist in the zone? ---
+    WRITE '@KERNEL const isValid=s=>fmt(toUTC(s))===s;'.
+
+*   --- Add n seconds to a local-time digit string (pure arithmetic) ---
+    WRITE '@KERNEL const addSecs=(s,n)=>{const dt=new Date(toMs(s)+n*1000);return String(dt.getUTCFullYear()).padStart(4,"0")+String(dt.getUTCMonth()+1).padStart(2,"0")+String(dt.getUTCDate()).padStart(2,"0")+String(dt.getUTCHours()).padStart(2,"0")+String(dt.getUTCMinutes()).padStart(2,"0")+String(dt.getUTCSeconds()).padStart(2,"0");};'.
+
+    WRITE '@KERNEL let outDate=d,outTime=t;'.
+    WRITE '@KERNEL if(!isValid(input)){'.
+    WRITE '@KERNEL   const mv=mode.get().trim();'.
+    WRITE '@KERNEL   if(mv==="W"){'.
+*   --- Wallclock: use the offset from 24 h earlier (safely before the DST change) ---
+    WRITE '@KERNEL     const ms=toMs(input),local=fmt(ms-off(ms-86400000));'.
+    WRITE '@KERNEL     outDate=local.slice(0,8);outTime=local.slice(8,14);'.
+    WRITE '@KERNEL   }else{'.
+*   --- Before / Next: walk local time second-by-second until we hit a valid time ---
+    WRITE '@KERNEL     const step=mv==="B"?-1:1;let loc=input;'.
+    WRITE '@KERNEL     for(let i=0;i<7200;i++){loc=addSecs(loc,step);if(isValid(loc)){outDate=loc.slice(0,8);outTime=loc.slice(8,14);break;}}'.
+    WRITE '@KERNEL   }'.
+    WRITE '@KERNEL }'.
+    WRITE '@KERNEL lv_out.set(outDate+outTime);'.
+
+    date_valid = lv_out(8).
+    time_valid = lv_out+8(6).
   ENDMETHOD.
 ENDCLASS.

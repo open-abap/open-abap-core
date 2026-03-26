@@ -12,6 +12,13 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS move_to_short1 FOR TESTING RAISING cx_static_check.
     METHODS td_subtract1 FOR TESTING RAISING cx_static_check.
     METHODS td_add1 FOR TESTING RAISING cx_static_check.
+    METHODS make_valid_time_utc FOR TESTING RAISING cx_static_check.
+    METHODS make_valid_time_dst_next FOR TESTING RAISING cx_static_check.
+    METHODS make_valid_time_dst_before FOR TESTING RAISING cx_static_check.
+    METHODS make_valid_time_dst_wallclock FOR TESTING RAISING cx_static_check.
+    METHODS make_valid_time_no_dst_zone FOR TESTING RAISING cx_static_check.
+    METHODS make_valid_time_gap_before FOR TESTING RAISING cx_static_check.
+    METHODS make_valid_time_before_est FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -193,6 +200,156 @@ CLASS ltcl_test IMPLEMENTATION.
       act = lv_time
       exp = '111251' ).
 
+  ENDMETHOD.
+
+  METHOD make_valid_time_utc.
+*   Valid time - should pass through unchanged
+    DATA lv_date TYPE d.
+    DATA lv_time TYPE t.
+
+    cl_abap_tstmp=>make_valid_time(
+      EXPORTING
+        date_in    = '20250101'
+        time_in    = '120000'
+        time_zone  = 'UTC'
+      IMPORTING
+        date_valid = lv_date
+        time_valid = lv_time ).
+
+    cl_abap_unit_assert=>assert_equals( act = lv_date
+                                        exp = '20250101' ).
+    cl_abap_unit_assert=>assert_equals( act = lv_time
+                                        exp = '120000' ).
+  ENDMETHOD.
+
+  METHOD make_valid_time_dst_next.
+*   CET spring forward: 2025-03-30 02:30 does not exist
+*   op_mode_next -> should give 03:00:00
+    DATA lv_date TYPE d.
+    DATA lv_time TYPE t.
+
+    cl_abap_tstmp=>make_valid_time(
+      EXPORTING
+        date_in    = '20250330'
+        time_in    = '023000'
+        time_zone  = 'CET'
+        mode       = cl_abap_tstmp=>op_mode_next
+      IMPORTING
+        date_valid = lv_date
+        time_valid = lv_time ).
+
+    cl_abap_unit_assert=>assert_equals( act = lv_date
+                                        exp = '20250330' ).
+    cl_abap_unit_assert=>assert_equals( act = lv_time
+                                        exp = '030000' ).
+  ENDMETHOD.
+
+  METHOD make_valid_time_dst_before.
+*   CET spring forward: 2025-03-30 02:30 does not exist
+*   op_mode_before -> should give 01:59:59
+    DATA lv_date TYPE d.
+    DATA lv_time TYPE t.
+
+    cl_abap_tstmp=>make_valid_time(
+      EXPORTING
+        date_in    = '20250330'
+        time_in    = '023000'
+        time_zone  = 'CET'
+        mode       = cl_abap_tstmp=>op_mode_before
+      IMPORTING
+        date_valid = lv_date
+        time_valid = lv_time ).
+
+    cl_abap_unit_assert=>assert_equals( act = lv_date
+                                        exp = '20250330' ).
+    cl_abap_unit_assert=>assert_equals( act = lv_time
+                                        exp = '015959' ).
+  ENDMETHOD.
+
+  METHOD make_valid_time_dst_wallclock.
+*   EST spring forward 2025-03-09: 02:30 does not exist
+*   op_mode_wallclock -> should give 03:30:00
+    DATA lv_date TYPE d.
+    DATA lv_time TYPE t.
+
+    cl_abap_tstmp=>make_valid_time(
+      EXPORTING
+        date_in    = '20250309'
+        time_in    = '023000'
+        time_zone  = 'EST'
+        mode       = cl_abap_tstmp=>op_mode_wallclock
+      IMPORTING
+        date_valid = lv_date
+        time_valid = lv_time ).
+
+    cl_abap_unit_assert=>assert_equals( act = lv_date
+                                        exp = '20250309' ).
+    cl_abap_unit_assert=>assert_equals( act = lv_time
+                                        exp = '033000' ).
+  ENDMETHOD.
+
+  METHOD make_valid_time_no_dst_zone.
+*   JST (Asia/Tokyo) never observes DST, any time should pass through
+    DATA lv_date TYPE d.
+    DATA lv_time TYPE t.
+
+    cl_abap_tstmp=>make_valid_time(
+      EXPORTING
+        date_in    = '20250330'
+        time_in    = '023000'
+        time_zone  = 'JST'
+      IMPORTING
+        date_valid = lv_date
+        time_valid = lv_time ).
+
+    cl_abap_unit_assert=>assert_equals( act = lv_date
+                                        exp = '20250330' ).
+    cl_abap_unit_assert=>assert_equals( act = lv_time
+                                        exp = '023000' ).
+  ENDMETHOD.
+
+  METHOD make_valid_time_gap_before.
+*   CET spring forward: 01:59:59 is the last valid second before the gap
+*   Should pass through unchanged
+    DATA lv_date TYPE d.
+    DATA lv_time TYPE t.
+
+    cl_abap_tstmp=>make_valid_time(
+      EXPORTING
+        date_in    = '20250330'
+        time_in    = '015959'
+        time_zone  = 'CET'
+        mode       = cl_abap_tstmp=>op_mode_before
+      IMPORTING
+        date_valid = lv_date
+        time_valid = lv_time ).
+
+    cl_abap_unit_assert=>assert_equals( act = lv_date
+                                        exp = '20250330' ).
+    cl_abap_unit_assert=>assert_equals( act = lv_time
+                                        exp = '015959' ).
+  ENDMETHOD.
+
+  METHOD make_valid_time_before_est.
+*   EST spring forward 2025-03-09: 02:30 does not exist
+*   op_mode_before -> should give 01:59:59
+    DATA lv_date TYPE d.
+    DATA lv_time TYPE t.
+
+    cl_abap_tstmp=>make_valid_time(
+      EXPORTING
+        date_in    = '20250309'
+        time_in    = '023000'
+        time_zone  = 'EST'
+        mode       = cl_abap_tstmp=>op_mode_before
+      IMPORTING
+        date_valid = lv_date
+        time_valid = lv_time ).
+
+    cl_abap_unit_assert=>assert_equals( act = lv_date
+                                        exp = '20250309' ).
+    cl_abap_unit_assert=>assert_equals( act = lv_time
+                                        exp = '015959' ).
   ENDMETHOD.
 
 ENDCLASS.
