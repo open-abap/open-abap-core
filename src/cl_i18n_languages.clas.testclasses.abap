@@ -32,15 +32,13 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD sap2_to_iso_en.
-    DATA lv_iso TYPE string.
-    DATA lv_country TYPE string.
 
     cl_i18n_languages=>sap2_to_iso639_1(
       EXPORTING
         im_lang_sap2   = 'EN'
       IMPORTING
-        ex_lang_iso639 = lv_iso
-        ex_country     = lv_country ).
+        ex_lang_iso639 = DATA(lv_iso)
+        ex_country     = DATA(lv_country) ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lv_iso
@@ -52,15 +50,13 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD sap2_to_iso_de.
-    DATA lv_iso TYPE string.
-    DATA lv_country TYPE string.
 
     cl_i18n_languages=>sap2_to_iso639_1(
       EXPORTING
         im_lang_sap2   = 'DE'
       IMPORTING
-        ex_lang_iso639 = lv_iso
-        ex_country     = lv_country ).
+        ex_lang_iso639 = DATA(lv_iso)
+        ex_country     = DATA(lv_country) ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lv_iso
@@ -72,15 +68,13 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD sap2_to_iso_da.
-    DATA lv_iso TYPE string.
-    DATA lv_country TYPE string.
 
     cl_i18n_languages=>sap2_to_iso639_1(
       EXPORTING
         im_lang_sap2   = 'DA'
       IMPORTING
-        ex_lang_iso639 = lv_iso
-        ex_country     = lv_country ).
+        ex_lang_iso639 = DATA(lv_iso)
+        ex_country     = DATA(lv_country) ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lv_iso
