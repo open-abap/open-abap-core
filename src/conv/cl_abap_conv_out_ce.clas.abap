@@ -34,7 +34,7 @@ CLASS cl_abap_conv_out_ce DEFINITION PUBLIC.
           data   TYPE simple
           n      TYPE i OPTIONAL
         EXPORTING
-          buffer TYPE xstring.
+          buffer TYPE xsequence.
 
     METHODS write
       IMPORTING
