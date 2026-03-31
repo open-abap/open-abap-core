@@ -44,6 +44,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS abap_bool_absolute FOR TESTING.
     METHODS abap_true_absolute FOR TESTING.
     METHODS xsdboolean_absolute FOR TESTING.
+    METHODS timestampl_absolute FOR TESTING.
     METHODS class_type_absolute FOR TESTING.
     METHODS describe_by_name_t000 FOR TESTING.
     METHODS describe_by_name_t000_space FOR TESTING.
@@ -479,6 +480,16 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_type->absolute_name
       exp = '\TYPE=XSDBOOLEAN' ).
+  ENDMETHOD.
+
+  METHOD timestampl_absolute.
+    DATA lo_type TYPE REF TO cl_abap_typedescr.
+    DATA lv_ts TYPE timestampl.
+    lo_type = cl_abap_typedescr=>describe_by_data( lv_ts ).
+* this is checked in ajson(which is used by abapGit)
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_type->absolute_name
+      exp = '\TYPE=TIMESTAMPL' ).
   ENDMETHOD.
 
   METHOD describe_by_name_t000.
