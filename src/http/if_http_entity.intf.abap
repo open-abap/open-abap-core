@@ -196,7 +196,7 @@ INTERFACE if_http_entity PUBLIC.
   METHODS set_form_fields
     IMPORTING
       fields     TYPE tihttpnvp
-      multivalue TYPE int4 OPTIONAL.
+      multivalue TYPE i OPTIONAL.
 
   METHODS set_header_fields
     IMPORTING

@@ -23,6 +23,12 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS reference_table FOR TESTING RAISING cx_static_check.
     METHODS keep_absolute FOR TESTING RAISING cx_static_check.
     METHODS keep_absolute_struct FOR TESTING RAISING cx_static_check.
+    METHODS packed_qualified_name FOR TESTING RAISING cx_static_check.
+    METHODS int_qualified_name FOR TESTING RAISING cx_static_check.
+    METHODS date_qualified_name FOR TESTING RAISING cx_static_check.
+    METHODS time_qualified_name FOR TESTING RAISING cx_static_check.
+    METHODS hex_qualified_name FOR TESTING RAISING cx_static_check.
+    METHODS numc_qualified_name FOR TESTING RAISING cx_static_check.
 
     METHODS ref_test1 CHANGING foo TYPE REF TO data.
     METHODS ref_test2 FOR TESTING RAISING cx_static_check.
@@ -373,6 +379,153 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_after->get_relative_name( )
       exp = lo_before->get_relative_name( ) ).
+  ENDMETHOD.
+
+  METHOD int_qualified_name.
+    DATA lo_struct TYPE REF TO cl_abap_structdescr.
+    DATA lo_elem   TYPE REF TO cl_abap_elemdescr.
+    DATA lr_data   TYPE REF TO data.
+
+    TYPES: BEGIN OF ty,
+             subrc TYPE sysubrc,
+           END OF ty.
+
+    FIELD-SYMBOLS <data>  TYPE any.
+    FIELD-SYMBOLS <field> TYPE any.
+
+    lo_struct ?= cl_abap_structdescr=>describe_by_data( VALUE ty( ) ).
+    CREATE DATA lr_data TYPE HANDLE lo_struct.
+    ASSIGN lr_data->* TO <data>.
+    ASSIGN COMPONENT 'SUBRC' OF STRUCTURE <data> TO <field>.
+    lo_elem ?= cl_abap_typedescr=>describe_by_data( <field> ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_elem->absolute_name
+      exp = '\TYPE=SYSUBRC' ).
+  ENDMETHOD.
+
+  METHOD date_qualified_name.
+    DATA lo_struct TYPE REF TO cl_abap_structdescr.
+    DATA lo_elem   TYPE REF TO cl_abap_elemdescr.
+    DATA lr_data   TYPE REF TO data.
+
+    TYPES: BEGIN OF ty,
+             datum TYPE sydate,
+           END OF ty.
+
+    FIELD-SYMBOLS <data>  TYPE any.
+    FIELD-SYMBOLS <field> TYPE any.
+
+    lo_struct ?= cl_abap_structdescr=>describe_by_data( VALUE ty( ) ).
+    CREATE DATA lr_data TYPE HANDLE lo_struct.
+    ASSIGN lr_data->* TO <data>.
+    ASSIGN COMPONENT 'DATUM' OF STRUCTURE <data> TO <field>.
+    lo_elem ?= cl_abap_typedescr=>describe_by_data( <field> ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_elem->absolute_name
+      exp = '\TYPE=SYDATE' ).
+  ENDMETHOD.
+
+  METHOD time_qualified_name.
+    DATA lo_struct TYPE REF TO cl_abap_structdescr.
+    DATA lo_elem   TYPE REF TO cl_abap_elemdescr.
+    DATA lr_data   TYPE REF TO data.
+
+    TYPES: BEGIN OF ty,
+             uzeit TYPE xsdtime_t,
+           END OF ty.
+
+    FIELD-SYMBOLS <data>  TYPE any.
+    FIELD-SYMBOLS <field> TYPE any.
+
+    lo_struct ?= cl_abap_structdescr=>describe_by_data( VALUE ty( ) ).
+    CREATE DATA lr_data TYPE HANDLE lo_struct.
+    ASSIGN lr_data->* TO <data>.
+    ASSIGN COMPONENT 'UZEIT' OF STRUCTURE <data> TO <field>.
+    lo_elem ?= cl_abap_typedescr=>describe_by_data( <field> ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_elem->absolute_name
+      exp = '\TYPE=XSDTIME_T' ).
+  ENDMETHOD.
+
+  METHOD hex_qualified_name.
+    DATA lo_struct TYPE REF TO cl_abap_structdescr.
+    DATA lo_elem   TYPE REF TO cl_abap_elemdescr.
+    DATA lr_data   TYPE REF TO data.
+
+    TYPES: BEGIN OF ty,
+             uuid TYPE sysuuid_x16,
+           END OF ty.
+
+    FIELD-SYMBOLS <data>  TYPE any.
+    FIELD-SYMBOLS <field> TYPE any.
+
+    lo_struct ?= cl_abap_structdescr=>describe_by_data( VALUE ty( ) ).
+    CREATE DATA lr_data TYPE HANDLE lo_struct.
+    ASSIGN lr_data->* TO <data>.
+    ASSIGN COMPONENT 'UUID' OF STRUCTURE <data> TO <field>.
+    lo_elem ?= cl_abap_typedescr=>describe_by_data( <field> ).
+* todo, needs https://github.com/abaplint/transpiler/pull/1700
+    " cl_abap_unit_assert=>assert_equals(
+    "   act = lo_elem->absolute_name
+    "   exp = '\TYPE=SYSUUID_X16' ).
+  ENDMETHOD.
+
+  METHOD numc_qualified_name.
+    DATA lo_struct TYPE REF TO cl_abap_structdescr.
+    DATA lo_elem   TYPE REF TO cl_abap_elemdescr.
+    DATA lr_data   TYPE REF TO data.
+
+    TYPES: BEGIN OF ty,
+             mnr TYPE balmnr,
+           END OF ty.
+
+    FIELD-SYMBOLS <data>  TYPE any.
+    FIELD-SYMBOLS <field> TYPE any.
+
+    lo_struct ?= cl_abap_structdescr=>describe_by_data( VALUE ty( ) ).
+    CREATE DATA lr_data TYPE HANDLE lo_struct.
+    ASSIGN lr_data->* TO <data>.
+    ASSIGN COMPONENT 'MNR' OF STRUCTURE <data> TO <field>.
+    lo_elem ?= cl_abap_typedescr=>describe_by_data( <field> ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_elem->absolute_name
+      exp = '\TYPE=BALMNR' ).
+  ENDMETHOD.
+
+  METHOD packed_qualified_name.
+* When kernel_create_data_handle creates a Packed field from an RTTI handle,
+* the qualifiedName (e.g. TIMESTAMPL) must be preserved so that
+* describe_by_data() returns absolute_name = '\TYPE=TIMESTAMPL'
+* instead of a generated placeholder like '\TYPE=%_T00000000000000000000000XX'.
+    DATA lo_struct TYPE REF TO cl_abap_structdescr.
+    DATA lo_elem   TYPE REF TO cl_abap_elemdescr.
+    DATA lr_data   TYPE REF TO data.
+
+    TYPES: BEGIN OF ty_with_timestamp,
+             name          TYPE c LENGTH 20,
+             lastchangedat TYPE timestampl,
+           END OF ty_with_timestamp.
+
+    FIELD-SYMBOLS <data>  TYPE any.
+    FIELD-SYMBOLS <field> TYPE any.
+
+* Get RTTI for the local structure containing a TIMESTAMPL field
+    lo_struct ?= cl_abap_structdescr=>describe_by_data( VALUE ty_with_timestamp( ) ).
+
+* Dynamically create data from the RTTI handle
+* (internally uses kernel_create_data_handle)
+    CREATE DATA lr_data TYPE HANDLE lo_struct.
+
+    ASSIGN lr_data->* TO <data>.
+    ASSIGN COMPONENT 'LASTCHANGEDAT' OF STRUCTURE <data> TO <field>.
+
+* Get RTTI for the dynamically created packed field
+    lo_elem ?= cl_abap_typedescr=>describe_by_data( <field> ).
+
+* absolute_name must be \TYPE=TIMESTAMPL, not a generated \TYPE=%_T...
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_elem->absolute_name
+      exp = '\TYPE=TIMESTAMPL' ).
   ENDMETHOD.
 
 ENDCLASS.

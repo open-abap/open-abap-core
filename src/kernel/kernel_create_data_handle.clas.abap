@@ -162,20 +162,28 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
     CASE handle->type_kind.
       WHEN cl_abap_typedescr=>typekind_float.
         CREATE DATA dref TYPE f.
+        WRITE '@KERNEL dref.getPointer().qualifiedName = handle.get().internal_qualified_name;'.
       WHEN cl_abap_typedescr=>typekind_string.
         CREATE DATA dref TYPE string.
+        WRITE '@KERNEL dref.getPointer().qualifiedName = handle.get().internal_qualified_name;'.
       WHEN cl_abap_typedescr=>typekind_xstring.
         CREATE DATA dref TYPE xstring.
+        WRITE '@KERNEL dref.getPointer().qualifiedName = handle.get().internal_qualified_name;'.
       WHEN cl_abap_typedescr=>typekind_int.
         CREATE DATA dref TYPE i.
+        WRITE '@KERNEL dref.getPointer().qualifiedName = handle.get().internal_qualified_name;'.
       WHEN cl_abap_typedescr=>typekind_utclong.
         CREATE DATA dref TYPE utclong.
+        WRITE '@KERNEL dref.getPointer().qualifiedName = handle.get().internal_qualified_name;'.
       WHEN cl_abap_typedescr=>typekind_date.
         CREATE DATA dref TYPE d.
+        WRITE '@KERNEL dref.getPointer().qualifiedName = handle.get().internal_qualified_name;'.
       WHEN cl_abap_typedescr=>typekind_hex.
         CREATE DATA dref TYPE x LENGTH handle->length.
+        WRITE '@KERNEL dref.getPointer().qualifiedName = handle.get().internal_qualified_name;'.
       WHEN cl_abap_typedescr=>typekind_packed.
         CREATE DATA dref TYPE p LENGTH handle->length DECIMALS handle->decimals.
+        WRITE '@KERNEL dref.getPointer().qualifiedName = handle.get().internal_qualified_name;'.
       WHEN cl_abap_typedescr=>typekind_char.
         lv_half = handle->length / 2.
         CREATE DATA dref TYPE c LENGTH lv_half.
@@ -183,10 +191,13 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
       WHEN cl_abap_typedescr=>typekind_num.
         lv_half = handle->length / 2.
         CREATE DATA dref TYPE n LENGTH lv_half.
+        WRITE '@KERNEL dref.getPointer().qualifiedName = handle.get().internal_qualified_name;'.
       WHEN cl_abap_typedescr=>typekind_time.
         CREATE DATA dref TYPE t.
+        WRITE '@KERNEL dref.getPointer().qualifiedName = handle.get().internal_qualified_name;'.
       WHEN cl_abap_typedescr=>typekind_int8.
         CREATE DATA dref TYPE int8.
+        WRITE '@KERNEL dref.getPointer().qualifiedName = handle.get().internal_qualified_name;'.
       WHEN OTHERS.
         WRITE '@KERNEL console.dir(handle);'.
         ASSERT 1 = 'todo'.
