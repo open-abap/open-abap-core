@@ -17,6 +17,20 @@ INTERFACE lif_test_types.
              END OF c_foo.
 ENDINTERFACE.
 
+CLASS lcl_bool DEFINITION.
+  PUBLIC SECTION.
+    TYPES ty_char1 TYPE c LENGTH 1.
+    TYPES bool TYPE ty_char1.
+    CONSTANTS:
+      BEGIN OF c_bool,
+        true  TYPE bool  VALUE `X`,
+        false TYPE bool  VALUE ``,
+      END OF  c_bool.
+
+ENDCLASS.
+CLASS lcl_bool IMPLEMENTATION.
+ENDCLASS.
+
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
@@ -74,6 +88,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS identical_refs2 FOR TESTING.
     METHODS identical_refs3 FOR TESTING.
     METHODS identical_refs4 FOR TESTING.
+
+    METHODS absolute_name_bool FOR TESTING.
 
 ENDCLASS.
 
@@ -666,6 +682,14 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = cl_abap_typedescr=>describe_by_data( t_tab )->length
       exp = 8 ).
+  ENDMETHOD.
+
+  METHOD absolute_name_bool.
+    DATA descr TYPE REF TO cl_abap_typedescr.
+    descr = cl_abap_typedescr=>describe_by_data( lcl_bool=>c_bool-true ).
+    cl_abap_unit_assert=>assert_equals(
+      act = descr->absolute_name
+      exp = '\TYPE=BOOL' ).
   ENDMETHOD.
 
   METHOD identical_refs1.
