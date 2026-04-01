@@ -129,8 +129,10 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     CREATE OBJECT ref.
     LOOP AT p_components INTO ls_component.
       CLEAR ls_ref.
-      ls_ref-name = ls_component-name.
-      ls_ref-type = ls_component-type.
+      ls_ref-name       = ls_component-name.
+      ls_ref-type       = ls_component-type.
+      ls_ref-as_include = ls_component-as_include.
+      ls_ref-suffix     = ls_component-suffix.
       APPEND ls_ref TO ref->mt_refs.
     ENDLOOP.
     ref->update_components( ).

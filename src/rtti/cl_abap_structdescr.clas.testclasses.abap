@@ -20,6 +20,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS get_components_include FOR TESTING RAISING cx_static_check.
     METHODS get_symbols FOR TESTING RAISING cx_static_check.
     METHODS two_grouped FOR TESTING RAISING cx_static_check.
+    METHODS create_with_include FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -471,6 +472,41 @@ CLASS ltcl_test IMPLEMENTATION.
       act = lo_struct->get_component_type( 'G2' )->kind
       exp = cl_abap_typedescr=>kind_struct ).
 
+  ENDMETHOD.
+
+  METHOD create_with_include.
+    TYPES: BEGIN OF ty_base,
+             field TYPE i,
+           END OF ty_base.
+
+    DATA ls_base       TYPE ty_base.
+    DATA lt_components TYPE cl_abap_structdescr=>component_table.
+    DATA ls_component  LIKE LINE OF lt_components.
+    DATA lo_struct     TYPE REF TO cl_abap_structdescr.
+    DATA lt_result     TYPE cl_abap_structdescr=>component_table.
+    DATA ls_result     LIKE LINE OF lt_result.
+
+    ls_component-type      ?= cl_abap_structdescr=>describe_by_data( ls_base ).
+    ls_component-name       = 'BASE'.
+    ls_component-as_include = abap_true.
+    APPEND ls_component TO lt_components.
+
+    lo_struct = cl_abap_structdescr=>create( lt_components ).
+
+    lt_result = lo_struct->get_components( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      exp = 1
+      act = lines( lt_result )
+      msg = |Should return 1 component| ).
+
+    READ TABLE lt_result INDEX 1 INTO ls_result.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      exp = abap_true
+      act = ls_result-as_include
+      msg = |as_include flag must be preserved by create( )| ).
   ENDMETHOD.
 
 ENDCLASS.
