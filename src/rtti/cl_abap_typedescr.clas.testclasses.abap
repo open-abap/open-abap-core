@@ -23,8 +23,8 @@ CLASS lcl_bool DEFINITION.
     TYPES bool TYPE ty_char1.
     CONSTANTS:
       BEGIN OF c_bool,
-        true  TYPE bool  VALUE `X`,
-        false TYPE bool  VALUE ``,
+        true  TYPE bool VALUE `X`,
+        false TYPE bool VALUE ``,
       END OF  c_bool.
 
 ENDCLASS.
@@ -687,9 +687,9 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD absolute_name_bool.
     DATA descr TYPE REF TO cl_abap_typedescr.
     descr = cl_abap_typedescr=>describe_by_data( lcl_bool=>c_bool-true ).
-    cl_abap_unit_assert=>assert_equals(
+    cl_abap_unit_assert=>assert_char_cp(
       act = descr->absolute_name
-      exp = '\TYPE=BOOL' ).
+      exp = '*\TYPE=BOOL' ).
   ENDMETHOD.
 
   METHOD identical_refs1.
