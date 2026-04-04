@@ -82,6 +82,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS unnamed_type FOR TESTING.
     METHODS describe_by_dashed FOR TESTING.
     METHODS structure_absolute FOR TESTING.
+    METHODS dref_bound_referenced_type FOR TESTING.
 
     METHODS tab_length FOR TESTING.
     METHODS identical_refs1 FOR TESTING.
@@ -94,6 +95,34 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
+  METHOD dref_bound_referenced_type.
+    TYPES: BEGIN OF ts_line,
+             value TYPE string,
+           END OF ts_line.
+    TYPES tt_lines TYPE STANDARD TABLE OF ts_line WITH NON-UNIQUE DEFAULT KEY.
+
+    DATA lt_table  TYPE tt_lines.
+    DATA lr_data   TYPE REF TO data.
+    DATA lo_descr  TYPE REF TO cl_abap_typedescr.
+    DATA lo_ref    TYPE REF TO cl_abap_refdescr.
+    DATA lo_reftyp TYPE REF TO cl_abap_typedescr.
+
+    GET REFERENCE OF lt_table INTO lr_data.
+
+    lo_descr = cl_abap_typedescr=>describe_by_data( lr_data ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_descr->type_kind
+      exp = cl_abap_typedescr=>typekind_dref
+      msg = 'type_kind should be dref' ).
+
+    lo_ref ?= lo_descr.
+    lo_reftyp = lo_ref->get_referenced_type( ).
+
+    cl_abap_unit_assert=>assert_not_initial(
+      act = lo_reftyp
+      msg = 'referenced type should not be initial for bound dref' ).
+  ENDMETHOD.
 
   METHOD is_ddic_type_true1.
     cl_abap_unit_assert=>assert_equals(
