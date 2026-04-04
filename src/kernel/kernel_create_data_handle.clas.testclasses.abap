@@ -29,6 +29,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS time_qualified_name FOR TESTING RAISING cx_static_check.
     METHODS hex_qualified_name FOR TESTING RAISING cx_static_check.
     METHODS numc_qualified_name FOR TESTING RAISING cx_static_check.
+    METHODS decfloat16 FOR TESTING RAISING cx_static_check.
+    METHODS decfloat34 FOR TESTING RAISING cx_static_check.
 
     METHODS ref_test1 CHANGING foo TYPE REF TO data.
     METHODS ref_test2 FOR TESTING RAISING cx_static_check.
@@ -489,6 +491,34 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_elem->absolute_name
       exp = '\TYPE=BALMNR' ).
+  ENDMETHOD.
+
+  METHOD decfloat16.
+    " DATA lo_element   TYPE REF TO cl_abap_elemdescr.
+    " DATA lo_value_new TYPE REF TO data.
+    " DATA lv_foo       TYPE decfloat16.
+    " FIELD-SYMBOLS <fs_value> TYPE simple.
+
+    " lo_element ?= cl_abap_typedescr=>describe_by_data( lv_foo ).
+
+    " CREATE DATA lo_value_new TYPE HANDLE lo_element.
+    " ASSIGN lo_value_new->* TO <fs_value>.
+    " CLEAR <fs_value>.
+    " <fs_value> = 2.
+  ENDMETHOD.
+
+  METHOD decfloat34.
+    DATA lo_element   TYPE REF TO cl_abap_elemdescr.
+    DATA lo_value_new TYPE REF TO data.
+    DATA lv_foo       TYPE decfloat34.
+    FIELD-SYMBOLS <fs_value> TYPE simple.
+
+    lo_element ?= cl_abap_typedescr=>describe_by_data( lv_foo ).
+
+    CREATE DATA lo_value_new TYPE HANDLE lo_element.
+    ASSIGN lo_value_new->* TO <fs_value>.
+    CLEAR <fs_value>.
+    <fs_value> = 2.
   ENDMETHOD.
 
   METHOD packed_qualified_name.
