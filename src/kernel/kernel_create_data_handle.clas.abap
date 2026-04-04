@@ -198,6 +198,12 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
       WHEN cl_abap_typedescr=>typekind_int8.
         CREATE DATA dref TYPE int8.
         WRITE '@KERNEL dref.getPointer().qualifiedName = handle.get().internal_qualified_name;'.
+      WHEN cl_abap_typedescr=>typekind_decfloat16.
+        CREATE DATA dref TYPE decfloat16.
+        WRITE '@KERNEL dref.getPointer().qualifiedName = handle.get().internal_qualified_name;'.
+      WHEN cl_abap_typedescr=>typekind_decfloat34.
+        CREATE DATA dref TYPE decfloat34.
+        WRITE '@KERNEL dref.getPointer().qualifiedName = handle.get().internal_qualified_name;'.
       WHEN OTHERS.
         WRITE '@KERNEL console.dir(handle);'.
         ASSERT 1 = 'todo'.
