@@ -83,6 +83,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS describe_by_dashed FOR TESTING.
     METHODS structure_absolute FOR TESTING.
     METHODS dref_bound_referenced_type FOR TESTING.
+    METHODS dref_unbound_referenced_type FOR TESTING.
 
     METHODS tab_length FOR TESTING.
     METHODS identical_refs1 FOR TESTING.
@@ -95,6 +96,32 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
+  METHOD dref_unbound_referenced_type.
+    " Reproduce: describe_by_data on an UNBOUND TYPE REF TO DATA
+    " get_referenced_type() should return initial (no specific type known)
+    " Previously returned CHAR4 placeholder from DataReference constructor
+
+    DATA lr_data  TYPE REF TO data.
+    DATA lo_descr TYPE REF TO cl_abap_typedescr.
+    DATA lo_ref   TYPE REF TO cl_abap_refdescr.
+    DATA lo_reftyp TYPE REF TO cl_abap_typedescr.
+
+    " lr_data is unbound (no GET REFERENCE)
+    lo_descr = cl_abap_typedescr=>describe_by_data( lr_data ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_descr->type_kind
+      exp = cl_abap_typedescr=>typekind_dref
+      msg = 'type_kind should be dref' ).
+
+    lo_ref ?= lo_descr.
+    lo_reftyp = lo_ref->get_referenced_type( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_reftyp->kind
+      exp = cl_abap_typedescr=>kind_elem ).
+  ENDMETHOD.
+
   METHOD dref_bound_referenced_type.
     TYPES: BEGIN OF ts_line,
              value TYPE string,
