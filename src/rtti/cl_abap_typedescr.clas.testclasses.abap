@@ -122,6 +122,10 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_not_initial(
       act = lo_reftyp
       msg = 'referenced type should not be initial for bound dref' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_reftyp->kind
+      exp = cl_abap_typedescr=>kind_elem ).
   ENDMETHOD.
 
   METHOD is_ddic_type_true1.
