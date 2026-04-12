@@ -82,6 +82,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS unnamed_type FOR TESTING.
     METHODS describe_by_dashed FOR TESTING.
     METHODS structure_absolute FOR TESTING.
+    METHODS dref_bound_referenced_type FOR TESTING.
+    METHODS dref_unbound_referenced_type FOR TESTING.
 
     METHODS tab_length FOR TESTING.
     METHODS identical_refs1 FOR TESTING.
@@ -90,10 +92,109 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS identical_refs4 FOR TESTING.
 
     METHODS absolute_name_bool FOR TESTING.
+    METHODS include_alias_with_tab FOR TESTING.
 
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
+  METHOD include_alias_with_tab.
+    TYPES: BEGIN OF lty_inner,
+             x TYPE string,
+           END OF lty_inner.
+
+    " Table type as a direct field (must appear BEFORE the INCLUDE)
+    TYPES lty_tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+
+    " The trigger structure:
+    "   MY_TABLE   (as_include = ' ')  <- table, processed first -> stale SYMB-VALUE
+    "   INNER_ALIAS (as_include = 'X') <- skipped by first block when include_aliases=F
+    "                                     second block uses stale SYMB-VALUE as DATA
+    TYPES: BEGIN OF lty_outer,
+             my_table TYPE lty_tab.
+      INCLUDE TYPE lty_inner AS inner_alias RENAMING WITH SUFFIX _sfx.
+    TYPES END OF lty_outer.
+
+    DATA: ls        TYPE lty_outer,
+          lo_descr  TYPE REF TO cl_abap_structdescr,
+          lt_comps  TYPE cl_abap_structdescr=>component_table,
+          lr_data   TYPE REF TO data,
+          lv_subrc  TYPE sy-subrc.
+
+    FIELD-SYMBOLS: <comp> LIKE LINE OF lt_comps,
+                   <fs>   TYPE any.
+
+    lo_descr ?= cl_abap_typedescr=>describe_by_data( ls ).
+    lt_comps  = lo_descr->get_components( ).
+    GET REFERENCE OF ls INTO lr_data.
+
+    " Walk every component the same way the JSON serialiser does.
+    " For the INNER_ALIAS component (as_include='X') this previously crashed.
+    LOOP AT lt_comps ASSIGNING <comp>.
+      UNASSIGN <fs>.
+      ASSIGN lr_data->(<comp>-name) TO <fs>.
+      " We just need this NOT to throw; sy-subrc can be 0 or 4.
+      lv_subrc = sy-subrc.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD dref_unbound_referenced_type.
+    " Reproduce: describe_by_data on an UNBOUND TYPE REF TO DATA
+    " get_referenced_type() should return initial (no specific type known)
+    " Previously returned CHAR4 placeholder from DataReference constructor
+
+    DATA lr_data  TYPE REF TO data.
+    DATA lo_descr TYPE REF TO cl_abap_typedescr.
+    DATA lo_ref   TYPE REF TO cl_abap_refdescr.
+    DATA lo_reftyp TYPE REF TO cl_abap_typedescr.
+
+    " lr_data is unbound (no GET REFERENCE)
+    lo_descr = cl_abap_typedescr=>describe_by_data( lr_data ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_descr->type_kind
+      exp = cl_abap_typedescr=>typekind_dref
+      msg = 'type_kind should be dref' ).
+
+    lo_ref ?= lo_descr.
+    lo_reftyp = lo_ref->get_referenced_type( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_reftyp->kind
+      exp = cl_abap_typedescr=>kind_elem ).
+  ENDMETHOD.
+
+  METHOD dref_bound_referenced_type.
+    TYPES: BEGIN OF ts_line,
+             value TYPE string,
+           END OF ts_line.
+    TYPES tt_lines TYPE STANDARD TABLE OF ts_line WITH NON-UNIQUE DEFAULT KEY.
+
+    DATA lt_table  TYPE tt_lines.
+    DATA lr_data   TYPE REF TO data.
+    DATA lo_descr  TYPE REF TO cl_abap_typedescr.
+    DATA lo_ref    TYPE REF TO cl_abap_refdescr.
+    DATA lo_reftyp TYPE REF TO cl_abap_typedescr.
+
+    GET REFERENCE OF lt_table INTO lr_data.
+
+    lo_descr = cl_abap_typedescr=>describe_by_data( lr_data ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_descr->type_kind
+      exp = cl_abap_typedescr=>typekind_dref
+      msg = 'type_kind should be dref' ).
+
+    lo_ref ?= lo_descr.
+    lo_reftyp = lo_ref->get_referenced_type( ).
+
+    cl_abap_unit_assert=>assert_not_initial(
+      act = lo_reftyp
+      msg = 'referenced type should not be initial for bound dref' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_reftyp->kind
+      exp = cl_abap_typedescr=>kind_elem ).
+  ENDMETHOD.
 
   METHOD is_ddic_type_true1.
     cl_abap_unit_assert=>assert_equals(
