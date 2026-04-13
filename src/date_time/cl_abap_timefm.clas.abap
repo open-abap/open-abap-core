@@ -3,6 +3,8 @@ CLASS cl_abap_timefm DEFINITION PUBLIC.
     TYPES ty_format TYPE i.
     TYPES ty_timefm TYPE c LENGTH 1.
 
+    CONSTANTS environment TYPE ty_format VALUE 3.
+
     CLASS-METHODS conv_time_ext_to_int
       IMPORTING
         time_ext      TYPE csequence
@@ -14,9 +16,11 @@ CLASS cl_abap_timefm DEFINITION PUBLIC.
 
     CLASS-METHODS conv_time_int_to_ext
       IMPORTING
-        time_int TYPE t
+        time_int            TYPE t
+        without_seconds     TYPE abap_bool DEFAULT abap_false
+        format_according_to TYPE ty_format DEFAULT environment
       EXPORTING
-        time_ext TYPE string
+        time_ext            TYPE string
       RAISING
         cx_parameter_invalid_range.
 
