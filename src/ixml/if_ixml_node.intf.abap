@@ -5,8 +5,13 @@ INTERFACE if_ixml_node PUBLIC.
     co_node_text          TYPE i VALUE 16,
     co_node_cdata_section TYPE i VALUE 32.
 
+  METHODS append_child
+    IMPORTING
+      new_child   TYPE REF TO if_ixml_node
+    RETURNING
+      VALUE(rval) TYPE i.
+
   METHODS:
-    append_child IMPORTING new_child TYPE REF TO if_ixml_node,
     get_attributes RETURNING VALUE(map) TYPE REF TO if_ixml_named_node_map,
     get_first_child RETURNING VALUE(node) TYPE REF TO if_ixml_node,
     get_children RETURNING VALUE(val) TYPE REF TO if_ixml_node_list,
