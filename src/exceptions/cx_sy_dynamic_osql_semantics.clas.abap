@@ -6,11 +6,14 @@ CLASS cx_sy_dynamic_osql_semantics DEFINITION PUBLIC INHERITING FROM cx_sy_dynam
     METHODS constructor
       IMPORTING
         token TYPE string OPTIONAL
+        textid LIKE textid OPTIONAL
         sqlmsg TYPE string OPTIONAL.
 ENDCLASS.
 
 CLASS cx_sy_dynamic_osql_semantics IMPLEMENTATION.
   METHOD constructor.
-    super->constructor( sqlmsg = sqlmsg ).
+    super->constructor(
+      textid = textid
+      sqlmsg = sqlmsg ).
   ENDMETHOD.
 ENDCLASS.
