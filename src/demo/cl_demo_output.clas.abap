@@ -33,9 +33,20 @@ CLASS cl_demo_output DEFINITION PUBLIC.
     CLASS-METHODS begin_section
       IMPORTING
         title TYPE clike OPTIONAL.
+
+    CLASS-METHODS display_data
+      IMPORTING
+        value   TYPE any
+        name    TYPE string OPTIONAL
+        exclude TYPE string OPTIONAL
+        include TYPE string OPTIONAL.
 ENDCLASS.
 
 CLASS cl_demo_output IMPLEMENTATION.
+  METHOD display_data.
+    ASSERT 1 = 'not supported'.
+  ENDMETHOD.
+
   METHOD begin_section.
     ASSERT 1 = 'not supported'.
   ENDMETHOD.

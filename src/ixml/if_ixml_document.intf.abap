@@ -2,6 +2,7 @@ INTERFACE if_ixml_document PUBLIC.
   INTERFACES if_ixml_node.
 
   ALIASES create_filter_name_ns FOR if_ixml_node~create_filter_name_ns.
+  ALIASES create_filter_name FOR if_ixml_node~create_filter_name.
 
   METHODS:
     set_encoding

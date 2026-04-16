@@ -13,6 +13,7 @@ CLASS cl_sql_statement DEFINITION PUBLIC.
     METHODS execute_query
       IMPORTING
         statement         TYPE string
+        hold_cursor       TYPE abap_bool OPTIONAL
       RETURNING
         VALUE(result_set) TYPE REF TO cl_sql_result_set
       RAISING
