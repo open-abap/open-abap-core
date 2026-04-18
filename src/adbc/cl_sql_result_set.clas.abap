@@ -20,6 +20,14 @@ CLASS cl_sql_result_set DEFINITION PUBLIC.
 
     METHODS close.
 
+    METHODS set_param_struct
+      IMPORTING
+        struct_ref           TYPE REF TO data
+        corresponding_fields TYPE adbc_column_tab OPTIONAL
+        lob_fields           TYPE adbc_column_tab OPTIONAL
+      RAISING
+        cx_parameter_invalid.
+
     METHODS next_package
       RETURNING
         VALUE(rows_ret) TYPE i
@@ -34,6 +42,9 @@ CLASS cl_sql_result_set DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS cl_sql_result_set IMPLEMENTATION.
+  METHOD set_param_struct.
+    RETURN. " todo, implement method
+  ENDMETHOD.
 
   METHOD set_param.
     mv_ref = data_ref.
