@@ -3,6 +3,7 @@ INTERFACE if_ixml_document PUBLIC.
 
   ALIASES create_filter_name_ns FOR if_ixml_node~create_filter_name_ns.
   ALIASES create_filter_name FOR if_ixml_node~create_filter_name.
+  ALIASES append_child FOR if_ixml_node~append_child.
 
   METHODS:
     set_encoding
@@ -17,9 +18,6 @@ INTERFACE if_ixml_document PUBLIC.
     set_namespace_prefix
       IMPORTING
         prefix TYPE string,
-    append_child
-      IMPORTING
-        new_child TYPE REF TO if_ixml_node,
     get_first_child
       RETURNING
         VALUE(child) TYPE REF TO if_ixml_node,
