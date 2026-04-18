@@ -4,6 +4,7 @@ INTERFACE if_ixml_document PUBLIC.
   ALIASES create_filter_name_ns FOR if_ixml_node~create_filter_name_ns.
   ALIASES create_filter_name FOR if_ixml_node~create_filter_name.
   ALIASES append_child FOR if_ixml_node~append_child.
+  ALIASES create_filter_parent FOR if_ixml_node~create_filter_parent.
 
   METHODS:
     set_encoding
