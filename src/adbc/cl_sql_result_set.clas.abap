@@ -22,7 +22,7 @@ CLASS cl_sql_result_set DEFINITION PUBLIC.
 
     METHODS next_package
       RETURNING
-        VALUE(rows_ret) type I
+        VALUE(rows_ret) TYPE i
       RAISING
         cx_sql_exception
         cx_parameter_invalid_type.
