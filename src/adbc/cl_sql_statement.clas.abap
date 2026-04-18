@@ -6,7 +6,17 @@ CLASS cl_sql_statement DEFINITION PUBLIC.
 
     METHODS execute_update
       IMPORTING
-        statement TYPE string
+        statement           TYPE string
+      RETURNING
+        VALUE(rows_updated) TYPE i
+      RAISING
+        cx_sql_exception.
+
+    METHODS execute_procedure
+      IMPORTING
+        proc_name             TYPE string
+      RETURNING
+        VALUE(rows_processed) TYPE i
       RAISING
         cx_sql_exception.
 
@@ -30,6 +40,9 @@ CLASS cl_sql_statement DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS cl_sql_statement IMPLEMENTATION.
+  METHOD execute_procedure.
+    RETURN. " todo, implement method
+  ENDMETHOD.
 
   METHOD constructor.
     IF con_ref IS INITIAL.
