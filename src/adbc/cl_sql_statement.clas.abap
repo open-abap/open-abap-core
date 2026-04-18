@@ -41,7 +41,7 @@ ENDCLASS.
 
 CLASS cl_sql_statement IMPLEMENTATION.
   METHOD execute_procedure.
-    RETURN. " todo, implement method
+    ASSERT 1 = 'not supported'.
   ENDMETHOD.
 
   METHOD constructor.
