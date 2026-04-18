@@ -21,6 +21,8 @@ CLASS cl_sql_result_set DEFINITION PUBLIC.
     METHODS close.
 
     METHODS next_package
+      RETURNING
+        VALUE(rows_ret) type I
       RAISING
         cx_sql_exception
         cx_parameter_invalid_type.
