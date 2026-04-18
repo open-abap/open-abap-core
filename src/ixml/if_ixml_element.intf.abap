@@ -2,6 +2,9 @@ INTERFACE if_ixml_element PUBLIC.
   INTERFACES if_ixml_node.
 
   ALIASES remove_child FOR if_ixml_node~remove_child.
+  ALIASES create_iterator_filtered FOR if_ixml_node~create_iterator_filtered.
+  ALIASES create_filter_name FOR if_ixml_node~create_filter_name.
+  ALIASES create_filter_parent FOR if_ixml_node~create_filter_parent.
 
   METHODS:
     remove_attribute_ns
