@@ -28,9 +28,23 @@ CLASS cl_bcs_convert DEFINITION PUBLIC.
       RETURNING
         VALUE(ev_xstring) TYPE xstring.
 
+    CLASS-METHODS string_to_solix
+      IMPORTING
+        iv_string   TYPE string
+        iv_codepage TYPE abap_encod OPTIONAL
+        iv_add_bom  TYPE abap_bool OPTIONAL
+      EXPORTING
+        et_solix    TYPE solix_tab
+        ev_size     TYPE so_obj_len
+      RAISING
+        cx_bcs.
+
 ENDCLASS.
 
 CLASS cl_bcs_convert IMPLEMENTATION.
+  METHOD string_to_solix.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD string_to_soli.
     ASSERT 1 = 'todo'.
