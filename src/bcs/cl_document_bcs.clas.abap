@@ -24,9 +24,18 @@ CLASS cl_document_bcs DEFINITION PUBLIC.
       RAISING
         cx_bcs.
 
+    CLASS-METHODS xstring_to_solix
+      IMPORTING
+        ip_xstring      TYPE xstring
+      RETURNING
+        VALUE(rt_solix) TYPE solix_tab.
+
 ENDCLASS.
 
 CLASS cl_document_bcs IMPLEMENTATION.
+  METHOD xstring_to_solix.
+    RETURN. " todo, implement method
+  ENDMETHOD.
 
   METHOD create_document.
     ASSERT 1 = 'todo'.
