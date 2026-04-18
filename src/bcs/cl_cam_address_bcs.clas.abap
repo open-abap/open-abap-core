@@ -13,9 +13,21 @@ CLASS cl_cam_address_bcs DEFINITION PUBLIC.
       RAISING
         cx_bcs.
 
+    CLASS-METHODS vcreate_user_home_address
+      IMPORTING
+        i_user        TYPE syuname
+        i_commtype    TYPE any
+      RETURNING
+        VALUE(result) TYPE REF TO cl_cam_address_bcs
+      RAISING
+        cx_bcs.
+
 ENDCLASS.
 
 CLASS cl_cam_address_bcs IMPLEMENTATION.
+  METHOD vcreate_user_home_address.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD create_internet_address.
     ASSERT 1 = 'todo'.
