@@ -33,4 +33,5 @@ INTERFACE if_system_uuid_static PUBLIC.
       uuid_c36 TYPE sysuuid_c36
     RAISING
       cx_uuid_error.
+
 ENDINTERFACE.
