@@ -13,7 +13,7 @@ CLASS zcl_shma_root DEFINITION
 
     METHODS set
       IMPORTING
-        !value TYPE i.
+        value TYPE i.
     METHODS get
       RETURNING
         VALUE(value) TYPE i.

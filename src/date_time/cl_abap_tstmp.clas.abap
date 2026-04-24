@@ -91,13 +91,13 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
 
     CLASS-METHODS make_valid_time
       IMPORTING
-        date_in     TYPE d
-        time_in     TYPE t
-        !time_zone  TYPE timezone
-        !mode       TYPE operation_mode DEFAULT op_mode_wallclock
+        date_in    TYPE d
+        time_in    TYPE t
+        time_zone  TYPE timezone
+        mode       TYPE operation_mode DEFAULT op_mode_wallclock
       EXPORTING
-        !date_valid TYPE d
-        !time_valid TYPE t
+        date_valid TYPE d
+        time_valid TYPE t
       RAISING
         cx_parameter_invalid_range
         cx_tstmp_internal_error.
