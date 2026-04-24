@@ -22,6 +22,8 @@
     "selection_screen_texts_missing": true,
     "empty_event": true,
     "implicit_start_of_selection": true,
+    "catch_and_raise": true,
+    "no_exclamation_escape": true,
     "tables_declared_locally": true,
     "unused_macros": true,
     "macro_naming": true,

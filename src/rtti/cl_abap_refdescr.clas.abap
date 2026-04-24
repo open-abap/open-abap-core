@@ -13,9 +13,9 @@ CLASS cl_abap_refdescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
 
     CLASS-METHODS create
       IMPORTING
-        !p_referenced_type TYPE REF TO cl_abap_typedescr
+        p_referenced_type TYPE REF TO cl_abap_typedescr
       RETURNING
-        VALUE(p_result)    TYPE REF TO cl_abap_refdescr.
+        VALUE(p_result)   TYPE REF TO cl_abap_refdescr.
 
     CLASS-METHODS get
       IMPORTING

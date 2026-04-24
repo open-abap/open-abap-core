@@ -18,7 +18,7 @@ CLASS cl_shm_service DEFINITION PUBLIC.
 
     CLASS-METHODS trace_get_service
       IMPORTING
-        !area_name           TYPE shm_area_name OPTIONAL
+        area_name            TYPE shm_area_name OPTIONAL
       RETURNING
         VALUE(trace_service) TYPE REF TO if_shm_trace.
 
