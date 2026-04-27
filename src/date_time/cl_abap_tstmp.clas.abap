@@ -101,6 +101,15 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
       RAISING
         cx_parameter_invalid_range
         cx_tstmp_internal_error.
+
+    CLASS-METHODS tstmp2utclong
+      IMPORTING
+        timestamp      TYPE p
+      RETURNING
+        VALUE(utclong) TYPE utclong
+      RAISING
+        cx_parameter_invalid_type
+        cx_sy_conversion_no_date_time.
 ENDCLASS.
 
 CLASS cl_abap_tstmp IMPLEMENTATION.
@@ -243,5 +252,14 @@ CLASS cl_abap_tstmp IMPLEMENTATION.
 
     date_valid = lv_out(8).
     time_valid = lv_out+8(6).
+  ENDMETHOD.
+
+  METHOD tstmp2utclong.
+    WRITE '@KERNEL const str = String(timestamp.get());'.
+    WRITE '@KERNEL if (str.length < 14) throw new Error("CX_SY_CONVERSION_NO_DATE_TIME");'.
+    WRITE '@KERNEL const iso = str.slice(0,4) + "-" + str.slice(4,6) + "-" + str.slice(6,8) + "T" +'.
+    WRITE '@KERNEL              str.slice(8,10) + ":" + str.slice(10,12) + ":" + str.slice(12,14) + "Z";'.
+    WRITE '@KERNEL const d = new Date(iso);'.
+    WRITE '@KERNEL utclong.value = d.toISOString().replace(/\.\d{3}Z$/, ".0000000");'.
   ENDMETHOD.
 ENDCLASS.
