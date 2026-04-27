@@ -75,7 +75,7 @@
     "sy_modification": false,
     "selection_screen_naming": false,
     "select_performance": {
-      "exclude": [".testclasses.", "cl_osql_test_environment"],
+      "exclude": [".testclasses.", "cl_osql_test_environment", "cl_package_factory"],
       "endSelect": true,
       "selectStar": true,
       "starOkayIfFewColumns": 10
