@@ -24,11 +24,27 @@ CLASS cl_sql_connection DEFINITION PUBLIC.
 
     METHODS close.
 
+    METHODS commit
+      RAISING
+        cx_sql_exception.
+
+    METHODS rollback
+      RAISING
+      cx_sql_exception.
+
   PRIVATE SECTION.
     DATA mv_con_name TYPE string.
 ENDCLASS.
 
 CLASS cl_sql_connection IMPLEMENTATION.
+  METHOD rollback.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD commit.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD close.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
