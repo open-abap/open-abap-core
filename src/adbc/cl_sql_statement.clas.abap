@@ -12,6 +12,16 @@ CLASS cl_sql_statement DEFINITION PUBLIC.
       RAISING
         cx_sql_exception.
 
+    METHODS set_param
+      IMPORTING
+        data_ref TYPE REF TO data
+        pos      TYPE int2 DEFAULT 0
+        ind_ref  TYPE REF TO int2 OPTIONAL
+        inout    TYPE any OPTIONAL
+        is_lob   TYPE flag DEFAULT space
+      RAISING
+        cx_parameter_invalid.
+
     METHODS execute_procedure
       IMPORTING
         proc_name             TYPE string
@@ -40,6 +50,10 @@ CLASS cl_sql_statement DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS cl_sql_statement IMPLEMENTATION.
+  METHOD set_param.
+    ASSERT 1 = 'not supported'.
+  ENDMETHOD.
+
   METHOD execute_procedure.
     ASSERT 1 = 'not supported'.
   ENDMETHOD.

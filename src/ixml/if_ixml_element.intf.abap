@@ -5,6 +5,8 @@ INTERFACE if_ixml_element PUBLIC.
   ALIASES create_iterator_filtered FOR if_ixml_node~create_iterator_filtered.
   ALIASES create_filter_name FOR if_ixml_node~create_filter_name.
   ALIASES create_filter_parent FOR if_ixml_node~create_filter_parent.
+  ALIASES get_namespace_uri FOR if_ixml_node~get_namespace_uri.
+  ALIASES query_interface FOR if_ixml_node~query_interface.
 
   METHODS:
     remove_attribute_ns
