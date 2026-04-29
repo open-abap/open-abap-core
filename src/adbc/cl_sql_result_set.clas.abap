@@ -8,7 +8,9 @@ CLASS cl_sql_result_set DEFINITION PUBLIC.
 
     METHODS set_param_table
       IMPORTING
-        itab_ref TYPE REF TO data
+        itab_ref             TYPE REF TO data
+        corresponding_fields TYPE adbc_column_tab OPTIONAL
+        lob_fields           TYPE adbc_column_tab OPTIONAL
       RAISING
         cx_parameter_invalid.
 
