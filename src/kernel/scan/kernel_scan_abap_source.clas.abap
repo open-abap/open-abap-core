@@ -59,6 +59,8 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
     DATA lt_stokesx TYPE ty_stokesx.
     DATA ls_stokesx LIKE LINE OF lt_stokesx.
     DATA lv_source  TYPE string.
+    DATA lt_levels TYPE slevel_tab.
+    DATA lt_structures TYPE sstruc_tab.
 
     WRITE '@KERNEL lv_source.set(INPUT.scan_abap_source.array ? INPUT.scan_abap_source.array().map(e => e.get()).join("\n") : INPUT.scan_abap_source.get());'.
 
@@ -79,6 +81,22 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
     WRITE '@KERNEL INPUT.tokens_into.set(len == 4 ? lt_stokes : lt_stokesx);'.
 
     WRITE '@KERNEL INPUT.statements_into.set(lt_sstmnt);'.
+
+    INSERT VALUE #(
+      depth = 1
+      from  = 1
+      to    = 1
+      type  = 'P' ) INTO TABLE lt_levels.
+    WRITE '@KERNEL INPUT.levels_into.set(lt_levels);'.
+
+    INSERT VALUE #(
+       type       = 'P'
+       stmnt_type = '?'
+       stmnt_from = 1
+       stmnt_to   = 1
+       struc_from = 3
+       struc_to   = 2 ) INTO TABLE lt_structures.
+    WRITE '@KERNEL INPUT.structures_into.set(lt_structures);'.
 
   ENDMETHOD.
 
