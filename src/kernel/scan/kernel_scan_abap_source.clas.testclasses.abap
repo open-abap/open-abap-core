@@ -16,6 +16,7 @@ CLASS ltcl_scan DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS some_type FOR TESTING RAISING cx_static_check.
     METHODS two_types FOR TESTING RAISING cx_static_check.
     METHODS stokes FOR TESTING RAISING cx_static_check.
+    METHODS a_select FOR TESTING RAISING cx_static_check.
 
     DATA tokens TYPE STANDARD TABLE OF stokesx WITH DEFAULT KEY.
     DATA statements TYPE STANDARD TABLE OF sstmnt WITH DEFAULT KEY.
@@ -410,6 +411,42 @@ CLASS ltcl_scan IMPLEMENTATION.
             |from:18,to:18\n| &&
             |from:19,to:22\n| &&
             |from:23,to:26| ).
+
+  ENDMETHOD.
+
+  METHOD a_select.
+
+    DATA iv_code TYPE string.
+    DATA lt_code TYPE STANDARD TABLE OF string WITH EMPTY KEY.
+
+    iv_code = 'SELECT SINGLE * FROM vbak INTO @DATA(ls_vbak).'.
+    SPLIT iv_code AT |\n| INTO TABLE lt_code.
+
+    DATA(lt_tokens) = VALUE stokesx_tab( ).
+    DATA(lt_statements) = VALUE sstmnt_tab( ).
+    DATA(lt_levels) = VALUE slevel_tab( ).
+    DATA(lt_structures) = VALUE sstruc_tab( ).
+    SCAN ABAP-SOURCE lt_code
+      TOKENS INTO lt_tokens
+      STATEMENTS INTO lt_statements
+      LEVELS INTO lt_levels
+      STRUCTURES INTO lt_structures
+      WITH ANALYSIS
+      WITH COMMENTS
+      WITH PRAGMAS '*'.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( lt_tokens )
+      exp = 7 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( lt_statements )
+      exp = 1 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( lt_levels )
+      exp = 1 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( lt_structures )
+      exp = 1 ).
 
   ENDMETHOD.
 
