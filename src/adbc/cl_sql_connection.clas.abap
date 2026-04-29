@@ -15,8 +15,10 @@ CLASS cl_sql_connection DEFINITION PUBLIC.
         VALUE(connection) TYPE REF TO cl_sql_connection.
 
     METHODS create_statement
+      IMPORTING
+        tab_name_for_trace TYPE tabname OPTIONAL
       RETURNING
-        VALUE(statement) TYPE REF TO cl_sql_statement.
+        VALUE(statement)   TYPE REF TO cl_sql_statement.
 
     METHODS get_con_name
       RETURNING
