@@ -87,7 +87,7 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
       from  = 1
       to    = 1
       type  = 'P' ) INTO TABLE lt_levels.
-    WRITE '@KERNEL INPUT.levels_into.set(lt_levels);'.
+    WRITE '@KERNEL INPUT.levels_into?.set(lt_levels);'.
 
     INSERT VALUE #(
        type       = 'P'
@@ -96,7 +96,7 @@ CLASS kernel_scan_abap_source IMPLEMENTATION.
        stmnt_to   = 1
        struc_from = 3
        struc_to   = 2 ) INTO TABLE lt_structures.
-    WRITE '@KERNEL INPUT.structures_into.set(lt_structures);'.
+    WRITE '@KERNEL INPUT.structures_into?.set(lt_structures);'.
 
   ENDMETHOD.
 
