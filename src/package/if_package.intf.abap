@@ -1,16 +1,30 @@
 INTERFACE if_package PUBLIC.
   DATA wbo_korr_flag         TYPE c LENGTH 1 READ-ONLY.
-  DATA package_name          TYPE string READ-ONLY.
+  DATA package_name          TYPE devclass READ-ONLY.
   DATA short_text            TYPE string READ-ONLY.
   DATA super_package_name    TYPE string READ-ONLY.
   DATA software_component    TYPE string READ-ONLY.
   DATA application_component TYPE string READ-ONLY.
   DATA transport_layer       TYPE string READ-ONLY.
   DATA changed_by            TYPE string READ-ONLY.
+  DATA application_component_text TYPE string READ-ONLY.
+  DATA author                     TYPE sy-uname READ-ONLY.
+  DATA changed_on                 TYPE d READ-ONLY.
+  DATA checks_as_server_enforced  TYPE abap_bool READ-ONLY.
+  DATA created_by                 TYPE sy-uname READ-ONLY.
+  DATA created_on                 TYPE d READ-ONLY.
+  DATA extension_restricted       TYPE abap_bool READ-ONLY.
+  DATA main_package               TYPE devclass READ-ONLY.
+  DATA master_language            TYPE sy-langu READ-ONLY.
+  DATA namespace                  TYPE char10 READ-ONLY.
+  DATA package_kind               TYPE char1 READ-ONLY.
+  DATA software_component_text    TYPE text80 READ-ONLY.
+  DATA transport_layer_text       TYPE char4 READ-ONLY.
 
   METHODS save
     IMPORTING
       i_transport_request TYPE trkorr OPTIONAL
+      i_suppress_dialog   TYPE abap_bool OPTIONAL
     EXCEPTIONS
       object_invalid
       object_not_changeable
@@ -115,3 +129,5 @@ INTERFACE if_package PUBLIC.
       object_invalid
       unexpected_error.
 ENDINTERFACE.
+
+
