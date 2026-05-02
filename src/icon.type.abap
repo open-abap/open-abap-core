@@ -22,6 +22,7 @@ CONSTANTS icon_biw_monitor TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_biw_report TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_biw_source_sys_r3 TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_booking_ok TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_deactivate TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_booking_stop TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_breakpoint TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_breakpoint_disable TYPE c LENGTH 4 VALUE 'ICON'.
