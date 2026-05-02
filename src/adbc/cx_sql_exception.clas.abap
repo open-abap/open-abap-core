@@ -1,11 +1,13 @@
 CLASS cx_sql_exception DEFINITION PUBLIC INHERITING FROM cx_static_check.
   PUBLIC SECTION.
     DATA sql_message TYPE string.
+    DATA sql_code TYPE i.
 
     METHODS constructor
       IMPORTING
         textid      LIKE textid OPTIONAL
         sql_message TYPE string OPTIONAL
+        sql_code    TYPE i OPTIONAL
         previous    TYPE REF TO cx_root OPTIONAL.
 ENDCLASS.
 
@@ -16,6 +18,7 @@ CLASS cx_sql_exception IMPLEMENTATION.
       previous = previous ).
 
     me->sql_message = sql_message.
+    me->sql_code = sql_code.
   ENDMETHOD.
 
 ENDCLASS.
