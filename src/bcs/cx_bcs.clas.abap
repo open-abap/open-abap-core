@@ -1,4 +1,6 @@
 CLASS cx_bcs DEFINITION PUBLIC INHERITING FROM cx_static_check.
+  PUBLIC SECTION.
+    DATA error_type TYPE c LENGTH 16.
 
 ENDCLASS.
 
