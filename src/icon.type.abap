@@ -22,7 +22,6 @@ CONSTANTS icon_biw_monitor TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_biw_report TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_biw_source_sys_r3 TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_booking_ok TYPE c LENGTH 4 VALUE 'ICON'.
-CONSTANTS icon_deactivate TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_booking_stop TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_breakpoint TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_breakpoint_disable TYPE c LENGTH 4 VALUE 'ICON'.
@@ -64,6 +63,7 @@ CONSTANTS icon_data_area_collapse TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_data_area_expand TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_database_table TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_date TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_deactivate TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_defect TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_delete TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_delete_favorites TYPE c LENGTH 4 VALUE 'ICON'.
@@ -101,6 +101,7 @@ CONSTANTS icon_fast_entry TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_field_with_text TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_filter TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_filter_undo TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_folder TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_foreign_key TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_generate TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_gis_pan TYPE c LENGTH 4 VALUE 'ICON'.
@@ -128,8 +129,11 @@ CONSTANTS icon_information TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_insert_row TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_inspection_characteristic TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_inspection_method TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_intensify TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_intensify_critical TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_interface TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_interval_include_green TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_interval_include_red TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_led_green TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_led_inactive TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_led_red TYPE c LENGTH 4 VALUE 'ICON'.
@@ -142,6 +146,7 @@ CONSTANTS icon_location TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_locked TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_mass_change TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_mass_change_done TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_material TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_message_critical TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_message_critical_small TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_message_error TYPE c LENGTH 4 VALUE 'ICON'.
@@ -187,6 +192,8 @@ CONSTANTS icon_page_left TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_page_right TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_parameter_result TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_partner TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_pattern_include_green TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_pattern_include_red TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_pdf TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_pdir_back TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_personal_help TYPE c LENGTH 4 VALUE 'ICON'.
@@ -195,6 +202,7 @@ CONSTANTS icon_plant TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_pm_insert TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_pm_press TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_position TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_position_hr TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_positive TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_ppe_snode TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_previous_object TYPE c LENGTH 4 VALUE 'ICON'.
@@ -271,6 +279,7 @@ CONSTANTS icon_system_help TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_system_local_copy TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_system_local_paste TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_system_okay TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_system_paste TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_system_play TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_system_possible_entries TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_system_save TYPE c LENGTH 4 VALUE 'ICON'.
@@ -278,6 +287,7 @@ CONSTANTS icon_system_shortcut TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_system_undo TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_target_group TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_task TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_tbh_hold TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_te_advance_payment TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_terminated_org_unit TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_test TYPE c LENGTH 4 VALUE 'ICON'.
@@ -301,6 +311,9 @@ CONSTANTS icon_trend_unchanged TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_trend_up TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_unlocked TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_unpack TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_unspecified_four TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_unspecified_one TYPE c LENGTH 4 VALUE 'ICON'.
+CONSTANTS icon_unspecified_three TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_unspecified_two TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_usergroup TYPE c LENGTH 4 VALUE 'ICON'.
 CONSTANTS icon_variable TYPE c LENGTH 4 VALUE 'ICON'.
