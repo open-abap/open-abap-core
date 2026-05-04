@@ -384,7 +384,9 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
 *      WRITE '@KERNEL console.dir(tol);'.
 *      WRITE '@KERNEL console.dir(diff);'.
       IF diff >= tol.
-        RAISE EXCEPTION TYPE kernel_cx_assert.
+        RAISE EXCEPTION TYPE kernel_cx_assert
+          EXPORTING
+            msg = |Expected values to differ less than { tol }, got { diff }|.
       ENDIF.
     ELSEIF type1 = 'l'.
       ASSIGN act->* TO <act>.
