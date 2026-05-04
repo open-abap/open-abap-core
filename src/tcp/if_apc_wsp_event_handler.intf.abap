@@ -1,4 +1,6 @@
 INTERFACE if_apc_wsp_event_handler PUBLIC.
+  INTERFACES if_apc_wsp_event_handler_base.
+
   METHODS on_open.
 
   METHODS on_message
