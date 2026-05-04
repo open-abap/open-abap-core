@@ -348,6 +348,8 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
     DATA lv_exp TYPE string.
     DATA lv_act TYPE string.
     DATA lv_msg TYPE string.
+    DATA lv_exp_numc TYPE string.
+    DATA lv_act_numc TYPE string.
 
     FIELD-SYMBOLS <act> TYPE any.
     FIELD-SYMBOLS <exp> TYPE any.
@@ -390,6 +392,32 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
       assert_equals(
         act = <act>
         exp = <exp> ).
+    ELSEIF ( type1 = 'N' AND type2 CA 'CgyN' )
+        OR ( type2 = 'N' AND type1 CA 'Cgy' ).
+      lv_act_numc = act.
+      lv_exp_numc = exp.
+      SHIFT lv_act_numc LEFT DELETING LEADING '0'.
+      SHIFT lv_exp_numc LEFT DELETING LEADING '0'.
+      IF lv_act_numc IS INITIAL.
+        lv_act_numc = '0'.
+      ENDIF.
+      IF lv_exp_numc IS INITIAL.
+        lv_exp_numc = '0'.
+      ENDIF.
+      IF lv_act_numc <> lv_exp_numc.
+        lv_act = lcl_dump=>to_string( act ).
+        lv_exp = lcl_dump=>to_string( exp ).
+        IF msg <> ''.
+          lv_msg = msg.
+        ELSE.
+          lv_msg = |Expected '{ lv_exp }', got '{ lv_act }'|.
+        ENDIF.
+        RAISE EXCEPTION TYPE kernel_cx_assert
+          EXPORTING
+            msg      = lv_msg
+            actual   = lv_act
+            expected = lv_exp.
+      ENDIF.
     ELSEIF act <> exp.
       lv_act = lcl_dump=>to_string( act ).
       lv_exp = lcl_dump=>to_string( exp ).
