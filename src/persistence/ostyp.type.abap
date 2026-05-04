@@ -1,0 +1,3 @@
+TYPE-POOL ostyp.
+
+TYPES ostyp_ref_tab TYPE STANDARD TABLE OF REF TO object WITH DEFAULT KEY.

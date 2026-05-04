@@ -1,0 +1,8 @@
+CLASS cx_os_class_not_found DEFINITION PUBLIC INHERITING FROM cx_os_error.
+  PUBLIC SECTION.
+
+ENDCLASS.
+
+CLASS cx_os_class_not_found IMPLEMENTATION.
+
+ENDCLASS.
