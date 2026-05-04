@@ -1,0 +1,8 @@
+CLASS cx_os_object_existing DEFINITION PUBLIC INHERITING FROM cx_os_object.
+  PUBLIC SECTION.
+
+ENDCLASS.
+
+CLASS cx_os_object_existing IMPLEMENTATION.
+
+ENDCLASS.
