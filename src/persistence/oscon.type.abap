@@ -13,3 +13,7 @@ CONSTANTS oscon_ostatus_changed    TYPE i VALUE 3.
 CONSTANTS oscon_ostatus_deleted    TYPE i VALUE 4.
 CONSTANTS oscon_ostatus_transient  TYPE i VALUE 10.
 CONSTANTS oscon_ostatus_loading    TYPE i VALUE 12.
+
+CONSTANTS oscon_dbstatus_unknown      TYPE i VALUE 0.
+CONSTANTS oscon_dbstatus_existing     TYPE i VALUE 1.
+CONSTANTS oscon_dbstatus_not_existing TYPE i VALUE 2.
