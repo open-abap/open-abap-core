@@ -8,7 +8,7 @@ CLASS cl_apc_tcp_client_manager DEFINITION PUBLIC.
         i_host           TYPE string
         i_port           TYPE string
         i_frame          TYPE apc_tcp_frame
-        i_event_handler  TYPE REF TO if_apc_wsp_event_handler
+        i_event_handler  TYPE REF TO if_apc_wsp_event_handler_base
         i_protocol       TYPE i DEFAULT co_protocol_type_tcp
         i_ssl_id         TYPE ssfapplssl OPTIONAL
       RETURNING
@@ -20,16 +20,19 @@ ENDCLASS.
 CLASS cl_apc_tcp_client_manager IMPLEMENTATION.
   METHOD create.
     DATA lv_port TYPE i.
+    DATA li_handler TYPE REF TO if_apc_wsp_event_handler.
     lv_port = i_port.
 
 * i_ssl_id is not checked, STRUST is inherited from system in nodejs
 * i_frame is currently ignored, framing is handled by TCP
 
+    li_handler ?= i_event_handler.
+
     CREATE OBJECT ri_client TYPE lcl_client
       EXPORTING
         iv_host     = i_host
         iv_port     = lv_port
-        io_handler  = i_event_handler
+        io_handler  = li_handler
         iv_protocol = i_protocol.
   ENDMETHOD.
 ENDCLASS.
