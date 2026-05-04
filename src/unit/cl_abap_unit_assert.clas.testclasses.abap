@@ -20,6 +20,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS decfloat34_eq FOR TESTING RAISING cx_static_check.
     METHODS decfloat34_ne FOR TESTING RAISING cx_static_check.
     METHODS numc_eq FOR TESTING RAISING cx_static_check.
+    METHODS numc_eq2 FOR TESTING RAISING cx_static_check.
     METHODS char_n_pack FOR TESTING RAISING cx_static_check.
     METHODS int8_eq_int8 FOR TESTING RAISING cx_static_check.
     METHODS int8_eq_5 FOR TESTING RAISING cx_static_check.
@@ -220,6 +221,14 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       exp = '0000000001'
       act = lv_num ).
+  ENDMETHOD.
+
+  METHOD numc_eq2.
+    DATA numc TYPE n LENGTH 10.
+    numc = 30.
+    cl_abap_unit_assert=>assert_equals(
+      exp = '30'
+      act = numc ).
   ENDMETHOD.
 
   METHOD int8_eq_int8.
