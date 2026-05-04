@@ -36,6 +36,7 @@ CLASS ltcl_deserialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
     METHODS top_tab FOR TESTING RAISING cx_static_check.
     METHODS test_log FOR TESTING RAISING cx_static_check.
     METHODS test_deser_no_match FOR TESTING RAISING cx_static_check.
+    METHODS test_camel FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -728,6 +729,27 @@ CLASS ltcl_deserialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lines( lt_log )
       exp = 0 ).
+
+  ENDMETHOD.
+
+  METHOD test_camel.
+
+    TYPES: BEGIN OF ty_payload,
+             keep_delivery_open TYPE abap_bool,
+           END OF ty_payload.
+
+    DATA(ls_payload) = VALUE ty_payload( ).
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json        = `{"keepDeliveryOpen":true}`
+        pretty_name = /ui2/cl_json=>pretty_mode-camel_case
+      CHANGING
+        data        = ls_payload ).
+
+    cl_abap_unit_assert=>assert_equals(
+      exp = abap_true
+      act = ls_payload-keep_delivery_open ).
 
   ENDMETHOD.
 
