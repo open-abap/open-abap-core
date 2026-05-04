@@ -1,0 +1,3 @@
+INTERFACE if_apc_wsp_event_handler_base PUBLIC.
+
+ENDINTERFACE.
