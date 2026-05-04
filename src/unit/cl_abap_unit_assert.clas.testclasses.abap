@@ -12,6 +12,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS equals_hashed FOR TESTING RAISING cx_static_check.
     METHODS equals_hashed_two_rows FOR TESTING RAISING cx_static_check.
     METHODS equals_tol FOR TESTING RAISING cx_static_check.
+    METHODS equals_tol_fail FOR TESTING RAISING cx_static_check.
     METHODS differs FOR TESTING RAISING cx_static_check.
     METHODS cp1 FOR TESTING RAISING cx_static_check.
     METHODS cp2 FOR TESTING RAISING cx_static_check.
@@ -52,6 +53,20 @@ CLASS ltcl_test IMPLEMENTATION.
       exp = pi
       act = radians
       tol = `0.000000000000001` ).
+  ENDMETHOD.
+
+  METHOD equals_tol_fail.
+    DATA lx_assert TYPE REF TO kernel_cx_assert.
+
+    TRY.
+        cl_abap_unit_assert=>assert_equals(
+          exp = 2
+          act = 1
+          tol = `0.5` ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH kernel_cx_assert INTO lx_assert.
+        cl_abap_unit_assert=>assert_not_initial( lx_assert->msg ).
+    ENDTRY.
   ENDMETHOD.
 
   METHOD cp1.
