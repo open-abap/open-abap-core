@@ -1,7 +1,10 @@
 CLASS cx_os_object_existing DEFINITION PUBLIC INHERITING FROM cx_os_object.
   PUBLIC SECTION.
 
-    CONSTANTS transient_creating_persistent TYPE sotr_conc VALUE '11111111111111111111111111111111'.
+    CONSTANTS transient_creating_persistent  TYPE sotr_conc VALUE '11111111111111111111111111111111'.
+    CONSTANTS persistent_creating_persistent TYPE sotr_conc VALUE '11111111111111111111111111111111'.
+    CONSTANTS transient_creating_transient   TYPE sotr_conc VALUE '11111111111111111111111111111111'.
+    CONSTANTS persistent_creating_transient  TYPE sotr_conc VALUE '11111111111111111111111111111111'.
 
     DATA bkey TYPE string.
 
