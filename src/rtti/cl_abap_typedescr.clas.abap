@@ -51,9 +51,9 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
       RETURNING
         VALUE(p_result) TYPE abap_bool.
 
-    METHODS get_ddic_object
+    METHODS
       RETURNING
-        VALUE(p_object) TYPE string_table
+        VALUE(p_object) TYPE dd_x031l_table
       EXCEPTIONS
         not_found
         no_ddic_type.
