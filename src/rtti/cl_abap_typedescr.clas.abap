@@ -53,7 +53,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
 
     METHODS get_ddic_object
       RETURNING
-        VALUE(p_object) TYPE string_table
+        VALUE(p_object) TYPE dd_x031l_table
       EXCEPTIONS
         not_found
         no_ddic_type.
