@@ -2,8 +2,9 @@ CLASS cl_sql_connection DEFINITION PUBLIC.
   PUBLIC SECTION.
     CLASS-METHODS get_connection
       IMPORTING
-        con_name          TYPE clike
+        con_name          TYPE clike OPTIONAL
         sharable          TYPE abap_bool DEFAULT abap_false
+      PREFERRED PARAMETER con_name
       RETURNING
         VALUE(connection) TYPE REF TO cl_sql_connection.
 
