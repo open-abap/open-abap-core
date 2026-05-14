@@ -17,6 +17,7 @@ CLASS cx_os_object_not_found DEFINITION PUBLIC INHERITING FROM cx_os_object.
         textid   LIKE textid OPTIONAL
         previous LIKE previous OPTIONAL
         table    LIKE table OPTIONAL
+        object   TYPE REF TO object OPTIONAL
         bkey     LIKE bkey OPTIONAL.
 
 ENDCLASS.
@@ -27,6 +28,7 @@ CLASS cx_os_object_not_found IMPLEMENTATION.
     CALL METHOD super->constructor
       EXPORTING
         textid   = textid
+        object   = object
         previous = previous.
 
     me->table = table.
