@@ -34,11 +34,11 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD test1.
 
-    DATA lx_error    TYPE REF TO cx_root.
-    DATA lv_act      TYPE string.
-    DATA ls_t100_key TYPE scx_t100key.
-    DATA lv_program_name TYPE string.
-    DATA lv_line TYPE i.
+    DATA lx_error        TYPE REF TO cx_root.
+    DATA lv_act          TYPE string.
+    DATA ls_t100_key     TYPE scx_t100key.
+    DATA lv_program_name TYPE syrepid.
+    DATA lv_line         TYPE i.
 
     ls_t100_key-msgid = '00'.
     ls_t100_key-msgno = '001'.
