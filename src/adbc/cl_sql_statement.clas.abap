@@ -24,7 +24,7 @@ CLASS cl_sql_statement DEFINITION PUBLIC.
 
     METHODS execute_procedure
       IMPORTING
-        proc_name             TYPE string
+        proc_name             TYPE c
       RETURNING
         VALUE(rows_processed) TYPE i
       RAISING
