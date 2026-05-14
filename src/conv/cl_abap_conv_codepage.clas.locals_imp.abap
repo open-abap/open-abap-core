@@ -1,6 +1,6 @@
 CLASS lcl_in DEFINITION.
   PUBLIC SECTION.
-    METHODS constructor IMPORTING codepage TYPE abap_encoding.
+    METHODS constructor IMPORTING codepage TYPE clike.
     INTERFACES if_abap_conv_in.
   PRIVATE SECTION.
     DATA mv_encoding TYPE abap_encoding.
@@ -26,7 +26,7 @@ ENDCLASS.
 
 CLASS lcl_out DEFINITION.
   PUBLIC SECTION.
-    METHODS constructor IMPORTING codepage TYPE abap_encoding.
+    METHODS constructor IMPORTING codepage TYPE clike.
     INTERFACES if_abap_conv_out.
   PRIVATE SECTION.
     DATA mv_encoding TYPE abap_encoding.
