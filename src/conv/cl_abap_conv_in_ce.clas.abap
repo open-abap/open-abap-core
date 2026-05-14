@@ -80,6 +80,7 @@ CLASS cl_abap_conv_in_ce IMPLEMENTATION.
   METHOD uccpi.
     DATA lv_hex TYPE x LENGTH 2.
     DATA lo_in  TYPE REF TO cl_abap_conv_in_ce.
+    DATA lv_str TYPE string.
 
     lv_hex = uccp.
     " switch to little endian
@@ -91,7 +92,9 @@ CLASS cl_abap_conv_in_ce IMPLEMENTATION.
       EXPORTING
         input = lv_hex
       IMPORTING
-        data  = char ).
+        data  = lv_str ).
+
+    char = lv_str.
   ENDMETHOD.
 
   METHOD convert.
