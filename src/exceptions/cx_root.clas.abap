@@ -10,8 +10,8 @@ CLASS cx_root DEFINITION ABSTRACT PUBLIC.
 
     METHODS get_source_position
       EXPORTING
-        program_name TYPE string
-        include_name TYPE string
+        program_name TYPE syrepid
+        include_name TYPE syrepid
         source_line  TYPE i.
 
     INTERFACES if_message.
