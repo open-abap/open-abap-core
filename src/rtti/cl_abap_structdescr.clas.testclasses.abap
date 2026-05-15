@@ -121,7 +121,7 @@ CLASS ltcl_test IMPLEMENTATION.
 
     cl_abap_unit_assert=>assert_equals(
       act = lines( lt_ddfields )
-      exp = 5 ).
+      exp = 6 ).
 
     READ TABLE lt_ddfields INTO ls_ddfields WITH KEY fieldname = 'MANDT'.
     cl_abap_unit_assert=>assert_subrc( ).

@@ -1,5 +1,7 @@
 CLASS cl_sql_connection DEFINITION PUBLIC.
   PUBLIC SECTION.
+    CONSTANTS c_default_connection TYPE char30 VALUE 'DEFAULT'.
+
     CLASS-METHODS get_connection
       IMPORTING
         con_name          TYPE clike OPTIONAL

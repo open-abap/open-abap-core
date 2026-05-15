@@ -1,7 +1,8 @@
 CLASS cx_root DEFINITION ABSTRACT PUBLIC.
   PUBLIC SECTION.
-    DATA previous TYPE REF TO cx_root.
-    DATA textid   TYPE c LENGTH 32.
+    DATA previous     TYPE REF TO cx_root READ-ONLY.
+    DATA textid       TYPE c LENGTH 32 READ-ONLY.
+    DATA kernel_errid TYPE char30 READ-ONLY.
 
     METHODS constructor
       IMPORTING

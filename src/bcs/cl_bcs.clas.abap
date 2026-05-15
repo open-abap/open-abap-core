@@ -1,8 +1,22 @@
 CLASS cl_bcs DEFINITION PUBLIC.
   PUBLIC SECTION.
+    DATA send_request TYPE REF TO cl_send_request_bcs READ-ONLY.
+
+    CONSTANTS gc_direct TYPE char1 VALUE 'D'.
+    CONSTANTS gc_retry TYPE char1 VALUE 'R'.
+    CONSTANTS gc_future TYPE char1 VALUE 'F'.
+    CONSTANTS gc_incons TYPE char1 VALUE 'X'.
+    CONSTANTS gc_ok TYPE char1 VALUE 'I'.
+
     CLASS-METHODS create_persistent
       RETURNING
         VALUE(result) TYPE REF TO cl_bcs
+      RAISING
+        cx_bcs.
+
+    METHODS document
+      RETURNING
+        VALUE(result) TYPE REF TO if_document_bcs
       RAISING
         cx_bcs.
 
@@ -55,6 +69,9 @@ CLASS cl_bcs DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS cl_bcs IMPLEMENTATION.
+  METHOD document.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD set_document.
     ASSERT 1 = 'todo'.

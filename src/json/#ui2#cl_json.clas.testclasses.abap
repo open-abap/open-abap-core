@@ -1258,7 +1258,7 @@ CLASS ltcl_serialize IMPLEMENTATION.
 * todo: it should have more fields, but for now its okay
     cl_abap_unit_assert=>assert_equals(
       act = lv_json
-      exp = '[{"EXCEPTION":{"PREVIOUS":null,"TEXTID":""}}]' ).
+      exp = '[{"EXCEPTION":{"KERNEL_ERRID":"","PREVIOUS":null,"TEXTID":""}}]' ).
 
   ENDMETHOD.
 
