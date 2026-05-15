@@ -3,6 +3,10 @@ INTERFACE if_ixml_istream PUBLIC.
   CONSTANTS dtd_restricted TYPE i VALUE 1.
   CONSTANTS dtd_prohibited TYPE i VALUE 2.
 
+  INTERFACES if_ixml_stream.
+
+  ALIASES get_encoding FOR if_ixml_stream~get_encoding.
+
   METHODS close.
 
   METHODS get_dtd_restriction

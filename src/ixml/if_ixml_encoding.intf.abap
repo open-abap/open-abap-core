@@ -10,4 +10,10 @@ INTERFACE if_ixml_encoding PUBLIC.
   METHODS get_character_set
     RETURNING
       VALUE(rval) TYPE string.
+
+  METHODS set_character_set
+    IMPORTING
+      charset     TYPE string
+    RETURNING
+      VALUE(rval) TYPE abap_bool.
 ENDINTERFACE.

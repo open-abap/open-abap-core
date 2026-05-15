@@ -7,7 +7,8 @@ CLASS cl_document_bcs DEFINITION PUBLIC.
         i_type        TYPE clike
         i_subject     TYPE clike
         i_text        TYPE any OPTIONAL
-        i_length      TYPE i OPTIONAL
+        i_hex         TYPE any OPTIONAL
+        i_length      TYPE clike OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO cl_document_bcs
       RAISING

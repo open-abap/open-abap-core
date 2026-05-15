@@ -22,9 +22,22 @@ CLASS cl_cam_address_bcs DEFINITION PUBLIC.
       RAISING
         cx_bcs.
 
+    CLASS-METHODS create_fax_address
+      IMPORTING
+        i_country     TYPE any
+        i_number      TYPE any
+      RETURNING
+        VALUE(result) TYPE REF TO cl_cam_address_bcs
+      RAISING
+        cx_address_bcs.
+
 ENDCLASS.
 
 CLASS cl_cam_address_bcs IMPLEMENTATION.
+  METHOD create_fax_address.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD create_user_home_address.
     ASSERT 1 = 'todo'.
   ENDMETHOD.

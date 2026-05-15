@@ -12,6 +12,13 @@ CLASS cl_sql_statement DEFINITION PUBLIC.
       RAISING
         cx_sql_exception.
 
+    METHODS set_param_table
+      IMPORTING
+        table_ref  TYPE REF TO data
+        lob_fields TYPE adbc_column_tab OPTIONAL
+      RAISING
+        cx_parameter_invalid.
+
     METHODS set_param
       IMPORTING
         data_ref TYPE REF TO data
@@ -50,6 +57,10 @@ CLASS cl_sql_statement DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS cl_sql_statement IMPLEMENTATION.
+  METHOD set_param_table.
+    ASSERT 1 = 'not supported'.
+  ENDMETHOD.
+
   METHOD set_param.
     ASSERT 1 = 'not supported'.
   ENDMETHOD.
