@@ -9,6 +9,10 @@ CLASS cl_demo_output DEFINITION PUBLIC.
 
     CLASS-METHODS clear.
 
+    CLASS-METHODS write_text
+      IMPORTING
+        text TYPE clike.
+
     CLASS-METHODS new
       RETURNING
         VALUE(output) TYPE REF TO if_demo_output.
@@ -43,6 +47,10 @@ CLASS cl_demo_output DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS cl_demo_output IMPLEMENTATION.
+  METHOD write_text.
+    ASSERT 1 = 'not supported'.
+  ENDMETHOD.
+
   METHOD display_data.
     ASSERT 1 = 'not supported'.
   ENDMETHOD.
