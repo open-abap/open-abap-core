@@ -24,9 +24,16 @@ CLASS cl_oo_factory IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD create_clif_source.
+    DATA ls_data TYPE reposrc.
+
 * todo, this not correct, should return a new instance, but will work for now
     result = me.
     mv_name = to_upper( clif_name ).
+
+    SELECT SINGLE * FROM reposrc INTO @ls_data WHERE progname = @mv_name.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_oo_clif_not_exists.
+    ENDIF.
   ENDMETHOD.
 
   METHOD if_oo_clif_source~get_source.

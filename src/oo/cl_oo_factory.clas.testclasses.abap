@@ -1,19 +1,37 @@
 CLASS ltcl_read_source DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
-    METHODS test1 FOR TESTING RAISING cx_static_check.
+    METHODS test_clas FOR TESTING RAISING cx_static_check.
+    METHODS test_intf FOR TESTING RAISING cx_static_check.
+    METHODS test_not_found FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_read_source IMPLEMENTATION.
+  METHOD test_not_found.
+    TRY.
+        cl_oo_factory=>create_instance( )->create_clif_source( 'SDFSDFDS' ).
+        cl_abap_unit_assert=>fail( 'Expected exception' ).
+      CATCH cx_oo_clif_not_exists.
+        RETURN.
+    ENDTRY.
+  ENDMETHOD.
 
-  METHOD test1.
-    DATA ref       TYPE REF TO if_oo_clif_source.
+  METHOD test_intf.
     DATA lt_source TYPE string_table.
 
-    ref = cl_oo_factory=>create_instance( )->create_clif_source( 'CL_OO_FACTORY' ).
+    DATA(lo_ref) = cl_oo_factory=>create_instance( )->create_clif_source( 'IF_OO_CLIF_SOURCE' ).
 
-    ref->get_source( IMPORTING source = lt_source ).
+    lo_ref->get_source( IMPORTING source = lt_source ).
+    cl_abap_unit_assert=>assert_not_initial( lt_source ).
+  ENDMETHOD.
+
+  METHOD test_clas.
+    DATA lt_source TYPE string_table.
+
+    DATA(lo_ref) = cl_oo_factory=>create_instance( )->create_clif_source( 'CL_OO_FACTORY' ).
+
+    lo_ref->get_source( IMPORTING source = lt_source ).
     cl_abap_unit_assert=>assert_not_initial( lt_source ).
   ENDMETHOD.
 
