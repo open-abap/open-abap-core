@@ -3,10 +3,20 @@ CLASS ltcl_read_source DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
   PRIVATE SECTION.
     METHODS test_clas FOR TESTING RAISING cx_static_check.
     METHODS test_intf FOR TESTING RAISING cx_static_check.
+    METHODS test_not_found FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_read_source IMPLEMENTATION.
+  METHOD test_not_found.
+    TRY.
+        cl_oo_factory=>create_instance( )->create_clif_source( 'SDFSDFDS' ).
+        cl_abap_unit_assert=>fail( 'Expected exception' ).
+      CATCH cx_oo_clif_not_exists.
+        RETURN.
+    ENDTRY.
+  ENDMETHOD.
+
   METHOD test_intf.
     DATA lt_source TYPE string_table.
 
