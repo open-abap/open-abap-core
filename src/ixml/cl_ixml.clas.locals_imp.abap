@@ -69,6 +69,10 @@ CLASS lcl_encoding DEFINITION.
 ENDCLASS.
 
 CLASS lcl_encoding IMPLEMENTATION.
+  METHOD if_ixml_encoding~set_character_set.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_encoding~get_byte_order.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
@@ -1010,6 +1014,10 @@ CLASS lcl_istream DEFINITION.
 ENDCLASS.
 
 CLASS lcl_istream IMPLEMENTATION.
+  METHOD if_ixml_stream~get_encoding.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD constructor.
     mv_xml = iv_xml.
   ENDMETHOD.
@@ -1035,6 +1043,10 @@ CLASS lcl_stream_factory DEFINITION.
 ENDCLASS.
 
 CLASS lcl_stream_factory IMPLEMENTATION.
+  METHOD if_ixml_stream_factory~create_ostream_uri.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_stream_factory~create_ostream_itable.
     ASSERT 1 = 'todo'.
   ENDMETHOD.

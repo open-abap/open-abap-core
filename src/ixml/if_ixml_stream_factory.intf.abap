@@ -35,4 +35,11 @@ INTERFACE if_ixml_stream_factory PUBLIC.
     RETURNING
       VALUE(rval) TYPE REF TO if_ixml_istream.
 
+  METHODS create_ostream_uri
+    IMPORTING
+      public_id   TYPE string OPTIONAL
+      system_id   TYPE string
+    RETURNING
+      VALUE(rval) TYPE REF TO if_ixml_ostream.
+
 ENDINTERFACE.
