@@ -1,4 +1,4 @@
-CLASS cl_http_entity DEFINITION PUBLIC CREATE PRIVATE FRIENDS cl_http_client.
+CLASS cl_http_entity DEFINITION PUBLIC CREATE PUBLIC FRIENDS cl_http_client.
   PUBLIC SECTION.
     INTERFACES if_http_response.
     INTERFACES if_http_request.
