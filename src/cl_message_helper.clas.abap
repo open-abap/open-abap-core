@@ -40,11 +40,21 @@ CLASS cl_message_helper DEFINITION PUBLIC.
         obj    TYPE REF TO object
       EXPORTING
         params TYPE any.
+
+    CLASS-METHODS get_latest_t100_exception
+      IMPORTING
+        exception     TYPE REF TO cx_root
+      RETURNING
+        VALUE(result) TYPE REF TO if_t100_message.
   PRIVATE SECTION.
     CONSTANTS gc_fallback TYPE string VALUE 'An exception was raised.'.
 ENDCLASS.
 
 CLASS cl_message_helper IMPLEMENTATION.
+  METHOD get_latest_t100_exception.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD get_text_params.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
