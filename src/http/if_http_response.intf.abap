@@ -56,8 +56,9 @@ INTERFACE if_http_response PUBLIC.
 
   METHODS set_status
     IMPORTING
-      code   TYPE i
-      reason TYPE string.
+      code          TYPE i
+      detailed_info TYPE string OPTIONAL
+      reason        TYPE string.
 
   METHODS delete_cookie_at_client
     IMPORTING
