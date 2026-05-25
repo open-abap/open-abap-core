@@ -17,9 +17,19 @@ CLASS cl_send_request_bcs DEFINITION PUBLIC.
         i_link_to_outbox TYPE abap_bool
       RAISING
         cx_os_object_not_found.
+
+    METHODS set_disclosure
+      IMPORTING
+        i_disclosure TYPE any
+      RAISING
+      cx_os_object_not_found.
 ENDCLASS.
 
 CLASS cl_send_request_bcs IMPLEMENTATION.
+  METHOD set_disclosure.
+    RETURN. " todo, implement method
+  ENDMETHOD.
+
   METHOD set_link_to_outbox.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
