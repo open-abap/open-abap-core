@@ -31,11 +31,41 @@ CLASS cl_document_bcs DEFINITION PUBLIC.
       RETURNING
         VALUE(rt_solix) TYPE solix_tab.
 
+    METHODS set_importance
+      IMPORTING
+        i_importance TYPE any
+      RAISING
+        cx_os_object_not_found.
+
+    METHODS set_sensitivity
+      IMPORTING
+        i_sensitivity TYPE any
+      RAISING
+        cx_os_object_not_found.
+
+    METHODS add_document_as_attachment
+      IMPORTING
+        im_document TYPE REF TO if_document_bcs
+      RAISING
+        cx_document_bcs.
+
 ENDCLASS.
 
 CLASS cl_document_bcs IMPLEMENTATION.
+  METHOD add_document_as_attachment.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD set_sensitivity.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD set_importance.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD xstring_to_solix.
-    RETURN. " todo, implement method
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD create_document.
