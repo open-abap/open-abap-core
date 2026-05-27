@@ -44,6 +44,24 @@ CLASS cl_abap_dyn_prg DEFINITION PUBLIC.
       RETURNING
         VALUE(out) TYPE string.
 
+    CLASS-METHODS check_column_name
+      IMPORTING
+        val            TYPE csequence
+        strict         TYPE abap_bool DEFAULT abap_false
+      RETURNING
+        VALUE(val_str) TYPE string
+      RAISING
+        cx_abap_invalid_name.
+
+    CLASS-METHODS check_variable_name
+      IMPORTING
+        val            TYPE csequence
+        strict         TYPE abap_bool DEFAULT abap_false
+      RETURNING
+        VALUE(val_str) TYPE string
+      RAISING
+        cx_abap_invalid_name.
+
     CLASS-METHODS check_table_or_view_name_str
       IMPORTING
         val               TYPE csequence
@@ -72,6 +90,14 @@ CLASS cl_abap_dyn_prg DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS cl_abap_dyn_prg IMPLEMENTATION.
+  METHOD check_variable_name.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD check_column_name.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD check_whitelist_tab.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
