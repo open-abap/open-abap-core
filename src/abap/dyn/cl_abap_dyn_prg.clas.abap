@@ -95,7 +95,25 @@ CLASS cl_abap_dyn_prg IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD check_column_name.
-    ASSERT 1 = 'todo'.
+    DATA lv_check TYPE string.
+
+    val_str = val.
+    lv_check = val_str.
+    TRANSLATE lv_check TO UPPER CASE.
+
+    IF val_str IS INITIAL.
+      RAISE EXCEPTION TYPE cx_abap_invalid_name.
+    ENDIF.
+
+    IF strict = abap_true.
+      FIND REGEX '^([A-Z_][A-Z0-9_]*|/[A-Z0-9_]+/[A-Z0-9_]+)$' IN lv_check.
+    ELSE.
+      FIND REGEX '^([A-Z_][A-Z0-9_]*|/[A-Z0-9_]+/[A-Z0-9_]+)(~([A-Z_][A-Z0-9_]*|/[A-Z0-9_]+/[A-Z0-9_]+))?$' IN lv_check.
+    ENDIF.
+
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_abap_invalid_name.
+    ENDIF.
   ENDMETHOD.
 
   METHOD check_whitelist_tab.
@@ -108,7 +126,20 @@ CLASS cl_abap_dyn_prg IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD check_table_or_view_name_str.
+    DATA lv_check TYPE string.
+
     val_str = val.
+    lv_check = val_str.
+    TRANSLATE lv_check TO UPPER CASE.
+
+    IF val_str IS INITIAL OR strlen( val_str ) > 30.
+      RAISE EXCEPTION TYPE cx_abap_not_a_table.
+    ENDIF.
+
+    FIND REGEX '^([A-Z_][A-Z0-9_]*|/[A-Z0-9_]+/[A-Z0-9_]+)$' IN lv_check.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_abap_not_a_table.
+    ENDIF.
   ENDMETHOD.
 
   METHOD check_table_name_str.

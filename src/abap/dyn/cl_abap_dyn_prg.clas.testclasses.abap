@@ -24,6 +24,19 @@ CLASS ltcl_dyn_prg DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FIN
     METHODS escape_quotes_str_empty FOR TESTING RAISING cx_static_check.
     METHODS escape_xss_xml_html_newline FOR TESTING RAISING cx_static_check.
     METHODS escape_xss_xml_html_tab FOR TESTING RAISING cx_static_check.
+    METHODS check_table_or_view_name FOR TESTING RAISING cx_static_check.
+    METHODS check_table_or_view_lower FOR TESTING RAISING cx_static_check.
+    METHODS check_table_or_view_namespace FOR TESTING RAISING cx_static_check.
+    METHODS check_table_or_view_invalid FOR TESTING RAISING cx_static_check.
+    METHODS check_table_or_view_empty FOR TESTING RAISING cx_static_check.
+    METHODS check_table_or_view_too_long FOR TESTING RAISING cx_static_check.
+    METHODS check_column_name_simple FOR TESTING RAISING cx_static_check.
+    METHODS check_column_name_underscore FOR TESTING RAISING cx_static_check.
+    METHODS check_column_name_namespace FOR TESTING RAISING cx_static_check.
+    METHODS check_column_name_qualified FOR TESTING RAISING cx_static_check.
+    METHODS check_column_name_strict FOR TESTING RAISING cx_static_check.
+    METHODS check_column_name_invalid FOR TESTING RAISING cx_static_check.
+    METHODS check_column_name_empty FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -166,6 +179,110 @@ CLASS ltcl_dyn_prg IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = cl_abap_dyn_prg=>escape_xss_xml_html( |a{ cl_abap_char_utilities=>horizontal_tab }b| )
       exp = 'a&#x9;b' ).
+  ENDMETHOD.
+
+  METHOD check_table_or_view_name.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>check_table_or_view_name_str(
+        val      = 'T000'
+        packages = '' )
+      exp = 'T000' ).
+  ENDMETHOD.
+
+  METHOD check_table_or_view_lower.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>check_table_or_view_name_str(
+        val      = 'zflight_view'
+        packages = '' )
+      exp = 'zflight_view' ).
+  ENDMETHOD.
+
+  METHOD check_table_or_view_namespace.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>check_table_or_view_name_str(
+        val      = '/DMO/FLIGHT'
+        packages = '' )
+      exp = '/DMO/FLIGHT' ).
+  ENDMETHOD.
+
+  METHOD check_table_or_view_invalid.
+    TRY.
+        cl_abap_dyn_prg=>check_table_or_view_name_str(
+          val      = 'T000 WHERE MANDT = 100'
+          packages = '' ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_abap_not_a_table.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD check_table_or_view_empty.
+    TRY.
+        cl_abap_dyn_prg=>check_table_or_view_name_str(
+          val      = ''
+          packages = '' ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_abap_not_a_table.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD check_table_or_view_too_long.
+    TRY.
+        cl_abap_dyn_prg=>check_table_or_view_name_str(
+          val      = 'ABCDEFGHIJKLMNOPQRSTUVWXYZABCDE'
+          packages = '' ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_abap_not_a_table.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD check_column_name_simple.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>check_column_name( 'MANDT' )
+      exp = 'MANDT' ).
+  ENDMETHOD.
+
+  METHOD check_column_name_underscore.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>check_column_name( 'created_by' )
+      exp = 'created_by' ).
+  ENDMETHOD.
+
+  METHOD check_column_name_namespace.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>check_column_name( '/DMO/FLIGHT_ID' )
+      exp = '/DMO/FLIGHT_ID' ).
+  ENDMETHOD.
+
+  METHOD check_column_name_qualified.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>check_column_name( 'spfli~carrid' )
+      exp = 'spfli~carrid' ).
+  ENDMETHOD.
+
+  METHOD check_column_name_strict.
+    TRY.
+        cl_abap_dyn_prg=>check_column_name(
+          val    = 'spfli~carrid'
+          strict = abap_true ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_abap_invalid_name.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD check_column_name_invalid.
+    TRY.
+        cl_abap_dyn_prg=>check_column_name( 'MANDT FROM T000' ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_abap_invalid_name.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD check_column_name_empty.
+    TRY.
+        cl_abap_dyn_prg=>check_column_name( '' ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_abap_invalid_name.
+    ENDTRY.
   ENDMETHOD.
 
 ENDCLASS.
