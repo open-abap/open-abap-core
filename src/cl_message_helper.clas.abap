@@ -153,6 +153,7 @@ CLASS cl_message_helper IMPLEMENTATION.
         li_t100_message ?= msg.
         t100key = li_t100_message->t100key.
       CATCH cx_sy_move_cast_error.
+        WRITE '@KERNEL console.dir(msg);'.
         ASSERT 1 = 'todo'.
     ENDTRY.
 
