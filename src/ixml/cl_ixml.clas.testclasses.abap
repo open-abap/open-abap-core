@@ -59,6 +59,9 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS get_elements_by_tag_name_elem FOR TESTING RAISING cx_static_check.
     METHODS get_elements_by_tag_name_ns FOR TESTING RAISING cx_static_check.
     METHODS get_elements_by_tag_name_empty FOR TESTING RAISING cx_static_check.
+    METHODS get_next_sibling FOR TESTING RAISING cx_static_check.
+    METHODS get_next_last_sibling FOR TESTING RAISING cx_static_check.
+    METHODS get_next_after_move FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml     TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -1498,6 +1501,78 @@ CLASS ltcl_xml IMPLEMENTATION.
       exp = 0 ).
 
     cl_abap_unit_assert=>assert_initial( li_collection->get_item( 1 ) ).
+
+  ENDMETHOD.
+
+  METHOD get_next_sibling.
+
+    DATA li_doc  TYPE REF TO if_ixml_document.
+    DATA li_root TYPE REF TO if_ixml_node.
+    DATA li_node TYPE REF TO if_ixml_node.
+    DATA li_next TYPE REF TO if_ixml_node.
+
+    li_doc = parse( |<root><first/><second/><third/></root>| ).
+    li_root ?= li_doc->get_root_element( ).
+    li_node = li_root->get_first_child( ).
+    li_next = li_node->get_next( ).
+
+    cl_abap_unit_assert=>assert_not_initial( li_next ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_next->get_name( )
+      exp = 'second' ).
+
+    li_next = li_next->get_next( ).
+
+    cl_abap_unit_assert=>assert_not_initial( li_next ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_next->get_name( )
+      exp = 'third' ).
+
+  ENDMETHOD.
+
+  METHOD get_next_last_sibling.
+
+    DATA li_doc  TYPE REF TO if_ixml_document.
+    DATA li_root TYPE REF TO if_ixml_node.
+    DATA li_node TYPE REF TO if_ixml_node.
+    DATA li_next TYPE REF TO if_ixml_node.
+
+    li_doc = parse( |<root><first/><second/></root>| ).
+    li_root ?= li_doc->get_root_element( ).
+    li_node = li_root->get_first_child( )->get_next( ).
+    li_next = li_node->get_next( ).
+
+    cl_abap_unit_assert=>assert_initial( li_next ).
+
+  ENDMETHOD.
+
+  METHOD get_next_after_move.
+
+    DATA li_doc    TYPE REF TO if_ixml_document.
+    DATA li_root   TYPE REF TO if_ixml_element.
+    DATA li_first  TYPE REF TO if_ixml_node.
+    DATA li_second TYPE REF TO if_ixml_node.
+    DATA li_third  TYPE REF TO if_ixml_node.
+
+    li_doc = parse( |<root><first/><second/><third/></root>| ).
+    li_root = li_doc->get_root_element( ).
+    li_first = li_root->get_first_child( ).
+    li_second = li_first->get_next( ).
+    li_third = li_second->get_next( ).
+
+    li_root->append_child( li_second ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_first->get_next( )->get_name( )
+      exp = 'third' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_third->get_next( )->get_name( )
+      exp = 'second' ).
+
+    cl_abap_unit_assert=>assert_initial( li_second->get_next( ) ).
 
   ENDMETHOD.
 
