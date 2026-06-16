@@ -134,6 +134,7 @@ ENDCLASS.
 CLASS lcl_node_list DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_node_list.
+    INTERFACES if_ixml_node_collection.
     METHODS append IMPORTING ii_node TYPE REF TO if_ixml_node.
     METHODS remove IMPORTING ii_node TYPE REF TO if_ixml_node.
   PRIVATE SECTION.
@@ -169,6 +170,19 @@ CLASS lcl_node_list IMPLEMENTATION.
   METHOD if_ixml_node_list~create_rev_iterator_filtered.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
+
+  METHOD if_ixml_node_collection~get_length.
+    rval = lines( mt_list ).
+  ENDMETHOD.
+
+  METHOD if_ixml_node_collection~create_iterator.
+    CREATE OBJECT rval TYPE lcl_node_iterator
+      EXPORTING it_list = mt_list.
+  ENDMETHOD.
+
+  METHOD if_ixml_node_collection~get_item.
+    READ TABLE mt_list INDEX index INTO rval.
+  ENDMETHOD.
 ENDCLASS.
 
 ****************************************************************
@@ -201,6 +215,12 @@ CLASS lcl_node DEFINITION.
     METHODS has_direct_text
       RETURNING
         VALUE(rv_has) TYPE abap_bool.
+
+    METHODS collect_elements_by_tag_name
+      IMPORTING
+        iv_name      TYPE string
+        iv_namespace TYPE string
+        io_list      TYPE REF TO lcl_node_list.
 ENDCLASS.
 
 CLASS lcl_node IMPLEMENTATION.
@@ -374,11 +394,23 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~get_elements_by_tag_name.
-    ASSERT 1 = 'todo'.
+    DATA lo_list TYPE REF TO lcl_node_list.
+    CREATE OBJECT lo_list.
+    collect_elements_by_tag_name(
+      iv_name      = name
+      iv_namespace = namespace
+      io_list      = lo_list ).
+    val = lo_list.
   ENDMETHOD.
 
   METHOD if_ixml_element~get_elements_by_tag_name_ns.
-    ASSERT 1 = 'todo'.
+    DATA lo_list TYPE REF TO lcl_node_list.
+    CREATE OBJECT lo_list.
+    collect_elements_by_tag_name(
+      iv_name      = name
+      iv_namespace = uri
+      io_list      = lo_list ).
+    val = lo_list.
   ENDMETHOD.
 
   METHOD if_ixml_element~get_first_child.
@@ -416,6 +448,37 @@ CLASS lcl_node IMPLEMENTATION.
     IF li_child->get_name( ) = '#text'.
       rv_has = abap_true.
     ENDIF.
+  ENDMETHOD.
+
+  METHOD collect_elements_by_tag_name.
+    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+    DATA li_node     TYPE REF TO if_ixml_node.
+    DATA lo_node     TYPE REF TO lcl_node.
+    DATA lv_matches  TYPE abap_bool.
+
+    li_iterator = mo_children->if_ixml_node_list~create_iterator( ).
+    DO.
+      li_node = li_iterator->get_next( ).
+      IF li_node IS INITIAL.
+        EXIT. " current loop
+      ENDIF.
+
+      IF li_node->get_name( ) <> '#text'.
+        lv_matches = boolc( iv_name = '*' OR li_node->get_name( ) = iv_name ).
+        IF lv_matches = abap_true
+            AND ( iv_namespace IS INITIAL
+              OR iv_namespace = '*'
+              OR li_node->get_namespace( ) = iv_namespace ).
+          io_list->append( li_node ).
+        ENDIF.
+      ENDIF.
+
+      lo_node ?= li_node.
+      lo_node->collect_elements_by_tag_name(
+        iv_name      = iv_name
+        iv_namespace = iv_namespace
+        io_list      = io_list ).
+    ENDDO.
   ENDMETHOD.
 
   METHOD if_ixml_element~render.
@@ -877,11 +940,21 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~get_elements_by_tag_name_ns.
-    ASSERT 1 = 'todo'.
+    DATA lv_namespace TYPE string.
+    lv_namespace = uri.
+    IF lv_namespace IS INITIAL.
+      lv_namespace = namespace.
+    ENDIF.
+
+    val = mi_node->if_ixml_element~get_elements_by_tag_name_ns(
+      name = name
+      uri  = lv_namespace ).
   ENDMETHOD.
 
   METHOD if_ixml_document~get_elements_by_tag_name.
-    ASSERT 1 = 'todo'.
+    val = mi_node->if_ixml_element~get_elements_by_tag_name(
+      name      = name
+      namespace = namespace ).
   ENDMETHOD.
 
   METHOD if_ixml_document~get_root.

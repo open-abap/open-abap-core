@@ -55,6 +55,10 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS top_attr FOR TESTING RAISING cx_static_check.
     METHODS unqualified_attr FOR TESTING RAISING cx_static_check.
     METHODS attrs_test FOR TESTING RAISING cx_static_check.
+    METHODS get_elements_by_tag_name FOR TESTING RAISING cx_static_check.
+    METHODS get_elements_by_tag_name_elem FOR TESTING RAISING cx_static_check.
+    METHODS get_elements_by_tag_name_ns FOR TESTING RAISING cx_static_check.
+    METHODS get_elements_by_tag_name_empty FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml     TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -1408,6 +1412,92 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = lv_xml
       exp = '*serializer_version="v1.0.0"*' ).
+
+  ENDMETHOD.
+
+  METHOD get_elements_by_tag_name.
+
+    DATA li_doc        TYPE REF TO if_ixml_document.
+    DATA li_collection TYPE REF TO if_ixml_node_collection.
+
+    li_doc = parse( |<root><item>1</item><other><item>2</item></other></root>| ).
+    li_collection = li_doc->get_elements_by_tag_name( name = 'item' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_collection->get_length( )
+      exp = 2 ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_collection->get_item( 1 )->get_value( )
+      exp = '1' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_collection->get_item( 2 )->get_value( )
+      exp = '2' ).
+
+  ENDMETHOD.
+
+  METHOD get_elements_by_tag_name_elem.
+
+    DATA li_doc        TYPE REF TO if_ixml_document.
+    DATA li_root       TYPE REF TO if_ixml_element.
+    DATA li_collection TYPE REF TO if_ixml_node_collection.
+
+    li_doc = parse( |<item><item>1</item><other><item>2</item></other></item>| ).
+    li_root = li_doc->get_root_element( ).
+    li_collection = li_root->get_elements_by_tag_name( name = 'item' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_collection->get_length( )
+      exp = 2 ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_collection->get_item( 1 )->get_value( )
+      exp = '1' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_collection->get_item( 2 )->get_value( )
+      exp = '2' ).
+
+  ENDMETHOD.
+
+  METHOD get_elements_by_tag_name_ns.
+
+    DATA li_doc        TYPE REF TO if_ixml_document.
+    DATA li_collection TYPE REF TO if_ixml_node_collection.
+
+    li_doc = parse( |<root><asx:item>1</asx:item><item>2</item><asx:item>3</asx:item></root>| ).
+    li_collection = li_doc->get_elements_by_tag_name_ns(
+      name = 'item'
+      uri  = 'asx' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_collection->get_length( )
+      exp = 2 ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_collection->get_item( 1 )->get_value( )
+      exp = '1' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_collection->get_item( 2 )->get_value( )
+      exp = '3' ).
+
+  ENDMETHOD.
+
+  METHOD get_elements_by_tag_name_empty.
+
+    DATA li_doc        TYPE REF TO if_ixml_document.
+    DATA li_collection TYPE REF TO if_ixml_node_collection.
+
+    li_doc = parse( |<root><item>1</item></root>| ).
+    li_collection = li_doc->get_elements_by_tag_name( name = 'missing' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_collection->get_length( )
+      exp = 0 ).
+
+    cl_abap_unit_assert=>assert_initial( li_collection->get_item( 1 ) ).
 
   ENDMETHOD.
 
