@@ -713,6 +713,8 @@ CLASS lcl_node IMPLEMENTATION.
 
   METHOD if_ixml_node~set_value.
     mv_value = value.
+    CLEAR mo_children.
+    CREATE OBJECT mo_children TYPE lcl_node_list.
   ENDMETHOD.
 ENDCLASS.
 
