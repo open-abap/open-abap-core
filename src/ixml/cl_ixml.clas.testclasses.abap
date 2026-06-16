@@ -1577,3 +1577,94 @@ CLASS ltcl_xml IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+
+CLASS ltcl_ixml_set_value DEFINITION FOR TESTING
+  DURATION SHORT
+  RISK LEVEL HARMLESS
+  FINAL.
+  PRIVATE SECTION.
+    METHODS get_value_after_set_value FOR TESTING.
+    METHODS render_after_set_value FOR TESTING.
+    METHODS parse
+      RETURNING
+        VALUE(ri_doc) TYPE REF TO if_ixml_document.
+ENDCLASS.
+
+CLASS ltcl_ixml_set_value IMPLEMENTATION.
+  METHOD parse.
+    DATA li_ixml    TYPE REF TO if_ixml.
+    DATA li_factory TYPE REF TO if_ixml_stream_factory.
+    DATA li_istream TYPE REF TO if_ixml_istream.
+    DATA li_parser  TYPE REF TO if_ixml_parser.
+    DATA lv_xml     TYPE string.
+
+    lv_xml = '<ROOT><A>old</A></ROOT>'.
+
+    li_ixml = cl_ixml=>create( ).
+    ri_doc = li_ixml->create_document( ).
+    li_factory = li_ixml->create_stream_factory( ).
+    li_istream = li_factory->create_istream_string( lv_xml ).
+    li_parser = li_ixml->create_parser(
+      stream_factory = li_factory
+      istream        = li_istream
+      document       = ri_doc ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_parser->parse( )
+      exp = 0 ).
+    li_istream->close( ).
+  ENDMETHOD.
+
+  METHOD get_value_after_set_value.
+    DATA li_doc      TYPE REF TO if_ixml_document.
+    DATA li_nodes    TYPE REF TO if_ixml_node_collection.
+    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+    DATA li_node     TYPE REF TO if_ixml_node.
+
+    li_doc = parse( ).
+    li_nodes = li_doc->get_elements_by_tag_name_ns( 'A' ).
+    li_iterator = li_nodes->create_iterator( ).
+    li_node = li_iterator->get_next( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_node->get_value( )
+      exp = 'old' ).
+
+    li_node->set_value( 'new' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_node->get_value( )
+      exp = 'new' ).
+  ENDMETHOD.
+
+  METHOD render_after_set_value.
+    DATA li_ixml     TYPE REF TO if_ixml.
+    DATA li_factory  TYPE REF TO if_ixml_stream_factory.
+    DATA li_ostream  TYPE REF TO if_ixml_ostream.
+    DATA li_renderer TYPE REF TO if_ixml_renderer.
+    DATA li_doc      TYPE REF TO if_ixml_document.
+    DATA li_nodes    TYPE REF TO if_ixml_node_collection.
+    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+    DATA li_node     TYPE REF TO if_ixml_node.
+    DATA lv_rendered TYPE string.
+
+    li_doc = parse( ).
+    li_nodes = li_doc->get_elements_by_tag_name_ns( 'A' ).
+    li_iterator = li_nodes->create_iterator( ).
+    li_node = li_iterator->get_next( ).
+    li_node->set_value( 'new' ).
+
+    li_ixml = cl_ixml=>create( ).
+    li_factory = li_ixml->create_stream_factory( ).
+    li_ostream = li_factory->create_ostream_cstring( lv_rendered ).
+    li_renderer = li_ixml->create_renderer(
+      ostream  = li_ostream
+      document = li_doc ).
+    li_renderer->render( ).
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_rendered
+      exp = '*<A>new</A>*' ).
+  ENDMETHOD.
+ENDCLASS.
