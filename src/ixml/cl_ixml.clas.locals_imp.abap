@@ -283,7 +283,30 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_next.
-    ASSERT 1 = 'todo'.
+    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+    DATA li_node     TYPE REF TO if_ixml_node.
+    DATA lv_found    TYPE abap_bool.
+
+    IF mi_parent IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    li_iterator = mi_parent->get_children( )->create_iterator( ).
+    DO.
+      li_node = li_iterator->get_next( ).
+      IF li_node IS INITIAL.
+        RETURN.
+      ENDIF.
+
+      IF lv_found = abap_true.
+        rval = li_node.
+        RETURN.
+      ENDIF.
+
+      IF li_node = me.
+        lv_found = abap_true.
+      ENDIF.
+    ENDDO.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_namespace_prefix.
@@ -299,7 +322,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~get_next.
-    ASSERT 1 = 'todo'.
+    next ?= if_ixml_node~get_next( ).
   ENDMETHOD.
 
   METHOD if_ixml_element~get_name.
@@ -752,7 +775,7 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_next.
-    ASSERT 1 = 'todo'.
+    RETURN.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_namespace_uri.
