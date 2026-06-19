@@ -1,6 +1,5 @@
 INTERFACE if_t100_message PUBLIC.
 
-
   INTERFACES if_message.
 
   DATA t100key TYPE scx_t100key.
