@@ -52,7 +52,23 @@ ENDCLASS.
 
 CLASS cl_message_helper IMPLEMENTATION.
   METHOD get_latest_t100_exception.
-    ASSERT 1 = 'todo'.
+
+    DATA lx_exception     TYPE REF TO cx_root.
+    DATA li_t100_message  TYPE REF TO if_t100_message.
+
+    lx_exception = exception.
+
+    WHILE lx_exception IS BOUND.
+      TRY.
+          li_t100_message ?= lx_exception.
+          result = li_t100_message.
+          RETURN.
+        CATCH cx_sy_move_cast_error.
+      ENDTRY.
+
+      lx_exception = lx_exception->previous.
+    ENDWHILE.
+
   ENDMETHOD.
 
   METHOD get_text_params.
