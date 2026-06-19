@@ -29,7 +29,9 @@ CLASS lcx_test2 DEFINITION INHERITING FROM cx_static_check.
     INTERFACES if_t100_dyn_msg.
     INTERFACES if_t100_message.
 
-    METHODS constructor.
+    METHODS constructor
+      IMPORTING
+        previous TYPE REF TO cx_root OPTIONAL.
 ENDCLASS.
 
 CLASS lcx_test2 IMPLEMENTATION.
@@ -54,6 +56,9 @@ CLASS ltcl_message_helper DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SH
     METHODS set_msg_vars_for_if_msg_text FOR TESTING RAISING cx_static_check.
     METHODS set_msg_vars_for_if_msg_dyn FOR TESTING RAISING cx_static_check.
     METHODS check_msg_kind FOR TESTING RAISING cx_static_check.
+    METHODS get_latest_t100_direct FOR TESTING RAISING cx_static_check.
+    METHODS get_latest_t100_previous FOR TESTING RAISING cx_static_check.
+    METHODS get_latest_t100_none FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -163,6 +168,65 @@ CLASS ltcl_message_helper IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = ls_t100key-msgno
       exp = '001' ).
+
+  ENDMETHOD.
+
+  METHOD get_latest_t100_direct.
+
+    DATA lx_error TYPE REF TO lcx_test2.
+    DATA li_t100  TYPE REF TO if_t100_message.
+
+    CREATE OBJECT lx_error.
+
+    li_t100 = cl_message_helper=>get_latest_t100_exception( lx_error ).
+
+    cl_abap_unit_assert=>assert_bound( li_t100 ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_t100->t100key-msgid
+      exp = '00' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_t100->t100key-msgno
+      exp = '001' ).
+
+  ENDMETHOD.
+
+  METHOD get_latest_t100_previous.
+
+    DATA lx_previous TYPE REF TO lcx_test2.
+    DATA lx_error    TYPE REF TO cx_no_check.
+    DATA li_t100     TYPE REF TO if_t100_message.
+
+    CREATE OBJECT lx_previous.
+    CREATE OBJECT lx_error
+      EXPORTING
+        previous = lx_previous.
+
+    li_t100 = cl_message_helper=>get_latest_t100_exception( lx_error ).
+
+    cl_abap_unit_assert=>assert_bound( li_t100 ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_t100->t100key-msgid
+      exp = '00' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_t100->t100key-msgno
+      exp = '001' ).
+
+  ENDMETHOD.
+
+  METHOD get_latest_t100_none.
+
+    DATA lx_error TYPE REF TO cx_no_check.
+    DATA li_t100  TYPE REF TO if_t100_message.
+
+    CREATE OBJECT lx_error.
+
+    li_t100 = cl_message_helper=>get_latest_t100_exception( lx_error ).
+
+    cl_abap_unit_assert=>assert_not_bound( li_t100 ).
 
   ENDMETHOD.
 
