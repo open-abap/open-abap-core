@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_DTEL" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <DD04V>
+    <ROLLNAME>FDT_DAY_OF_MONTH</ROLLNAME>
+    <DDLANGUAGE>E</DDLANGUAGE>
+    <DATATYPE>NUMC</DATATYPE>
+    <HEADLEN>55</HEADLEN>
+    <SCRLEN1>10</SCRLEN1>
+    <SCRLEN2>20</SCRLEN2>
+    <SCRLEN3>40</SCRLEN3>
+    <DDTEXT>Day of Month</DDTEXT>
+    <REPTEXT>Day of Month</REPTEXT>
+    <SCRTEXT_S>Day</SCRTEXT_S>
+    <SCRTEXT_M>Day of Month</SCRTEXT_M>
+    <SCRTEXT_L>Day of Month</SCRTEXT_L>
+    <DTELMASTER>E</DTELMASTER>
+    <LENG>000002</LENG>
+    <DECIMALS>000000</DECIMALS>
+    <OUTPUTLEN>000002</OUTPUTLEN>
+   </DD04V>
+  </asx:values>
+ </asx:abap>
+</abapGit>
