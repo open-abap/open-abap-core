@@ -1,0 +1,7 @@
+CLASS cx_abap_api_state DEFINITION PUBLIC INHERITING FROM cx_static_check CREATE PUBLIC.
+
+ENDCLASS.
+
+CLASS cx_abap_api_state IMPLEMENTATION.
+
+ENDCLASS.
