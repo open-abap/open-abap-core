@@ -20,6 +20,23 @@ CLASS cl_sql_result_set DEFINITION PUBLIC.
       RAISING
         cx_sql_exception.
 
+    METHODS get_metadata
+      RETURNING
+        VALUE(md_tab) TYPE adbc_rs_metadata_descr_tab
+      RAISING
+        cx_sql_exception.
+
+    METHODS get_struct_ref
+      IMPORTING
+        md_tab            TYPE adbc_rs_metadata_descr_tab
+        string_only       TYPE abap_bool DEFAULT abap_false
+        p_strict          TYPE abap_bool DEFAULT abap_true
+      RETURNING
+        VALUE(struct_ref) TYPE REF TO data
+      RAISING
+        cx_sy_struct_creation
+        cx_parameter_invalid_range.
+
     METHODS close.
 
     METHODS set_param_struct
@@ -44,8 +61,16 @@ CLASS cl_sql_result_set DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS cl_sql_result_set IMPLEMENTATION.
+  METHOD get_struct_ref.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get_metadata.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD set_param_struct.
-    RETURN. " todo, implement method
+    ASSERT 1 = 'todo'.
   ENDMETHOD.
 
   METHOD set_param.
