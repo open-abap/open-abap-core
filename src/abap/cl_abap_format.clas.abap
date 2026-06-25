@@ -1,5 +1,6 @@
 CLASS cl_abap_format DEFINITION PUBLIC.
   PUBLIC SECTION.
+
     CONSTANTS exp_preserve                    TYPE i VALUE cl_abap_math=>max_int4.
 
     CONSTANTS a_left                          TYPE i VALUE 1.
