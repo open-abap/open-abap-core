@@ -80,7 +80,7 @@ CLASS ltcl_test IMPLEMENTATION.
 
     cl_http_client=>create_by_url(
       EXPORTING
-        url    = 'http://httpbin.org/get'
+        url    = |{ get_http_bin_host( ) }/get|
       IMPORTING
         client = li_client ).
     li_client->send( ).
