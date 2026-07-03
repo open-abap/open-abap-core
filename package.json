@@ -13,6 +13,7 @@
     "docker:start": "docker compose -p open-abap -f test/stack.yml up -d --wait && npm run postgres:init",
     "test": "npm run lint && npm run unit"
   },
+
   "license": "MIT",
   "dependencies": {
     "@abaplint/cli": "^2.119.54",
