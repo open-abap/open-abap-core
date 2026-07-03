@@ -13,12 +13,13 @@
     "docker:start": "docker compose -p open-abap -f test/stack.yml up -d --wait && npm run postgres:init",
     "test": "npm run lint && npm run unit"
   },
+
   "license": "MIT",
   "dependencies": {
-    "@abaplint/cli": "^2.119.42",
+    "@abaplint/cli": "^2.119.54",
     "@abaplint/database-pg": "^2.11.78",
     "@abaplint/database-sqlite": "^2.11.78",
-    "@abaplint/runtime": "^2.13.30",
-    "@abaplint/transpiler-cli": "^2.13.30"
+    "@abaplint/runtime": "^2.13.32",
+    "@abaplint/transpiler-cli": "^2.13.32"
   }
 }
