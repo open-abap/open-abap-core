@@ -66,9 +66,38 @@ CLASS cl_bcs DEFINITION PUBLIC.
         i_send_immediately TYPE abap_bool
       RAISING
         cx_bcs.
+
+    METHODS set_disclosure
+      IMPORTING
+        i_disclosure TYPE any.
+
+    METHODS set_priority
+      IMPORTING
+        i_priority TYPE any
+      RAISING
+        cx_send_req_bcs.
+
+    METHODS create_link_to_app
+      IMPORTING
+        i_app_instance TYPE any
+      RAISING
+        cx_send_req_bcs.
+
 ENDCLASS.
 
 CLASS cl_bcs IMPLEMENTATION.
+  METHOD create_link_to_app.
+    RETURN. " todo, implement method
+  ENDMETHOD.
+
+  METHOD set_priority.
+    RETURN. " todo, implement method
+  ENDMETHOD.
+
+  METHOD set_disclosure.
+    RETURN. " todo, implement method
+  ENDMETHOD.
+
   METHOD document.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
