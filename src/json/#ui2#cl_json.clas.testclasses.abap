@@ -794,6 +794,7 @@ CLASS ltcl_serialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT F
     METHODS xstring_identity FOR TESTING RAISING cx_static_check.
     METHODS test_log FOR TESTING RAISING cx_static_check.
     METHODS test_exception FOR TESTING RAISING cx_static_check.
+    METHODS escape_backslash FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_serialize IMPLEMENTATION.
@@ -1260,6 +1261,16 @@ CLASS ltcl_serialize IMPLEMENTATION.
       act = lv_json
       exp = '[{"EXCEPTION":{"KERNEL_ERRID":"","PREVIOUS":null,"TEXTID":""}}]' ).
 
+  ENDMETHOD.
+
+  METHOD escape_backslash.
+    DATA lv_value TYPE string.
+    DATA lv_json  TYPE string.
+    lv_value = '\TYPE=%_T0000000000000000000000394'.
+    lv_json = /ui2/cl_json=>serialize( lv_value ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_json
+      exp = '"\\TYPE=%_T0000000000000000000000394"' ).
   ENDMETHOD.
 
 ENDCLASS.
