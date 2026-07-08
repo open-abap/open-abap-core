@@ -12,6 +12,18 @@ CLASS lcl_stream DEFINITION.
         iv_xstring       TYPE xstring
       RETURNING
         VALUE(rv_crc)    TYPE xstring.
+    CLASS-METHODS read_int2
+      IMPORTING
+        iv_xstr       TYPE xstring
+        iv_offset     TYPE i
+      RETURNING
+        VALUE(rv_int) TYPE i.
+    CLASS-METHODS read_int4
+      IMPORTING
+        iv_xstr       TYPE xstring
+        iv_offset     TYPE i
+      RETURNING
+        VALUE(rv_int) TYPE i.
   PRIVATE SECTION.
     CLASS-DATA crc32_map TYPE xstring.
     DATA mv_xstr TYPE xstring.
@@ -20,6 +32,36 @@ ENDCLASS.
 CLASS lcl_stream IMPLEMENTATION.
   METHOD append.
     CONCATENATE mv_xstr iv_xstr INTO mv_xstr IN BYTE MODE.
+  ENDMETHOD.
+
+  METHOD read_int2.
+    DATA lv_byte   TYPE x LENGTH 1.
+    DATA lv_val    TYPE i.
+    DATA lv_factor TYPE i VALUE 1.
+    DATA lv_pos    TYPE i.
+
+    DO 2 TIMES.
+      lv_pos = iv_offset + sy-index - 1.
+      lv_byte = iv_xstr+lv_pos(1).
+      lv_val = lv_byte.
+      rv_int = rv_int + lv_val * lv_factor.
+      lv_factor = lv_factor * 256.
+    ENDDO.
+  ENDMETHOD.
+
+  METHOD read_int4.
+    DATA lv_byte   TYPE x LENGTH 1.
+    DATA lv_val    TYPE i.
+    DATA lv_factor TYPE i VALUE 1.
+    DATA lv_pos    TYPE i.
+
+    DO 4 TIMES.
+      lv_pos = iv_offset + sy-index - 1.
+      lv_byte = iv_xstr+lv_pos(1).
+      lv_val = lv_byte.
+      rv_int = rv_int + lv_val * lv_factor.
+      lv_factor = lv_factor * 256.
+    ENDDO.
   ENDMETHOD.
 
   METHOD get.
