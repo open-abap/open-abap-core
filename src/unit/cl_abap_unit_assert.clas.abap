@@ -169,6 +169,12 @@ CLASS cl_abap_unit_assert DEFINITION PUBLIC.
           act TYPE any
           exp TYPE any.
 
+    CLASS-METHODS
+      check_comparable
+        IMPORTING
+          act TYPE any
+          exp TYPE any.
+
 ENDCLASS.
 
 CLASS cl_abap_unit_assert IMPLEMENTATION.
@@ -230,6 +236,22 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
       ENDDO.
     ENDIF.
 
+  ENDMETHOD.
+
+  METHOD check_comparable.
+    DATA type1 TYPE c LENGTH 1.
+    DATA type2 TYPE c LENGTH 1.
+
+    DESCRIBE FIELD act TYPE type1.
+    DESCRIBE FIELD exp TYPE type2.
+
+* fixed length hex (x) and xstring are not comparable
+    IF ( type1 = 'X' AND type2 = 'y' )
+        OR ( type1 = 'y' AND type2 = 'X' ).
+      RAISE EXCEPTION TYPE kernel_cx_assert
+        EXPORTING
+          msg = |Types are not comparable|.
+    ENDIF.
   ENDMETHOD.
 
   METHOD assert_text_matches.
@@ -295,6 +317,9 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD assert_differs.
+    check_comparable(
+      act = act
+      exp = exp ).
     TRY.
         assert_equals(
           act = act
@@ -353,6 +378,10 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
 
     FIELD-SYMBOLS <act> TYPE any.
     FIELD-SYMBOLS <exp> TYPE any.
+
+    check_comparable(
+      act = act
+      exp = exp ).
 
     DESCRIBE FIELD act TYPE type1.
     DESCRIBE FIELD exp TYPE type2.

@@ -70,7 +70,7 @@ CLASS ltcl_test IMPLEMENTATION.
           exp = 2
           act = 1
           tol = `0.5` ).
-        cl_abap_unit_assert=>fail( ).
+        ASSERT 1 = 2.
       CATCH kernel_cx_assert INTO lx_assert.
         cl_abap_unit_assert=>assert_not_initial( lx_assert->msg ).
     ENDTRY.
