@@ -34,6 +34,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS non_compareable2 FOR TESTING RAISING cx_static_check.
     METHODS non_compareable3 FOR TESTING RAISING cx_static_check.
     METHODS non_compareable4 FOR TESTING RAISING cx_static_check.
+    METHODS non_compareable5 FOR TESTING RAISING cx_static_check.
+    METHODS non_compareable6 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -403,6 +405,46 @@ CLASS ltcl_test IMPLEMENTATION.
         cl_abap_unit_assert=>assert_differs(
           act = val1
           exp = val2 ).
+
+        cl_abap_unit_assert=>fail( ).
+      CATCH kernel_cx_assert INTO lx_assert.
+        cl_abap_unit_assert=>assert_not_initial( lx_assert->msg ).
+    ENDTRY.
+
+  ENDMETHOD.
+
+  METHOD non_compareable5.
+
+    DATA lx_assert TYPE REF TO kernel_cx_assert.
+    DATA val1 TYPE x LENGTH 2.
+    DATA val2 TYPE xstring.
+    val1 = '1234'.
+    val2 = '1234'.
+
+    TRY.
+        cl_abap_unit_assert=>assert_equals(
+          act = val2
+          exp = val1 ).
+
+        cl_abap_unit_assert=>fail( ).
+      CATCH kernel_cx_assert INTO lx_assert.
+        cl_abap_unit_assert=>assert_not_initial( lx_assert->msg ).
+    ENDTRY.
+
+  ENDMETHOD.
+
+  METHOD non_compareable6.
+
+    DATA lx_assert TYPE REF TO kernel_cx_assert.
+    DATA val1 TYPE x LENGTH 2.
+    DATA val2 TYPE xstring.
+    val1 = '1234'.
+    val2 = '1234'.
+
+    TRY.
+        cl_abap_unit_assert=>assert_differs(
+          act = val2
+          exp = val1 ).
 
         cl_abap_unit_assert=>fail( ).
       CATCH kernel_cx_assert INTO lx_assert.
