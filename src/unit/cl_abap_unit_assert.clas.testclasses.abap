@@ -30,6 +30,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS float_zero FOR TESTING RAISING cx_static_check.
     METHODS float_55 FOR TESTING RAISING cx_static_check.
     METHODS packed_eq_str FOR TESTING RAISING cx_static_check.
+    METHODS non_compareable1 FOR TESTING RAISING cx_static_check.
+    METHODS non_compareable2 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -328,6 +330,42 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_act
       exp = '150.000' ).
+
+  ENDMETHOD.
+
+  METHOD non_compareable1.
+
+    DATA lx_assert TYPE REF TO kernel_cx_assert.
+    DATA val1 TYPE x LENGTH 2.
+    DATA val2 TYPE xstring.
+
+    TRY.
+        cl_abap_unit_assert=>assert_equals(
+          act = val1
+          exp = val2 ).
+
+        cl_abap_unit_assert=>fail( ).
+      CATCH kernel_cx_assert INTO lx_assert.
+        cl_abap_unit_assert=>assert_not_initial( lx_assert->msg ).
+    ENDTRY.
+
+  ENDMETHOD.
+
+  METHOD non_compareable2.
+
+    DATA lx_assert TYPE REF TO kernel_cx_assert.
+    DATA val1 TYPE x LENGTH 2.
+    DATA val2 TYPE xstring.
+
+    TRY.
+        cl_abap_unit_assert=>assert_differs(
+          act = val1
+          exp = val2 ).
+
+        cl_abap_unit_assert=>fail( ).
+      CATCH kernel_cx_assert INTO lx_assert.
+        cl_abap_unit_assert=>assert_not_initial( lx_assert->msg ).
+    ENDTRY.
 
   ENDMETHOD.
 
