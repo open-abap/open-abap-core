@@ -170,7 +170,8 @@ CLASS cl_abap_zip IMPLEMENTATION.
 * 28, 2, File name length (n)
 * 30, 2, Extra field length (m)
       lv_tmp = lo_file->get( ).
-      lo_central->append( lv_tmp+4(26) ).
+      lv_tmp = lv_tmp+4(26).
+      lo_central->append( lv_tmp ).
 
 * 32, 2, File comment length (k)
       lo_central->append_int2( 0 ).
