@@ -348,7 +348,7 @@ CLASS ltcl_test IMPLEMENTATION.
           act = val1
           exp = val2 ).
 
-        cl_abap_unit_assert=>fail( ).
+        ASSERT 1 = 2.
       CATCH kernel_cx_assert INTO lx_assert.
         cl_abap_unit_assert=>assert_not_initial( lx_assert->msg ).
     ENDTRY.
@@ -366,7 +366,7 @@ CLASS ltcl_test IMPLEMENTATION.
           act = val1
           exp = val2 ).
 
-        cl_abap_unit_assert=>fail( ).
+        ASSERT 1 = 2.
       CATCH kernel_cx_assert INTO lx_assert.
         cl_abap_unit_assert=>assert_not_initial( lx_assert->msg ).
     ENDTRY.
@@ -386,7 +386,7 @@ CLASS ltcl_test IMPLEMENTATION.
           act = val1
           exp = val2 ).
 
-        cl_abap_unit_assert=>fail( ).
+        ASSERT 1 = 2.
       CATCH kernel_cx_assert INTO lx_assert.
         cl_abap_unit_assert=>assert_not_initial( lx_assert->msg ).
     ENDTRY.
@@ -406,7 +406,7 @@ CLASS ltcl_test IMPLEMENTATION.
           act = val1
           exp = val2 ).
 
-        cl_abap_unit_assert=>fail( ).
+        ASSERT 1 = 2.
       CATCH kernel_cx_assert INTO lx_assert.
         cl_abap_unit_assert=>assert_not_initial( lx_assert->msg ).
     ENDTRY.
@@ -426,7 +426,7 @@ CLASS ltcl_test IMPLEMENTATION.
           act = val2
           exp = val1 ).
 
-        cl_abap_unit_assert=>fail( ).
+        ASSERT 1 = 2.
       CATCH kernel_cx_assert INTO lx_assert.
         cl_abap_unit_assert=>assert_not_initial( lx_assert->msg ).
     ENDTRY.
@@ -446,7 +446,7 @@ CLASS ltcl_test IMPLEMENTATION.
           act = val2
           exp = val1 ).
 
-        cl_abap_unit_assert=>fail( ).
+        ASSERT 1 = 2.
       CATCH kernel_cx_assert INTO lx_assert.
         cl_abap_unit_assert=>assert_not_initial( lx_assert->msg ).
     ENDTRY.
