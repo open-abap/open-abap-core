@@ -94,7 +94,76 @@ CLASS cl_abap_zip IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD load.
-    ASSERT 1 = 'todo'.
+* https://en.wikipedia.org/wiki/ZIP_(file_format)
+    CONSTANTS lc_local_sig TYPE x LENGTH 4 VALUE '504B0304'.
+
+    DATA lv_offset     TYPE i.
+    DATA lv_length     TYPE i.
+    DATA lv_sig        TYPE x LENGTH 4.
+    DATA lv_comp_size  TYPE i.
+    DATA lv_name_len   TYPE i.
+    DATA lv_extra_len  TYPE i.
+    DATA lv_name_x     TYPE xstring.
+    DATA lv_name_off   TYPE i.
+    DATA ls_contents   LIKE LINE OF mt_contents.
+    DATA ls_file       LIKE LINE OF files.
+    DATA lv_out_len    TYPE i.
+    DATA lo_conv       TYPE REF TO cl_abap_conv_in_ce.
+
+    CLEAR mt_contents.
+    CLEAR files.
+
+    lv_length = xstrlen( zip ).
+    lv_offset = 0.
+
+    WHILE lv_offset + 30 <= lv_length.
+      lv_sig = zip+lv_offset(4).
+      IF lv_sig <> lc_local_sig.
+* end of local file records reached (central directory / EOCD)
+        EXIT.
+      ENDIF.
+
+      CLEAR ls_contents.
+
+* 18, 4, Compressed size
+      lv_comp_size = lcl_stream=>read_int4( iv_xstr   = zip
+                                            iv_offset = lv_offset + 18 ).
+* 26, 2, File name length (n)
+      lv_name_len = lcl_stream=>read_int2( iv_xstr   = zip
+                                           iv_offset = lv_offset + 26 ).
+* 28, 2, Extra field length (m)
+      lv_extra_len = lcl_stream=>read_int2( iv_xstr   = zip
+                                            iv_offset = lv_offset + 28 ).
+
+* 30, n, File name
+      IF lv_name_len > 0.
+        lv_name_off = lv_offset + 30.
+        lv_name_x = zip+lv_name_off(lv_name_len).
+        lo_conv = cl_abap_conv_in_ce=>create( input = lv_name_x ).
+        lo_conv->read( IMPORTING data = ls_contents-name ).
+      ENDIF.
+
+      lv_offset = lv_offset + 30 + lv_name_len + lv_extra_len.
+
+* compressed data
+      IF lv_comp_size > 0.
+        ls_contents-compressed = zip+lv_offset(lv_comp_size).
+      ENDIF.
+      lv_offset = lv_offset + lv_comp_size.
+
+      cl_abap_gzip=>decompress_binary(
+        EXPORTING
+          gzip_in     = ls_contents-compressed
+        IMPORTING
+          raw_out     = ls_contents-content
+          raw_out_len = lv_out_len ).
+
+      INSERT ls_contents INTO TABLE mt_contents.
+
+      ls_file-name = ls_contents-name.
+      ls_file-size = xstrlen( ls_contents-content ).
+      INSERT ls_file INTO TABLE files.
+    ENDWHILE.
   ENDMETHOD.
 
   METHOD save.
