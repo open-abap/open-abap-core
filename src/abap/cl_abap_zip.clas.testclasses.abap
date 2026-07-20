@@ -3,6 +3,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
   PRIVATE SECTION.
     METHODS test1 FOR TESTING RAISING cx_static_check.
     METHODS get FOR TESTING RAISING cx_static_check.
+    METHODS delete FOR TESTING RAISING cx_static_check.
     METHODS crc FOR TESTING RAISING cx_static_check.
     METHODS save FOR TESTING RAISING cx_static_check.
     METHODS load FOR TESTING RAISING cx_static_check.
@@ -92,6 +93,41 @@ CLASS ltcl_test IMPLEMENTATION.
     lo_zip->get( EXPORTING name    = 'foobar'
                  IMPORTING content = lv_act ).
 
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_act
+      exp = lv_content ).
+  ENDMETHOD.
+
+  METHOD delete.
+    DATA lo_zip     TYPE REF TO cl_abap_zip.
+    DATA lv_content TYPE xstring.
+    DATA lv_act     TYPE xstring.
+
+    lv_content = '1122334455667788AABBCCDDEEFF'.
+    CREATE OBJECT lo_zip.
+    lo_zip->add( name    = 'foo'
+                 content = lv_content ).
+    lo_zip->add( name    = 'bar'
+                 content = lv_content ).
+
+    lo_zip->delete( EXPORTING  name            = 'foo'
+                    EXCEPTIONS zip_index_error = 1
+                               OTHERS          = 2 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = sy-subrc
+      exp = 0 ).
+
+    " deleting again raises
+    lo_zip->delete( EXPORTING  name            = 'foo'
+                    EXCEPTIONS zip_index_error = 1
+                               OTHERS          = 2 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = sy-subrc
+      exp = 1 ).
+
+    " remaining entry is untouched
+    lo_zip->get( EXPORTING name    = 'bar'
+                 IMPORTING content = lv_act ).
     cl_abap_unit_assert=>assert_equals(
       act = lv_act
       exp = lv_content ).
