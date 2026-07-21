@@ -19,7 +19,9 @@ CLASS cl_abap_zip DEFINITION PUBLIC.
         name    TYPE string OPTIONAL
         index   TYPE i OPTIONAL
       EXPORTING
-        content TYPE xstring.
+        content TYPE xstring
+      EXCEPTIONS
+        zip_index_error.
 
     METHODS delete
       IMPORTING
@@ -72,6 +74,9 @@ CLASS cl_abap_zip IMPLEMENTATION.
     ASSERT index IS INITIAL.
 
     READ TABLE mt_contents WITH KEY name = name INTO ls_contents.
+    IF sy-subrc <> 0.
+      RAISE zip_index_error.
+    ENDIF.
     cl_abap_gzip=>decompress_binary(
       EXPORTING
         gzip_in     = ls_contents-compressed
