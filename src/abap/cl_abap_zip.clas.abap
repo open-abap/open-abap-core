@@ -63,7 +63,19 @@ CLASS cl_abap_zip IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD delete.
-    ASSERT 1 = 'todo'.
+    DATA lv_name TYPE string.
+
+    ASSERT name IS NOT INITIAL.
+    ASSERT index IS INITIAL.
+    lv_name = name.
+
+    READ TABLE mt_contents WITH KEY name = lv_name TRANSPORTING NO FIELDS.
+    IF sy-subrc <> 0.
+      RAISE zip_index_error.
+    ENDIF.
+
+    DELETE mt_contents WHERE name = lv_name.
+    DELETE files WHERE name = lv_name.
   ENDMETHOD.
 
   METHOD get.
