@@ -132,6 +132,8 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_act
       exp = lv_content ).
+  ENDMETHOD.
+
   METHOD get_missing.
     DATA lo_zip     TYPE REF TO cl_abap_zip.
     DATA lv_content TYPE xstring.
