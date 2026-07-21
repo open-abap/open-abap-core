@@ -64,7 +64,11 @@ CLASS cl_http_utility IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD escape_html.
-    ASSERT 1 = 'todo'.
+    escaped = unescaped.
+    REPLACE ALL OCCURRENCES OF `&` IN escaped WITH `&amp;`.
+    REPLACE ALL OCCURRENCES OF `<` IN escaped WITH `&lt;`.
+    REPLACE ALL OCCURRENCES OF `>` IN escaped WITH `&gt;`.
+    REPLACE ALL OCCURRENCES OF `"` IN escaped WITH `&quot;`.
   ENDMETHOD.
 
   METHOD escape_javascript.
