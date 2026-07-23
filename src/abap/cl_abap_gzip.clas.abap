@@ -74,6 +74,7 @@ CLASS cl_abap_gzip IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD decompress_binary.
+    CLEAR raw_out.
     WRITE '@KERNEL const zlib = await import("zlib");'.
     WRITE '@KERNEL const buf = Buffer.from(gzip_in.get(), "hex");'.
     WRITE '@KERNEL const decompress = zlib.inflateRawSync(buf, {finishFlush: zlib.constants.Z_SYNC_FLUSH}).toString("hex").toUpperCase();'.
@@ -83,6 +84,7 @@ CLASS cl_abap_gzip IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD compress_binary.
+    CLEAR gzip_out.
 * todo, input parameter COMPRESS_LEVEL corresponds to "level" in "options" for Node?
     WRITE '@KERNEL const zlib = await import("zlib");'.
     WRITE '@KERNEL const buf = Buffer.from(raw_in.get(), "hex");'.

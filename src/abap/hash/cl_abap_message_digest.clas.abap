@@ -41,6 +41,7 @@ CLASS cl_abap_message_digest IMPLEMENTATION.
 
     DATA lv_algorithm TYPE string.
 
+    CLEAR ef_hashxstring.
     lv_algorithm = to_lower( if_algorithm ).
     ASSERT lv_algorithm = 'sha1' OR lv_algorithm = 'md5' OR lv_algorithm = 'sha256'.
 
