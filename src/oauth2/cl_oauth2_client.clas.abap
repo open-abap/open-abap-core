@@ -37,6 +37,10 @@ CLASS cl_oauth2_client IMPLEMENTATION.
 
   METHOD if_oauth2_client~execute_cc_flow.
 
+    TYPES: BEGIN OF ty_token_response,
+             access_token TYPE string,
+           END OF ty_token_response.
+
     DATA lv_text          TYPE string.
     DATA lv_code          TYPE i.
     DATA lv_message       TYPE string.
@@ -46,6 +50,7 @@ CLASS cl_oauth2_client IMPLEMENTATION.
     DATA lv_endpoint      TYPE string.
     DATA lv_path          TYPE string.
     DATA li_http_client   TYPE REF TO if_http_client.
+    DATA ls_token_response TYPE ty_token_response.
 
 
     mo_config_writer_api->read(
@@ -54,7 +59,7 @@ CLASS cl_oauth2_client IMPLEMENTATION.
         e_token_endpoint = lv_endpoint
         e_target_path    = lv_path ).
 
-    WRITE '@KERNEL lv_client_secret.set(this.mo_config_writer_api.get().ms_config.get().client_secret);'.
+    WRITE '@KERNEL lv_client_secret.set(this.#mo_config_writer_api.get().FRIENDS_ACCESS_INSTANCE["ms_config"].get().client_secret);'.
 
     cl_http_client=>create_by_url(
       EXPORTING
@@ -121,8 +126,15 @@ CLASS cl_oauth2_client IMPLEMENTATION.
       RAISE EXCEPTION TYPE cx_oa2c.
     ENDIF.
 
-    FIND REGEX |"access_token":"([\\w\\.-]+)"| IN lv_cdata SUBMATCHES mv_token.
-    ASSERT sy-subrc = 0.
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = lv_cdata
+      CHANGING
+        data = ls_token_response ).
+    mv_token = ls_token_response-access_token.
+    IF mv_token IS INITIAL.
+      RAISE EXCEPTION TYPE cx_oa2c.
+    ENDIF.
 
   ENDMETHOD.
 

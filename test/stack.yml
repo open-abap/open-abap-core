@@ -19,3 +19,16 @@ services:
     container_name: httpbin
     ports:
       - '8080:80'
+  oauth2:
+    image: node:22-alpine
+    container_name: oauth2
+    command: ["node", "/app/oauth2-server.mjs"]
+    volumes:
+      - ./oauth2/oauth2-server.mjs:/app/oauth2-server.mjs:ro
+    ports:
+      - '8081:8081'
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:8081/health').then(response => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 1s
+      timeout: 2s
+      retries: 10
