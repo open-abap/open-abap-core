@@ -100,9 +100,9 @@ CLASS ltcl_test IMPLEMENTATION.
     struct ?= cl_abap_typedescr=>describe_by_name( 'T000' ).
     struct->get_component_type(
       EXPORTING
-        p_name      = 'NONONONONO'
+        p_name              = 'NONONONONO'
       RECEIVING
-        p_descr_ref = type
+        p_descr_ref         = type
       EXCEPTIONS
         component_not_found = 4 ).
     cl_abap_unit_assert=>assert_equals(

@@ -275,13 +275,13 @@ CLASS ltcl_fugr IMPLEMENTATION.
 
     CALL FUNCTION 'UNIT_CONVERSION_SIMPLE'
       EXPORTING
-        input                = 1
-        unit_in              = 'KG'
-        unit_out             = 'KG'
+        input    = 1
+        unit_in  = 'KG'
+        unit_out = 'KG'
       IMPORTING
-        output               = lv_result
+        output   = lv_result
       EXCEPTIONS
-        OTHERS               = 1.
+        OTHERS   = 1.
     cl_abap_unit_assert=>assert_subrc( ).
 
     cl_abap_unit_assert=>assert_equals(

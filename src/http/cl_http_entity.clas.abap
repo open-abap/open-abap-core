@@ -207,7 +207,7 @@ CLASS cl_http_entity IMPLEMENTATION.
   METHOD if_http_entity~get_cdata.
     cl_abap_conv_in_ce=>create( encoding = 'UTF-8' )->convert(
       EXPORTING input = mv_data
-      IMPORTING data = data ).
+      IMPORTING data  = data ).
   ENDMETHOD.
 
   METHOD if_http_response~set_status.
@@ -217,7 +217,7 @@ CLASS cl_http_entity IMPLEMENTATION.
 
   METHOD if_http_entity~set_cdata.
     cl_abap_conv_out_ce=>create( encoding = 'UTF-8' )->convert(
-      EXPORTING data = data
+      EXPORTING data   = data
       IMPORTING buffer = mv_data ).
   ENDMETHOD.
 

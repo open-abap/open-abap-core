@@ -145,9 +145,9 @@ CLASS ltcl_deserialize IMPLEMENTATION.
     lv_json = '{"foo": true}'.
     /ui2/cl_json=>deserialize(
       EXPORTING
-        json        = lv_json
+        json = lv_json
       CHANGING
-        data        = stru ).
+        data = stru ).
     cl_abap_unit_assert=>assert_equals(
       act = stru-foo
       exp = abap_true ).
@@ -161,9 +161,9 @@ CLASS ltcl_deserialize IMPLEMENTATION.
     lv_json = '{"foo": true}'.
     /ui2/cl_json=>deserialize(
       EXPORTING
-        json        = lv_json
+        json = lv_json
       CHANGING
-        data        = stru ).
+        data = stru ).
     cl_abap_unit_assert=>assert_equals(
       act = stru-foo
       exp = abap_true ).
@@ -177,9 +177,9 @@ CLASS ltcl_deserialize IMPLEMENTATION.
     lv_json = '{"foo": false}'.
     /ui2/cl_json=>deserialize(
       EXPORTING
-        json        = lv_json
+        json = lv_json
       CHANGING
-        data        = stru ).
+        data = stru ).
     cl_abap_unit_assert=>assert_equals(
       act = stru-foo
       exp = abap_false ).
@@ -965,7 +965,7 @@ CLASS ltcl_serialize IMPLEMENTATION.
       data          = foo
       ts_as_iso8601 = abap_true ).
     cl_abap_unit_assert=>assert_equals(
-      act    = lv_json
+      act = lv_json
       exp = '{"TS":""}' ).
   ENDMETHOD.
 
@@ -978,7 +978,7 @@ CLASS ltcl_serialize IMPLEMENTATION.
       data          = foo
       ts_as_iso8601 = abap_true ).
     cl_abap_unit_assert=>assert_equals(
-      act    = lv_json
+      act = lv_json
       exp = '{"TS":""}' ).
   ENDMETHOD.
 

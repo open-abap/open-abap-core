@@ -628,7 +628,7 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD describe_by_name_not_found.
     cl_abap_typedescr=>describe_by_name(
       EXPORTING
-        p_name = 'SDFSDFSDF'
+        p_name         = 'SDFSDFSDF'
       EXCEPTIONS
         type_not_found = 16 ).
     cl_abap_unit_assert=>assert_equals(
@@ -639,7 +639,7 @@ CLASS ltcl_test IMPLEMENTATION.
   METHOD describe_by_name_empty.
     cl_abap_typedescr=>describe_by_name(
       EXPORTING
-        p_name = ''
+        p_name         = ''
       EXCEPTIONS
         type_not_found = 1 ).
     cl_abap_unit_assert=>assert_equals(

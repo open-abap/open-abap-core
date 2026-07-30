@@ -95,7 +95,7 @@ CLASS ltcl_test IMPLEMENTATION.
     lv_name = cl_http_utility=>unescape_url( lv_name ).
     cl_abap_unit_assert=>assert_equals(
       act = lv_name
-      exp  = '==' ).
+      exp = '==' ).
   ENDMETHOD.
 
   METHOD unescape_url_eqs2.
@@ -104,7 +104,7 @@ CLASS ltcl_test IMPLEMENTATION.
     lv_name = cl_http_utility=>unescape_url( lv_name ).
     cl_abap_unit_assert=>assert_equals(
       act = lv_name
-      exp  = 'ello==' ).
+      exp = 'ello==' ).
   ENDMETHOD.
 
   METHOD unescape_url_colon.

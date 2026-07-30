@@ -11,7 +11,7 @@ FUNCTION conversion_exit_isola_input.
 
   output = cl_i18n_languages=>sap2_to_sap1(
     EXPORTING
-      im_lang_sap2 = input
+      im_lang_sap2  = input
     EXCEPTIONS
       no_assignment = 1 ).
   IF sy-subrc = 1.

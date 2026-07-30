@@ -183,7 +183,7 @@ CLASS ltcl_test IMPLEMENTATION.
     ASSERT li_client->request->get_header_field( 'Authorization' ) = 'Basic c2RmOnNkZg=='.
     ASSERT li_client->request->get_header_field( 'authorizaTION' ) = 'Basic c2RmOnNkZg=='.
 
-    li_client->request->set_header_field( name = 'FOObar'
+    li_client->request->set_header_field( name  = 'FOObar'
                                           value = '42' ).
 
     li_client->request->get_header_fields( CHANGING fields = fields ).
@@ -226,7 +226,7 @@ CLASS ltcl_test IMPLEMENTATION.
         ssl_id = 'ANONYM'
       IMPORTING
         client = li_client ).
-    li_client->request->set_form_field( name = 'foo'
+    li_client->request->set_form_field( name  = 'foo'
                                         value = 'bar' ).
     li_client->send( ).
     li_client->receive( ).
@@ -361,7 +361,7 @@ CLASS ltcl_test IMPLEMENTATION.
         ssl_id = 'ANONYM'
       IMPORTING
         client = li_client ).
-    li_client->request->set_header_field( name = '~request_uri'
+    li_client->request->set_header_field( name  = '~request_uri'
                                           value = lv_uri ).
 
     lv_val = li_client->request->get_header_field( name = '~request_uri' ).
@@ -406,9 +406,9 @@ CLASS ltcl_test IMPLEMENTATION.
       IMPORTING
         client = li_client ).
     li_client->request->set_method( 'POST' ).
-    li_client->request->set_form_field( name = 'foo1'
+    li_client->request->set_form_field( name  = 'foo1'
                                         value = 'bar1' ).
-    li_client->request->set_form_field( name = 'foo2'
+    li_client->request->set_form_field( name  = 'foo2'
                                         value = 'bar2' ).
     li_client->request->set_content_type( 'application/x-www-form-urlencoded' ).
 

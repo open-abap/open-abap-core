@@ -491,7 +491,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     lv_dump = dump_nodes( li_doc->if_ixml_node~get_children( ) ).
 
     li_git ?= li_doc->find_from_name_ns( depth = 0
-                                         name = 'abapGit' ).
+                                         name  = 'abapGit' ).
     li_sub = li_git->get_first_child( ).
     cl_abap_unit_assert=>assert_not_initial( li_sub ).
 
@@ -523,7 +523,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     li_doc = parse( lv_xml ).
 
     li_node ?= li_doc->find_from_name_ns( depth = 0
-                                          name = 'abapGit' ).
+                                          name  = 'abapGit' ).
     li_version = li_node->get_attributes( )->get_named_item_ns( 'vers' ).
 
     cl_abap_unit_assert=>assert_not_initial( li_version ).
@@ -546,7 +546,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     li_doc = parse( lv_xml ).
 
     li_element ?= li_doc->find_from_name_ns( depth = 0
-                                             name = 'abapGit' ).
+                                             name  = 'abapGit' ).
     cl_abap_unit_assert=>assert_not_initial( li_element ).
 
     cl_abap_unit_assert=>assert_equals(
@@ -567,7 +567,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     li_doc = parse( lv_xml ).
 
     li_element ?= li_doc->find_from_name_ns( depth = 0
-                                             name = 'abapGit' ).
+                                             name  = 'abapGit' ).
     cl_abap_unit_assert=>assert_not_initial( li_element ).
 
 * not found, should return blank
@@ -589,7 +589,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     li_doc = parse( lv_xml ).
 
     li_element ?= li_doc->find_from_name_ns( depth = 0
-                                             name = 'DATA' ).
+                                             name  = 'DATA' ).
     cl_abap_unit_assert=>assert_not_initial( li_element ).
 
 * not found, should return blank
@@ -610,11 +610,11 @@ CLASS ltcl_xml IMPLEMENTATION.
     li_doc = parse( lv_xml ).
 
     li_element ?= li_doc->find_from_name_ns( depth = 0
-                                             name = 'moo' ).
+                                             name  = 'moo' ).
     cl_abap_unit_assert=>assert_not_initial( li_element ).
 
     li_element ?= mi_document->find_from_name_ns( depth = 0
-                                                  name = 'moo' ).
+                                                  name  = 'moo' ).
 
     cl_abap_unit_assert=>assert_equals(
       act = li_element->get_value( )
@@ -633,11 +633,11 @@ CLASS ltcl_xml IMPLEMENTATION.
     li_doc = parse( lv_xml ).
 
     li_element ?= li_doc->find_from_name_ns( depth = 0
-                                             name = 'moo' ).
+                                             name  = 'moo' ).
     cl_abap_unit_assert=>assert_not_initial( li_element ).
 
     li_element ?= mi_document->find_from_name_ns( depth = 0
-                                                  name = 'moo' ).
+                                                  name  = 'moo' ).
 
     " todo
     " cl_abap_unit_assert=>assert_equals(
@@ -658,7 +658,7 @@ CLASS ltcl_xml IMPLEMENTATION.
 
     li_element ?= li_doc->find_from_name_ns(
       depth = 0
-      name = 'BTN_ICON' ).
+      name  = 'BTN_ICON' ).
     cl_abap_unit_assert=>assert_not_initial( li_element ).
 
     cl_abap_unit_assert=>assert_equals(
@@ -679,7 +679,7 @@ CLASS ltcl_xml IMPLEMENTATION.
 
     li_element ?= li_doc->find_from_name_ns(
       depth = 0
-      name = 'O_APP' ).
+      name  = 'O_APP' ).
     cl_abap_unit_assert=>assert_not_initial( li_element ).
 
   ENDMETHOD.
@@ -696,7 +696,7 @@ CLASS ltcl_xml IMPLEMENTATION.
 
     li_element ?= li_doc->find_from_name_ns(
       depth = 0
-      name = 'O_APP' ).
+      name  = 'O_APP' ).
     cl_abap_unit_assert=>assert_not_initial( li_element ).
 
   ENDMETHOD.
@@ -791,7 +791,7 @@ CLASS ltcl_xml IMPLEMENTATION.
 
     li_element ?= li_doc->find_from_name_ns(
       depth = 0
-      name = 'DATA' ).
+      name  = 'DATA' ).
     cl_abap_unit_assert=>assert_not_initial( li_element ).
 
     cl_abap_unit_assert=>assert_equals(
@@ -1305,18 +1305,18 @@ CLASS ltcl_xml IMPLEMENTATION.
     li_doc  = li_ixml->create_document( ).
 
     li_root = li_doc->create_element( 'abapGit' ).
-    li_root->set_attribute( name = 'version'
+    li_root->set_attribute( name  = 'version'
                             value = 'v1.0.0' ).
-    li_root->set_attribute( name = 'serializer'
+    li_root->set_attribute( name  = 'serializer'
                             value = 'LCL_OBJECT_DOMA' ).
-    li_root->set_attribute( name = 'serializer_version'
+    li_root->set_attribute( name  = 'serializer_version'
                             value = 'v1.0.0' ).
 
-    li_abap = li_doc->create_element_ns( name = 'abap'
+    li_abap = li_doc->create_element_ns( name   = 'abap'
                                          prefix = 'asx' ).
-    li_abap->set_attribute_ns( name = 'version'
+    li_abap->set_attribute_ns( name  = 'version'
                                value = '1.0' ).
-    li_abap->set_attribute_ns( name = 'xmlns:asx'
+    li_abap->set_attribute_ns( name  = 'xmlns:asx'
                                value = 'http://www.sap.com/abapxml' ).
 
     li_root->append_child( li_abap ).
@@ -1325,7 +1325,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     li_sf      = li_ixml->create_stream_factory( ).
     li_ostream = li_sf->create_ostream_xstring( lv_xxml ).
     li_renderer = li_ixml->create_renderer( document = li_doc
-                                            ostream = li_ostream ).
+                                            ostream  = li_ostream ).
     li_renderer->render( ).
 
     lv_xml = cl_abap_conv_codepage=>create_in( )->convert( lv_xxml ).
@@ -1396,11 +1396,11 @@ CLASS ltcl_xml IMPLEMENTATION.
     li_doc  = li_ixml->create_document( ).
 
     li_element = li_doc->create_element( 'abapGit' ).
-    li_element->set_attribute( name = 'version'
+    li_element->set_attribute( name  = 'version'
                                value = 'v1.0.0' ).
-    li_element->set_attribute( name = 'serializer'
+    li_element->set_attribute( name  = 'serializer'
                                value = 'LCL_OBJECT_DOMA' ).
-    li_element->set_attribute( name = 'serializer_version'
+    li_element->set_attribute( name  = 'serializer_version'
                                value = 'v1.0.0' ).
     li_doc->append_child( li_element ).
 

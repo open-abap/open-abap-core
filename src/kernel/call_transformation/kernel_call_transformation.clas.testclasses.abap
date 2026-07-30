@@ -452,7 +452,7 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
 
 * fix()
     li_git ?= mi_xml_doc->find_from_name_ns( depth = 0
-                                             name = 'abapGit' ).
+                                             name  = 'abapGit' ).
     li_abap = li_git->get_first_child( ).
     mi_xml_doc->get_root( )->remove_child( li_git ).
     mi_xml_doc->get_root( )->append_child( li_abap ).

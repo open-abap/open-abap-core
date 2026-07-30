@@ -35,7 +35,7 @@ CLASS cl_abap_codepage IMPLEMENTATION.
     conv = cl_abap_conv_in_ce=>create( encoding = CONV #( codepage ) ).
     conv->convert(
       EXPORTING input = source
-      IMPORTING data = output ).
+      IMPORTING data  = output ).
   ENDMETHOD.
 
   METHOD sap_codepage.

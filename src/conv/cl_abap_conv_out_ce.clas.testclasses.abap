@@ -45,7 +45,7 @@ CLASS ltcl_conv_out IMPLEMENTATION.
     DATA lo_obj  TYPE REF TO cl_abap_conv_out_ce.
     lo_obj = cl_abap_conv_out_ce=>create( encoding = '4103' ).
 
-    lo_obj->convert( EXPORTING data = lv_char
+    lo_obj->convert( EXPORTING data   = lv_char
                      IMPORTING buffer = xstr ).
 
     cl_abap_unit_assert=>assert_equals(
@@ -59,7 +59,7 @@ CLASS ltcl_conv_out IMPLEMENTATION.
     DATA lo_obj   TYPE REF TO cl_abap_conv_out_ce.
     lo_obj = cl_abap_conv_out_ce=>create( encoding = '4103' ).
 
-    lo_obj->convert( EXPORTING data = lv_empty
+    lo_obj->convert( EXPORTING data   = lv_empty
                      IMPORTING buffer = xstr ).
 
     cl_abap_unit_assert=>assert_equals(
@@ -132,7 +132,7 @@ CLASS ltcl_conv_out IMPLEMENTATION.
     DATA lv_xstr   TYPE xstring.
     lv_string = 'hello world'.
     lo_obj = cl_abap_conv_out_ce=>create( encoding = '4103' ).
-    lo_obj->convert( EXPORTING data = lv_string
+    lo_obj->convert( EXPORTING data   = lv_string
                      IMPORTING buffer = lv_xstr ).
     cl_abap_unit_assert=>assert_equals(
       act = lv_xstr

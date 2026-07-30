@@ -106,7 +106,7 @@ CLASS ltcl_conv_in IMPLEMENTATION.
     conv = cl_abap_conv_in_ce=>create( encoding = 'UTF-8' ).
     conv->convert(
       EXPORTING input = '616263'
-      IMPORTING data = data ).
+      IMPORTING data  = data ).
     cl_abap_unit_assert=>assert_equals(
       act = data
       exp = 'abc' ).
@@ -163,7 +163,7 @@ CLASS ltcl_conv_in IMPLEMENTATION.
     conv = cl_abap_conv_in_ce=>create( encoding = 'UTF-8' ).
     conv->convert(
       EXPORTING input = input
-      IMPORTING data = data ).
+      IMPORTING data  = data ).
     cl_abap_unit_assert=>assert_initial( data ).
 
   ENDMETHOD.

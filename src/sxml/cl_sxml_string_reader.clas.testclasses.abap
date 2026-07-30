@@ -150,7 +150,7 @@ CLASS ltcl_json IMPLEMENTATION.
 
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'num' ).
-    add_expected( iv_type = if_sxml_node=>co_nt_value
+    add_expected( iv_type  = if_sxml_node=>co_nt_value
                   iv_value = '2' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_close
                   iv_name = 'num' ).
@@ -169,7 +169,7 @@ CLASS ltcl_json IMPLEMENTATION.
 
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'bool' ).
-    add_expected( iv_type = if_sxml_node=>co_nt_value
+    add_expected( iv_type  = if_sxml_node=>co_nt_value
                   iv_value = 'true' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_close
                   iv_name = 'bool' ).
@@ -207,7 +207,7 @@ CLASS ltcl_json IMPLEMENTATION.
                   iv_name = 'array' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'num' ).
-    add_expected( iv_type = if_sxml_node=>co_nt_value
+    add_expected( iv_type  = if_sxml_node=>co_nt_value
                   iv_value = '2' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_close
                   iv_name = 'num' ).
@@ -231,7 +231,7 @@ CLASS ltcl_json IMPLEMENTATION.
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'str'
                   iv_key  = 'key1' ).
-    add_expected( iv_type = if_sxml_node=>co_nt_value
+    add_expected( iv_type  = if_sxml_node=>co_nt_value
                   iv_value = 'value1' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_close
                   iv_name = 'str' ).
@@ -277,14 +277,14 @@ CLASS ltcl_json IMPLEMENTATION.
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'str'
                   iv_key  = 'key1' ).
-    add_expected( iv_type = if_sxml_node=>co_nt_value
+    add_expected( iv_type  = if_sxml_node=>co_nt_value
                   iv_value = 'value1' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_close
                   iv_name = 'str' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'str'
                   iv_key  = 'key2' ).
-    add_expected( iv_type = if_sxml_node=>co_nt_value
+    add_expected( iv_type  = if_sxml_node=>co_nt_value
                   iv_value = 'value2' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_close
                   iv_name = 'str' ).
@@ -307,13 +307,13 @@ CLASS ltcl_json IMPLEMENTATION.
                   iv_name = 'array' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'num' ).
-    add_expected( iv_type = if_sxml_node=>co_nt_value
+    add_expected( iv_type  = if_sxml_node=>co_nt_value
                   iv_value = '1' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_close
                   iv_name = 'num' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'num' ).
-    add_expected( iv_type = if_sxml_node=>co_nt_value
+    add_expected( iv_type  = if_sxml_node=>co_nt_value
                   iv_value = '2' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_close
                   iv_name = 'num' ).
@@ -339,7 +339,7 @@ CLASS ltcl_json IMPLEMENTATION.
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'str'
                   iv_key  = 'key' ).
-    add_expected( iv_type = if_sxml_node=>co_nt_value
+    add_expected( iv_type  = if_sxml_node=>co_nt_value
                   iv_value = 'value' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_close
                   iv_name = 'str' ).
@@ -364,11 +364,11 @@ CLASS ltcl_json IMPLEMENTATION.
                   iv_name = 'object' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'object'
-                  iv_key = 'key' ).
+                  iv_key  = 'key' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_open
                   iv_name = 'str'
-                  iv_key = 'sub' ).
-    add_expected( iv_type = if_sxml_node=>co_nt_value
+                  iv_key  = 'sub' ).
+    add_expected( iv_type  = if_sxml_node=>co_nt_value
                   iv_value = 'value' ).
     add_expected( iv_type = if_sxml_node=>co_nt_element_close
                   iv_name = 'str' ).

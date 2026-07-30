@@ -53,7 +53,7 @@ CLASS cl_http_client IMPLEMENTATION.
 
     CREATE OBJECT if_http_client~request TYPE cl_http_entity.
     if_http_client~request->set_header_field(
-      name = '~request_uri'
+      name  = '~request_uri'
       value = lv_uri ).
 
     FIND REGEX '\?(.*)' IN url SUBMATCHES lv_query.
@@ -80,7 +80,7 @@ CLASS cl_http_client IMPLEMENTATION.
     DATA lv_base64 TYPE string.
     lv_base64 = cl_http_utility=>encode_base64( |{ username }:{ password }| ).
     if_http_client~request->set_header_field(
-      name = 'authorization'
+      name  = 'authorization'
       value = |Basic { lv_base64 }| ).
   ENDMETHOD.
 

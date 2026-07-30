@@ -109,7 +109,7 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     INSERT VALUE #( name = lv_name descr = descr ) INTO TABLE mt_cache.
 
     add_attributes( p_object = p_object
-                    descr = descr ).
+                    descr    = descr ).
 
 * set interfaces
     WRITE '@KERNEL for (const a of p_object?.IMPLEMENTED_INTERFACES || []) {'.

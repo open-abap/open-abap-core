@@ -59,7 +59,7 @@ CLASS cl_http_utility IMPLEMENTATION.
 
   METHOD set_request_uri.
     request->set_header_field(
-      name = '~request_uri'
+      name  = '~request_uri'
       value = uri ).
   ENDMETHOD.
 
@@ -116,7 +116,7 @@ CLASS cl_http_utility IMPLEMENTATION.
       APPEND str TO tab.
     ENDLOOP.
     string = concat_lines_of( table = tab
-                              sep = '&' ).
+                              sep   = '&' ).
   ENDMETHOD.
 
   METHOD encode_x_base64.
