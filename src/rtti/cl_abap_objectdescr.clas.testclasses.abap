@@ -97,7 +97,8 @@ CLASS lcl_generics DEFINITION.
     METHODS name
       EXPORTING
         foo TYPE clike
-        bar TYPE csequence.
+        bar TYPE csequence
+        baz TYPE numeric.
 ENDCLASS.
 CLASS lcl_generics IMPLEMENTATION.
   METHOD name.
@@ -451,6 +452,13 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_datadescr->type_kind
       exp = cl_abap_typedescr=>typekind_csequence ).
+
+    lo_datadescr = lo_objdescr->get_method_parameter_type(
+      p_method_name    = 'NAME'
+      p_parameter_name = 'BAZ' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_datadescr->type_kind
+      exp = cl_abap_typedescr=>typekind_numeric ).
   ENDMETHOD.
 
   METHOD parm_kind.
