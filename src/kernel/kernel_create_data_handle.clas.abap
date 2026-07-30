@@ -42,16 +42,16 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
     CASE handle->kind.
       WHEN cl_abap_typedescr=>kind_elem.
         elem( EXPORTING handle = handle
-              CHANGING dref = dref ).
+              CHANGING dref    = dref ).
       WHEN cl_abap_typedescr=>kind_struct.
         struct( EXPORTING handle = handle
-                CHANGING dref = dref ).
+                CHANGING dref    = dref ).
       WHEN cl_abap_typedescr=>kind_table.
         table( EXPORTING handle = handle
-               CHANGING dref = dref ).
+               CHANGING dref    = dref ).
       WHEN cl_abap_typedescr=>kind_ref.
         ref( EXPORTING handle = handle
-             CHANGING dref = dref ).
+             CHANGING dref    = dref ).
       WHEN OTHERS.
         WRITE '@KERNEL console.dir(handle);'.
         ASSERT 1 = 'todo'.
@@ -79,7 +79,7 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
         lo_datadescr ?= lo_refdescr->get_referenced_type( ).
         call(
           EXPORTING handle = lo_datadescr
-          CHANGING dref   = field ).
+          CHANGING dref    = field ).
 
         WRITE '@KERNEL dref.assign(new abap.types.DataReference(field.getPointer()));'.
     ENDCASE.

@@ -169,10 +169,10 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lv_int TYPE i.
     cl_abap_tstmp=>td_subtract(
       EXPORTING
-        date1 = '19900101'
-        time1 = '113000'
-        date2 = '19900101'
-        time2 = '112000'
+        date1    = '19900101'
+        time1    = '113000'
+        date2    = '19900101'
+        time2    = '112000'
       IMPORTING
         res_secs = lv_int ).
     cl_abap_unit_assert=>assert_equals(
@@ -187,9 +187,9 @@ CLASS ltcl_test IMPLEMENTATION.
 
     cl_abap_tstmp=>td_add(
       EXPORTING
-        date = '20250505'
-        time = '111111'
-        secs = 100
+        date     = '20250505'
+        time     = '111111'
+        secs     = 100
       IMPORTING
         res_date = lv_date
         res_time = lv_time ).
@@ -355,10 +355,11 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD tstmp2utclong.
+    CONSTANTS lc_timestamp TYPE timestamp VALUE '20260427123456'.
     DATA lv_utclong TYPE utclong.
     DATA lv_result TYPE string.
 
-    lv_utclong = cl_abap_tstmp=>tstmp2utclong( timestamp = '20260427123456' ).
+    lv_utclong = cl_abap_tstmp=>tstmp2utclong( timestamp = lc_timestamp ).
     lv_result = lv_utclong.
 
     cl_abap_unit_assert=>assert_equals(

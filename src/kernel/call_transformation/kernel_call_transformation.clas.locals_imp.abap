@@ -221,7 +221,7 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
           GET REFERENCE OF <any> INTO lv_ref.
           rv_xml = rv_xml && run(
             iv_name = |item|
-            iv_ref = lv_ref ).
+            iv_ref  = lv_ref ).
         ENDLOOP.
         rv_xml = rv_xml && |</{ iv_name }>|.
       WHEN cl_abap_typedescr=>kind_ref.
@@ -286,7 +286,7 @@ CLASS lcl_object_to_sxml IMPLEMENTATION.
     WRITE '@KERNEL     result.assign(INPUT.source[name]);'.
     WRITE '@KERNEL   }'.
     mi_writer->open_element( name = 'str' ).
-    mi_writer->write_attribute( name = 'name'
+    mi_writer->write_attribute( name  = 'name'
                                 value = to_upper( lv_name ) ).
     traverse_write( result ).
     mi_writer->close_element( ).
@@ -341,7 +341,7 @@ CLASS lcl_object_to_sxml IMPLEMENTATION.
           ASSIGN COMPONENT ls_compo-name OF STRUCTURE <any> TO <field>.
           GET REFERENCE OF <field> INTO lv_ref.
           mi_writer->open_element( name = traverse_write_type( lv_ref ) ).
-          mi_writer->write_attribute( name = 'name'
+          mi_writer->write_attribute( name  = 'name'
                                       value = to_upper( ls_compo-name ) ).
           traverse_write( lv_ref ).
           mi_writer->close_element( ).

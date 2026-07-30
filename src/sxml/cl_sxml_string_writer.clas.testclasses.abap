@@ -24,7 +24,7 @@ CLASS ltcl_json IMPLEMENTATION.
     intf ?= writer.
     intf->open_element( name = 'object' ).
     intf->open_element( name = 'str' ).
-    intf->write_attribute( name = 'name'
+    intf->write_attribute( name  = 'name'
                            value = 'text' ).
     intf->write_value( 'moo' ).
     intf->close_element( ).
@@ -98,12 +98,12 @@ CLASS ltcl_json IMPLEMENTATION.
     intf ?= writer.
     intf->open_element( name = 'object' ).
     intf->open_element( name = 'str' ).
-    intf->write_attribute( name = 'name'
+    intf->write_attribute( name  = 'name'
                            value = 'text' ).
     intf->write_value( 'moo' ).
     intf->close_element( ).
     intf->open_element( name = 'str' ).
-    intf->write_attribute( name = 'name'
+    intf->write_attribute( name  = 'name'
                            value = 'next' ).
     intf->write_value( 'moo' ).
     intf->close_element( ).
@@ -202,7 +202,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     intf ?= writer.
     intf->open_element( name = 'object' ).
     intf->open_element( name = 'str' ).
-    intf->write_attribute( name = 'name'
+    intf->write_attribute( name  = 'name'
                            value = 'text' ).
     intf->write_value( 'moo' ).
     intf->close_element( ).
@@ -275,12 +275,12 @@ CLASS ltcl_xml IMPLEMENTATION.
     intf ?= writer.
     intf->open_element( name = 'object' ).
     intf->open_element( name = 'str' ).
-    intf->write_attribute( name = 'name'
+    intf->write_attribute( name  = 'name'
                            value = 'text' ).
     intf->write_value( 'moo' ).
     intf->close_element( ).
     intf->open_element( name = 'str' ).
-    intf->write_attribute( name = 'name'
+    intf->write_attribute( name  = 'name'
                            value = 'next' ).
     intf->write_value( 'moo' ).
     intf->close_element( ).
@@ -298,7 +298,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     writer = cl_sxml_string_writer=>create( if_sxml=>co_xt_xml10 ).
     intf ?= writer.
     intf->open_element( name = 'str' ).
-    intf->write_attribute( name = 'name'
+    intf->write_attribute( name  = 'name'
                            value = 'a"b' ).
     intf->write_value( 'foo & <bar>' ).
     intf->close_element( ).

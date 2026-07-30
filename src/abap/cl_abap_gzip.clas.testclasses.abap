@@ -72,15 +72,15 @@ CLASS ltcl_gzip IMPLEMENTATION.
 
     cl_abap_gzip=>compress_binary(
       EXPORTING
-        raw_in       = input
+        raw_in   = input
       IMPORTING
-        gzip_out     = out ).
+        gzip_out = out ).
 
     cl_abap_gzip=>decompress_binary(
       EXPORTING
-        gzip_in      = out
+        gzip_in = out
       IMPORTING
-        raw_out     = result ).
+        raw_out = result ).
 
     cl_abap_unit_assert=>assert_equals(
       act = input

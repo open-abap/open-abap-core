@@ -201,7 +201,7 @@ CLASS cl_abap_zip IMPLEMENTATION.
     lo_conv = cl_abap_conv_out_ce=>create( ).
 
     LOOP AT mt_contents INTO ls_contents.
-      lo_conv->convert( EXPORTING data = ls_contents-name
+      lo_conv->convert( EXPORTING data   = ls_contents-name
                         IMPORTING buffer = lv_buffer ).
 
 ****************************************

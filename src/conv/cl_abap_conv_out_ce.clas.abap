@@ -80,7 +80,7 @@ CLASS cl_abap_conv_out_ce IMPLEMENTATION.
 
   METHOD write.
     DATA res TYPE xstring.
-    convert( EXPORTING data = data
+    convert( EXPORTING data   = data
              IMPORTING buffer = res ).
     CONCATENATE mv_buffer res INTO mv_buffer IN BYTE MODE.
   ENDMETHOD.
@@ -96,7 +96,7 @@ CLASS cl_abap_conv_out_ce IMPLEMENTATION.
     lv_char = char(1).
     lo_obj = create( encoding = '4103' ).
 
-    lo_obj->convert( EXPORTING data = lv_char
+    lo_obj->convert( EXPORTING data   = lv_char
                      IMPORTING buffer = uccp ).
 
     SHIFT uccp LEFT CIRCULAR IN BYTE MODE.

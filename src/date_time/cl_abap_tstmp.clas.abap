@@ -120,10 +120,13 @@ CLASS cl_abap_tstmp IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD td_add.
+    DATA td TYPE timestamp.
 
-    DATA(td) = add(
-      tstmp = |{ date }{ time }|
-      secs = secs ).
+    CONVERT DATE date TIME time INTO TIME STAMP td.
+
+    td = add(
+      tstmp = td
+      secs  = secs ).
 
     CONVERT TIME STAMP td INTO DATE res_date TIME res_time.
 
@@ -145,7 +148,7 @@ CLASS cl_abap_tstmp IMPLEMENTATION.
       RAISE EXCEPTION TYPE cx_parameter_invalid_range.
     ENDIF.
 
-    utc_tstmp = |{ syst_date }{ syst_time }|.
+    CONVERT DATE syst_date TIME syst_time INTO TIME STAMP utc_tstmp.
   ENDMETHOD.
 
   METHOD subtract.
