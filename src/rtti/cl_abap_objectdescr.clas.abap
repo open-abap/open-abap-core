@@ -144,6 +144,9 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     ELSEIF lv_type_name = 'CSequenceType'.
       <parameter>-type_kind = cl_abap_typedescr=>typekind_csequence.
       <ptype>-type_kind = cl_abap_typedescr=>typekind_csequence.
+    ELSEIF lv_type_name = 'NumericGenericType'.
+      <parameter>-type_kind = cl_abap_typedescr=>typekind_numeric.
+      <ptype>-type_kind = cl_abap_typedescr=>typekind_numeric.
     ELSE.
       GET REFERENCE OF lv_any INTO <ptype>-type.
 "       WRITE '@KERNEL   if (lv_any.constructor.name === "ABAPObject") {'.
@@ -231,6 +234,11 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
       p_descr_ref->absolute_name = '\TYPE=CSEQUENCE'.
       p_descr_ref->kind = cl_abap_elemdescr=>kind_elem.
       p_descr_ref->type_kind = cl_abap_typedescr=>typekind_csequence.
+    ELSEIF ls_row-type_kind = cl_abap_typedescr=>typekind_numeric.
+      CREATE OBJECT p_descr_ref TYPE cl_abap_elemdescr.
+      p_descr_ref->absolute_name = '\TYPE=NUMERIC'.
+      p_descr_ref->kind = cl_abap_elemdescr=>kind_elem.
+      p_descr_ref->type_kind = cl_abap_typedescr=>typekind_numeric.
     ELSE.
       ASSIGN ls_row-type->* TO <type>.
       p_descr_ref ?= describe_by_data( <type> ).
