@@ -961,7 +961,46 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~find_from_path.
-    ASSERT 1 = 'todo'.
+    DATA lt_names    TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA lv_name     TYPE string.
+    DATA lv_found    TYPE abap_bool.
+    DATA li_current  TYPE REF TO if_ixml_node.
+    DATA li_children TYPE REF TO if_ixml_node_list.
+    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+    DATA li_node     TYPE REF TO if_ixml_node.
+
+    li_current = mi_node.
+
+    SPLIT path AT '/' INTO TABLE lt_names.
+
+    LOOP AT lt_names INTO lv_name.
+      IF lv_name IS INITIAL.
+        CONTINUE.
+      ENDIF.
+
+      lv_found = abap_false.
+      li_children = li_current->get_children( ).
+      li_iterator = li_children->create_iterator( ).
+      DO.
+        li_node = li_iterator->get_next( ).
+        IF li_node IS INITIAL.
+          EXIT. " current loop
+        ENDIF.
+        IF li_node->get_name( ) = lv_name.
+          li_current = li_node.
+          lv_found = abap_true.
+          EXIT. " current loop
+        ENDIF.
+      ENDDO.
+
+      IF lv_found = abap_false.
+        RETURN.
+      ENDIF.
+    ENDLOOP.
+
+    IF lv_found = abap_true.
+      val ?= li_current.
+    ENDIF.
   ENDMETHOD.
 
   METHOD if_ixml_document~get_elements_by_tag_name_ns.

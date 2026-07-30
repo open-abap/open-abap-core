@@ -62,6 +62,9 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS get_next_sibling FOR TESTING RAISING cx_static_check.
     METHODS get_next_last_sibling FOR TESTING RAISING cx_static_check.
     METHODS get_next_after_move FOR TESTING RAISING cx_static_check.
+    METHODS find_from_path FOR TESTING RAISING cx_static_check.
+    METHODS find_from_path_relative FOR TESTING RAISING cx_static_check.
+    METHODS find_from_path_not_found FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml     TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -1573,6 +1576,57 @@ CLASS ltcl_xml IMPLEMENTATION.
       exp = 'second' ).
 
     cl_abap_unit_assert=>assert_initial( li_second->get_next( ) ).
+
+  ENDMETHOD.
+
+  METHOD find_from_path.
+
+    DATA li_doc     TYPE REF TO if_ixml_document.
+    DATA li_element TYPE REF TO if_ixml_element.
+
+    li_doc = parse( |<root><first><sub>hello</sub></first><second/></root>| ).
+
+    li_element = li_doc->find_from_path( '/root/first/sub' ).
+    cl_abap_unit_assert=>assert_not_initial( li_element ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_element->get_value( )
+      exp = 'hello' ).
+
+    li_element = li_doc->find_from_path( '/root' ).
+    cl_abap_unit_assert=>assert_not_initial( li_element ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_element->get_name( )
+      exp = 'root' ).
+
+  ENDMETHOD.
+
+  METHOD find_from_path_relative.
+
+    DATA li_doc     TYPE REF TO if_ixml_document.
+    DATA li_element TYPE REF TO if_ixml_element.
+
+    li_doc = parse( |<root><first><sub>hello</sub></first></root>| ).
+
+    li_element = li_doc->find_from_path( 'root/first' ).
+    cl_abap_unit_assert=>assert_not_initial( li_element ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_element->get_name( )
+      exp = 'first' ).
+
+  ENDMETHOD.
+
+  METHOD find_from_path_not_found.
+
+    DATA li_doc     TYPE REF TO if_ixml_document.
+    DATA li_element TYPE REF TO if_ixml_element.
+
+    li_doc = parse( |<root><first/></root>| ).
+
+    li_element = li_doc->find_from_path( '/root/second' ).
+    cl_abap_unit_assert=>assert_initial( li_element ).
+
+    li_element = li_doc->find_from_path( '/' ).
+    cl_abap_unit_assert=>assert_initial( li_element ).
 
   ENDMETHOD.
 
