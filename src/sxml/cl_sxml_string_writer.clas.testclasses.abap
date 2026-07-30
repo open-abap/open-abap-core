@@ -180,3 +180,132 @@ CLASS ltcl_json IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+
+  PRIVATE SECTION.
+    METHODS writer FOR TESTING RAISING cx_static_check.
+    METHODS write_empty_array FOR TESTING RAISING cx_static_check.
+    METHODS write_array_str FOR TESTING RAISING cx_static_check.
+    METHODS write_array_multi FOR TESTING RAISING cx_static_check.
+    METHODS write_object_multi FOR TESTING RAISING cx_static_check.
+    METHODS write_escaped FOR TESTING RAISING cx_static_check.
+
+ENDCLASS.
+
+CLASS ltcl_xml IMPLEMENTATION.
+
+  METHOD writer.
+    DATA writer TYPE REF TO cl_sxml_string_writer.
+    DATA intf TYPE REF TO if_sxml_writer.
+    DATA xml TYPE string.
+    writer = cl_sxml_string_writer=>create( if_sxml=>co_xt_xml10 ).
+    intf ?= writer.
+    intf->open_element( name = 'object' ).
+    intf->open_element( name = 'str' ).
+    intf->write_attribute( name = 'name'
+                           value = 'text' ).
+    intf->write_value( 'moo' ).
+    intf->close_element( ).
+    intf->close_element( ).
+    xml = cl_abap_conv_codepage=>create_in( )->convert( writer->get_output( ) ).
+    cl_abap_unit_assert=>assert_equals(
+      act = xml
+      exp = '<object><str name="text">moo</str></object>' ).
+  ENDMETHOD.
+
+  METHOD write_empty_array.
+    DATA writer TYPE REF TO cl_sxml_string_writer.
+    DATA intf TYPE REF TO if_sxml_writer.
+    DATA xml TYPE string.
+    writer = cl_sxml_string_writer=>create( if_sxml=>co_xt_xml10 ).
+    intf ?= writer.
+    intf->open_element( name = 'array' ).
+    intf->close_element( ).
+    xml = cl_abap_conv_codepage=>create_in( )->convert( writer->get_output( ) ).
+    cl_abap_unit_assert=>assert_equals(
+      act = xml
+      exp = '<array/>' ).
+  ENDMETHOD.
+
+  METHOD write_array_str.
+    DATA writer TYPE REF TO cl_sxml_string_writer.
+    DATA intf TYPE REF TO if_sxml_writer.
+    DATA xml TYPE string.
+    writer = cl_sxml_string_writer=>create( if_sxml=>co_xt_xml10 ).
+    intf ?= writer.
+    intf->open_element( name = 'array' ).
+    intf->open_element( name = 'str' ).
+    intf->write_value( 'moo' ).
+    intf->close_element( ).
+    intf->close_element( ).
+    xml = cl_abap_conv_codepage=>create_in( )->convert( writer->get_output( ) ).
+    cl_abap_unit_assert=>assert_equals(
+      act = xml
+      exp = '<array><str>moo</str></array>' ).
+  ENDMETHOD.
+
+  METHOD write_array_multi.
+    DATA writer TYPE REF TO cl_sxml_string_writer.
+    DATA intf TYPE REF TO if_sxml_writer.
+    DATA xml TYPE string.
+    writer = cl_sxml_string_writer=>create( if_sxml=>co_xt_xml10 ).
+    intf ?= writer.
+    intf->open_element( name = 'array' ).
+
+    intf->open_element( name = 'str' ).
+    intf->write_value( 'foo' ).
+    intf->close_element( ).
+
+    intf->open_element( name = 'str' ).
+    intf->write_value( 'bar' ).
+    intf->close_element( ).
+
+    intf->close_element( ).
+    xml = cl_abap_conv_codepage=>create_in( )->convert( writer->get_output( ) ).
+    cl_abap_unit_assert=>assert_equals(
+      act = xml
+      exp = '<array><str>foo</str><str>bar</str></array>' ).
+  ENDMETHOD.
+
+  METHOD write_object_multi.
+    DATA writer TYPE REF TO cl_sxml_string_writer.
+    DATA intf TYPE REF TO if_sxml_writer.
+    DATA xml TYPE string.
+    writer = cl_sxml_string_writer=>create( if_sxml=>co_xt_xml10 ).
+    intf ?= writer.
+    intf->open_element( name = 'object' ).
+    intf->open_element( name = 'str' ).
+    intf->write_attribute( name = 'name'
+                           value = 'text' ).
+    intf->write_value( 'moo' ).
+    intf->close_element( ).
+    intf->open_element( name = 'str' ).
+    intf->write_attribute( name = 'name'
+                           value = 'next' ).
+    intf->write_value( 'moo' ).
+    intf->close_element( ).
+    intf->close_element( ).
+    xml = cl_abap_conv_codepage=>create_in( )->convert( writer->get_output( ) ).
+    cl_abap_unit_assert=>assert_equals(
+      act = xml
+      exp = '<object><str name="text">moo</str><str name="next">moo</str></object>' ).
+  ENDMETHOD.
+
+  METHOD write_escaped.
+    DATA writer TYPE REF TO cl_sxml_string_writer.
+    DATA intf TYPE REF TO if_sxml_writer.
+    DATA xml TYPE string.
+    writer = cl_sxml_string_writer=>create( if_sxml=>co_xt_xml10 ).
+    intf ?= writer.
+    intf->open_element( name = 'str' ).
+    intf->write_attribute( name = 'name'
+                           value = 'a"b' ).
+    intf->write_value( 'foo & <bar>' ).
+    intf->close_element( ).
+    xml = cl_abap_conv_codepage=>create_in( )->convert( writer->get_output( ) ).
+    cl_abap_unit_assert=>assert_equals(
+      act = xml
+      exp = '<str name="a&quot;b">foo &amp; &lt;bar&gt;</str>' ).
+  ENDMETHOD.
+
+ENDCLASS.
