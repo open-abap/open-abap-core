@@ -28,9 +28,27 @@ CLASS cl_sxml_string_writer DEFINITION PUBLIC FINAL CREATE PRIVATE.
     DATA mv_output TYPE xstring.
     DATA mv_type TYPE if_sxml=>xml_stream_type.
     DATA mt_stack TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA mv_tag_open TYPE abap_bool.
 
     METHODS append_text IMPORTING text TYPE string.
     METHODS get_text RETURNING VALUE(text) TYPE string.
+
+* json output
+    METHODS json_open_element IMPORTING name TYPE string.
+    METHODS json_close_element.
+    METHODS json_write_attribute IMPORTING value TYPE string.
+    METHODS json_write_value IMPORTING value TYPE string.
+
+* xml output
+    METHODS xml_open_element IMPORTING name TYPE string.
+    METHODS xml_close_element.
+    METHODS xml_write_attribute IMPORTING name  TYPE string
+                                          value TYPE string.
+    METHODS xml_write_value IMPORTING value TYPE string.
+    METHODS xml_close_tag.
+    METHODS xml_escape IMPORTING text          TYPE string
+                                 attribute     TYPE abap_bool DEFAULT abap_false
+                       RETURNING VALUE(result) TYPE string.
 
 * stack operations
     METHODS peek RETURNING VALUE(rv_name) TYPE string.
@@ -96,6 +114,14 @@ CLASS cl_sxml_string_writer IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_sxml_writer~open_element.
+    IF mv_type = if_sxml=>co_xt_json.
+      json_open_element( name ).
+    ELSE.
+      xml_open_element( name ).
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD json_open_element.
     DATA parent TYPE string.
     parent = peek( ).
 
@@ -123,6 +149,14 @@ CLASS cl_sxml_string_writer IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_sxml_writer~close_element.
+    IF mv_type = if_sxml=>co_xt_json.
+      json_close_element( ).
+    ELSE.
+      xml_close_element( ).
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD json_close_element.
     DATA name TYPE string.
     name = remove( ).
     CASE name.
@@ -134,6 +168,15 @@ CLASS cl_sxml_string_writer IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_sxml_writer~write_attribute.
+    IF mv_type = if_sxml=>co_xt_json.
+      json_write_attribute( value ).
+    ELSE.
+      xml_write_attribute( name  = name
+                           value = value ).
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD json_write_attribute.
     append_text( '"' ).
     append_text( value ).
     append_text( '":' ).
@@ -146,6 +189,14 @@ CLASS cl_sxml_string_writer IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_sxml_writer~write_value.
+    IF mv_type = if_sxml=>co_xt_json.
+      json_write_value( value ).
+    ELSE.
+      xml_write_value( value ).
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD json_write_value.
     DATA name TYPE string.
     name = peek( ).
     CASE name.
@@ -159,6 +210,60 @@ CLASS cl_sxml_string_writer IMPLEMENTATION.
         WRITE '@KERNEL console.dir(name);'.
         ASSERT 1 = 'todo_if_sxml_writer_write_value'.
     ENDCASE.
+  ENDMETHOD.
+
+  METHOD xml_open_element.
+    xml_close_tag( ).
+    APPEND name TO mt_stack.
+    append_text( '<' ).
+    append_text( name ).
+    mv_tag_open = abap_true.
+  ENDMETHOD.
+
+  METHOD xml_close_element.
+    DATA name TYPE string.
+    name = remove( ).
+    IF mv_tag_open = abap_true.
+      append_text( '/>' ).
+      mv_tag_open = abap_false.
+    ELSE.
+      append_text( '</' ).
+      append_text( name ).
+      append_text( '>' ).
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD xml_write_attribute.
+    ASSERT mv_tag_open = abap_true.
+    append_text( ' ' ).
+    append_text( name ).
+    append_text( '="' ).
+    append_text( xml_escape( text      = value
+                             attribute = abap_true ) ).
+    append_text( '"' ).
+  ENDMETHOD.
+
+  METHOD xml_write_value.
+    xml_close_tag( ).
+    append_text( xml_escape( value ) ).
+  ENDMETHOD.
+
+  METHOD xml_close_tag.
+    IF mv_tag_open = abap_true.
+      append_text( '>' ).
+      mv_tag_open = abap_false.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD xml_escape.
+    result = text.
+    REPLACE ALL OCCURRENCES OF '&' IN result WITH '&amp;'.
+    REPLACE ALL OCCURRENCES OF '<' IN result WITH '&lt;'.
+    REPLACE ALL OCCURRENCES OF '>' IN result WITH '&gt;'.
+    IF attribute = abap_true.
+      REPLACE ALL OCCURRENCES OF '"' IN result WITH '&quot;'.
+      REPLACE ALL OCCURRENCES OF |'| IN result WITH '&apos;'.
+    ENDIF.
   ENDMETHOD.
 
 ENDCLASS.
