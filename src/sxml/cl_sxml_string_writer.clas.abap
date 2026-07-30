@@ -235,7 +235,7 @@ CLASS cl_sxml_string_writer IMPLEMENTATION.
 
   METHOD xml_write_attribute.
     ASSERT mv_tag_open = abap_true.
-    append_text( ' ' ).
+    append_text( ` ` ).
     append_text( name ).
     append_text( '="' ).
     append_text( xml_escape( text      = value
