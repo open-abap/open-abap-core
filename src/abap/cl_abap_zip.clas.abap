@@ -118,6 +118,7 @@ CLASS cl_abap_zip IMPLEMENTATION.
     DATA lv_length     TYPE i.
     DATA lv_sig        TYPE x LENGTH 4.
     DATA lv_comp_size  TYPE i.
+    DATA lv_comp_method TYPE i.
     DATA lv_name_len   TYPE i.
     DATA lv_extra_len  TYPE i.
     DATA lv_name_x     TYPE xstring.
@@ -142,6 +143,9 @@ CLASS cl_abap_zip IMPLEMENTATION.
 
       CLEAR ls_contents.
 
+* 8, 2, Compression method
+      lv_comp_method = lcl_stream=>read_int2( iv_xstr   = zip
+                                               iv_offset = lv_offset + 8 ).
 * 18, 4, Compressed size
       lv_comp_size = lcl_stream=>read_int4( iv_xstr   = zip
                                             iv_offset = lv_offset + 18 ).
@@ -168,12 +172,23 @@ CLASS cl_abap_zip IMPLEMENTATION.
       ENDIF.
       lv_offset = lv_offset + lv_comp_size.
 
-      cl_abap_gzip=>decompress_binary(
-        EXPORTING
-          gzip_in     = ls_contents-compressed
-        IMPORTING
-          raw_out     = ls_contents-content
-          raw_out_len = lv_out_len ).
+      IF lv_comp_method = 0.
+* STORED entry (no compression): the block is the content itself.
+* Recompress it so GET, which always inflates COMPRESSED, works unchanged.
+        ls_contents-content = ls_contents-compressed.
+        cl_abap_gzip=>compress_binary(
+          EXPORTING
+            raw_in   = ls_contents-content
+          IMPORTING
+            gzip_out = ls_contents-compressed ).
+      ELSE.
+        cl_abap_gzip=>decompress_binary(
+          EXPORTING
+            gzip_in     = ls_contents-compressed
+          IMPORTING
+            raw_out     = ls_contents-content
+            raw_out_len = lv_out_len ).
+      ENDIF.
 
       INSERT ls_contents INTO TABLE mt_contents.
 
