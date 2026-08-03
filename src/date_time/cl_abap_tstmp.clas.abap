@@ -47,7 +47,7 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
         syst_date TYPE d
         syst_time TYPE t
       EXPORTING
-        utc_tstmp TYPE p
+        utc_tstmp TYPE timestamp
       RAISING
         cx_parameter_invalid_range.
 
