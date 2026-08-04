@@ -15,6 +15,8 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS render_nested FOR TESTING RAISING cx_static_check.
     METHODS render_document_namespace_pref FOR TESTING RAISING cx_static_check.
     METHODS parse_basic FOR TESTING RAISING cx_static_check.
+    METHODS root_element_after_crlf FOR TESTING RAISING cx_static_check.
+    METHODS first_child_after_crlf FOR TESTING RAISING cx_static_check.
     METHODS parse_empty FOR TESTING RAISING cx_static_check.
     METHODS parse_namespace FOR TESTING RAISING cx_static_check.
     METHODS parse_unescape FOR TESTING RAISING cx_static_check.
@@ -391,6 +393,38 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_subrc
       exp = 0 ).
+  ENDMETHOD.
+
+  METHOD root_element_after_crlf.
+
+    DATA lv_xml  TYPE string.
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    " CRLF after the prolog: parse( ) removes newlines but the carriage
+    " return remains and becomes a #text node before the root element
+    lv_xml = |<?xml version="1.0"?>\r\n<root><item>A</item></root>|.
+
+    li_root = parse( lv_xml )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_name( )
+      exp = `root` ).
+
+  ENDMETHOD.
+
+  METHOD first_child_after_crlf.
+
+    DATA lv_xml   TYPE string.
+    DATA li_child TYPE REF TO if_ixml_node.
+
+    lv_xml = |<?xml version="1.0"?>\r\n<root><item>A</item></root>|.
+
+    li_child = parse( lv_xml )->get_first_child( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_child->get_name( )
+      exp = `root` ).
+
   ENDMETHOD.
 
   METHOD parse_basic.

@@ -885,7 +885,14 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~get_first_child.
-    child = mi_node->if_ixml_node~get_first_child( ).
+* skip whitespace #text nodes before the root element, they are not
+* part of the document structure
+    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+    li_iterator = mi_node->if_ixml_node~get_children( )->create_iterator( ).
+    child = li_iterator->get_next( ).
+    WHILE child IS NOT INITIAL AND child->get_name( ) = `#text`.
+      child = li_iterator->get_next( ).
+    ENDWHILE.
   ENDMETHOD.
 
   METHOD if_ixml_document~create_attribute_ns.
@@ -1026,7 +1033,7 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~get_root_element.
-    root ?= mi_node->if_ixml_element~get_first_child( ).
+    root ?= if_ixml_document~get_first_child( ).
   ENDMETHOD.
 
 ENDCLASS.
