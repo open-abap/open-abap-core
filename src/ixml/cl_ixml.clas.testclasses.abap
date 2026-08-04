@@ -110,8 +110,10 @@ CLASS ltcl_xml IMPLEMENTATION.
 
     li_element = mi_document->create_simple_element( name   = `tag`
                                                      parent = mi_document ).
-    li_element->set_attribute( name = `count` value = `1` ).
-    li_element->set_attribute( name = `count` value = `2` ).
+    li_element->set_attribute( name  = `count` 
+                               value = `1` ).
+    li_element->set_attribute( name  = `count` 
+                               value = `2` ).
 
     cl_abap_unit_assert=>assert_equals(
       act = li_element->get_attribute( `count` )
