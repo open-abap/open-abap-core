@@ -110,7 +110,7 @@ CLASS ltcl_xml IMPLEMENTATION.
 
     li_element = mi_document->create_simple_element( name   = `tag`
                                                      parent = mi_document ).
-    li_element->set_attribute( name  = `count` 
+    li_element->set_attribute( name  = `count`
                                value = `1` ).
     li_element->set_attribute( name  = `count` 
                                value = `2` ).
