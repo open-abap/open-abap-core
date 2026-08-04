@@ -112,7 +112,7 @@ CLASS ltcl_xml IMPLEMENTATION.
                                                      parent = mi_document ).
     li_element->set_attribute( name  = `count`
                                value = `1` ).
-    li_element->set_attribute( name  = `count` 
+    li_element->set_attribute( name  = `count`
                                value = `2` ).
 
     cl_abap_unit_assert=>assert_equals(
