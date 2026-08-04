@@ -8,6 +8,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS crc FOR TESTING RAISING cx_static_check.
     METHODS save FOR TESTING RAISING cx_static_check.
     METHODS load FOR TESTING RAISING cx_static_check.
+    METHODS load_stored FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -150,6 +151,42 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = sy-subrc
       exp = 1 ).
+  ENDMETHOD.
+
+  METHOD load_stored.
+    " hand-crafted zip with a single STORED (method 0) entry:
+    " file name F, payload 4142
+    DATA lv_hex TYPE string.
+    DATA lv_zip TYPE xstring.
+    DATA lv_act TYPE xstring.
+    DATA lv_exp TYPE xstring.
+    DATA lo_zip TYPE REF TO cl_abap_zip.
+
+    CONCATENATE
+      `504B0304`            " local file header signature
+      `1400` `0000` `0000`  " version, flags, method = STORED
+      `0000` `0000`         " mod time, mod date
+      `00000000`            " crc32 (not checked by load)
+      `02000000` `02000000` " compressed / uncompressed size = 2
+      `0100` `0000`         " name length = 1, extra length = 0
+      `46`                  " file name F
+      `4142`                " stored payload
+      INTO lv_hex.
+    lv_zip = lv_hex.
+
+    CREATE OBJECT lo_zip.
+    lo_zip->load( lv_zip ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( lo_zip->files )
+      exp = 1 ).
+
+    lo_zip->get( EXPORTING name    = `F`
+                 IMPORTING content = lv_act ).
+    lv_exp = '4142'.
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_act
+      exp = lv_exp ).
   ENDMETHOD.
 
 ENDCLASS.
