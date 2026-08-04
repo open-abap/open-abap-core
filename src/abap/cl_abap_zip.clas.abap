@@ -144,7 +144,7 @@ CLASS cl_abap_zip IMPLEMENTATION.
       CLEAR ls_contents.
 
 * 8, 2, Compression method
-      lv_comp_method = lcl_stream=>read_int2( iv_xstr   = zip
+      lv_comp_method = lcl_stream=>read_int2( iv_xstr    = zip
                                                iv_offset = lv_offset + 8 ).
 * 18, 4, Compressed size
       lv_comp_size = lcl_stream=>read_int4( iv_xstr   = zip
