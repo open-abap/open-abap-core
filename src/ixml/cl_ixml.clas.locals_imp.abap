@@ -125,6 +125,19 @@ CLASS lcl_named_node_map IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_named_node_map~set_named_item_ns.
+* replace an existing node with the same name, otherwise add it,
+* appending unconditionally produces duplicate attributes
+    DATA lv_index TYPE i.
+    DATA li_node  LIKE LINE OF mt_list.
+
+    LOOP AT mt_list INTO li_node.
+      lv_index = sy-tabix.
+      IF li_node->get_name( ) = node->get_name( ).
+        MODIFY mt_list INDEX lv_index FROM node.
+        RETURN.
+      ENDIF.
+    ENDLOOP.
+
     APPEND node TO mt_list.
   ENDMETHOD.
 ENDCLASS.

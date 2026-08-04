@@ -36,6 +36,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_tag_space FOR TESTING RAISING cx_static_check.
     METHODS create FOR TESTING RAISING cx_static_check.
     METHODS create_set_attributes FOR TESTING RAISING cx_static_check.
+    METHODS set_attribute_twice FOR TESTING RAISING cx_static_check.
     METHODS parse_and_render FOR TESTING RAISING cx_static_check.
     METHODS parse_close_tag FOR TESTING RAISING cx_static_check.
     METHODS parse_more FOR TESTING RAISING cx_static_check.
@@ -100,6 +101,28 @@ CLASS ltcl_xml IMPLEMENTATION.
   METHOD setup.
     mi_ixml = cl_ixml=>create( ).
     mi_document = mi_ixml->create_document( ).
+  ENDMETHOD.
+
+  METHOD set_attribute_twice.
+
+    DATA li_element TYPE REF TO if_ixml_element.
+    DATA lv_xml     TYPE string.
+
+    li_element = mi_document->create_simple_element( name   = `tag`
+                                                     parent = mi_document ).
+    li_element->set_attribute( name = `count` value = `1` ).
+    li_element->set_attribute( name = `count` value = `2` ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_element->get_attribute( `count` )
+      exp = `2` ).
+
+    lv_xml = render( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_xml
+      exp = |<?xml version="1.0" encoding="utf-16"?><tag count="2"/>| ).
+
   ENDMETHOD.
 
   METHOD create_set_attributes.
