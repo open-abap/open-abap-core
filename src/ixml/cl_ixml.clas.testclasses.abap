@@ -17,6 +17,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_basic FOR TESTING RAISING cx_static_check.
     METHODS root_element_after_crlf FOR TESTING RAISING cx_static_check.
     METHODS first_child_after_crlf FOR TESTING RAISING cx_static_check.
+    METHODS parse_bom FOR TESTING RAISING cx_static_check.
     METHODS parse_empty FOR TESTING RAISING cx_static_check.
     METHODS parse_namespace FOR TESTING RAISING cx_static_check.
     METHODS parse_unescape FOR TESTING RAISING cx_static_check.
@@ -404,6 +405,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     " return remains and becomes a #text node before the root element
     lv_xml = |<?xml version="1.0"?>\r\n<root><item>A</item></root>|.
 
+
     li_root = parse( lv_xml )->get_root_element( ).
 
     cl_abap_unit_assert=>assert_equals(
@@ -423,6 +425,24 @@ CLASS ltcl_xml IMPLEMENTATION.
 
     cl_abap_unit_assert=>assert_equals(
       act = li_child->get_name( )
+      exp = `root` ).
+
+  ENDMETHOD.
+
+  METHOD parse_bom.
+
+    DATA lv_bom  TYPE c LENGTH 1.
+    DATA lv_xml  TYPE string.
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    " U+FEFF byte order mark, found at the start of many real-world files
+    lv_bom = cl_abap_conv_in_ce=>uccpi( 65279 ).
+    CONCATENATE lv_bom `<?xml version="1.0"?><root><item>A</item></root>` INTO lv_xml.
+
+    li_root = parse( lv_xml )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_name( )
       exp = `root` ).
 
   ENDMETHOD.
