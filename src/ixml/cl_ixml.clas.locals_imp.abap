@@ -1263,6 +1263,7 @@ CLASS lcl_parser IMPLEMENTATION.
   METHOD if_ixml_parser~parse.
 
     DATA lv_xml       TYPE string.
+    DATA lv_bom       TYPE c LENGTH 1.
     DATA lv_offset    TYPE i.
     DATA lv_value     TYPE string.
     DATA lv_name      TYPE string.
@@ -1281,6 +1282,12 @@ CLASS lcl_parser IMPLEMENTATION.
 * get the private value from istream,
     stream = mi_istream.
     WRITE '@KERNEL lv_xml.set(stream.get().mv_xml);'.
+
+* strip the byte order mark, it is not part of the document
+    lv_bom = cl_abap_conv_in_ce=>uccpi( 65279 ).
+    IF lv_xml IS NOT INITIAL AND lv_xml(1) = lv_bom.
+      lv_xml = lv_xml+1.
+    ENDIF.
 
     REPLACE ALL OCCURRENCES OF |\n| IN lv_xml WITH ||.
 
