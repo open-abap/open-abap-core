@@ -67,6 +67,9 @@ CLASS cl_http_server IMPLEMENTATION.
 
   METHOD if_http_server~get_location.
     host = 'localhost'.
+    port = '8080'.
+    " no HTTPS support for now
+    out_protocol = 'http'.
   ENDMETHOD.
 
   METHOD if_http_server~get_location_exception.
