@@ -93,6 +93,7 @@ CLASS cl_http_utility IMPLEMENTATION.
     SPLIT string AT '&' INTO TABLE tab.
     LOOP AT tab INTO str.
       SPLIT str AT '=' INTO ls_field-name ls_field-value.
+      ls_field-value = if_http_utility~unescape_url( ls_field-value ).
       APPEND ls_field TO fields.
     ENDLOOP.
   ENDMETHOD.
@@ -141,7 +142,7 @@ CLASS cl_http_utility IMPLEMENTATION.
     DO strlen( unescaped ) TIMES.
       lv_index = sy-index - 1.
       lv_char = unescaped+lv_index(1).
-      IF to_upper( lv_char ) CA sy-abcde OR lv_char CA '0123456789.-()'.
+      IF to_upper( lv_char ) CA sy-abcde OR lv_char CA '0123456789.-_()'.
         escaped = escaped && lv_char.
       ELSE.
         escaped = escaped && '%' && to_lower( cl_abap_codepage=>convert_to( lv_char ) ).
