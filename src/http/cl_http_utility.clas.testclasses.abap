@@ -18,6 +18,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS fields_escaping1 FOR TESTING RAISING cx_static_check.
     METHODS fields_escaping2 FOR TESTING RAISING cx_static_check.
     METHODS decode_base64 FOR TESTING RAISING cx_static_check.
+    METHODS fields_encode_base64url FOR TESTING RAISING cx_static_check.
+    METHODS fields_decode_base64url FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -230,6 +232,32 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = value
       exp = `&lt;a href=&quot;x&quot;&gt;Q&amp;A&lt;/a&gt;` ).
+
+  ENDMETHOD.
+
+  METHOD fields_encode_base64url.
+
+    DATA lt_fields TYPE tihttpnvp.
+
+    APPEND VALUE #(
+      name  = 'access_token'
+      value = 'abc_def.ghi-jkl' ) TO lt_fields.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>fields_to_string( lt_fields )
+      exp = 'access_token=abc_def.ghi-jkl' ).
+
+  ENDMETHOD.
+
+
+  METHOD fields_decode_base64url.
+
+    DATA(lt_fields) =
+      cl_http_utility=>string_to_fields( 'access_token=abc%5fdef.ghi-jkl' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lt_fields[ 1 ]-value
+      exp = 'abc_def.ghi-jkl' ).
 
   ENDMETHOD.
 
