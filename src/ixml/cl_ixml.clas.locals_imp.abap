@@ -125,6 +125,19 @@ CLASS lcl_named_node_map IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_named_node_map~set_named_item_ns.
+* replace an existing node with the same name, otherwise add it,
+* appending unconditionally produces duplicate attributes
+    DATA lv_index TYPE i.
+    DATA li_node  LIKE LINE OF mt_list.
+
+    LOOP AT mt_list INTO li_node.
+      lv_index = sy-tabix.
+      IF li_node->get_name( ) = node->get_name( ).
+        MODIFY mt_list INDEX lv_index FROM node.
+        RETURN.
+      ENDIF.
+    ENDLOOP.
+
     APPEND node TO mt_list.
   ENDMETHOD.
 ENDCLASS.
@@ -885,7 +898,14 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~get_first_child.
-    child = mi_node->if_ixml_node~get_first_child( ).
+* skip whitespace #text nodes before the root element, they are not
+* part of the document structure
+    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+    li_iterator = mi_node->if_ixml_node~get_children( )->create_iterator( ).
+    child = li_iterator->get_next( ).
+    WHILE child IS NOT INITIAL AND child->get_name( ) = `#text`.
+      child = li_iterator->get_next( ).
+    ENDWHILE.
   ENDMETHOD.
 
   METHOD if_ixml_document~create_attribute_ns.
@@ -1026,7 +1046,7 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_document~get_root_element.
-    root ?= mi_node->if_ixml_element~get_first_child( ).
+    root ?= if_ixml_document~get_first_child( ).
   ENDMETHOD.
 
 ENDCLASS.
@@ -1256,6 +1276,7 @@ CLASS lcl_parser IMPLEMENTATION.
   METHOD if_ixml_parser~parse.
 
     DATA lv_xml       TYPE string.
+    DATA lv_bom       TYPE c LENGTH 1.
     DATA lv_offset    TYPE i.
     DATA lv_value     TYPE string.
     DATA lv_name      TYPE string.
@@ -1274,6 +1295,12 @@ CLASS lcl_parser IMPLEMENTATION.
 * get the private value from istream,
     stream = mi_istream.
     WRITE '@KERNEL lv_xml.set(stream.get().mv_xml);'.
+
+* strip the byte order mark, it is not part of the document
+    lv_bom = cl_abap_conv_in_ce=>uccpi( 65279 ).
+    IF lv_xml IS NOT INITIAL AND lv_xml(1) = lv_bom.
+      lv_xml = lv_xml+1.
+    ENDIF.
 
     REPLACE ALL OCCURRENCES OF |\n| IN lv_xml WITH ||.
 
