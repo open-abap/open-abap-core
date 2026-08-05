@@ -143,9 +143,20 @@ CLASS cl_oauth2_client IMPLEMENTATION.
       RAISE EXCEPTION TYPE cx_oa2c_at_not_available.
     ENDIF.
 
-    io_http_client->request->set_header_field(
-      name  = 'Authorization'
-      value = |Bearer { mv_token }| ).
+    CASE i_param_kind.
+      WHEN if_oauth2_client=>c_param_kind_form_field.
+        io_http_client->request->set_form_field(
+          name  = 'access_token'
+          value = mv_token ).
+
+      WHEN if_oauth2_client=>c_param_kind_header_field OR space.
+        io_http_client->request->set_header_field(
+          name  = 'Authorization'
+          value = |Bearer { mv_token }| ).
+
+      WHEN OTHERS.
+        RAISE EXCEPTION TYPE cx_oa2c.
+    ENDCASE.
   ENDMETHOD.
 
 ENDCLASS.
