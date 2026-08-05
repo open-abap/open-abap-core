@@ -40,13 +40,17 @@ CLASS cl_http_client IMPLEMENTATION.
   METHOD constructor.
 * SSL_ID and proxies are currently ignored
 
+    DATA lv_url TYPE string.
     DATA lv_uri TYPE string.
     DATA lv_query TYPE string.
 
     CREATE OBJECT if_http_client~response TYPE cl_http_entity.
 
-    FIND REGEX '\w(\/[\w\d\.\-\/]+)' IN url SUBMATCHES lv_uri.
-    mv_host = url.
+* the query string is not part of the host, split it off first
+    SPLIT url AT '?' INTO lv_url lv_query.
+
+    FIND REGEX '\w(\/[\w\d\.\-\/]+)' IN lv_url SUBMATCHES lv_uri.
+    mv_host = lv_url.
 *    WRITE '@KERNEL console.dir(this.mv_host.get());'.
 *    WRITE '@KERNEL console.dir(lv_uri.get());'.
     REPLACE FIRST OCCURRENCE OF lv_uri IN mv_host WITH ''.
@@ -56,8 +60,7 @@ CLASS cl_http_client IMPLEMENTATION.
       name  = '~request_uri'
       value = lv_uri ).
 
-    FIND REGEX '\?(.*)' IN url SUBMATCHES lv_query.
-    IF sy-subrc = 0.
+    IF lv_query IS NOT INITIAL.
       cl_http_utility=>set_query(
         request = if_http_client~request
         query   = lv_query ).
