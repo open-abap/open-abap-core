@@ -1275,8 +1275,10 @@ CLASS lcl_parser IMPLEMENTATION.
 
   METHOD if_ixml_parser~parse.
 
-    DATA lv_xml       TYPE string.
-    DATA lv_bom       TYPE c LENGTH 1.
+    DATA lv_xml        TYPE string.
+    DATA lv_rest       TYPE string.
+    DATA lv_whitespace TYPE string.
+    DATA lv_bom        TYPE c LENGTH 1.
     DATA lv_offset    TYPE i.
     DATA lv_value     TYPE string.
     DATA lv_name      TYPE string.
@@ -1295,6 +1297,8 @@ CLASS lcl_parser IMPLEMENTATION.
 * get the private value from istream,
     stream = mi_istream.
     WRITE '@KERNEL lv_xml.set(stream.get().mv_xml);'.
+
+    lv_whitespace = cl_abap_char_utilities=>get_simple_spaces_for_cur_cp( ).
 
 * strip the byte order mark, it is not part of the document
     lv_bom = cl_abap_conv_in_ce=>uccpi( 65279 ).
@@ -1358,7 +1362,15 @@ CLASS lcl_parser IMPLEMENTATION.
       ENDIF.
 
       lv_xml = lv_xml+lv_offset.
-      CONDENSE lv_xml.
+
+* skip whitespace between tags, but never touch text content: CONDENSE
+* also removed leading blanks of a value and collapsed blanks inside it,
+* so `<t xml:space="preserve">A  B</t>` lost characters
+      lv_rest = lv_xml.
+      SHIFT lv_rest LEFT DELETING LEADING lv_whitespace.
+      IF lv_rest IS INITIAL OR lv_rest(1) = '<'.
+        lv_xml = lv_rest.
+      ENDIF.
     ENDWHILE.
 
   ENDMETHOD.

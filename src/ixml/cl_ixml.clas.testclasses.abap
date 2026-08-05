@@ -27,6 +27,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_attributes3 FOR TESTING RAISING cx_static_check.
     METHODS parse_attributes4 FOR TESTING RAISING cx_static_check.
     METHODS parse_value_whitespace FOR TESTING RAISING cx_static_check.
+    METHODS parse_value_spaces_kept FOR TESTING RAISING cx_static_check.
     METHODS parse_special FOR TESTING RAISING cx_static_check.
     METHODS parse_hash FOR TESTING RAISING cx_static_check.
     METHODS parse_attr_dash FOR TESTING RAISING cx_static_check.
@@ -698,6 +699,22 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = li_element->get_value( )
       exp = |&<>"'| ).
+
+  ENDMETHOD.
+
+  METHOD parse_value_spaces_kept.
+
+    DATA lv_xml  TYPE string.
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    " spaces inside a value are data, also leading ones
+    lv_xml = |<t xml:space="preserve"> A  B</t>|.
+
+    li_root = parse( lv_xml )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_value( )
+      exp = | A  B| ).
 
   ENDMETHOD.
 
