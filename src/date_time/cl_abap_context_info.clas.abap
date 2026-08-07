@@ -15,9 +15,18 @@ CLASS cl_abap_context_info DEFINITION PUBLIC FINAL CREATE PUBLIC.
     CLASS-METHODS get_user_alias
       RETURNING
         VALUE(rv_alias) TYPE ty_user_alias.
+
+    CLASS-METHODS get_user_time_zone
+      IMPORTING
+        iv_buser           TYPE clike OPTIONAL
+      RETURNING
+        VALUE(rv_timezone) TYPE timezone.
 ENDCLASS.
 
 CLASS cl_abap_context_info IMPLEMENTATION.
+  METHOD get_user_time_zone.
+    rv_timezone = 'UTC'.
+  ENDMETHOD.
 
   METHOD get_system_date.
     rv_date = sy-datum.
