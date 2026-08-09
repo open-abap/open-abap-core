@@ -272,6 +272,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     DATA lv_convexit  TYPE string.
     DATA lv_ddicname  TYPE string.
     DATA lv_decimals  TYPE i.
+    DATA lv_generic   TYPE abap_bool.
     DATA lv_length    TYPE i.
     DATA lv_name      TYPE string.
     DATA lv_prefix    TYPE string.
@@ -281,6 +282,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     WRITE '@KERNEL lv_name.set(p_data.constructor.name);'.
     WRITE '@KERNEL lv_length.set(p_data.getLength ? p_data.getLength() : 0);'.
     WRITE '@KERNEL lv_decimals.set(p_data.getDecimals ? p_data.getDecimals() : 0);'.
+    WRITE '@KERNEL lv_generic.set(p_data.constructor.name === "DataReference" && p_data.getPointer() === undefined && p_data.type?.constructor?.name === "Character" && p_data.type?.length === 4 && p_data.type?.extra === undefined ? "X" : " ");'.
 
 * These are the constructor names from the js runtime
     CASE lv_name.
@@ -412,8 +414,15 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->type_kind = typekind_utclong.
         type->kind = kind_elem.
       WHEN 'DataReference'.
-        WRITE '@KERNEL lv_any = p_data.type;'.
-        type = cl_abap_refdescr=>create( describe_by_data( lv_any ) ).
+        IF lv_generic = abap_true.
+          CREATE OBJECT lo_referenced TYPE cl_abap_datadescr.
+          lo_referenced->type_kind = typekind_data.
+          lo_referenced->kind = kind_elem.
+        ELSE.
+          WRITE '@KERNEL lv_any = p_data.type;'.
+          lo_referenced = describe_by_data( lv_any ).
+        ENDIF.
+        type = cl_abap_refdescr=>create( lo_referenced ).
         type->type_kind = typekind_dref.
         type->kind = kind_ref.
       WHEN OTHERS.
