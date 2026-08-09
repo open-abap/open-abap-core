@@ -2,9 +2,10 @@ CLASS kernel_create_data_handle DEFINITION PUBLIC.
   PUBLIC SECTION.
     CLASS-METHODS call
       IMPORTING
-        handle TYPE REF TO cl_abap_datadescr
+        handle        TYPE REF TO cl_abap_datadescr
+        allow_generic TYPE abap_bool OPTIONAL
       CHANGING
-        dref   TYPE REF TO any.
+        dref          TYPE REF TO any.
   PRIVATE SECTION.
     CLASS-METHODS elem
       IMPORTING
@@ -33,6 +34,11 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
   METHOD call.
     IF handle IS NOT BOUND.
       RAISE EXCEPTION TYPE cx_sy_ref_is_initial.
+    ENDIF.
+
+    IF handle->type_kind = cl_abap_typedescr=>typekind_data
+        AND allow_generic = abap_false.
+      RAISE EXCEPTION TYPE cx_sy_create_data_error.
     ENDIF.
 
     WRITE '@KERNEL if (dref.constructor.name === "FieldSymbol") {'.
@@ -78,8 +84,11 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
       WHEN OTHERS.
         lo_datadescr ?= lo_refdescr->get_referenced_type( ).
         call(
-          EXPORTING handle = lo_datadescr
-          CHANGING dref    = field ).
+          EXPORTING
+            handle        = lo_datadescr
+            allow_generic = abap_true
+          CHANGING
+            dref          = field ).
 
         WRITE '@KERNEL dref.assign(new abap.types.DataReference(field.getPointer()));'.
     ENDCASE.
