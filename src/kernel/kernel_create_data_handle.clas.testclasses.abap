@@ -12,6 +12,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS numeric FOR TESTING RAISING cx_static_check.
     METHODS string FOR TESTING RAISING cx_static_check.
     METHODS abap_bool FOR TESTING RAISING cx_static_check.
+    METHODS generic_data_handle FOR TESTING RAISING cx_static_check.
     METHODS structure FOR TESTING RAISING cx_static_check.
     METHODS table FOR TESTING RAISING cx_static_check.
     METHODS ref FOR TESTING RAISING cx_static_check.
@@ -106,6 +107,25 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lo_value_new TYPE REF TO data.
     handle = cl_abap_typedescr=>describe_by_data( foo ).
     CREATE DATA lo_value_new TYPE HANDLE handle.
+  ENDMETHOD.
+
+  METHOD generic_data_handle.
+    DATA lr_generic   TYPE REF TO data.
+    DATA lr_created   TYPE REF TO data.
+    DATA lo_refdescr  TYPE REF TO cl_abap_refdescr.
+    DATA lo_datadescr TYPE REF TO cl_abap_datadescr.
+    DATA lv_caught    TYPE abap_bool.
+
+    lo_refdescr ?= cl_abap_typedescr=>describe_by_data( lr_generic ).
+    lo_datadescr ?= lo_refdescr->get_referenced_type( ).
+
+    TRY.
+        CREATE DATA lr_created TYPE HANDLE lo_datadescr.
+      CATCH cx_sy_create_data_error.
+        lv_caught = abap_true.
+    ENDTRY.
+
+    ASSERT lv_caught = abap_true.
   ENDMETHOD.
 
   METHOD structure.
