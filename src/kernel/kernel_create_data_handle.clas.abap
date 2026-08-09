@@ -160,6 +160,8 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
   METHOD elem.
     DATA lv_half TYPE i.
     CASE handle->type_kind.
+      WHEN cl_abap_typedescr=>typekind_data.
+        WRITE '@KERNEL dref.assign(new abap.types.Character(4));'.
       WHEN cl_abap_typedescr=>typekind_float.
         CREATE DATA dref TYPE f.
         WRITE '@KERNEL dref.getPointer().qualifiedName = handle.get().internal_qualified_name;'.
