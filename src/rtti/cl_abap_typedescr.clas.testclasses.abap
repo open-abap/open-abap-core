@@ -794,53 +794,53 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD identical_refs1.
-    " DATA t    TYPE timestamp.
-    " DATA ref1 TYPE REF TO cl_abap_typedescr.
-    " DATA ref2 TYPE REF TO cl_abap_typedescr.
-    " ref1 = cl_abap_typedescr=>describe_by_data( t ).
-    " ref2 = cl_abap_typedescr=>describe_by_data( t ).
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = ref1
-    "   exp = ref2 ).
+    DATA value TYPE i.
+    DATA first_descriptor TYPE REF TO cl_abap_typedescr.
+    DATA second_descriptor TYPE REF TO cl_abap_typedescr.
+    first_descriptor = cl_abap_typedescr=>describe_by_data( value ).
+    second_descriptor = cl_abap_typedescr=>describe_by_data( value ).
+    cl_abap_unit_assert=>assert_equals(
+      act = first_descriptor
+      exp = second_descriptor ).
   ENDMETHOD.
 
   METHOD identical_refs2.
-    " TYPES ty TYPE c LENGTH 2.
-    " DATA t1 TYPE ty.
-    " DATA t2 TYPE ty.
-    " DATA ref1 TYPE REF TO cl_abap_typedescr.
-    " DATA ref2 TYPE REF TO cl_abap_typedescr.
-    " ref1 = cl_abap_typedescr=>describe_by_data( t1 ).
-    " ref2 = cl_abap_typedescr=>describe_by_data( t2 ).
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = ref1
-    "   exp = ref2 ).
+    TYPES ty TYPE c LENGTH 2.
+    DATA t1 TYPE ty.
+    DATA t2 TYPE ty.
+    DATA ref1 TYPE REF TO cl_abap_typedescr.
+    DATA ref2 TYPE REF TO cl_abap_typedescr.
+    ref1 = cl_abap_typedescr=>describe_by_data( t1 ).
+    ref2 = cl_abap_typedescr=>describe_by_data( t2 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ref1
+      exp = ref2 ).
   ENDMETHOD.
 
   METHOD identical_refs3.
-    " DATA t1 TYPE c LENGTH 2.
-    " DATA t2 TYPE c LENGTH 2.
-    " DATA ref1 TYPE REF TO cl_abap_typedescr.
-    " DATA ref2 TYPE REF TO cl_abap_typedescr.
-    " ref1 = cl_abap_typedescr=>describe_by_data( t1 ).
-    " ref2 = cl_abap_typedescr=>describe_by_data( t2 ).
-    " cl_abap_unit_assert=>assert_equals(
-    "   act = ref1
-    "   exp = ref2 ).
+    DATA t1 TYPE c LENGTH 2.
+    DATA t2 TYPE c LENGTH 2.
+    DATA ref1 TYPE REF TO cl_abap_typedescr.
+    DATA ref2 TYPE REF TO cl_abap_typedescr.
+    ref1 = cl_abap_typedescr=>describe_by_data( t1 ).
+    ref2 = cl_abap_typedescr=>describe_by_data( t2 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ref1
+      exp = ref2 ).
   ENDMETHOD.
 
   METHOD identical_refs4.
-    " TYPES ty1 TYPE c LENGTH 2.
-    " TYPES ty2 TYPE c LENGTH 2.
-    " DATA t1 TYPE ty1.
-    " DATA t2 TYPE ty2.
-    " DATA ref1 TYPE REF TO cl_abap_typedescr.
-    " DATA ref2 TYPE REF TO cl_abap_typedescr.
-    " ref1 = cl_abap_typedescr=>describe_by_data( t1 ).
-    " ref2 = cl_abap_typedescr=>describe_by_data( t2 ).
-    " IF ref1 = ref2.
-    "   cl_abap_unit_assert=>fail( ).
-    " ENDIF.
+    TYPES ty1 TYPE c LENGTH 2.
+    TYPES ty2 TYPE c LENGTH 2.
+    DATA t1 TYPE ty1.
+    DATA t2 TYPE ty2.
+    DATA ref1 TYPE REF TO cl_abap_typedescr.
+    DATA ref2 TYPE REF TO cl_abap_typedescr.
+    ref1 = cl_abap_typedescr=>describe_by_data( t1 ).
+    ref2 = cl_abap_typedescr=>describe_by_data( t2 ).
+    IF ref1 = ref2.
+      cl_abap_unit_assert=>fail( ).
+    ENDIF.
   ENDMETHOD.
 
 ENDCLASS.

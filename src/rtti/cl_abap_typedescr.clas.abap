@@ -112,6 +112,13 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS kind_intf   TYPE c LENGTH 1 VALUE 'I'.
 
   PRIVATE SECTION.
+    TYPES: BEGIN OF ty_cache,
+             type_id TYPE string,
+             descr   TYPE REF TO cl_abap_typedescr,
+           END OF ty_cache.
+
+    CLASS-DATA gt_cache TYPE HASHED TABLE OF ty_cache
+      WITH UNIQUE KEY type_id.
     CLASS-DATA gv_counter TYPE n LENGTH 10.
 
     CLASS-METHODS describe_by_dashes
@@ -121,6 +128,10 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CLASS-METHODS is_deep
       IMPORTING  io_struct     TYPE REF TO cl_abap_structdescr
       RETURNING VALUE(rv_deep) TYPE abap_bool.
+
+    CLASS-METHODS get_type_id
+      IMPORTING p_data         TYPE any
+      RETURNING VALUE(type_id) TYPE string.
 ENDCLASS.
 
 CLASS cl_abap_typedescr IMPLEMENTATION.
@@ -263,6 +274,30 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 
   ENDMETHOD.
 
+  METHOD get_type_id.
+    WRITE '@KERNEL cl_abap_typedescr.runtimeTypeId ??= (data, seen = new WeakSet()) => {'.
+    WRITE '@KERNEL   if (data?.constructor === undefined) { return String(data); }'.
+    WRITE '@KERNEL   if (data.constructor.name === "FieldSymbol") { return cl_abap_typedescr.runtimeTypeId(data.getPointer(), seen); }'.
+    WRITE '@KERNEL   const unwrap = value => value?.get?.() ?? value ?? "";'.
+    WRITE '@KERNEL   const qualified = unwrap(data.getQualifiedName?.() || data.qualifiedName);'.
+    WRITE '@KERNEL   const ddic = unwrap(data.getDDICName?.() || data.ddicName);'.
+    WRITE '@KERNEL   let key = data.constructor.name + "|" + qualified + "|" + ddic;'.
+    WRITE '@KERNEL   if (seen.has(data)) { return key + "|recursive"; }'.
+    WRITE '@KERNEL   seen.add(data);'.
+    WRITE '@KERNEL   if (data.constructor.name === "Structure") {'.
+    WRITE '@KERNEL     key += "|" + Object.entries(data.get()).map(([name, value]) => name + ":" + cl_abap_typedescr.runtimeTypeId(value, seen)).join(",");'.
+    WRITE '@KERNEL   } else if (data.constructor.name === "Table" || data.constructor.name === "HashedTable") {'.
+    WRITE '@KERNEL     key += "|" + cl_abap_typedescr.runtimeTypeId(data.getRowType(), seen) + "|" + JSON.stringify(data.getOptions());'.
+    WRITE '@KERNEL   } else if (data.constructor.name === "DataReference") {'.
+    WRITE '@KERNEL     key += "|" + cl_abap_typedescr.runtimeTypeId(data.type, seen);'.
+    WRITE '@KERNEL   } else {'.
+    WRITE '@KERNEL     key += "|" + unwrap(data.getLength?.()) + "|" + unwrap(data.getDecimals?.()) + "|" + unwrap(data.getConversionExit?.()) + "|" + unwrap(data.RTTIName);'.
+    WRITE '@KERNEL   }'.
+    WRITE '@KERNEL   return key;'.
+    WRITE '@KERNEL };'.
+    WRITE '@KERNEL type_id.set(cl_abap_typedescr.runtimeTypeId(p_data));'.
+  ENDMETHOD.
+
   METHOD describe_by_data.
 
     DATA lo_elem      TYPE REF TO cl_abap_elemdescr.
@@ -278,6 +313,15 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     DATA lv_prefix    TYPE string.
     DATA lv_qualified TYPE string.
     DATA lv_rtti_name TYPE string.
+    DATA lv_type_id   TYPE string.
+    DATA ls_cache     TYPE ty_cache.
+
+    lv_type_id = get_type_id( p_data ).
+    READ TABLE gt_cache INTO ls_cache WITH TABLE KEY type_id = lv_type_id.
+    IF sy-subrc = 0.
+      type = ls_cache-descr.
+      RETURN.
+    ENDIF.
 
     WRITE '@KERNEL lv_name.set(p_data.constructor.name);'.
     WRITE '@KERNEL lv_length.set(p_data.getLength ? p_data.getLength() : 0);'.
@@ -473,6 +517,10 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     IF lv_convexit <> ''.
       lo_elem->edit_mask = '==' && lv_convexit.
     ENDIF.
+
+    INSERT VALUE #(
+      type_id = lv_type_id
+      descr   = type ) INTO TABLE gt_cache.
 
   ENDMETHOD.
 
