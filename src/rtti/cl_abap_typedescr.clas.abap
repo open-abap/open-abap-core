@@ -249,7 +249,8 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     WRITE '@KERNEL lv_name.set(p_object_ref.get().constructor.name.toUpperCase());'.
 
     lo_cdescr->relative_name = lv_name.
-    lo_cdescr->absolute_name = '\CLASS=' && lv_name.
+    WRITE '@KERNEL lv_name.set(p_object_ref.get().constructor.INTERNAL_NAME);'.
+    lo_cdescr->absolute_name = kernel_internal_name=>internal_to_rtti( lv_name ).
 
     p_descr_ref = lo_cdescr.
   ENDMETHOD.
