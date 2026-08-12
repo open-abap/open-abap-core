@@ -36,6 +36,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS ref_test1 CHANGING foo TYPE REF TO data.
     METHODS ref_test2 FOR TESTING RAISING cx_static_check.
     METHODS ref_class FOR TESTING RAISING cx_static_check.
+    METHODS object_class FOR TESTING RAISING cx_static_check.
 
     METHODS method1 FOR TESTING.
     METHODS method2 CHANGING data TYPE data.
@@ -300,6 +301,19 @@ CLASS ltcl_test IMPLEMENTATION.
     ASSERT lo_handle->kind = cl_abap_typedescr=>kind_ref.
     ASSERT lo_handle->type_kind = cl_abap_typedescr=>typekind_oref.
     CREATE DATA rdata TYPE HANDLE lo_handle.
+  ENDMETHOD.
+
+  METHOD object_class.
+    DATA target     TYPE REF TO lcl_dummy.
+    DATA descriptor TYPE REF TO cl_abap_typedescr.
+    DATA type_name  TYPE abap_abstypename.
+
+    CREATE OBJECT target.
+    descriptor = cl_abap_typedescr=>describe_by_object_ref( target ).
+    type_name = descriptor->absolute_name.
+    CLEAR target.
+    CREATE OBJECT target TYPE (type_name).
+    ASSERT target IS BOUND.
   ENDMETHOD.
 
   METHOD method1.
