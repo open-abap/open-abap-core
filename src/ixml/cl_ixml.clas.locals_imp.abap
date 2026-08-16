@@ -1,4 +1,5 @@
 CLASS lcl_escape DEFINITION.
+
   PUBLIC SECTION.
     CLASS-METHODS unescape_value
       IMPORTING
