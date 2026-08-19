@@ -2,9 +2,9 @@ CLASS kernel_authority_check DEFINITION PUBLIC.
   PUBLIC SECTION.
     CLASS-METHODS call
       IMPORTING
-        object        TYPE csequence OPTIONAL
-        user          TYPE csequence OPTIONAL
-        authorization TYPE cl_aunit_auth_check_types_def=>authorization OPTIONAL.
+        object TYPE csequence OPTIONAL
+        user   TYPE csequence OPTIONAL
+        fields TYPE any OPTIONAL.
 
     CLASS-METHODS restrict
       IMPORTING authorizations TYPE cl_aunit_auth_check_types_def=>user_role_authorizations.
@@ -41,6 +41,19 @@ CLASS kernel_authority_check IMPLEMENTATION.
     DATA lv_user TYPE sy-uname.
     DATA lv_subrc TYPE sysubrc.
     DATA ls_log TYPE cl_aunit_auth_check_types_def=>auth_ctxtset_msg.
+    DATA authorization TYPE cl_aunit_auth_check_types_def=>authorization.
+
+    WRITE '@KERNEL if (INPUT.fields) {'.
+    WRITE '@KERNEL   for (const inputField of INPUT.fields) {'.
+    WRITE '@KERNEL     if (inputField.dummy === true) continue;'.
+    WRITE '@KERNEL     const authField = authorization.getRowType().clone();'.
+    WRITE '@KERNEL     authField.get().fieldname.set(inputField.id);'.
+    WRITE '@KERNEL     const interval = authField.get().fieldvalues.getRowType().clone();'.
+    WRITE '@KERNEL     interval.get().lower_value.set(inputField.field);'.
+    WRITE '@KERNEL     authField.get().fieldvalues.append(interval);'.
+    WRITE '@KERNEL     abap.statements.insertInternal({data: authField, table: authorization});'.
+    WRITE '@KERNEL   }'.
+    WRITE '@KERNEL }'.
 
     lv_user = user.
     IF lv_user IS INITIAL.

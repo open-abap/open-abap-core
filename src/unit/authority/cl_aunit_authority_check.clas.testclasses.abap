@@ -50,6 +50,16 @@ CLASS ltcl_authority_check IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_subrc
       exp = 4 ).
+
+    AUTHORITY-CHECK OBJECT 'ZAUTH_TEST'
+      ID 'ACTVT' FIELD '03'
+      ID 'IGNORED' DUMMY.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    AUTHORITY-CHECK OBJECT 'ZAUTH_TEST'
+      ID 'ACTVT' FIELD '03'
+      ID 'OTHER' FIELD 'X'.
+    cl_abap_unit_assert=>assert_subrc( exp = 4 ).
   ENDMETHOD.
 
   METHOD execution_log.
@@ -128,17 +138,8 @@ CLASS ltcl_authority_check IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD call_check.
-    DATA lt_authorization TYPE cl_aunit_auth_check_types_def=>authorization.
-    DATA ls_field TYPE cl_aunit_auth_check_types_def=>authfield_values.
-    DATA ls_interval LIKE LINE OF ls_field-fieldvalues.
-
-    ls_interval-lower_value = value.
-    APPEND ls_interval TO ls_field-fieldvalues.
-    ls_field-fieldname = 'ACTVT'.
-    INSERT ls_field INTO TABLE lt_authorization.
-    kernel_authority_check=>call(
-      object        = 'ZAUTH_TEST'
-      authorization = lt_authorization ).
+    AUTHORITY-CHECK OBJECT 'ZAUTH_TEST'
+      ID 'ACTVT' FIELD value.
     result = sy-subrc.
   ENDMETHOD.
 ENDCLASS.
