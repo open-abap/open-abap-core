@@ -20,6 +20,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS make_valid_time_gap_before FOR TESTING RAISING cx_static_check.
     METHODS make_valid_time_before_est FOR TESTING RAISING cx_static_check.
     METHODS tstmp2utclong FOR TESTING RAISING cx_static_check.
+    METHODS utclong2tstmp_short FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -365,6 +366,20 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_result
       exp = '2026-04-27T12:34:56.0000000' ).
+  ENDMETHOD.
+
+  METHOD utclong2tstmp_short.
+    CONSTANTS lc_timestamp TYPE timestamp VALUE '20260427123456'.
+    DATA lv_utclong   TYPE utclong.
+    DATA lv_timestamp TYPE timestamp.
+
+    lv_utclong = cl_abap_tstmp=>tstmp2utclong( timestamp = lc_timestamp ).
+
+    lv_timestamp = cl_abap_tstmp=>utclong2tstmp_short( utclong = lv_utclong ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_timestamp
+      exp = lc_timestamp ).
   ENDMETHOD.
 
 ENDCLASS.
