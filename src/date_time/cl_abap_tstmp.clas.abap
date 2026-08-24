@@ -110,6 +110,10 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
       RAISING
         cx_parameter_invalid_type
         cx_sy_conversion_no_date_time.
+
+    CLASS-METHODS get_system_timezone
+      RETURNING
+        VALUE(system_timezone) TYPE tznzone.
 ENDCLASS.
 
 CLASS cl_abap_tstmp IMPLEMENTATION.
@@ -271,5 +275,10 @@ CLASS cl_abap_tstmp IMPLEMENTATION.
     WRITE '@KERNEL              str.slice(8,10) + ":" + str.slice(10,12) + ":" + str.slice(12,14) + "Z";'.
     WRITE '@KERNEL const d = new Date(iso);'.
     WRITE '@KERNEL utclong.value = d.toISOString().replace(/\.\d{3}Z$/, ".0000000");'.
+  ENDMETHOD.
+
+  METHOD get_system_timezone.
+* system timezone is always UTC for open-abap
+    system_timezone = 'UTC'.
   ENDMETHOD.
 ENDCLASS.
