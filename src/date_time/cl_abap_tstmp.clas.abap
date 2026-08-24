@@ -115,8 +115,15 @@ ENDCLASS.
 CLASS cl_abap_tstmp IMPLEMENTATION.
 
   METHOD utclong2tstmp_short.
-* wonder if this works?
-    timestamp = utclong.
+    DATA lv_date TYPE d.
+    DATA lv_time TYPE t.
+
+    IF utclong IS INITIAL.
+      RAISE EXCEPTION TYPE cx_sy_conversion_no_date_time.
+    ENDIF.
+
+    CONVERT UTCLONG utclong INTO DATE lv_date TIME lv_time TIME ZONE 'UTC'.
+    CONVERT DATE lv_date TIME lv_time INTO TIME STAMP timestamp TIME ZONE 'UTC'.
   ENDMETHOD.
 
   METHOD td_add.
