@@ -21,6 +21,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS make_valid_time_before_est FOR TESTING RAISING cx_static_check.
     METHODS tstmp2utclong FOR TESTING RAISING cx_static_check.
     METHODS utclong2tstmp_short FOR TESTING RAISING cx_static_check.
+    METHODS get_system_timezone FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -380,6 +381,12 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_timestamp
       exp = lc_timestamp ).
+  ENDMETHOD.
+
+  METHOD get_system_timezone.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_tstmp=>get_system_timezone( )
+      exp = 'UTC' ).
   ENDMETHOD.
 
 ENDCLASS.
