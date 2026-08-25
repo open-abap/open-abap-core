@@ -1,6 +1,9 @@
 CLASS cl_bcs_convert DEFINITION PUBLIC.
   PUBLIC SECTION.
 
+    CONSTANTS gc_tab TYPE c LENGTH 1 VALUE cl_abap_char_utilities=>horizontal_tab.
+    CONSTANTS gc_crlf TYPE c LENGTH 2 VALUE cl_abap_char_utilities=>cr_lf.
+
     CLASS-METHODS string_to_soli
       IMPORTING
         iv_string      TYPE string
