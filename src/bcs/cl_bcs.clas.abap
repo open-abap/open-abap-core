@@ -7,6 +7,12 @@ CLASS cl_bcs DEFINITION PUBLIC.
     CONSTANTS gc_future TYPE char1 VALUE 'F'.
     CONSTANTS gc_incons TYPE char1 VALUE 'X'.
     CONSTANTS gc_ok TYPE char1 VALUE 'I'.
+    " todo, verify values against a real system
+    CONSTANTS gc_wait TYPE char1 VALUE 'W'.
+    CONSTANTS gc_error TYPE char1 VALUE 'E'.
+    CONSTANTS gc_err_intern TYPE char1 VALUE 'N'.
+    CONSTANTS gc_err_extern TYPE char1 VALUE 'T'.
+    CONSTANTS gc_err_connect TYPE char1 VALUE 'C'.
 
     CLASS-METHODS create_persistent
       RETURNING
