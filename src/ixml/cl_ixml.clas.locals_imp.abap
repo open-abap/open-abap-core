@@ -244,6 +244,10 @@ CLASS lcl_node IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
+  METHOD if_ixml_node~create_filter_parent.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD get_parent.
     ri_parent = mi_parent.
   ENDMETHOD.
@@ -748,6 +752,10 @@ ENDCLASS.
 
 CLASS lcl_document IMPLEMENTATION.
   METHOD if_ixml_node~create_filter_name.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_ixml_node~create_filter_parent.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 

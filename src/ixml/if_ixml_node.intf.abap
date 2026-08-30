@@ -99,4 +99,10 @@ INTERFACE if_ixml_node PUBLIC.
       namespace   TYPE string OPTIONAL
     RETURNING
       VALUE(rval) TYPE REF TO if_ixml_node_filter.
+
+  METHODS create_filter_parent
+    IMPORTING
+      filter_parent TYPE REF TO if_ixml_node_filter
+    RETURNING
+      VALUE(rval)   TYPE REF TO if_ixml_node_filter.
 ENDINTERFACE.

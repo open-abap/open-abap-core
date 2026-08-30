@@ -1,5 +1,11 @@
 TYPE-POOL icon.
 
+CONSTANTS icon_active_inactive TYPE c LENGTH 4 VALUE 'TODO'.
+CONSTANTS icon_availability_check TYPE c LENGTH 4 VALUE 'TODO'.
+CONSTANTS icon_include_in_selection TYPE c LENGTH 4 VALUE 'TODO'.
+CONSTANTS icon_supplier TYPE c LENGTH 4 VALUE 'TODO'.
+CONSTANTS icon_val_quantity_structure TYPE c LENGTH 4 VALUE 'TODO'.
+
 CONSTANTS icon_abap TYPE c LENGTH 4 VALUE '@9U@'.
 CONSTANTS icon_action_success TYPE c LENGTH 4 VALUE '@9P@'.
 CONSTANTS icon_activate TYPE c LENGTH 4 VALUE '@3C@'.
