@@ -1163,6 +1163,10 @@ CLASS lcl_ostream IMPLEMENTATION.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
+  METHOD if_ixml_ostream~get_encoding.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_ostream~get_num_written_raw.
     ASSERT 1 = 'todo'.
   ENDMETHOD.

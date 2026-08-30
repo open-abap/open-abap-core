@@ -9,10 +9,19 @@ CLASS cl_document_bcs DEFINITION PUBLIC.
         i_text        TYPE any OPTIONAL
         i_hex         TYPE any OPTIONAL
         i_length      TYPE clike OPTIONAL
+        i_importance  TYPE any OPTIONAL
+        i_sensitivity TYPE any OPTIONAL
+        i_sender      TYPE REF TO if_sender_bcs OPTIONAL
       RETURNING
         VALUE(result) TYPE REF TO cl_document_bcs
       RAISING
         cx_bcs.
+
+    CLASS-METHODS string_to_soli
+      IMPORTING
+        ip_string      TYPE string
+      RETURNING
+        VALUE(rt_soli) TYPE soli_tab.
 
     METHODS add_attachment
       IMPORTING
@@ -69,6 +78,10 @@ CLASS cl_document_bcs IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD create_document.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD string_to_soli.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 

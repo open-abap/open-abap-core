@@ -79,6 +79,14 @@ CLASS cl_demo_output IMPLEMENTATION.
     ASSERT 1 = 'not supported'.
   ENDMETHOD.
 
+  METHOD if_demo_output~write_html.
+    ASSERT 1 = 'not supported'.
+  ENDMETHOD.
+
+  METHOD if_demo_output~begin_section.
+    ASSERT 1 = 'not supported'.
+  ENDMETHOD.
+
   METHOD new.
     ASSERT 1 = 'not supported'.
   ENDMETHOD.
