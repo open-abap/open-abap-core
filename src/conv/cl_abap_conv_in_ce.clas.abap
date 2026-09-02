@@ -30,13 +30,13 @@ CLASS cl_abap_conv_in_ce DEFINITION PUBLIC.
         input TYPE xsequence
         n     TYPE i OPTIONAL
       EXPORTING
-        data  TYPE string.
+        data  TYPE simple.
 
     METHODS read
       IMPORTING
         n    TYPE i OPTIONAL
       EXPORTING
-        data TYPE string.
+        data TYPE simple.
   PRIVATE SECTION.
     DATA mv_input TYPE xstring.
     DATA mv_js_encoding TYPE string.
