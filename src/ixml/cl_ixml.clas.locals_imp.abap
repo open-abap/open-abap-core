@@ -1,4 +1,5 @@
 CLASS lcl_escape DEFINITION.
+
   PUBLIC SECTION.
     CLASS-METHODS unescape_value
       IMPORTING
@@ -16,11 +17,13 @@ ENDCLASS.
 CLASS lcl_escape IMPLEMENTATION.
   METHOD unescape_value.
     rv_value = iv_value.
-    REPLACE ALL OCCURRENCES OF '&amp;' IN rv_value WITH '&'.
     REPLACE ALL OCCURRENCES OF '&lt;' IN rv_value WITH '<'.
     REPLACE ALL OCCURRENCES OF '&gt;' IN rv_value WITH '>'.
     REPLACE ALL OCCURRENCES OF '&quot;' IN rv_value WITH '"'.
     REPLACE ALL OCCURRENCES OF '&apos;' IN rv_value WITH |'|.
+* "&amp;" must be last, otherwise an escaped "&amp;lt;" is unescaped twice and
+* a value that literally contains "&lt;" comes back as "<"
+    REPLACE ALL OCCURRENCES OF '&amp;' IN rv_value WITH '&'.
   ENDMETHOD.
 
   METHOD escape_value.
