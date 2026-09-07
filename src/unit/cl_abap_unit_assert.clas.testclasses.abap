@@ -37,10 +37,17 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS non_compareable4 FOR TESTING RAISING cx_static_check.
     METHODS non_compareable5 FOR TESTING RAISING cx_static_check.
     METHODS non_compareable6 FOR TESTING RAISING cx_static_check.
-
+    METHODS zero_tol FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
+
+  METHOD zero_tol.
+    cl_abap_unit_assert=>assert_equals(
+      exp = 0
+      act = 0
+      tol = 0 ).
+  ENDMETHOD.
 
   METHOD char_n_pack.
     TYPES total TYPE p LENGTH 3 DECIMALS 2.
