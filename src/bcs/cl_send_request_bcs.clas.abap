@@ -23,6 +23,12 @@ CLASS cl_send_request_bcs DEFINITION PUBLIC.
         i_disclosure TYPE any
       RAISING
       cx_os_object_not_found.
+
+    METHODS create_link
+      IMPORTING
+        i_object TYPE any
+      RAISING
+        cx_os_object_not_found.
 ENDCLASS.
 
 CLASS cl_send_request_bcs IMPLEMENTATION.
@@ -39,6 +45,10 @@ CLASS cl_send_request_bcs IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD set_expires_on.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD create_link.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
 
