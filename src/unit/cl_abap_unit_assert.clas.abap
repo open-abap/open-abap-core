@@ -408,7 +408,7 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
       compare_tables(
         act = act
         exp = exp ).
-    ELSEIF tol IS SUPPLIED.
+    ELSEIF tol IS NOT INITIAL.
       diff = exp - act.
 *      WRITE '@KERNEL console.dir(tol);'.
 *      WRITE '@KERNEL console.dir(diff);'.
