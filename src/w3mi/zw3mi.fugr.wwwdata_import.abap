@@ -14,10 +14,19 @@ FUNCTION wwwdata_import.
   DATA xstr     TYPE xstring.
   DATA row      TYPE w3mime.
   DATA len      TYPE i.
+  DATA lv_error TYPE abap_bool.
 
   CLEAR mime.
 
-  WRITE '@KERNEL filename.set(abap.W3MI[key.get().objid.get().trimEnd()].filename);'.
+  WRITE '@KERNEL const w3obj = abap.W3MI?.[key.get().objid.get().trimEnd()];'.
+  WRITE '@KERNEL lv_error.set(w3obj === undefined ? "X" : " ");'.
+
+  IF lv_error = abap_true.
+    RAISE import_error.
+  ENDIF.
+
+  " Reuse w3obj directly
+  WRITE '@KERNEL filename.set(w3obj.filename);'.
 
   WRITE '@KERNEL const fs = await import("fs");'.
   WRITE '@KERNEL const path = await import("path");'.
