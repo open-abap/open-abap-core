@@ -103,6 +103,9 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
 
   METHOD if_osql_test_environment~destroy.
 
+* sqlite refuses to detach a database with pending writes, "database is locked"
+    COMMIT WORK.
+
 * https://www.sqlite.org/lang_detach.html
     mo_sql->execute_update( |DETACH DATABASE { mv_schema };| ).
 
