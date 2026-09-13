@@ -169,6 +169,24 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     DATA objectdescr TYPE REF TO cl_abap_objectdescr.
     DATA oo_type     TYPE string.
     DATA lv_any      TYPE string.
+    DATA lv_absolute TYPE string.
+    DATA lv_offset   TYPE i.
+
+* an ABSOLUTE type name - the spelling a serialized type descriptor carries -
+* is resolved by its relative part, as a system does: \TYPE=STRING is STRING.
+* FIND rather than a prefix strip, so that \TYPE-POOL=ABAP\TYPE=ABAP_BOOL
+* finds the segment that names the type; generated names (%) are left alone,
+* their relative part names nothing
+    lv_absolute = p_name.
+    IF lv_absolute CP '\TYPE*' AND lv_absolute NA '%'.
+      FIND FIRST OCCURRENCE OF '\TYPE=' IN lv_absolute MATCH OFFSET lv_offset.
+      IF sy-subrc = 0.
+        lv_offset = lv_offset + 6.
+        lv_absolute = lv_absolute+lv_offset.
+        type = describe_by_name( lv_absolute ).
+        RETURN.
+      ENDIF.
+    ENDIF.
 
 * note, p_name might be internal name, so check and skip these,
     IF p_name CA '-' AND p_name NP 'CLAS-*' AND p_name NP 'PROG-*'.
