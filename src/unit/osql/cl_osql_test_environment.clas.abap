@@ -11,6 +11,10 @@ CLASS cl_osql_test_environment DEFINITION PUBLIC.
   PRIVATE SECTION.
     CONSTANTS mv_schema TYPE string VALUE 'double'.
 
+* only one environment can be active at a time, the previous one must be destroyed
+* before a new one is created, otherwise the doubles of the two overlap
+    CLASS-DATA go_active TYPE REF TO cl_osql_test_environment.
+
     DATA mt_tables TYPE if_osql_test_environment=>ty_t_sobjnames.
     DATA mo_sql    TYPE REF TO cl_sql_statement.
 
@@ -26,11 +30,18 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
 
     ASSERT sy-dbsys = 'sqlite'.
 
+    IF go_active IS BOUND.
+      RAISE EXCEPTION TYPE cx_osql_failure
+        EXPORTING
+          reason = |cl_osql_test_environment: environment already created, call destroy( ) before creating a new one|.
+    ENDIF.
+
     CREATE OBJECT lo_env.
     lo_env->mt_tables = i_dependency_list.
     CREATE OBJECT lo_env->mo_sql.
     lo_env->initialize( ).
 
+    go_active = lo_env.
     r_result = lo_env.
 
   ENDMETHOD.
@@ -103,6 +114,12 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
 
   METHOD if_osql_test_environment~destroy.
 
+    IF go_active <> me.
+      RAISE EXCEPTION TYPE cx_osql_failure
+        EXPORTING
+          reason = |cl_osql_test_environment: environment already destroyed|.
+    ENDIF.
+
 * sqlite refuses to detach a database with pending writes, "database is locked"
     COMMIT WORK.
 
@@ -110,6 +127,8 @@ CLASS cl_osql_test_environment IMPLEMENTATION.
     mo_sql->execute_update( |DETACH DATABASE { mv_schema };| ).
 
     WRITE '@KERNEL abap.dbo.schemaPrefix = "";'.
+
+    CLEAR go_active.
 
   ENDMETHOD.
 

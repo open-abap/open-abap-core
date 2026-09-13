@@ -1,6 +1,8 @@
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
   PRIVATE SECTION.
     METHODS basic FOR TESTING RAISING cx_static_check.
+    METHODS create_twice FOR TESTING RAISING cx_static_check.
+    METHODS destroy_twice FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
@@ -36,6 +38,41 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lt_after
       exp = lt_before ).
+
+  ENDMETHOD.
+
+  METHOD create_twice.
+
+    DATA li_environment TYPE REF TO if_osql_test_environment.
+    DATA lt_tables      TYPE if_osql_test_environment=>ty_t_sobjnames.
+
+    APPEND 'TDEVC' TO lt_tables.
+    li_environment = cl_osql_test_environment=>create( lt_tables ).
+
+    TRY.
+        cl_osql_test_environment=>create( lt_tables ).
+        cl_abap_unit_assert=>fail( 'expected cx_osql_failure' ).
+      CATCH cx_osql_failure.
+    ENDTRY.
+
+    li_environment->destroy( ).
+
+  ENDMETHOD.
+
+  METHOD destroy_twice.
+
+    DATA li_environment TYPE REF TO if_osql_test_environment.
+    DATA lt_tables      TYPE if_osql_test_environment=>ty_t_sobjnames.
+
+    APPEND 'TDEVC' TO lt_tables.
+    li_environment = cl_osql_test_environment=>create( lt_tables ).
+    li_environment->destroy( ).
+
+    TRY.
+        li_environment->destroy( ).
+        cl_abap_unit_assert=>fail( 'expected cx_osql_failure' ).
+      CATCH cx_osql_failure.
+    ENDTRY.
 
   ENDMETHOD.
 
