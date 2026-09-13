@@ -93,6 +93,9 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS invalid_input FOR TESTING RAISING cx_static_check.
     METHODS empty_input FOR TESTING RAISING cx_static_check.
     METHODS parse_escaped_quotes FOR TESTING RAISING cx_static_check.
+    METHODS escape_char_data FOR TESTING RAISING cx_static_check.
+    METHODS escape_char_data_roundtrip FOR TESTING RAISING cx_static_check.
+    METHODS escape_entity_text_roundtrip FOR TESTING RAISING cx_static_check.
     METHODS to_string_simple FOR TESTING RAISING cx_static_check.
     METHODS to_string_empty FOR TESTING RAISING cx_static_check.
     METHODS to_string_array FOR TESTING RAISING cx_static_check.
@@ -265,6 +268,72 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_foo
       exp = |"| ).
+  ENDMETHOD.
+
+  METHOD escape_char_data.
+    DATA lv_actual   TYPE string.
+    DATA lv_expected TYPE string.
+    DATA: BEGIN OF ls_xml,
+            field TYPE string,
+          END OF ls_xml.
+
+    ls_xml-field = 'a <= b & c > d'.
+
+    CALL TRANSFORMATION id
+      SOURCE repo = ls_xml
+      RESULT XML lv_actual.
+
+    lv_expected = |*<FIELD>a &lt;= b &amp; c &gt; d</FIELD>*|.
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_actual
+      exp = lv_expected ).
+  ENDMETHOD.
+
+  METHOD escape_char_data_roundtrip.
+    DATA lv_xml TYPE string.
+    DATA: BEGIN OF ls_data,
+            field TYPE string,
+          END OF ls_data.
+
+    ls_data-field = 'a <= b & c > d'.
+
+    CALL TRANSFORMATION id
+      SOURCE data = ls_data
+      RESULT XML lv_xml.
+
+    CLEAR ls_data.
+
+    CALL TRANSFORMATION id
+      SOURCE XML lv_xml
+      RESULT data = ls_data.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_data-field
+      exp = 'a <= b & c > d' ).
+  ENDMETHOD.
+
+  METHOD escape_entity_text_roundtrip.
+* a value that literally contains an entity must not be unescaped twice
+    DATA lv_xml TYPE string.
+    DATA: BEGIN OF ls_data,
+            field TYPE string,
+          END OF ls_data.
+
+    ls_data-field = 'literal &lt; entity'.
+
+    CALL TRANSFORMATION id
+      SOURCE data = ls_data
+      RESULT XML lv_xml.
+
+    CLEAR ls_data.
+
+    CALL TRANSFORMATION id
+      SOURCE XML lv_xml
+      RESULT data = ls_data.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_data-field
+      exp = 'literal &lt; entity' ).
   ENDMETHOD.
 
   METHOD convert_json_to_sxml.

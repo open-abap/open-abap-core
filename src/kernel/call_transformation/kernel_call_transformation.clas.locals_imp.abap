@@ -38,6 +38,12 @@ CLASS lcl_data_to_xml DEFINITION.
   PRIVATE SECTION.
     DATA mo_heap    TYPE REF TO lcl_heap.
     DATA ms_options TYPE kernel_call_transformation=>ty_options.
+
+    CLASS-METHODS escape_text
+      IMPORTING
+        iv_value        TYPE string
+      RETURNING
+        VALUE(rv_value) TYPE string.
 ENDCLASS.
 
 CLASS lcl_heap IMPLEMENTATION.
@@ -159,6 +165,18 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
     rv_xml = mo_heap->serialize( ).
   ENDMETHOD.
 
+  METHOD escape_text.
+* character data only, same set as CL_SXML_STRING_WRITER's xml_escape( attribute = abap_false ),
+* quotes are legal raw in a text node. Guarded so a value without any of the three
+* serializes byte for byte as before
+    rv_value = iv_value.
+    IF rv_value CA '&<>'.
+      REPLACE ALL OCCURRENCES OF '&' IN rv_value WITH '&amp;'.
+      REPLACE ALL OCCURRENCES OF '<' IN rv_value WITH '&lt;'.
+      REPLACE ALL OCCURRENCES OF '>' IN rv_value WITH '&gt;'.
+    ENDIF.
+  ENDMETHOD.
+
   METHOD run.
     DATA lo_type  TYPE REF TO cl_abap_typedescr.
     DATA lo_struc TYPE REF TO cl_abap_structdescr.
@@ -203,9 +221,11 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
         IF lo_type->type_kind = cl_abap_typedescr=>typekind_string AND <ref> IS INITIAL.
           rv_xml = rv_xml && |<{ iv_name }/>|.
         ELSE.
+* "&& ``" converts the value exactly as the concatenation itself does, notably
+* ignoring trailing blanks of fixed length character types
           rv_xml = rv_xml &&
             |<{ iv_name }>| &&
-            <ref> &&
+            escape_text( <ref> && `` ) &&
             |</{ iv_name }>|.
         ENDIF.
       WHEN cl_abap_typedescr=>kind_table.
