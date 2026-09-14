@@ -104,6 +104,23 @@
      </DOCUMENTATION>
     </item>
     <item>
+     <FUNCNAME>GENERAL_GET_RANDOM_INT</FUNCNAME>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>RANGE</PARAMETER>
+       <REFERENCE>X</REFERENCE>
+       <TYP>I</TYP>
+      </RSIMP>
+     </IMPORT>
+     <EXPORT>
+      <RSEXP>
+       <PARAMETER>RANDOM</PARAMETER>
+       <REFERENCE>X</REFERENCE>
+       <TYP>I</TYP>
+      </RSEXP>
+     </EXPORT>
+    </item>
+    <item>
      <FUNCNAME>GENERATE_SEC_RANDOM</FUNCNAME>
      <IMPORT>
       <RSIMP>
