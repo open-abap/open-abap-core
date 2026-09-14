@@ -4,10 +4,18 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
     TYPES pretty_name_mode TYPE c LENGTH 1.
 
     CONSTANTS: BEGIN OF pretty_mode,
-                 none       TYPE pretty_name_mode VALUE '',
-                 low_case   TYPE pretty_name_mode VALUE 'L',
-                 camel_case TYPE pretty_name_mode VALUE 'X',
+                 none          TYPE pretty_name_mode VALUE '',
+                 low_case      TYPE pretty_name_mode VALUE 'L',
+                 camel_case    TYPE pretty_name_mode VALUE 'X',
+                 user          TYPE pretty_name_mode VALUE 'U',
+                 user_low_case TYPE pretty_name_mode VALUE 'C',
                END OF pretty_mode.
+
+    TYPES: BEGIN OF name_mapping,
+             abap TYPE abap_compname,
+             json TYPE string,
+           END OF name_mapping.
+    TYPES name_mappings TYPE HASHED TABLE OF name_mapping WITH UNIQUE KEY abap.
 
     TYPES bool TYPE c LENGTH 1.
 
@@ -38,6 +46,7 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
         pretty_name      TYPE pretty_name_mode OPTIONAL
         assoc_arrays     TYPE abap_bool OPTIONAL
         assoc_arrays_opt TYPE abap_bool OPTIONAL
+        name_mappings    TYPE name_mappings OPTIONAL
         conversion_exits TYPE abap_bool OPTIONAL
       CHANGING
         data             TYPE data.
@@ -51,6 +60,7 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
         assoc_arrays_opt TYPE abap_bool OPTIONAL
         ts_as_iso8601    TYPE abap_bool OPTIONAL
         type_descr       TYPE REF TO cl_abap_typedescr OPTIONAL
+        name_mappings    TYPE name_mappings OPTIONAL
         format_output    TYPE abap_bool OPTIONAL
       RETURNING
         VALUE(r_json)    TYPE string.
@@ -59,6 +69,7 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
       IMPORTING
         json           TYPE string
         pretty_name    TYPE pretty_name_mode OPTIONAL
+        name_mappings  TYPE name_mappings OPTIONAL
       RETURNING
         VALUE(rr_data) TYPE REF TO data.
 
@@ -84,15 +95,17 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
         compress      TYPE abap_bool DEFAULT abap_false
         pretty_name   TYPE pretty_name_mode DEFAULT pretty_mode-none
         assoc_arrays  TYPE abap_bool DEFAULT abap_false
-        ts_as_iso8601 TYPE abap_bool DEFAULT abap_false.
+        ts_as_iso8601 TYPE abap_bool DEFAULT abap_false
+        name_mappings TYPE name_mappings OPTIONAL.
 
   PROTECTED SECTION.
 
     DATA mv_compress TYPE abap_bool.
-    DATA mv_pretty_name TYPE string.
+    DATA mv_pretty_name TYPE pretty_name_mode.
     DATA mv_assoc_arrays TYPE abap_bool.
     DATA mv_ts_as_iso8601 TYPE abap_bool.
     DATA mv_extended TYPE abap_bool.
+    DATA mt_name_mappings TYPE name_mappings.
 
     METHODS is_compressable
       IMPORTING
@@ -101,12 +114,37 @@ CLASS /ui2/cl_json DEFINITION PUBLIC.
       RETURNING
       VALUE(rv_compress) TYPE abap_bool.
 
+    " maps an ABAP component name to its JSON representation
+    CLASS-METHODS format_name
+      IMPORTING
+        name           TYPE string
+        pretty_name    TYPE pretty_name_mode
+        name_mappings  TYPE name_mappings OPTIONAL
+      RETURNING
+        VALUE(rv_name) TYPE string.
+
+    " the presence of name mappings implies the "user" pretty name modes
+    CLASS-METHODS adjust_pretty_name
+      IMPORTING
+        pretty_name    TYPE pretty_name_mode
+        name_mappings  TYPE name_mappings
+      RETURNING
+        VALUE(rv_mode) TYPE pretty_name_mode.
+
+    " the ABAP names of the mappings are case insensitive
+    CLASS-METHODS upper_case_mappings
+      IMPORTING
+        name_mappings    TYPE name_mappings
+      RETURNING
+        VALUE(rt_result) TYPE name_mappings.
+
   PRIVATE SECTION.
     CLASS-DATA mo_parsed TYPE REF TO lcl_parser.
     CLASS-METHODS _deserialize
       IMPORTING
         VALUE(prefix) TYPE string
         pretty_name   TYPE pretty_name_mode
+        name_mappings TYPE name_mappings
         io_type       TYPE REF TO cl_abap_typedescr
       CHANGING
         data          TYPE data.
@@ -229,13 +267,9 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           IF mv_compress = abap_true AND <any> IS INITIAL.
             CONTINUE.
           ENDIF.
-          IF mv_pretty_name = pretty_mode-camel_case.
-            r_json = r_json && |"{ to_mixed( to_lower( <ls_component>-name ) ) }":|.
-          ELSEIF mv_pretty_name = pretty_mode-low_case.
-            r_json = r_json && |"{ to_lower( <ls_component>-name ) }":|.
-          ELSE.
-            r_json = r_json && |"{ <ls_component>-name }":|.
-          ENDIF.
+          r_json = r_json && |"{ format_name( name          = |{ <ls_component>-name }|
+                                              pretty_name   = mv_pretty_name
+                                              name_mappings = mt_name_mappings ) }":|.
           r_json = r_json && serialize_int(
             data       = <any>
             type_descr = <ls_component>-type ).
@@ -268,13 +302,9 @@ CLASS /ui2/cl_json IMPLEMENTATION.
               IF mv_compress = abap_true AND <any> IS INITIAL.
                 CONTINUE.
               ENDIF.
-              IF mv_pretty_name = pretty_mode-camel_case.
-                r_json = r_json && |"{ to_mixed( to_lower( ls_attribute-name ) ) }":|.
-              ELSEIF mv_pretty_name = pretty_mode-low_case.
-                r_json = r_json && |"{ to_lower( ls_attribute-name ) }":|.
-              ELSE.
-                r_json = r_json && |"{ ls_attribute-name }":|.
-              ENDIF.
+              r_json = r_json && |"{ format_name( name          = |{ ls_attribute-name }|
+                                                  pretty_name   = mv_pretty_name
+                                                  name_mappings = mt_name_mappings ) }":|.
               r_json = r_json && serialize_int( <any> ).
               r_json = r_json && ','.
             ENDLOOP.
@@ -295,7 +325,9 @@ CLASS /ui2/cl_json IMPLEMENTATION.
 
   METHOD deserialize.
 
-    DATA lo_type TYPE REF TO cl_abap_typedescr.
+    DATA lo_type         TYPE REF TO cl_abap_typedescr.
+    DATA lt_mappings     TYPE name_mappings.
+    DATA lv_pretty_name  TYPE pretty_name_mode.
 
     CREATE OBJECT mo_parsed.
 
@@ -312,13 +344,18 @@ CLASS /ui2/cl_json IMPLEMENTATION.
 
     lo_type = cl_abap_typedescr=>describe_by_data( data ).
 
+    lt_mappings = upper_case_mappings( name_mappings ).
+    lv_pretty_name = adjust_pretty_name( pretty_name   = pretty_name
+                                         name_mappings = lt_mappings ).
+
     _deserialize(
       EXPORTING
-        prefix      = ''
-        pretty_name = pretty_name
-        io_type     = lo_type
+        prefix        = ''
+        pretty_name   = lv_pretty_name
+        name_mappings = lt_mappings
+        io_type       = lo_type
       CHANGING
-        data        = data ).
+        data          = data ).
 
   ENDMETHOD.
 
@@ -326,10 +363,12 @@ CLASS /ui2/cl_json IMPLEMENTATION.
 
     DATA rtti TYPE REF TO cl_abap_classdescr.
 
-    mv_compress       = compress.
-    mv_pretty_name    = pretty_name.
-    mv_assoc_arrays   = assoc_arrays.
-    mv_ts_as_iso8601  = ts_as_iso8601.
+    mv_compress        = compress.
+    mv_assoc_arrays    = assoc_arrays.
+    mv_ts_as_iso8601   = ts_as_iso8601.
+    mt_name_mappings   = upper_case_mappings( name_mappings ).
+    mv_pretty_name     = adjust_pretty_name( pretty_name   = pretty_name
+                                             name_mappings = mt_name_mappings ).
 
 *  rtti ?= cl_abap_classdescr=>describe_by_object_ref( me ).
 *  IF rtti->absolute_name NE mc_me_type.
@@ -340,6 +379,51 @@ CLASS /ui2/cl_json IMPLEMENTATION.
 
   METHOD is_compressable.
     rv_compress = abap_true.
+  ENDMETHOD.
+
+  METHOD upper_case_mappings.
+    DATA ls_mapping LIKE LINE OF name_mappings.
+
+    LOOP AT name_mappings INTO ls_mapping.
+      TRANSLATE ls_mapping-abap TO UPPER CASE.
+      INSERT ls_mapping INTO TABLE rt_result.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD adjust_pretty_name.
+    rv_mode = pretty_name.
+
+    IF name_mappings IS INITIAL.
+      RETURN.
+    ENDIF.
+
+    IF rv_mode = pretty_mode-none.
+      rv_mode = pretty_mode-user.
+    ELSEIF rv_mode = pretty_mode-low_case.
+      rv_mode = pretty_mode-user_low_case.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD format_name.
+    DATA ls_mapping LIKE LINE OF name_mappings.
+
+    CASE pretty_name.
+      WHEN pretty_mode-user OR pretty_mode-user_low_case OR pretty_mode-camel_case.
+        READ TABLE name_mappings INTO ls_mapping WITH TABLE KEY abap = to_upper( name ).
+        IF sy-subrc = 0.
+          rv_name = ls_mapping-json.
+          RETURN.
+        ENDIF.
+    ENDCASE.
+
+    CASE pretty_name.
+      WHEN pretty_mode-camel_case.
+        rv_name = to_mixed( to_lower( name ) ).
+      WHEN pretty_mode-low_case OR pretty_mode-user_low_case.
+        rv_name = to_lower( name ).
+      WHEN OTHERS.
+        rv_name = name.
+    ENDCASE.
   ENDMETHOD.
 
   METHOD generate.
@@ -357,7 +441,8 @@ CLASS /ui2/cl_json IMPLEMENTATION.
         compress      = compress
         pretty_name   = pretty_name
         assoc_arrays  = assoc_arrays
-        ts_as_iso8601 = ts_as_iso8601.
+        ts_as_iso8601 = ts_as_iso8601
+        name_mappings = name_mappings.
 
     r_json = lo_json->serialize_int(
       data       = data
@@ -433,11 +518,12 @@ CLASS /ui2/cl_json IMPLEMENTATION.
           ASSIGN ref->* TO <any>.
           _deserialize(
             EXPORTING
-              prefix      = prefix && '/' && lv_member
-              pretty_name = pretty_name
-              io_type     = lo_table->get_table_line_type( )
+              prefix        = prefix && '/' && lv_member
+              pretty_name   = pretty_name
+              name_mappings = name_mappings
+              io_type       = lo_table->get_table_line_type( )
             CHANGING
-              data        = <any> ).
+              data          = <any> ).
 *          WRITE '@KERNEL console.dir(fs_row_);'.
           INSERT <any> INTO TABLE <at>.
         ENDLOOP.
@@ -447,20 +533,20 @@ CLASS /ui2/cl_json IMPLEMENTATION.
         LOOP AT lt_components ASSIGNING <ls_component>.
           ASSIGN COMPONENT <ls_component>-name OF STRUCTURE data TO <any>.
           ASSERT sy-subrc = 0.
-          CASE pretty_name.
-            WHEN pretty_mode-camel_case.
-              lv_name = to_mixed( to_lower( <ls_component>-name ) ).
-            WHEN OTHERS.
-              lv_name = to_lower( <ls_component>-name ).
-          ENDCASE.
+          lv_name = format_name( name          = |{ <ls_component>-name }|
+                                 pretty_name   = pretty_name
+                                 name_mappings = name_mappings ).
+          " the parser normalizes hyphens, so mapped names must be normalized too
+          REPLACE ALL OCCURRENCES OF '-' IN lv_name WITH '_'.
           " WRITE '@KERNEL console.dir("structure: " + lv_name.get());'.
           _deserialize(
             EXPORTING
-              prefix      = prefix && '/' && lv_name
-              pretty_name = pretty_name
-              io_type     = <ls_component>-type
+              prefix        = prefix && '/' && lv_name
+              pretty_name   = pretty_name
+              name_mappings = name_mappings
+              io_type       = <ls_component>-type
             CHANGING
-              data        = <any> ).
+              data          = <any> ).
         ENDLOOP.
       WHEN cl_abap_typedescr=>kind_ref.
         lo_refdescr ?= io_type.
@@ -521,11 +607,12 @@ CLASS /ui2/cl_json IMPLEMENTATION.
 * todo: optimize, it should not be nessesary to call cl_abap_typedescr
         _deserialize(
           EXPORTING
-            prefix      = prefix
-            pretty_name = pretty_name
-            io_type     = cl_abap_typedescr=>describe_by_data( <any> )
+            prefix        = prefix
+            pretty_name   = pretty_name
+            name_mappings = name_mappings
+            io_type       = cl_abap_typedescr=>describe_by_data( <any> )
           CHANGING
-            data        = <any> ).
+            data          = <any> ).
       WHEN OTHERS.
         ASSERT 1 = 'cl_json, unknown kind'.
     ENDCASE.
