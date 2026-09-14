@@ -203,6 +203,7 @@ ENDCLASS.
 CLASS lcl_node DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_element.
+    INTERFACES if_ixml_text.
 
     METHODS constructor
       IMPORTING
@@ -1055,6 +1056,12 @@ CLASS lcl_document IMPLEMENTATION.
 
   METHOD if_ixml_document~get_root_element.
     root ?= if_ixml_document~get_first_child( ).
+  ENDMETHOD.
+
+  METHOD if_ixml_document~create_text.
+    CREATE OBJECT rval TYPE lcl_node.
+    rval->if_ixml_node~set_name( '#text' ).
+    rval->if_ixml_node~set_value( string ).
   ENDMETHOD.
 
 ENDCLASS.

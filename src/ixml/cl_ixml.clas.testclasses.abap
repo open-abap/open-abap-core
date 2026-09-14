@@ -55,6 +55,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS pretty5 FOR TESTING RAISING cx_static_check.
     METHODS add_stuff FOR TESTING RAISING cx_static_check.
     METHODS create_attribute_ns FOR TESTING RAISING cx_static_check.
+    METHODS create_text FOR TESTING RAISING cx_static_check.
     METHODS spaces FOR TESTING RAISING cx_static_check.
     METHODS spaces_inner FOR TESTING RAISING cx_static_check.
     METHODS top_attr FOR TESTING RAISING cx_static_check.
@@ -1294,6 +1295,24 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = lv_xml
       exp = '*<HELLO version="1.0" xmlns:asx="http://abapgit.org"/>*' ).
+  ENDMETHOD.
+
+  METHOD create_text.
+    DATA li_root TYPE REF TO if_ixml_element.
+    DATA li_text TYPE REF TO if_ixml_text.
+    DATA lv_xml  TYPE string.
+
+    li_root = mi_document->create_simple_element(
+      name   = 'root'
+      parent = mi_document ).
+    li_text = mi_document->create_text( 'hello' ).
+    li_root->append_child( li_text ).
+
+    lv_xml = render( ).
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_xml
+      exp = '*<root>hello</root>' ).
   ENDMETHOD.
 
   METHOD spaces.
