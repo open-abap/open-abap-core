@@ -1274,3 +1274,177 @@ CLASS ltcl_serialize IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+*****************************************************************************************
+
+CLASS ltcl_name_mappings DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+
+  PRIVATE SECTION.
+    TYPES: BEGIN OF ty_data,
+             city_name TYPE string,
+             zip_code  TYPE string,
+           END OF ty_data.
+
+    METHODS serialize_default FOR TESTING RAISING cx_static_check.
+    METHODS serialize_low_case FOR TESTING RAISING cx_static_check.
+    METHODS serialize_camel_case FOR TESTING RAISING cx_static_check.
+    METHODS serialize_lower_abap_name FOR TESTING RAISING cx_static_check.
+    METHODS deserialize_default FOR TESTING RAISING cx_static_check.
+    METHODS deserialize_camel_case FOR TESTING RAISING cx_static_check.
+    METHODS deserialize_hyphen FOR TESTING RAISING cx_static_check.
+    METHODS roundtrip FOR TESTING RAISING cx_static_check.
+
+    METHODS build
+      IMPORTING
+        abap_name        TYPE string
+        json_name        TYPE string
+      RETURNING
+        VALUE(rt_result) TYPE /ui2/cl_json=>name_mappings.
+ENDCLASS.
+
+CLASS ltcl_name_mappings IMPLEMENTATION.
+
+  METHOD build.
+    DATA ls_mapping TYPE /ui2/cl_json=>name_mapping.
+    ls_mapping-abap = abap_name.
+    ls_mapping-json = json_name.
+    INSERT ls_mapping INTO TABLE rt_result.
+  ENDMETHOD.
+
+  METHOD serialize_default.
+    DATA ls_data TYPE ty_data.
+
+    ls_data-city_name = 'Walldorf'.
+    ls_data-zip_code = '69190'.
+
+" only CITY_NAME is mapped, the rest keeps the ABAP name
+    cl_abap_unit_assert=>assert_equals(
+      act = /ui2/cl_json=>serialize( data          = ls_data
+                                     name_mappings = build( abap_name = 'CITY_NAME'
+                                                            json_name = 'CityName' ) )
+      exp = '{"CityName":"Walldorf","ZIP_CODE":"69190"}' ).
+  ENDMETHOD.
+
+  METHOD serialize_low_case.
+    DATA ls_data TYPE ty_data.
+
+    ls_data-city_name = 'Walldorf'.
+    ls_data-zip_code = '69190'.
+
+" unmapped names are lower cased
+    cl_abap_unit_assert=>assert_equals(
+      act = /ui2/cl_json=>serialize( data          = ls_data
+                                     pretty_name   = /ui2/cl_json=>pretty_mode-low_case
+                                     name_mappings = build( abap_name = 'CITY_NAME'
+                                                            json_name = 'CityName' ) )
+      exp = '{"CityName":"Walldorf","zip_code":"69190"}' ).
+  ENDMETHOD.
+
+  METHOD serialize_camel_case.
+    DATA ls_data TYPE ty_data.
+
+    ls_data-city_name = 'Walldorf'.
+    ls_data-zip_code = '69190'.
+
+" the mapping wins over camel casing
+    cl_abap_unit_assert=>assert_equals(
+      act = /ui2/cl_json=>serialize( data          = ls_data
+                                     pretty_name   = /ui2/cl_json=>pretty_mode-camel_case
+                                     name_mappings = build( abap_name = 'CITY_NAME'
+                                                            json_name = 'the_city' ) )
+      exp = '{"the_city":"Walldorf","zipCode":"69190"}' ).
+  ENDMETHOD.
+
+  METHOD serialize_lower_abap_name.
+    DATA ls_data TYPE ty_data.
+
+    ls_data-city_name = 'Walldorf'.
+
+" the ABAP side of the mapping is case insensitive
+    cl_abap_unit_assert=>assert_equals(
+      act = /ui2/cl_json=>serialize( data          = ls_data
+                                     compress      = abap_true
+                                     name_mappings = build( abap_name = 'city_name'
+                                                            json_name = 'CityName' ) )
+      exp = '{"CityName":"Walldorf"}' ).
+  ENDMETHOD.
+
+  METHOD deserialize_default.
+    DATA ls_data TYPE ty_data.
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json          = '{"CityName":"Walldorf","ZIP_CODE":"69190"}'
+        name_mappings = build( abap_name = 'CITY_NAME'
+                               json_name = 'CityName' )
+      CHANGING
+        data          = ls_data ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_data-city_name
+      exp = 'Walldorf' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_data-zip_code
+      exp = '69190' ).
+  ENDMETHOD.
+
+  METHOD deserialize_camel_case.
+    DATA ls_data TYPE ty_data.
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json          = '{"the_city":"Walldorf","zipCode":"69190"}'
+        pretty_name   = /ui2/cl_json=>pretty_mode-camel_case
+        name_mappings = build( abap_name = 'CITY_NAME'
+                               json_name = 'the_city' )
+      CHANGING
+        data          = ls_data ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_data-city_name
+      exp = 'Walldorf' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_data-zip_code
+      exp = '69190' ).
+  ENDMETHOD.
+
+  METHOD deserialize_hyphen.
+    DATA ls_data TYPE ty_data.
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json          = '{"City-Name":"Walldorf"}'
+        name_mappings = build( abap_name = 'CITY_NAME'
+                               json_name = 'City-Name' )
+      CHANGING
+        data          = ls_data ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_data-city_name
+      exp = 'Walldorf' ).
+  ENDMETHOD.
+
+  METHOD roundtrip.
+    DATA ls_data   TYPE ty_data.
+    DATA ls_result TYPE ty_data.
+    DATA lt_map    TYPE /ui2/cl_json=>name_mappings.
+
+    lt_map = build( abap_name = 'CITY_NAME'
+                    json_name = 'CityName' ).
+    ls_data-city_name = 'Walldorf'.
+    ls_data-zip_code = '69190'.
+
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json          = /ui2/cl_json=>serialize( data          = ls_data
+                                                 name_mappings = lt_map )
+        name_mappings = lt_map
+      CHANGING
+        data          = ls_result ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_result
+      exp = ls_data ).
+  ENDMETHOD.
+
+ENDCLASS.
