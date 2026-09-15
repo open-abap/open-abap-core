@@ -366,6 +366,7 @@ CLASS lcl_node DEFINITION.
       IMPORTING
         iv_name      TYPE string
         iv_namespace TYPE string
+        iv_uri       TYPE string
         io_list      TYPE REF TO lcl_node_list.
 
     METHODS uri_of_prefix
@@ -689,6 +690,7 @@ CLASS lcl_node IMPLEMENTATION.
     collect_elements_by_tag_name(
       iv_name      = name
       iv_namespace = namespace
+      iv_uri       = ''
       io_list      = lo_list ).
     val = lo_list.
   ENDMETHOD.
@@ -698,7 +700,8 @@ CLASS lcl_node IMPLEMENTATION.
     CREATE OBJECT lo_list.
     collect_elements_by_tag_name(
       iv_name      = name
-      iv_namespace = uri
+      iv_namespace = ''
+      iv_uri       = uri
       io_list      = lo_list ).
     val = lo_list.
   ENDMETHOD.
@@ -755,10 +758,17 @@ CLASS lcl_node IMPLEMENTATION.
 
       IF li_node->get_name( ) <> '#text'.
         lv_matches = boolc( iv_name = '*' OR li_node->get_name( ) = iv_name ).
+* a uri is compared with the uri the prefix of the element is bound to. A
+* prefix is still accepted in its place, as before; it has no colon, so it
+* never equals an absolute uri
         IF lv_matches = abap_true
             AND ( iv_namespace IS INITIAL
               OR iv_namespace = '*'
-              OR li_node->get_namespace( ) = iv_namespace ).
+              OR li_node->get_namespace( ) = iv_namespace )
+            AND ( iv_uri IS INITIAL
+              OR iv_uri = '*'
+              OR li_node->get_namespace( ) = iv_uri
+              OR li_node->get_namespace_uri( ) = iv_uri ).
           io_list->append( li_node ).
         ENDIF.
       ENDIF.
@@ -767,6 +777,7 @@ CLASS lcl_node IMPLEMENTATION.
       lo_node->collect_elements_by_tag_name(
         iv_name      = iv_name
         iv_namespace = iv_namespace
+        iv_uri       = iv_uri
         io_list      = io_list ).
     ENDDO.
   ENDMETHOD.
