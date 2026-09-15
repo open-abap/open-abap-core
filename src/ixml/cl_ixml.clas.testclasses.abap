@@ -47,6 +47,10 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_text_without_markup FOR TESTING RAISING cx_static_check.
     METHODS parse_text_after_root FOR TESTING RAISING cx_static_check.
     METHODS parse_unclosed_tag FOR TESTING RAISING cx_static_check.
+    METHODS element_get_attributes FOR TESTING RAISING cx_static_check.
+    METHODS element_remove_attribute FOR TESTING RAISING cx_static_check.
+    METHODS remove_attribute_unknown FOR TESTING RAISING cx_static_check.
+    METHODS attribute_map_get_item FOR TESTING RAISING cx_static_check.
     METHODS attribute IMPORTING iv_xml TYPE string iv_name TYPE string RETURNING VALUE(rv_value) TYPE string.
     METHODS parse_value_with_newline FOR TESTING RAISING cx_static_check.
     METHODS parse_bom FOR TESTING RAISING cx_static_check.
@@ -892,6 +896,65 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = li_root->get_first_child( )->get_value( )
       exp = `A` ).
+
+  ENDMETHOD.
+
+  METHOD element_get_attributes.
+
+    DATA li_item TYPE REF TO if_ixml_element.
+
+    li_item = parse( |<root><item foo="1" bar="2">A</item></root>| )->find_from_name( `item` ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_item->get_attributes( )->get_length( )
+      exp = 2 ).
+
+  ENDMETHOD.
+
+  METHOD element_remove_attribute.
+
+    DATA li_item TYPE REF TO if_ixml_element.
+
+    li_item = parse( |<root><item foo="1" bar="2">A</item></root>| )->find_from_name( `item` ).
+
+    li_item->remove_attribute( `foo` ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_item->get_attributes( )->get_length( )
+      exp = 1 ).
+
+    cl_abap_unit_assert=>assert_initial( act = li_item->get_attribute( `foo` ) ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_item->get_attribute( `bar` )
+      exp = `2` ).
+
+  ENDMETHOD.
+
+  METHOD remove_attribute_unknown.
+
+    DATA li_item TYPE REF TO if_ixml_element.
+
+    " a name the element does not carry leaves the map as it is
+    li_item = parse( |<root><item foo="1">A</item></root>| )->find_from_name( `item` ).
+
+    li_item->remove_attribute( `nope` ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_item->get_attributes( )->get_length( )
+      exp = 1 ).
+
+  ENDMETHOD.
+
+  METHOD attribute_map_get_item.
+
+    DATA li_item TYPE REF TO if_ixml_element.
+
+    li_item = parse( |<root><item foo="1" bar="2">A</item></root>| )->find_from_name( `item` ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_item->get_attributes( )->get_item( 2 )->get_name( )
+      exp = `bar` ).
 
   ENDMETHOD.
 

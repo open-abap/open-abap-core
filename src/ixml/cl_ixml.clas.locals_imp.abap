@@ -208,7 +208,8 @@ ENDCLASS.
 
 CLASS lcl_named_node_map IMPLEMENTATION.
   METHOD if_ixml_named_node_map~get_item.
-    ASSERT 1 = 'todo'.
+* one based, the same as get_item of the node list and the node collection
+    READ TABLE mt_list INDEX index INTO rval.
   ENDMETHOD.
 
   METHOD if_ixml_named_node_map~create_iterator.
@@ -236,7 +237,20 @@ CLASS lcl_named_node_map IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_named_node_map~remove_named_item.
-    ASSERT 1 = 'todo'.
+    DATA li_node  LIKE LINE OF mt_list.
+    DATA lv_index TYPE i.
+
+    LOOP AT mt_list INTO li_node.
+      IF li_node->get_name( ) = name.
+        lv_index = sy-tabix.
+        EXIT.
+      ENDIF.
+    ENDLOOP.
+
+* a name the map does not carry is not an error, there is nothing to remove
+    IF lv_index > 0.
+      DELETE mt_list INDEX lv_index.
+    ENDIF.
   ENDMETHOD.
 
   METHOD if_ixml_named_node_map~set_named_item_ns.
@@ -451,7 +465,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~get_attributes.
-    ASSERT 1 = 'todo'.
+    attr = if_ixml_node~get_attributes( ).
   ENDMETHOD.
 
   METHOD if_ixml_element~get_next.
@@ -581,7 +595,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~remove_attribute.
-    ASSERT 1 = 'todo'.
+    if_ixml_node~get_attributes( )->remove_named_item( name ).
   ENDMETHOD.
 
   METHOD if_ixml_element~remove_node.
