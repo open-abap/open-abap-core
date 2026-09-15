@@ -15,6 +15,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS render_nested FOR TESTING RAISING cx_static_check.
     METHODS render_document_namespace_pref FOR TESTING RAISING cx_static_check.
     METHODS parse_basic FOR TESTING RAISING cx_static_check.
+    METHODS parse_no_validation FOR TESTING RAISING cx_static_check.
     METHODS root_element_after_crlf FOR TESTING RAISING cx_static_check.
     METHODS first_child_after_crlf FOR TESTING RAISING cx_static_check.
     METHODS parse_blank_only_value FOR TESTING RAISING cx_static_check.
@@ -1280,6 +1281,29 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_dump
       exp = lv_expected ).
+
+  ENDMETHOD.
+
+  METHOD parse_no_validation.
+
+    DATA li_factory TYPE REF TO if_ixml_stream_factory.
+    DATA li_istream TYPE REF TO if_ixml_istream.
+    DATA li_parser  TYPE REF TO if_ixml_parser.
+
+* abap2xlsx switches validation off before it parses a file
+    li_factory = mi_ixml->create_stream_factory( ).
+    li_istream = li_factory->create_istream_string( |<root>1</root>| ).
+    li_parser = mi_ixml->create_parser( stream_factory = li_factory
+                                        istream        = li_istream
+                                        document       = mi_document ).
+    li_parser->set_validating( mode = if_ixml_parser=>co_no_validation ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_parser->parse( )
+      exp = 0 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = mi_document->get_root_element( )->get_value( )
+      exp = '1' ).
 
   ENDMETHOD.
 
