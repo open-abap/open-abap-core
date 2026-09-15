@@ -1303,6 +1303,7 @@ CLASS lcl_parser IMPLEMENTATION.
     DATA lv_xml        TYPE string.
     DATA lv_rest       TYPE string.
     DATA lv_whitespace TYPE string.
+    DATA lv_in_element TYPE abap_bool.
     DATA lv_bom        TYPE c LENGTH 1.
     DATA lv_offset    TYPE i.
     DATA lv_value     TYPE string.
@@ -1341,6 +1342,7 @@ CLASS lcl_parser IMPLEMENTATION.
         FIND FIRST OCCURRENCE OF '?>' IN lv_xml MATCH OFFSET lv_offset.
         ASSERT lv_offset > 0.
         lv_offset = lv_offset + 2.
+        lv_in_element = abap_false.
       ELSEIF lv_xml CP '<*'.
 * start or close tag
         FIND FIRST OCCURRENCE OF REGEX lc_regex_tag IN lv_xml RESULTS ls_match.
@@ -1354,6 +1356,7 @@ CLASS lcl_parser IMPLEMENTATION.
         IF lv_xml CP '</*'.
 * todo: check its the right name
           lo_parent ?= lo_parent->if_ixml_node~get_parent( ).
+          lv_in_element = abap_false.
         ELSE.
           CREATE OBJECT lo_node EXPORTING ii_parent = lo_parent.
           IF lv_name CA ':'.
@@ -1364,6 +1367,9 @@ CLASS lcl_parser IMPLEMENTATION.
 
           IF lv_tag NP '*/>'.
             lo_parent = lo_node.
+            lv_in_element = abap_true.
+          ELSE.
+            lv_in_element = abap_false.
           ENDIF.
         ENDIF.
 
@@ -1384,6 +1390,7 @@ CLASS lcl_parser IMPLEMENTATION.
         CREATE OBJECT lo_node EXPORTING ii_parent = lo_parent.
         lo_node->if_ixml_node~set_name( '#text' ).
         lo_node->if_ixml_node~set_value( lcl_escape=>unescape_value( lv_value ) ).
+        lv_in_element = abap_false.
       ENDIF.
 
       lv_xml = lv_xml+lv_offset.
@@ -1394,7 +1401,14 @@ CLASS lcl_parser IMPLEMENTATION.
       lv_rest = lv_xml.
       SHIFT lv_rest LEFT DELETING LEADING lv_whitespace.
       IF lv_rest IS INITIAL OR lv_rest(1) = '<'.
-        lv_xml = lv_rest.
+* whitespace that stands between a start tag and its own end tag is the
+* content of that element, `<FIELD> </FIELD>` carries a single blank, so it
+* is left for the value branch below - everything else is formatting
+        IF lv_in_element = abap_true AND lv_rest CP '</*' AND lv_rest <> lv_xml.
+          lv_in_element = abap_false.
+        ELSE.
+          lv_xml = lv_rest.
+        ENDIF.
       ENDIF.
     ENDWHILE.
 

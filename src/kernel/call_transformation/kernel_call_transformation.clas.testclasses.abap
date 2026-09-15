@@ -96,6 +96,8 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS escape_char_data FOR TESTING RAISING cx_static_check.
     METHODS escape_char_data_roundtrip FOR TESTING RAISING cx_static_check.
     METHODS escape_entity_text_roundtrip FOR TESTING RAISING cx_static_check.
+    METHODS blank_only_roundtrip FOR TESTING RAISING cx_static_check.
+    METHODS newline_only_roundtrip FOR TESTING RAISING cx_static_check.
     METHODS newline_roundtrip FOR TESTING RAISING cx_static_check.
     METHODS to_string_simple FOR TESTING RAISING cx_static_check.
     METHODS to_string_empty FOR TESTING RAISING cx_static_check.
@@ -346,6 +348,55 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
           END OF ls_data.
 
     lv_exp = |a{ cl_abap_char_utilities=>newline }b|.
+    ls_data-field = lv_exp.
+
+    CALL TRANSFORMATION id
+      SOURCE data = ls_data
+      RESULT XML lv_xml.
+
+    CLEAR ls_data.
+
+    CALL TRANSFORMATION id
+      SOURCE XML lv_xml
+      RESULT data = ls_data.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_data-field
+      exp = lv_exp ).
+  ENDMETHOD.
+
+  METHOD blank_only_roundtrip.
+* a value of one blank is content, not formatting
+    DATA lv_xml TYPE string.
+    DATA: BEGIN OF ls_data,
+            field TYPE string,
+          END OF ls_data.
+
+    ls_data-field = ` `.
+
+    CALL TRANSFORMATION id
+      SOURCE data = ls_data
+      RESULT XML lv_xml.
+
+    CLEAR ls_data.
+
+    CALL TRANSFORMATION id
+      SOURCE XML lv_xml
+      RESULT data = ls_data.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_data-field
+      exp = ` ` ).
+  ENDMETHOD.
+
+  METHOD newline_only_roundtrip.
+    DATA lv_xml TYPE string.
+    DATA lv_exp TYPE string.
+    DATA: BEGIN OF ls_data,
+            field TYPE string,
+          END OF ls_data.
+
+    lv_exp = cl_abap_char_utilities=>newline.
     ls_data-field = lv_exp.
 
     CALL TRANSFORMATION id

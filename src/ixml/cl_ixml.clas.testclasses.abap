@@ -17,6 +17,8 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_basic FOR TESTING RAISING cx_static_check.
     METHODS root_element_after_crlf FOR TESTING RAISING cx_static_check.
     METHODS first_child_after_crlf FOR TESTING RAISING cx_static_check.
+    METHODS parse_blank_only_value FOR TESTING RAISING cx_static_check.
+    METHODS parse_indented_children FOR TESTING RAISING cx_static_check.
     METHODS parse_value_with_newline FOR TESTING RAISING cx_static_check.
     METHODS parse_bom FOR TESTING RAISING cx_static_check.
     METHODS parse_empty FOR TESTING RAISING cx_static_check.
@@ -471,6 +473,35 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = li_root->get_first_child( )->get_value( )
       exp = |a\nb| ).
+
+  ENDMETHOD.
+
+  METHOD parse_blank_only_value.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    li_root = parse( |<root><item> </item></root>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_value( )
+      exp = ` ` ).
+
+  ENDMETHOD.
+
+  METHOD parse_indented_children.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+    DATA li_item TYPE REF TO if_ixml_node.
+
+    " whitespace between two tags stays formatting, the first child of root
+    " is the element and not a #text node
+    li_root = parse( |<root>\n  <item>A</item>\n</root>| )->get_root_element( ).
+
+    li_item = li_root->get_first_child( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_item->get_name( )
+      exp = `item` ).
 
   ENDMETHOD.
 
