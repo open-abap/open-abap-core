@@ -461,7 +461,33 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_namespace_uri.
-    ASSERT 1 = 'todo'.
+* the declaration that binds the prefix of this node: "xmlns:<prefix>", or
+* "xmlns" for a node without one. It may stand on the node itself or on any
+* of its ancestors, the nearest one wins - and an undeclared prefix has no
+* uri, which is initial
+    DATA lv_name TYPE string.
+    DATA li_node TYPE REF TO if_ixml_node.
+    DATA li_map  TYPE REF TO if_ixml_named_node_map.
+    DATA li_attr TYPE REF TO if_ixml_node.
+
+    IF mv_namespace IS INITIAL.
+      lv_name = 'xmlns'.
+    ELSE.
+      CONCATENATE 'xmlns:' mv_namespace INTO lv_name.
+    ENDIF.
+
+    li_node = me.
+    WHILE li_node IS BOUND.
+      li_map = li_node->get_attributes( ).
+      IF li_map IS BOUND.
+        li_attr = li_map->get_named_item( lv_name ).
+        IF li_attr IS BOUND.
+          rval = li_attr->get_value( ).
+          RETURN.
+        ENDIF.
+      ENDIF.
+      li_node = li_node->get_parent( ).
+    ENDWHILE.
   ENDMETHOD.
 
   METHOD if_ixml_element~get_attributes.
@@ -936,7 +962,7 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_namespace_uri.
-    ASSERT 1 = 'todo'.
+    rval = mi_node->if_ixml_node~get_namespace_uri( ).
   ENDMETHOD.
 
   METHOD if_ixml_node~append_child.

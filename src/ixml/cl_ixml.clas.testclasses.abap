@@ -51,6 +51,11 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS element_remove_attribute FOR TESTING RAISING cx_static_check.
     METHODS remove_attribute_unknown FOR TESTING RAISING cx_static_check.
     METHODS attribute_map_get_item FOR TESTING RAISING cx_static_check.
+    METHODS namespace_uri_prefix FOR TESTING RAISING cx_static_check.
+    METHODS namespace_uri_inherited FOR TESTING RAISING cx_static_check.
+    METHODS namespace_uri_default FOR TESTING RAISING cx_static_check.
+    METHODS namespace_uri_none FOR TESTING RAISING cx_static_check.
+    METHODS namespace_uri_undeclared FOR TESTING RAISING cx_static_check.
     METHODS attribute IMPORTING iv_xml TYPE string iv_name TYPE string RETURNING VALUE(rv_value) TYPE string.
     METHODS parse_value_with_newline FOR TESTING RAISING cx_static_check.
     METHODS parse_bom FOR TESTING RAISING cx_static_check.
@@ -955,6 +960,64 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = li_item->get_attributes( )->get_item( 2 )->get_name( )
       exp = `bar` ).
+
+  ENDMETHOD.
+
+  METHOD namespace_uri_prefix.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    li_root = parse( |<n:root xmlns:n="urn:x"><n:item>A</n:item></n:root>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_namespace_uri( )
+      exp = `urn:x` ).
+
+  ENDMETHOD.
+
+  METHOD namespace_uri_inherited.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    " the declaration stands on the root, the child carries the same prefix
+    li_root = parse( |<n:root xmlns:n="urn:x"><n:item>A</n:item></n:root>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_namespace_uri( )
+      exp = `urn:x` ).
+
+  ENDMETHOD.
+
+  METHOD namespace_uri_default.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    li_root = parse( |<root xmlns="urn:x"><item>A</item></root>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_namespace_uri( )
+      exp = `urn:x` ).
+
+  ENDMETHOD.
+
+  METHOD namespace_uri_none.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    li_root = parse( |<root><item>A</item></root>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_initial( act = li_root->get_namespace_uri( ) ).
+
+  ENDMETHOD.
+
+  METHOD namespace_uri_undeclared.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    " nothing binds "n", so there is no uri to return
+    li_root = parse( |<n:root><n:item>A</n:item></n:root>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_initial( act = li_root->get_namespace_uri( ) ).
 
   ENDMETHOD.
 
