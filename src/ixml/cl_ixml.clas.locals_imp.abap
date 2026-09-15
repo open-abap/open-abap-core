@@ -416,7 +416,41 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~clone.
-    ASSERT 1 = 'todo'.
+* a deep copy: the node with its name, value and attributes, and every
+* child cloned in turn. The copy has no parent, it belongs nowhere until it
+* is appended somewhere
+    DATA lo_clone TYPE REF TO lcl_node.
+    DATA lo_attr  TYPE REF TO lcl_node.
+    DATA li_attr  TYPE REF TO if_ixml_node.
+    DATA li_iter  TYPE REF TO if_ixml_node_iterator.
+    DATA li_child TYPE REF TO if_ixml_node.
+    DATA lv_index TYPE i.
+
+    CREATE OBJECT lo_clone.
+    lo_clone->mv_name      = mv_name.
+    lo_clone->mv_namespace = mv_namespace.
+    lo_clone->mv_value     = mv_value.
+
+    DO mi_attributes->get_length( ) TIMES.
+      lv_index = sy-index.
+      li_attr = mi_attributes->get_item( lv_index ).
+
+      CREATE OBJECT lo_attr.
+      lo_attr->mv_name  = li_attr->get_name( ).
+      lo_attr->mv_value = li_attr->get_value( ).
+      lo_clone->mi_attributes->set_named_item_ns( lo_attr ).
+    ENDDO.
+
+    li_iter = mo_children->if_ixml_node_list~create_iterator( ).
+    DO.
+      li_child = li_iter->get_next( ).
+      IF li_child IS INITIAL.
+        EXIT.
+      ENDIF.
+      lo_clone->if_ixml_node~append_child( li_child->clone( ) ).
+    ENDDO.
+
+    rval = lo_clone.
   ENDMETHOD.
 
   METHOD if_ixml_node~create_iterator_filtered.
@@ -527,7 +561,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~clone.
-    ASSERT 1 = 'todo'.
+    val = if_ixml_node~clone( ).
   ENDMETHOD.
 
   METHOD if_ixml_element~create_filter_node_type.
@@ -977,7 +1011,7 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~clone.
-    ASSERT 1 = 'todo'.
+    rval = mi_node->if_ixml_node~clone( ).
   ENDMETHOD.
 
   METHOD if_ixml_node~create_iterator_filtered.
