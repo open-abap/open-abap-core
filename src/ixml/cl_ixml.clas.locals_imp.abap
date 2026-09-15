@@ -1475,6 +1475,13 @@ CLASS lcl_parser IMPLEMENTATION.
 
         lv_offset = lv_offset + 3.
         lv_in_element = abap_false.
+      ELSEIF lv_xml CP '<!--*'.
+* a comment carries no content, it is skipped as a whole - what stands
+* inside it is text and is never read as markup
+        FIND FIRST OCCURRENCE OF '-->' IN lv_xml MATCH OFFSET lv_offset.
+        ASSERT sy-subrc = 0.
+        lv_offset = lv_offset + 3.
+        lv_in_element = abap_false.
       ELSEIF lv_xml CP '<*'.
 * start or close tag
         FIND FIRST OCCURRENCE OF REGEX lc_regex_tag IN lv_xml RESULTS ls_match.
