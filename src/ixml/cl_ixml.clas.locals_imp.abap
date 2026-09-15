@@ -11,6 +11,19 @@ CLASS lcl_escape DEFINITION.
         iv_value        TYPE string
       RETURNING
         VALUE(rv_value) TYPE string.
+
+  PRIVATE SECTION.
+    CLASS-METHODS unescape_references
+      IMPORTING
+        iv_value        TYPE string
+      RETURNING
+        VALUE(rv_value) TYPE string.
+
+    CLASS-METHODS reference_to_char
+      IMPORTING
+        iv_number      TYPE string
+      RETURNING
+        VALUE(rv_char) TYPE string.
 ENDCLASS.
 
 CLASS lcl_escape IMPLEMENTATION.
@@ -20,9 +33,109 @@ CLASS lcl_escape IMPLEMENTATION.
     REPLACE ALL OCCURRENCES OF '&gt;' IN rv_value WITH '>'.
     REPLACE ALL OCCURRENCES OF '&quot;' IN rv_value WITH '"'.
     REPLACE ALL OCCURRENCES OF '&apos;' IN rv_value WITH |'|.
+    rv_value = unescape_references( rv_value ).
 * "&amp;" must be last, otherwise an escaped "&amp;lt;" is unescaped twice and
 * a value that literally contains "&lt;" comes back as "<"
     REPLACE ALL OCCURRENCES OF '&amp;' IN rv_value WITH '&'.
+  ENDMETHOD.
+
+  METHOD unescape_references.
+* character references, decimal "&#10;" and hexadecimal "&#x41;". Anything
+* that is not one, "&#foo;" or "AT&#T", is left exactly as it is
+    DATA lt_parts  TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA lv_part   TYPE string.
+    DATA lv_char   TYPE string.
+    DATA lv_tail   TYPE string.
+    DATA lv_number TYPE string.
+    DATA lv_offset TYPE i.
+
+    rv_value = iv_value.
+    IF rv_value NS '&#'.
+      RETURN.
+    ENDIF.
+
+    SPLIT rv_value AT '&#' INTO TABLE lt_parts.
+    CLEAR rv_value.
+
+    LOOP AT lt_parts INTO lv_part.
+      IF sy-tabix = 1.
+        rv_value = lv_part.
+        CONTINUE.
+      ENDIF.
+
+      CLEAR lv_char.
+      FIND FIRST OCCURRENCE OF ';' IN lv_part MATCH OFFSET lv_offset.
+      IF sy-subrc = 0 AND lv_offset > 0.
+        lv_number = lv_part(lv_offset).
+        lv_char = reference_to_char( lv_number ).
+      ENDIF.
+
+      IF lv_char IS INITIAL.
+        CONCATENATE rv_value '&#' lv_part INTO rv_value RESPECTING BLANKS.
+      ELSE.
+        lv_tail = lv_part+lv_offset.
+        SHIFT lv_tail LEFT BY 1 PLACES.
+        CONCATENATE rv_value lv_char lv_tail INTO rv_value RESPECTING BLANKS.
+      ENDIF.
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD reference_to_char.
+* the text between "&#" and ";". Returns initial when it is not a number the
+* runtime can turn into a character, the caller then keeps the text
+    DATA lv_text  TYPE string.
+    DATA lv_digit TYPE string.
+    DATA lv_hex   TYPE abap_bool.
+    DATA lv_value TYPE i.
+    DATA lv_index TYPE i.
+    DATA lv_pos   TYPE i.
+
+    lv_text = iv_number.
+    TRANSLATE lv_text TO UPPER CASE.
+
+    IF lv_text(1) = 'X'.
+      lv_hex = abap_true.
+      SHIFT lv_text LEFT BY 1 PLACES.
+      IF lv_text IS INITIAL.
+        RETURN.
+      ENDIF.
+    ENDIF.
+
+    WHILE lv_pos < strlen( lv_text ).
+      lv_digit = lv_text+lv_pos(1).
+      IF lv_hex = abap_true.
+        FIND FIRST OCCURRENCE OF lv_digit IN '0123456789ABCDEF' MATCH OFFSET lv_index.
+      ELSE.
+        FIND FIRST OCCURRENCE OF lv_digit IN '0123456789' MATCH OFFSET lv_index.
+      ENDIF.
+      IF sy-subrc <> 0.
+        RETURN.
+      ENDIF.
+
+      IF lv_hex = abap_true.
+        lv_value = lv_value * 16 + lv_index.
+      ELSE.
+        lv_value = lv_value * 10 + lv_index.
+      ENDIF.
+* uccpi builds the character from two bytes, a code point above the basic
+* multilingual plane is left as it is
+      IF lv_value > 65535.
+        RETURN.
+      ENDIF.
+
+      lv_pos = lv_pos + 1.
+    ENDWHILE.
+
+    IF lv_value = 0.
+      RETURN.
+    ENDIF.
+
+    IF lv_value = 32.
+* a blank, uccpi returns it in a C field where it is a trailing space
+      rv_char = ` `.
+    ELSE.
+      rv_char = cl_abap_conv_in_ce=>uccpi( lv_value ).
+    ENDIF.
   ENDMETHOD.
 
   METHOD escape_value.
