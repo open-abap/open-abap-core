@@ -1424,6 +1424,7 @@ CLASS lcl_parser IMPLEMENTATION.
     DATA lv_in_element TYPE abap_bool.
     DATA lv_bom        TYPE c LENGTH 1.
     DATA lv_offset    TYPE i.
+    DATA lv_subset    TYPE i.
     DATA lv_length    TYPE i.
     DATA lv_value     TYPE string.
     DATA lv_name      TYPE string.
@@ -1456,11 +1457,26 @@ CLASS lcl_parser IMPLEMENTATION.
     WHILE lv_xml IS NOT INITIAL.
       CLEAR lo_node.
 
-      IF lv_xml CP '<?xml *'.
-* for now just skip the xml tag
+      IF lv_xml CP '<?*'.
+* the xml declaration and every other processing instruction, both carry
+* no content of the document and end at "?>"
         FIND FIRST OCCURRENCE OF '?>' IN lv_xml MATCH OFFSET lv_offset.
         ASSERT lv_offset > 0.
         lv_offset = lv_offset + 2.
+        lv_in_element = abap_false.
+      ELSEIF lv_xml CP '<!DOCTYPE*'.
+* the document type declaration, skipped as a whole. With an internal
+* subset it ends at "]>", the ">" of the subset is not its own
+        FIND FIRST OCCURRENCE OF '>' IN lv_xml MATCH OFFSET lv_offset.
+        ASSERT sy-subrc = 0.
+        FIND FIRST OCCURRENCE OF '[' IN lv_xml MATCH OFFSET lv_subset.
+        IF sy-subrc = 0 AND lv_subset < lv_offset.
+          FIND FIRST OCCURRENCE OF ']>' IN lv_xml MATCH OFFSET lv_offset.
+          ASSERT sy-subrc = 0.
+          lv_offset = lv_offset + 2.
+        ELSE.
+          lv_offset = lv_offset + 1.
+        ENDIF.
         lv_in_element = abap_false.
       ELSEIF lv_xml CP '<![CDATA[*'.
 * a CDATA section is character data, taken as it stands up to "]]>" - the

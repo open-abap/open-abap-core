@@ -40,6 +40,10 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_attribute_single_quote FOR TESTING RAISING cx_static_check.
     METHODS parse_attribute_name_dash FOR TESTING RAISING cx_static_check.
     METHODS parse_element_name_dash FOR TESTING RAISING cx_static_check.
+    METHODS parse_doctype FOR TESTING RAISING cx_static_check.
+    METHODS parse_doctype_subset FOR TESTING RAISING cx_static_check.
+    METHODS parse_processing_instruction FOR TESTING RAISING cx_static_check.
+    METHODS parse_instruction_in_element FOR TESTING RAISING cx_static_check.
     METHODS attribute IMPORTING iv_xml TYPE string iv_name TYPE string RETURNING VALUE(rv_value) TYPE string.
     METHODS parse_value_with_newline FOR TESTING RAISING cx_static_check.
     METHODS parse_bom FOR TESTING RAISING cx_static_check.
@@ -798,6 +802,55 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = li_root->get_first_child( )->get_name( )
       exp = `my-item` ).
+
+  ENDMETHOD.
+
+  METHOD parse_doctype.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    li_root = parse( |<!DOCTYPE note SYSTEM "note.dtd"><root><item>A</item></root>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_value( )
+      exp = `A` ).
+
+  ENDMETHOD.
+
+  METHOD parse_doctype_subset.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    " the ">" of the internal subset does not end the declaration
+    li_root = parse( |<!DOCTYPE note [<!ELEMENT note (#PCDATA)>]><root><item>A</item></root>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_value( )
+      exp = `A` ).
+
+  ENDMETHOD.
+
+  METHOD parse_processing_instruction.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    li_root = parse( |<?xml-stylesheet type="text/xsl" href="a.xsl"?><root><item>A</item></root>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_value( )
+      exp = `A` ).
+
+  ENDMETHOD.
+
+  METHOD parse_instruction_in_element.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    li_root = parse( |<root><?target data?><item>A</item></root>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_name( )
+      exp = `item` ).
 
   ENDMETHOD.
 
