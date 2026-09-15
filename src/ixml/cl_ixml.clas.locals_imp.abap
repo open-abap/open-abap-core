@@ -364,6 +364,12 @@ CLASS lcl_node DEFINITION.
         iv_name      TYPE string
         iv_namespace TYPE string
         io_list      TYPE REF TO lcl_node_list.
+
+    METHODS uri_of_prefix
+      IMPORTING
+        iv_prefix     TYPE string
+      RETURNING
+        VALUE(rv_uri) TYPE string.
 ENDCLASS.
 
 CLASS lcl_node IMPLEMENTATION.
@@ -461,19 +467,22 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_namespace_uri.
-* the declaration that binds the prefix of this node: "xmlns:<prefix>", or
-* "xmlns" for a node without one. It may stand on the node itself or on any
-* of its ancestors, the nearest one wins - and an undeclared prefix has no
-* uri, which is initial
+    rval = uri_of_prefix( mv_namespace ).
+  ENDMETHOD.
+
+  METHOD uri_of_prefix.
+* the declaration that binds a prefix: "xmlns:<prefix>", or "xmlns" for the
+* empty one. It may stand on this node or on any of its ancestors, the
+* nearest one wins - and an undeclared prefix has no uri, which is initial
     DATA lv_name TYPE string.
     DATA li_node TYPE REF TO if_ixml_node.
     DATA li_map  TYPE REF TO if_ixml_named_node_map.
     DATA li_attr TYPE REF TO if_ixml_node.
 
-    IF mv_namespace IS INITIAL.
+    IF iv_prefix IS INITIAL.
       lv_name = 'xmlns'.
     ELSE.
-      CONCATENATE 'xmlns:' mv_namespace INTO lv_name.
+      CONCATENATE 'xmlns:' iv_prefix INTO lv_name.
     ENDIF.
 
     li_node = me.
@@ -482,7 +491,7 @@ CLASS lcl_node IMPLEMENTATION.
       IF li_map IS BOUND.
         li_attr = li_map->get_named_item( lv_name ).
         IF li_attr IS BOUND.
-          rval = li_attr->get_value( ).
+          rv_uri = li_attr->get_value( ).
           RETURN.
         ENDIF.
       ENDIF.
@@ -577,11 +586,41 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~get_attribute_ns.
-    DATA li_node TYPE REF TO if_ixml_node.
-    li_node = if_ixml_node~get_attributes( )->get_named_item_ns( name ).
-    IF li_node IS NOT INITIAL.
-      val = li_node->get_value( ).
+* without a uri the name is taken as it stands, prefix included. With one,
+* the name is the local part and the prefix of the attribute has to resolve
+* to that uri - an attribute without a prefix is in no namespace, a default
+* declaration does not reach it
+    DATA li_map    TYPE REF TO if_ixml_named_node_map.
+    DATA li_node   TYPE REF TO if_ixml_node.
+    DATA lv_name   TYPE string.
+    DATA lv_prefix TYPE string.
+    DATA lv_local  TYPE string.
+    DATA lv_index  TYPE i.
+
+    li_map = if_ixml_node~get_attributes( ).
+
+    IF uri IS INITIAL.
+      li_node = li_map->get_named_item_ns( name ).
+      IF li_node IS NOT INITIAL.
+        val = li_node->get_value( ).
+      ENDIF.
+      RETURN.
     ENDIF.
+
+    DO li_map->get_length( ) TIMES.
+      lv_index = sy-index.
+      li_node = li_map->get_item( lv_index ).
+      lv_name = li_node->get_name( ).
+      IF lv_name NS ':'.
+        CONTINUE.
+      ENDIF.
+
+      SPLIT lv_name AT ':' INTO lv_prefix lv_local.
+      IF lv_local = name AND uri_of_prefix( lv_prefix ) = uri.
+        val = li_node->get_value( ).
+        RETURN.
+      ENDIF.
+    ENDDO.
   ENDMETHOD.
 
   METHOD if_ixml_element~get_attribute.

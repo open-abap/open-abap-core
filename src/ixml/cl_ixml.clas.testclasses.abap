@@ -56,6 +56,11 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS namespace_uri_default FOR TESTING RAISING cx_static_check.
     METHODS namespace_uri_none FOR TESTING RAISING cx_static_check.
     METHODS namespace_uri_undeclared FOR TESTING RAISING cx_static_check.
+    METHODS attribute_ns_by_uri FOR TESTING RAISING cx_static_check.
+    METHODS attribute_ns_other_prefix FOR TESTING RAISING cx_static_check.
+    METHODS attribute_ns_wrong_uri FOR TESTING RAISING cx_static_check.
+    METHODS attribute_ns_unprefixed FOR TESTING RAISING cx_static_check.
+    METHODS attribute_ns_without_uri FOR TESTING RAISING cx_static_check.
     METHODS attribute IMPORTING iv_xml TYPE string iv_name TYPE string RETURNING VALUE(rv_value) TYPE string.
     METHODS parse_value_with_newline FOR TESTING RAISING cx_static_check.
     METHODS parse_bom FOR TESTING RAISING cx_static_check.
@@ -1018,6 +1023,81 @@ CLASS ltcl_xml IMPLEMENTATION.
     li_root = parse( |<n:root><n:item>A</n:item></n:root>| )->get_root_element( ).
 
     cl_abap_unit_assert=>assert_initial( act = li_root->get_namespace_uri( ) ).
+
+  ENDMETHOD.
+
+  METHOD attribute_ns_by_uri.
+
+    DATA li_item TYPE REF TO if_ixml_element.
+
+    li_item = parse( |<root xmlns:n="urn:x"><item n:bar="2"/></root>| )->find_from_name( `item` ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_item->get_attribute_ns( name = `bar`
+                                       uri  = `urn:x` )
+      exp = `2` ).
+
+  ENDMETHOD.
+
+  METHOD attribute_ns_other_prefix.
+
+    DATA li_item TYPE REF TO if_ixml_element.
+
+    " the uri identifies the namespace, the prefix is only a local name for it
+    li_item = parse( |<root xmlns:other="urn:x"><item other:bar="2"/></root>| )->find_from_name( `item` ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_item->get_attribute_ns( name = `bar`
+                                       uri  = `urn:x` )
+      exp = `2` ).
+
+  ENDMETHOD.
+
+  METHOD attribute_ns_wrong_uri.
+
+    DATA li_item  TYPE REF TO if_ixml_element.
+    DATA lv_value TYPE string.
+
+    li_item = parse( |<root xmlns:n="urn:x"><item n:bar="2"/></root>| )->find_from_name( `item` ).
+
+    lv_value = li_item->get_attribute_ns( name = `bar`
+                                          uri  = `urn:other` ).
+
+    cl_abap_unit_assert=>assert_initial( act = lv_value ).
+
+  ENDMETHOD.
+
+  METHOD attribute_ns_unprefixed.
+
+    DATA li_item  TYPE REF TO if_ixml_element.
+    DATA lv_value TYPE string.
+
+    " an attribute without a prefix is in no namespace, the default
+    " declaration of the element does not reach it
+    li_item = parse( |<root xmlns="urn:x"><item bar="2"/></root>| )->find_from_name( `item` ).
+
+    lv_value = li_item->get_attribute_ns( name = `bar`
+                                          uri  = `urn:x` ).
+
+    cl_abap_unit_assert=>assert_initial( act = lv_value ).
+
+  ENDMETHOD.
+
+  METHOD attribute_ns_without_uri.
+
+    DATA li_item TYPE REF TO if_ixml_element.
+
+    " no uri asked for: the name as it stands, which is how get_attribute
+    " reaches this method
+    li_item = parse( |<root xmlns:n="urn:x"><item n:bar="2" foo="1"/></root>| )->find_from_name( `item` ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_item->get_attribute_ns( `n:bar` )
+      exp = `2` ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_item->get_attribute( `foo` )
+      exp = `1` ).
 
   ENDMETHOD.
 
