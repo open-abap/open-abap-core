@@ -204,6 +204,13 @@ CLASS lcl_named_node_map DEFINITION.
     INTERFACES if_ixml_named_node_map.
   PRIVATE SECTION.
     DATA mt_list TYPE STANDARD TABLE OF REF TO if_ixml_node WITH DEFAULT KEY.
+
+    METHODS is_named
+      IMPORTING
+        ii_node      TYPE REF TO if_ixml_node
+        iv_name      TYPE string
+      RETURNING
+        VALUE(rv_is) TYPE abap_bool.
 ENDCLASS.
 
 CLASS lcl_named_node_map IMPLEMENTATION.
@@ -225,11 +232,32 @@ CLASS lcl_named_node_map IMPLEMENTATION.
     DATA li_node LIKE LINE OF mt_list.
 
     LOOP AT mt_list INTO li_node.
-      IF li_node->get_name( ) = name.
+      IF is_named( ii_node = li_node
+                   iv_name = name ) = abap_true.
         val = li_node.
         RETURN.
       ENDIF.
     ENDLOOP.
+  ENDMETHOD.
+
+  METHOD is_named.
+* by the local name, which is what get_name returns, or by the qualified name
+* as it stands in the document, "r:id"
+    DATA lv_name      TYPE string.
+    DATA lv_prefix    TYPE string.
+    DATA lv_qualified TYPE string.
+
+    lv_name = ii_node->get_name( ).
+    IF lv_name = iv_name.
+      rv_is = abap_true.
+      RETURN.
+    ENDIF.
+
+    lv_prefix = ii_node->get_namespace_prefix( ).
+    IF lv_prefix IS NOT INITIAL.
+      CONCATENATE lv_prefix ':' lv_name INTO lv_qualified.
+      rv_is = boolc( lv_qualified = iv_name ).
+    ENDIF.
   ENDMETHOD.
 
   METHOD if_ixml_named_node_map~get_named_item.
@@ -241,7 +269,8 @@ CLASS lcl_named_node_map IMPLEMENTATION.
     DATA lv_index TYPE i.
 
     LOOP AT mt_list INTO li_node.
-      IF li_node->get_name( ) = name.
+      IF is_named( ii_node = li_node
+                   iv_name = name ) = abap_true.
         lv_index = sy-tabix.
         EXIT.
       ENDIF.
@@ -254,14 +283,15 @@ CLASS lcl_named_node_map IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_named_node_map~set_named_item_ns.
-* replace an existing node with the same name, otherwise add it,
+* replace an existing node with the same name and prefix, otherwise add it,
 * appending unconditionally produces duplicate attributes
     DATA lv_index TYPE i.
     DATA li_node  LIKE LINE OF mt_list.
 
     LOOP AT mt_list INTO li_node.
       lv_index = sy-tabix.
-      IF li_node->get_name( ) = node->get_name( ).
+      IF li_node->get_name( ) = node->get_name( )
+          AND li_node->get_namespace_prefix( ) = node->get_namespace_prefix( ).
         MODIFY mt_list INDEX lv_index FROM node.
         RETURN.
       ENDIF.
@@ -502,8 +532,9 @@ CLASS lcl_node IMPLEMENTATION.
       li_attr = mi_attributes->get_item( lv_index ).
 
       CREATE OBJECT lo_attr.
-      lo_attr->mv_name  = li_attr->get_name( ).
-      lo_attr->mv_value = li_attr->get_value( ).
+      lo_attr->mv_name      = li_attr->get_name( ).
+      lo_attr->mv_namespace = li_attr->get_namespace_prefix( ).
+      lo_attr->mv_value     = li_attr->get_value( ).
       lo_clone->mi_attributes->set_named_item_ns( lo_attr ).
     ENDDO.
 
@@ -720,15 +751,13 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD attribute_node.
-* without a uri the name is taken as it stands, prefix included. With one,
-* the name is the local part and the prefix of the attribute has to resolve
-* to that uri - an attribute without a prefix is in no namespace, a default
-* declaration does not reach it
+* without a uri the name is the local one or the qualified one, "r:id". With
+* one, the name is the local part and the prefix of the attribute has to
+* resolve to that uri - an attribute without a prefix is in no namespace, a
+* default declaration does not reach it
     DATA li_map    TYPE REF TO if_ixml_named_node_map.
     DATA li_node   TYPE REF TO if_ixml_node.
-    DATA lv_name   TYPE string.
     DATA lv_prefix TYPE string.
-    DATA lv_local  TYPE string.
     DATA lv_index  TYPE i.
 
     li_map = if_ixml_node~get_attributes( ).
@@ -741,13 +770,12 @@ CLASS lcl_node IMPLEMENTATION.
     DO li_map->get_length( ) TIMES.
       lv_index = sy-index.
       li_node = li_map->get_item( lv_index ).
-      lv_name = li_node->get_name( ).
-      IF lv_name NS ':'.
+      lv_prefix = li_node->get_namespace_prefix( ).
+      IF lv_prefix IS INITIAL.
         CONTINUE.
       ENDIF.
 
-      SPLIT lv_name AT ':' INTO lv_prefix lv_local.
-      IF lv_local = iv_name AND uri_of_prefix( lv_prefix ) = iv_uri.
+      IF li_node->get_name( ) = iv_name AND uri_of_prefix( lv_prefix ) = iv_uri.
         ri_node = li_node.
         RETURN.
       ENDIF.
@@ -1831,6 +1859,7 @@ CLASS lcl_parser IMPLEMENTATION.
     DATA li_node     TYPE REF TO if_ixml_node.
     DATA lv_offset   TYPE i.
     DATA lv_length   TYPE i.
+    DATA lv_prefix   TYPE string.
 
     IF lines( is_match-submatches ) = 1.
       RETURN.
@@ -1855,6 +1884,12 @@ CLASS lcl_parser IMPLEMENTATION.
       ENDIF.
 
       CREATE OBJECT li_node TYPE lcl_node.
+* r:id is the attribute id with the prefix r, get_name returns the local part
+      CLEAR lv_prefix.
+      IF lv_name CA ':'.
+        SPLIT lv_name AT ':' INTO lv_prefix lv_name.
+      ENDIF.
+      li_node->set_namespace_prefix( lv_prefix ).
       li_node->set_name( lv_name ).
       li_node->set_value( lcl_escape=>unescape_value( lv_value ) ).
       ii_node->get_attributes( )->set_named_item_ns( li_node ).
