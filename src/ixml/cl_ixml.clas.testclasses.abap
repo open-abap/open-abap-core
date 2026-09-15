@@ -61,6 +61,10 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS attribute_ns_wrong_uri FOR TESTING RAISING cx_static_check.
     METHODS attribute_ns_unprefixed FOR TESTING RAISING cx_static_check.
     METHODS attribute_ns_without_uri FOR TESTING RAISING cx_static_check.
+    METHODS clone_element FOR TESTING RAISING cx_static_check.
+    METHODS clone_is_deep FOR TESTING RAISING cx_static_check.
+    METHODS clone_has_no_parent FOR TESTING RAISING cx_static_check.
+    METHODS clone_is_independent FOR TESTING RAISING cx_static_check.
     METHODS attribute IMPORTING iv_xml TYPE string iv_name TYPE string RETURNING VALUE(rv_value) TYPE string.
     METHODS parse_value_with_newline FOR TESTING RAISING cx_static_check.
     METHODS parse_bom FOR TESTING RAISING cx_static_check.
@@ -1098,6 +1102,80 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = li_item->get_attribute( `foo` )
       exp = `1` ).
+
+  ENDMETHOD.
+
+  METHOD clone_element.
+
+    DATA li_item  TYPE REF TO if_ixml_element.
+    DATA li_clone TYPE REF TO if_ixml_node.
+
+    li_item = parse( |<root><item foo="1">A</item></root>| )->find_from_name( `item` ).
+
+    li_clone = li_item->clone( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_clone->get_name( )
+      exp = `item` ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_clone->get_attributes( )->get_named_item( `foo` )->get_value( )
+      exp = `1` ).
+
+  ENDMETHOD.
+
+  METHOD clone_is_deep.
+
+    DATA li_item  TYPE REF TO if_ixml_element.
+    DATA li_clone TYPE REF TO if_ixml_node.
+
+    li_item = parse( |<root><item><sub>B</sub></item></root>| )->find_from_name( `item` ).
+
+    li_clone = li_item->clone( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_clone->get_first_child( )->get_name( )
+      exp = `sub` ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_clone->get_first_child( )->get_value( )
+      exp = `B` ).
+
+  ENDMETHOD.
+
+  METHOD clone_has_no_parent.
+
+    DATA li_item  TYPE REF TO if_ixml_element.
+    DATA li_clone TYPE REF TO if_ixml_node.
+
+    " the copy belongs nowhere until it is appended somewhere
+    li_item = parse( |<root><item>A</item></root>| )->find_from_name( `item` ).
+
+    li_clone = li_item->clone( ).
+
+    cl_abap_unit_assert=>assert_initial( act = li_clone->get_parent( ) ).
+
+  ENDMETHOD.
+
+  METHOD clone_is_independent.
+
+    DATA li_item  TYPE REF TO if_ixml_element.
+    DATA li_clone TYPE REF TO if_ixml_element.
+
+    " changing the copy leaves the original as it was
+    li_item = parse( |<root><item foo="1">A</item></root>| )->find_from_name( `item` ).
+
+    li_clone ?= li_item->clone( ).
+    li_clone->set_attribute( name  = `foo`
+                             value = `2` ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_item->get_attribute( `foo` )
+      exp = `1` ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_clone->get_attribute( `foo` )
+      exp = `2` ).
 
   ENDMETHOD.
 
