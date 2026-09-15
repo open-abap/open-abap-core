@@ -71,6 +71,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS find_from_path FOR TESTING RAISING cx_static_check.
     METHODS find_from_path_relative FOR TESTING RAISING cx_static_check.
     METHODS find_from_path_not_found FOR TESTING RAISING cx_static_check.
+    METHODS find_from_name_element FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml     TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -1756,6 +1757,24 @@ CLASS ltcl_xml IMPLEMENTATION.
 
     li_element = li_doc->find_from_path( '/' ).
     cl_abap_unit_assert=>assert_initial( li_element ).
+
+  ENDMETHOD.
+
+  METHOD find_from_name_element.
+
+    DATA li_doc  TYPE REF TO if_ixml_document.
+    DATA li_row  TYPE REF TO if_ixml_element.
+    DATA li_cell TYPE REF TO if_ixml_element.
+
+    li_doc = parse( |<sheetData><row r="1"><c r="A1"/></row><row r="2"><c r="A2"/></row></sheetData>| ).
+
+    li_row ?= li_doc->find_from_name( 'row' )->get_next( ).
+    li_cell = li_row->find_from_name( 'c' ).
+
+* searches below the element, not from the top of the document
+    cl_abap_unit_assert=>assert_equals(
+      act = li_cell->get_attribute( 'r' )
+      exp = 'A2' ).
 
   ENDMETHOD.
 

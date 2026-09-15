@@ -410,7 +410,10 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~find_from_name.
-    ASSERT 1 = 'todo'.
+    val = if_ixml_element~find_from_name_ns(
+      name      = name
+      depth     = depth
+      namespace = namespace ).
   ENDMETHOD.
 
   METHOD if_ixml_element~get_attribute_node.
