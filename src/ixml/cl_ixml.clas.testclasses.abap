@@ -31,6 +31,10 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_cdata_not_unescaped FOR TESTING RAISING cx_static_check.
     METHODS parse_cdata_newline FOR TESTING RAISING cx_static_check.
     METHODS parse_cdata_empty FOR TESTING RAISING cx_static_check.
+    METHODS parse_comment FOR TESTING RAISING cx_static_check.
+    METHODS parse_comment_before_root FOR TESTING RAISING cx_static_check.
+    METHODS parse_comment_with_markup FOR TESTING RAISING cx_static_check.
+    METHODS parse_comment_only_child FOR TESTING RAISING cx_static_check.
     METHODS parse_value_with_newline FOR TESTING RAISING cx_static_check.
     METHODS parse_bom FOR TESTING RAISING cx_static_check.
     METHODS parse_empty FOR TESTING RAISING cx_static_check.
@@ -679,6 +683,55 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = li_root->get_first_child( )->get_value( )
       exp = `` ).
+
+  ENDMETHOD.
+
+  METHOD parse_comment.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    li_root = parse( |<root><!-- c --><item>A</item></root>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_name( )
+      exp = `item` ).
+
+  ENDMETHOD.
+
+  METHOD parse_comment_before_root.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    li_root = parse( |<?xml version="1.0"?><!-- c --><root><item>A</item></root>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_name( )
+      exp = `root` ).
+
+  ENDMETHOD.
+
+  METHOD parse_comment_with_markup.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    " what stands inside a comment is text, the tags in it are not read
+    li_root = parse( |<root><!-- <item>A</item> --><item>B</item></root>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_value( )
+      exp = `B` ).
+
+  ENDMETHOD.
+
+  METHOD parse_comment_only_child.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    li_root = parse( |<root><!-- c --></root>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_children( )->get_length( )
+      exp = 0 ).
 
   ENDMETHOD.
 
