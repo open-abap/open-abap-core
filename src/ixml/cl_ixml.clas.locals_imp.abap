@@ -1331,7 +1331,7 @@ CLASS lcl_parser IMPLEMENTATION.
       lv_xml = lv_xml+1.
     ENDIF.
 
-    REPLACE ALL OCCURRENCES OF |\n| IN lv_xml WITH ||.
+* newline handling: whitespace between tags is skipped below, a LF inside a value is kept
 
     WHILE lv_xml IS NOT INITIAL.
       CLEAR lo_node.
