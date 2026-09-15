@@ -546,7 +546,8 @@ CLASS lcl_node IMPLEMENTATION.
       IF lv_ns IS NOT INITIAL.
         lv_ns = lv_ns && ':'.
       ENDIF.
-      lv_attributes = lv_attributes && | | && lv_ns && li_node->get_name( ) && '="' && li_node->get_value( ) && '"'.
+      lv_attributes = lv_attributes && | | && lv_ns && li_node->get_name( ) &&
+        '="' && lcl_escape=>escape_value( li_node->get_value( ) ) && '"'.
     ENDDO.
 
 *    WRITE '@KERNEL console.dir(mv_namespace);'.
@@ -1441,7 +1442,7 @@ CLASS lcl_parser IMPLEMENTATION.
 
       CREATE OBJECT li_node TYPE lcl_node.
       li_node->set_name( lv_name ).
-      li_node->set_value( lv_value ).
+      li_node->set_value( lcl_escape=>unescape_value( lv_value ) ).
       ii_node->get_attributes( )->set_named_item_ns( li_node ).
 
       lv_offset = lv_offset + lv_length.

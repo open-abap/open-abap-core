@@ -19,6 +19,9 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS first_child_after_crlf FOR TESTING RAISING cx_static_check.
     METHODS parse_blank_only_value FOR TESTING RAISING cx_static_check.
     METHODS parse_indented_children FOR TESTING RAISING cx_static_check.
+    METHODS parse_escaped_attribute FOR TESTING RAISING cx_static_check.
+    METHODS render_escaped_attribute FOR TESTING RAISING cx_static_check.
+    METHODS attribute_roundtrip FOR TESTING RAISING cx_static_check.
     METHODS parse_value_with_newline FOR TESTING RAISING cx_static_check.
     METHODS parse_bom FOR TESTING RAISING cx_static_check.
     METHODS parse_empty FOR TESTING RAISING cx_static_check.
@@ -502,6 +505,56 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = li_item->get_name( )
       exp = `item` ).
+
+  ENDMETHOD.
+
+  METHOD parse_escaped_attribute.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+    DATA li_item TYPE REF TO if_ixml_node.
+
+    li_root = parse( |<root><item foo="a&lt;b&amp;c"/></root>| )->get_root_element( ).
+    li_item = li_root->get_first_child( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_item->get_attributes( )->get_named_item( `foo` )->get_value( )
+      exp = `a<b&c` ).
+
+  ENDMETHOD.
+
+  METHOD render_escaped_attribute.
+
+    DATA lo_element TYPE REF TO if_ixml_element.
+    DATA lv_xml     TYPE string.
+
+    lo_element = mi_document->create_simple_element(
+      name   = 'moo'
+      parent = mi_document ).
+    lo_element->set_attribute(
+      name  = 'name'
+      value = |&<>"| ).
+
+    lv_xml = render( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_xml
+      exp = '<?xml version="1.0" encoding="utf-16"?><moo name="&amp;&lt;&gt;&quot;"/>' ).
+
+  ENDMETHOD.
+
+  METHOD attribute_roundtrip.
+
+    DATA lv_xml TYPE string.
+
+    " the parser unescapes, the renderer escapes again - the document that
+    " went in is the document that comes out
+    parse( |<root foo="a&lt;b&amp;c&quot;d"/>| ).
+
+    lv_xml = render( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_xml
+      exp = '<?xml version="1.0" encoding="utf-16"?><root foo="a&lt;b&amp;c&quot;d"/>' ).
 
   ENDMETHOD.
 
