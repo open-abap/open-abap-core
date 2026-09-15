@@ -411,7 +411,10 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~find_from_name.
-    ASSERT 1 = 'todo'.
+    val = if_ixml_element~find_from_name_ns(
+      name      = name
+      depth     = depth
+      namespace = namespace ).
   ENDMETHOD.
 
   METHOD if_ixml_element~get_attribute_node.
@@ -1269,8 +1272,9 @@ CLASS lcl_parser DEFINITION.
         istream  TYPE REF TO if_ixml_istream
         document TYPE REF TO if_ixml_document.
   PRIVATE SECTION.
-    CONSTANTS lc_regex_tag  TYPE string VALUE '<\/?([\w:\.]+)( [\w:]+="[\w\.,:\-\/#; %\(\){}&]+")* */?>'.
-    CONSTANTS lc_regex_attr TYPE string VALUE '([\w:]+)="([\w\.,:\-\/#; %\(\){}&]+)"'.
+* an attribute value is anything up to the closing quote, it may be empty
+    CONSTANTS lc_regex_tag  TYPE string VALUE '<\/?([\w:\.]+)( [\w:]+="[^"]*")* */?>'.
+    CONSTANTS lc_regex_attr TYPE string VALUE '([\w:]+)="([^"]*)"'.
 
     DATA mi_istream  TYPE REF TO if_ixml_istream.
     DATA mi_document TYPE REF TO if_ixml_document.
