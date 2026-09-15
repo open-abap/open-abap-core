@@ -1389,8 +1389,10 @@ CLASS lcl_parser DEFINITION.
         document TYPE REF TO if_ixml_document.
   PRIVATE SECTION.
 * an attribute value is anything up to the closing quote, it may be empty
-    CONSTANTS lc_regex_tag  TYPE string VALUE '<\/?([\w:\.]+)( [\w:]+="[^"]*")* */?>'.
-    CONSTANTS lc_regex_attr TYPE string VALUE '([\w:]+)="([^"]*)"'.
+    CONSTANTS lc_regex_tag  TYPE string
+      VALUE '<\/?([\w:.\-]+)(\s+[\w:.\-]+\s*=\s*("[^"]*"|''[^'']*''))*\s*\/?>'.
+    CONSTANTS lc_regex_attr TYPE string
+      VALUE '([\w:.\-]+)\s*=\s*(?:"([^"]*)"|''([^'']*)'')'.
 * the length of "<![CDATA[", what stands before the content of a section
     CONSTANTS c_cdata_length TYPE i VALUE 9.
 
@@ -1558,6 +1560,8 @@ CLASS lcl_parser IMPLEMENTATION.
     DATA ls_submatch LIKE LINE OF is_match-submatches.
     DATA lv_name     TYPE string.
     DATA lv_value    TYPE string.
+    DATA lv_dquoted  TYPE string.
+    DATA lv_squoted  TYPE string.
     DATA lv_xml      TYPE string.
     DATA li_node     TYPE REF TO if_ixml_node.
     DATA lv_offset   TYPE i.
@@ -1573,9 +1577,16 @@ CLASS lcl_parser IMPLEMENTATION.
       FIND FIRST OCCURRENCE OF REGEX lc_regex_attr IN lv_xml
         MATCH OFFSET lv_offset
         MATCH LENGTH lv_length
-        SUBMATCHES lv_name lv_value.
+        SUBMATCHES lv_name lv_dquoted lv_squoted.
       IF sy-subrc <> 0.
         RETURN.
+      ENDIF.
+
+* the value is quoted with either character, only one of the two matches
+      IF lv_dquoted IS INITIAL.
+        lv_value = lv_squoted.
+      ELSE.
+        lv_value = lv_dquoted.
       ENDIF.
 
       CREATE OBJECT li_node TYPE lcl_node.
