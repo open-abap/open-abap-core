@@ -1391,6 +1391,8 @@ CLASS lcl_parser DEFINITION.
 * an attribute value is anything up to the closing quote, it may be empty
     CONSTANTS lc_regex_tag  TYPE string VALUE '<\/?([\w:\.]+)( [\w:]+="[^"]*")* */?>'.
     CONSTANTS lc_regex_attr TYPE string VALUE '([\w:]+)="([^"]*)"'.
+* the length of "<![CDATA[", what stands before the content of a section
+    CONSTANTS c_cdata_length TYPE i VALUE 9.
 
     DATA mi_istream  TYPE REF TO if_ixml_istream.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -1420,6 +1422,7 @@ CLASS lcl_parser IMPLEMENTATION.
     DATA lv_in_element TYPE abap_bool.
     DATA lv_bom        TYPE c LENGTH 1.
     DATA lv_offset    TYPE i.
+    DATA lv_length    TYPE i.
     DATA lv_value     TYPE string.
     DATA lv_name      TYPE string.
     DATA lv_namespace TYPE string.
@@ -1456,6 +1459,21 @@ CLASS lcl_parser IMPLEMENTATION.
         FIND FIRST OCCURRENCE OF '?>' IN lv_xml MATCH OFFSET lv_offset.
         ASSERT lv_offset > 0.
         lv_offset = lv_offset + 2.
+        lv_in_element = abap_false.
+      ELSEIF lv_xml CP '<![CDATA[*'.
+* a CDATA section is character data, taken as it stands up to "]]>" - the
+* markup it contains is text and nothing in it is unescaped
+        FIND FIRST OCCURRENCE OF ']]>' IN lv_xml MATCH OFFSET lv_offset.
+        ASSERT sy-subrc = 0.
+        lv_length = lv_offset - c_cdata_length.
+        lv_value = lv_xml+c_cdata_length.
+        lv_value = lv_value(lv_length).
+
+        CREATE OBJECT lo_node EXPORTING ii_parent = lo_parent.
+        lo_node->if_ixml_node~set_name( '#text' ).
+        lo_node->if_ixml_node~set_value( lv_value ).
+
+        lv_offset = lv_offset + 3.
         lv_in_element = abap_false.
       ELSEIF lv_xml CP '<*'.
 * start or close tag

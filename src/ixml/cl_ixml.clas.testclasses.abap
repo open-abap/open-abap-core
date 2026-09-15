@@ -27,6 +27,10 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_escaped_reference FOR TESTING RAISING cx_static_check.
     METHODS parse_not_a_reference FOR TESTING RAISING cx_static_check.
     METHODS parse_reference_attribute FOR TESTING RAISING cx_static_check.
+    METHODS parse_cdata FOR TESTING RAISING cx_static_check.
+    METHODS parse_cdata_not_unescaped FOR TESTING RAISING cx_static_check.
+    METHODS parse_cdata_newline FOR TESTING RAISING cx_static_check.
+    METHODS parse_cdata_empty FOR TESTING RAISING cx_static_check.
     METHODS parse_value_with_newline FOR TESTING RAISING cx_static_check.
     METHODS parse_bom FOR TESTING RAISING cx_static_check.
     METHODS parse_empty FOR TESTING RAISING cx_static_check.
@@ -626,6 +630,55 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = li_item->get_attributes( )->get_named_item( `foo` )->get_value( )
       exp = |a{ cl_abap_char_utilities=>newline }b| ).
+
+  ENDMETHOD.
+
+  METHOD parse_cdata.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    li_root = parse( |<root><item><![CDATA[a<b&c]]></item></root>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_value( )
+      exp = `a<b&c` ).
+
+  ENDMETHOD.
+
+  METHOD parse_cdata_not_unescaped.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    " inside a section an entity is text, it is not resolved
+    li_root = parse( |<root><item><![CDATA[a&lt;b]]></item></root>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_value( )
+      exp = `a&lt;b` ).
+
+  ENDMETHOD.
+
+  METHOD parse_cdata_newline.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    li_root = parse( |<root><item><![CDATA[a\nb]]></item></root>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_value( )
+      exp = |a{ cl_abap_char_utilities=>newline }b| ).
+
+  ENDMETHOD.
+
+  METHOD parse_cdata_empty.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    li_root = parse( |<root><item><![CDATA[]]></item></root>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_value( )
+      exp = `` ).
 
   ENDMETHOD.
 
