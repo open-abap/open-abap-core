@@ -35,6 +35,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
     METHODS typekind_int FOR TESTING.
+    METHODS describe_by_name_absolute FOR TESTING.
     METHODS typekind_char FOR TESTING.
     METHODS typekind_structure1 FOR TESTING.
     METHODS typekind_structure2 FOR TESTING.
@@ -334,6 +335,22 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = type->type_kind
       exp = cl_abap_typedescr=>typekind_dref ).
+  ENDMETHOD.
+
+  METHOD describe_by_name_absolute.
+    DATA type TYPE REF TO cl_abap_typedescr.
+
+    type = cl_abap_typedescr=>describe_by_name( '\TYPE=STRING' ).
+    cl_abap_unit_assert=>assert_not_initial( type ).
+    cl_abap_unit_assert=>assert_equals(
+      act = type->type_kind
+      exp = cl_abap_typedescr=>typekind_string ).
+
+    type = cl_abap_typedescr=>describe_by_name( '\TYPE-POOL=ABAP\TYPE=ABAP_BOOL' ).
+    cl_abap_unit_assert=>assert_not_initial( type ).
+    cl_abap_unit_assert=>assert_equals(
+      act = type->type_kind
+      exp = cl_abap_typedescr=>typekind_char ).
   ENDMETHOD.
 
   METHOD typekind_int.

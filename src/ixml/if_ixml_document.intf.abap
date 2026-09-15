@@ -40,6 +40,11 @@ INTERFACE if_ixml_document PUBLIC.
         name           TYPE string
       RETURNING
         VALUE(element) TYPE REF TO if_ixml_element,
+    create_text
+      IMPORTING
+        string      TYPE string
+      RETURNING
+        VALUE(rval) TYPE REF TO if_ixml_text,
     create_iterator_filtered
       IMPORTING filter     TYPE any
       RETURNING VALUE(val) TYPE REF TO if_ixml_node_iterator,

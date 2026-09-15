@@ -35,6 +35,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_href FOR TESTING RAISING cx_static_check.
     METHODS parse_percent FOR TESTING RAISING cx_static_check.
     METHODS parse_tag_space FOR TESTING RAISING cx_static_check.
+    METHODS parse_attr_any_value FOR TESTING RAISING cx_static_check.
     METHODS create FOR TESTING RAISING cx_static_check.
     METHODS create_set_attributes FOR TESTING RAISING cx_static_check.
     METHODS set_attribute_twice FOR TESTING RAISING cx_static_check.
@@ -55,6 +56,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS pretty5 FOR TESTING RAISING cx_static_check.
     METHODS add_stuff FOR TESTING RAISING cx_static_check.
     METHODS create_attribute_ns FOR TESTING RAISING cx_static_check.
+    METHODS create_text FOR TESTING RAISING cx_static_check.
     METHODS spaces FOR TESTING RAISING cx_static_check.
     METHODS spaces_inner FOR TESTING RAISING cx_static_check.
     METHODS top_attr FOR TESTING RAISING cx_static_check.
@@ -70,6 +72,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS find_from_path FOR TESTING RAISING cx_static_check.
     METHODS find_from_path_relative FOR TESTING RAISING cx_static_check.
     METHODS find_from_path_not_found FOR TESTING RAISING cx_static_check.
+    METHODS find_from_name_element FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml     TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -845,6 +848,38 @@ CLASS ltcl_xml IMPLEMENTATION.
 
   ENDMETHOD.
 
+  METHOD parse_attr_any_value.
+
+    DATA lv_xml     TYPE string.
+    DATA lv_sheet   TYPE string.
+    DATA li_doc     TYPE REF TO if_ixml_document.
+    DATA li_element TYPE REF TO if_ixml_element.
+    DATA li_node    TYPE REF TO if_ixml_node.
+
+* all three come from files Excel writes: a folder path in workbook.xml,
+* empty typefaces in theme1.xml and a sheet name with non-English letters
+    lv_sheet = cl_abap_conv_in_ce=>uccpi( 233 ) && cl_abap_conv_in_ce=>uccpi( 351 )
+      && cl_abap_conv_in_ce=>uccpi( 1179 ) && '1'.
+    lv_xml = |<wb><absPath url="C:\\Users\\me\\"/><ea typeface=""/><sheet name="{ lv_sheet }"/></wb>|.
+    li_doc = parse( lv_xml ).
+
+    li_element = li_doc->find_from_name_ns( name = 'absPath' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_element->get_attribute( 'url' )
+      exp = `C:\Users\me\` ).
+
+    li_node = li_doc->find_from_name_ns( name = 'ea' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_node->get_attributes( )->get_length( )
+      exp = 1 ).
+
+    li_element = li_doc->find_from_name_ns( name = 'sheet' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_element->get_attribute( 'name' )
+      exp = lv_sheet ).
+
+  ENDMETHOD.
+
   METHOD parse_and_render.
 
     DATA lv_xml      TYPE string.
@@ -1296,6 +1331,24 @@ CLASS ltcl_xml IMPLEMENTATION.
       exp = '*<HELLO version="1.0" xmlns:asx="http://abapgit.org"/>*' ).
   ENDMETHOD.
 
+  METHOD create_text.
+    DATA li_root TYPE REF TO if_ixml_element.
+    DATA li_text TYPE REF TO if_ixml_text.
+    DATA lv_xml  TYPE string.
+
+    li_root = mi_document->create_simple_element(
+      name   = 'root'
+      parent = mi_document ).
+    li_text = mi_document->create_text( 'hello' ).
+    li_root->append_child( li_text ).
+
+    lv_xml = render( ).
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_xml
+      exp = '*<root>hello</root>' ).
+  ENDMETHOD.
+
   METHOD spaces.
 
     " Reproduces: when a leaf element's value is set via set_value(),
@@ -1723,6 +1776,24 @@ CLASS ltcl_xml IMPLEMENTATION.
 
     li_element = li_doc->find_from_path( '/' ).
     cl_abap_unit_assert=>assert_initial( li_element ).
+
+  ENDMETHOD.
+
+  METHOD find_from_name_element.
+
+    DATA li_doc  TYPE REF TO if_ixml_document.
+    DATA li_row  TYPE REF TO if_ixml_element.
+    DATA li_cell TYPE REF TO if_ixml_element.
+
+    li_doc = parse( |<sheetData><row r="1"><c r="A1"/></row><row r="2"><c r="A2"/></row></sheetData>| ).
+
+    li_row ?= li_doc->find_from_name( 'row' )->get_next( ).
+    li_cell = li_row->find_from_name( 'c' ).
+
+* searches below the element, not from the top of the document
+    cl_abap_unit_assert=>assert_equals(
+      act = li_cell->get_attribute( 'r' )
+      exp = 'A2' ).
 
   ENDMETHOD.
 

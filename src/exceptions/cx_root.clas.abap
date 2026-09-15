@@ -33,8 +33,12 @@ CLASS cx_root IMPLEMENTATION.
     CLEAR include_name.
     CLEAR source_line.
 
-    WRITE '@KERNEL source_line.set(this.EXTRA_CX.INTERNAL_LINE || 1);'.
-    WRITE '@KERNEL program_name.set(this.EXTRA_CX.INTERNAL_FILENAME || "error");'.
+    " EXTRA_CX is attached by the transpiled RAISE statement. An exception the
+    " runtime raises itself - a conversion error, a division by zero - never
+    " goes through RAISE, so it has no EXTRA_CX, and reading through it threw
+    " a TypeError before the fallbacks below could be reached.
+    WRITE '@KERNEL source_line.set(this.EXTRA_CX?.INTERNAL_LINE || 1);'.
+    WRITE '@KERNEL program_name.set(this.EXTRA_CX?.INTERNAL_FILENAME || "error");'.
   ENDMETHOD.
 
   METHOD if_message~get_longtext.

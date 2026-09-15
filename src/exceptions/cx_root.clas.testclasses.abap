@@ -27,6 +27,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
     METHODS test1 FOR TESTING.
+    METHODS source_position_runtime_raise FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -63,6 +64,28 @@ CLASS ltcl_test IMPLEMENTATION.
         cl_abap_unit_assert=>assert_not_initial( lv_line ).
     ENDTRY.
 
+  ENDMETHOD.
+
+  METHOD source_position_runtime_raise.
+    " an exception the runtime raises itself never goes through RAISE, so it
+    " carries no EXTRA_CX. Reading through it used to throw a TypeError before
+    " the fallbacks in get_source_position could be reached, which turns a
+    " handler that asks where something happened into a crash of its own.
+    DATA lv_float       TYPE f.
+    DATA lv_program_name TYPE syrepid.
+    DATA lv_line        TYPE i.
+
+    TRY.
+        lv_float = CONV f( 'not a number' ).
+        cl_abap_unit_assert=>fail( 'expected CX_SY_CONVERSION_NO_NUMBER' ).
+      CATCH cx_root INTO DATA(lx_error).
+        lx_error->get_source_position(
+          IMPORTING
+            program_name = lv_program_name
+            source_line  = lv_line ).
+        cl_abap_unit_assert=>assert_not_initial( lv_program_name ).
+        cl_abap_unit_assert=>assert_not_initial( lv_line ).
+    ENDTRY.
   ENDMETHOD.
 
 ENDCLASS.
