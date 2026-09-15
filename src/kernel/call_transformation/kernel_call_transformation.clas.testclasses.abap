@@ -96,6 +96,7 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS escape_char_data FOR TESTING RAISING cx_static_check.
     METHODS escape_char_data_roundtrip FOR TESTING RAISING cx_static_check.
     METHODS escape_entity_text_roundtrip FOR TESTING RAISING cx_static_check.
+    METHODS newline_roundtrip FOR TESTING RAISING cx_static_check.
     METHODS to_string_simple FOR TESTING RAISING cx_static_check.
     METHODS to_string_empty FOR TESTING RAISING cx_static_check.
     METHODS to_string_array FOR TESTING RAISING cx_static_check.
@@ -334,6 +335,32 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = ls_data-field
       exp = 'literal &lt; entity' ).
+  ENDMETHOD.
+
+  METHOD newline_roundtrip.
+* a line break inside a value must survive the roundtrip
+    DATA lv_xml TYPE string.
+    DATA lv_exp TYPE string.
+    DATA: BEGIN OF ls_data,
+            field TYPE string,
+          END OF ls_data.
+
+    lv_exp = |a{ cl_abap_char_utilities=>newline }b|.
+    ls_data-field = lv_exp.
+
+    CALL TRANSFORMATION id
+      SOURCE data = ls_data
+      RESULT XML lv_xml.
+
+    CLEAR ls_data.
+
+    CALL TRANSFORMATION id
+      SOURCE XML lv_xml
+      RESULT data = ls_data.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_data-field
+      exp = lv_exp ).
   ENDMETHOD.
 
   METHOD convert_json_to_sxml.

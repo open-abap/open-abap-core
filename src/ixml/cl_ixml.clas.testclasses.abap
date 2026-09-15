@@ -17,6 +17,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_basic FOR TESTING RAISING cx_static_check.
     METHODS root_element_after_crlf FOR TESTING RAISING cx_static_check.
     METHODS first_child_after_crlf FOR TESTING RAISING cx_static_check.
+    METHODS parse_value_with_newline FOR TESTING RAISING cx_static_check.
     METHODS parse_bom FOR TESTING RAISING cx_static_check.
     METHODS parse_empty FOR TESTING RAISING cx_static_check.
     METHODS parse_namespace FOR TESTING RAISING cx_static_check.
@@ -455,6 +456,21 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = li_child->get_name( )
       exp = `root` ).
+
+  ENDMETHOD.
+
+  METHOD parse_value_with_newline.
+
+    DATA lv_xml  TYPE string.
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    lv_xml = |<root><item>a\nb</item></root>|.
+
+    li_root = parse( lv_xml )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_value( )
+      exp = |a\nb| ).
 
   ENDMETHOD.
 
