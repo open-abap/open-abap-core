@@ -22,6 +22,11 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_escaped_attribute FOR TESTING RAISING cx_static_check.
     METHODS render_escaped_attribute FOR TESTING RAISING cx_static_check.
     METHODS attribute_roundtrip FOR TESTING RAISING cx_static_check.
+    METHODS parse_decimal_reference FOR TESTING RAISING cx_static_check.
+    METHODS parse_hex_reference FOR TESTING RAISING cx_static_check.
+    METHODS parse_escaped_reference FOR TESTING RAISING cx_static_check.
+    METHODS parse_not_a_reference FOR TESTING RAISING cx_static_check.
+    METHODS parse_reference_attribute FOR TESTING RAISING cx_static_check.
     METHODS parse_value_with_newline FOR TESTING RAISING cx_static_check.
     METHODS parse_bom FOR TESTING RAISING cx_static_check.
     METHODS parse_empty FOR TESTING RAISING cx_static_check.
@@ -555,6 +560,72 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_xml
       exp = '<?xml version="1.0" encoding="utf-16"?><root foo="a&lt;b&amp;c&quot;d"/>' ).
+
+  ENDMETHOD.
+
+  METHOD parse_decimal_reference.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    li_root = parse( |<root><item>a&#10;b</item></root>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_value( )
+      exp = |a{ cl_abap_char_utilities=>newline }b| ).
+
+  ENDMETHOD.
+
+  METHOD parse_hex_reference.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    li_root = parse( |<root><item>&#x41;&#66;</item></root>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_value( )
+      exp = `AB` ).
+
+  ENDMETHOD.
+
+  METHOD parse_escaped_reference.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    " a value that literally contains "&#10;" is written as "&amp;#10;" and
+    " must not be resolved a second time
+    li_root = parse( |<root><item>a&amp;#10;b</item></root>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_value( )
+      exp = `a&#10;b` ).
+
+  ENDMETHOD.
+
+  METHOD parse_not_a_reference.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    li_root = parse( |<root><item>&#zz; &#; a&#1</item></root>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_value( )
+      exp = `&#zz; &#; a&#1` ).
+
+  ENDMETHOD.
+
+  METHOD parse_reference_attribute.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+    DATA li_item TYPE REF TO if_ixml_node.
+
+    " an attribute value goes through unescape_value since #1228, so a
+    " reference in one resolves as well
+    li_root = parse( |<root><item foo="a&#10;b"/></root>| )->get_root_element( ).
+    li_item = li_root->get_first_child( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_item->get_attributes( )->get_named_item( `foo` )->get_value( )
+      exp = |a{ cl_abap_char_utilities=>newline }b| ).
 
   ENDMETHOD.
 
