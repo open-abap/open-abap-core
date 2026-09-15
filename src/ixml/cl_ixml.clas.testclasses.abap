@@ -35,6 +35,12 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_comment_before_root FOR TESTING RAISING cx_static_check.
     METHODS parse_comment_with_markup FOR TESTING RAISING cx_static_check.
     METHODS parse_comment_only_child FOR TESTING RAISING cx_static_check.
+    METHODS parse_attribute_on_new_line FOR TESTING RAISING cx_static_check.
+    METHODS parse_attributes_two_spaces FOR TESTING RAISING cx_static_check.
+    METHODS parse_attribute_single_quote FOR TESTING RAISING cx_static_check.
+    METHODS parse_attribute_name_dash FOR TESTING RAISING cx_static_check.
+    METHODS parse_element_name_dash FOR TESTING RAISING cx_static_check.
+    METHODS attribute IMPORTING iv_xml TYPE string iv_name TYPE string RETURNING VALUE(rv_value) TYPE string.
     METHODS parse_value_with_newline FOR TESTING RAISING cx_static_check.
     METHODS parse_bom FOR TESTING RAISING cx_static_check.
     METHODS parse_empty FOR TESTING RAISING cx_static_check.
@@ -732,6 +738,66 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = li_root->get_children( )->get_length( )
       exp = 0 ).
+
+  ENDMETHOD.
+
+  METHOD attribute.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+    DATA li_item TYPE REF TO if_ixml_node.
+
+    li_root = parse( iv_xml )->get_root_element( ).
+    li_item = li_root->get_first_child( ).
+    rv_value = li_item->get_attributes( )->get_named_item( iv_name )->get_value( ).
+
+  ENDMETHOD.
+
+  METHOD parse_attribute_on_new_line.
+
+    " a start tag may be broken over lines, every pretty printer does it
+    cl_abap_unit_assert=>assert_equals(
+      act = attribute( iv_xml  = |<root><item\n  foo="bar">A</item></root>|
+                       iv_name = `foo` )
+      exp = `bar` ).
+
+  ENDMETHOD.
+
+  METHOD parse_attributes_two_spaces.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = attribute( iv_xml  = |<root><item  foo="1"  bar="2">A</item></root>|
+                       iv_name = `bar` )
+      exp = `2` ).
+
+  ENDMETHOD.
+
+  METHOD parse_attribute_single_quote.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = attribute( iv_xml  = |<root><item foo='bar'>A</item></root>|
+                       iv_name = `foo` )
+      exp = `bar` ).
+
+  ENDMETHOD.
+
+  METHOD parse_attribute_name_dash.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = attribute( iv_xml  = |<root><item xml-lang="en">A</item></root>|
+                       iv_name = `xml-lang` )
+      exp = `en` ).
+
+  ENDMETHOD.
+
+  METHOD parse_element_name_dash.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    li_root = parse( |<root><my-item>A</my-item></root>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_name( )
+      exp = `my-item` ).
 
   ENDMETHOD.
 
