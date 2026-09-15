@@ -44,6 +44,9 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS parse_doctype_subset FOR TESTING RAISING cx_static_check.
     METHODS parse_processing_instruction FOR TESTING RAISING cx_static_check.
     METHODS parse_instruction_in_element FOR TESTING RAISING cx_static_check.
+    METHODS parse_text_without_markup FOR TESTING RAISING cx_static_check.
+    METHODS parse_text_after_root FOR TESTING RAISING cx_static_check.
+    METHODS parse_unclosed_tag FOR TESTING RAISING cx_static_check.
     METHODS attribute IMPORTING iv_xml TYPE string iv_name TYPE string RETURNING VALUE(rv_value) TYPE string.
     METHODS parse_value_with_newline FOR TESTING RAISING cx_static_check.
     METHODS parse_bom FOR TESTING RAISING cx_static_check.
@@ -851,6 +854,44 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = li_root->get_first_child( )->get_name( )
       exp = `item` ).
+
+  ENDMETHOD.
+
+  METHOD parse_text_without_markup.
+
+    DATA li_doc TYPE REF TO if_ixml_document.
+
+    " a document that is character data only - the loop must end
+    li_doc = parse( `hello` ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_doc->get_root( )->get_first_child( )->get_value( )
+      exp = `hello` ).
+
+  ENDMETHOD.
+
+  METHOD parse_text_after_root.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    li_root = parse( |<root><item>A</item></root>tail| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_name( )
+      exp = `root` ).
+
+  ENDMETHOD.
+
+  METHOD parse_unclosed_tag.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    " the document is cut off, what was read stays readable
+    li_root = parse( |<root><item>A| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_value( )
+      exp = `A` ).
 
   ENDMETHOD.
 

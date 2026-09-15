@@ -1543,6 +1543,12 @@ CLASS lcl_parser IMPLEMENTATION.
       ELSE.
 * value
         FIND FIRST OCCURRENCE OF '<' IN lv_xml MATCH OFFSET lv_offset.
+        IF sy-subrc <> 0.
+* the document ends in character data. Without this the offset of the
+* previous match stands, which reads beyond the end or, when there was no
+* match yet, leaves the loop where it is and it never terminates
+          lv_offset = strlen( lv_xml ).
+        ENDIF.
         lv_value = lv_xml(lv_offset).
         CREATE OBJECT lo_node EXPORTING ii_parent = lo_parent.
         lo_node->if_ixml_node~set_name( '#text' ).
