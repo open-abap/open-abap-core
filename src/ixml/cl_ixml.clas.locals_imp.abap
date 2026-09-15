@@ -716,7 +716,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~remove_node.
-    ASSERT 1 = 'todo'.
+    if_ixml_node~remove_node( ).
   ENDMETHOD.
 
   METHOD has_direct_text.
@@ -900,7 +900,13 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~remove_node.
-    ASSERT 1 = 'todo'.
+* takes the node out of its parent, it is not part of the document
+* afterwards. A node that has no parent is not in one to begin with, and
+* removing it is not an error
+    IF mi_parent IS BOUND.
+      mi_parent->remove_child( me ).
+      CLEAR mi_parent.
+    ENDIF.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_parent.
