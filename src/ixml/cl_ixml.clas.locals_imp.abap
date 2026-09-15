@@ -333,6 +333,9 @@ CLASS lcl_node DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_element.
     INTERFACES if_ixml_text.
+* an attribute is a node of this class too, so it is one of these as well -
+* the interface adds no method of its own, only aliases of if_ixml_node
+    INTERFACES if_ixml_attribute.
 
     METHODS constructor
       IMPORTING
@@ -370,6 +373,13 @@ CLASS lcl_node DEFINITION.
         iv_prefix     TYPE string
       RETURNING
         VALUE(rv_uri) TYPE string.
+
+    METHODS attribute_node
+      IMPORTING
+        iv_name        TYPE string
+        iv_uri         TYPE string OPTIONAL
+      RETURNING
+        VALUE(ri_node) TYPE REF TO if_ixml_node.
 ENDCLASS.
 
 CLASS lcl_node IMPLEMENTATION.
@@ -466,7 +476,8 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~get_attribute_node_ns.
-    ASSERT 1 = 'todo'.
+    val ?= attribute_node( iv_name = name
+                           iv_uri  = uri ).
   ENDMETHOD.
 
   METHOD if_ixml_node~get_next.
@@ -616,10 +627,20 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~get_attribute_node.
-    ASSERT 1 = 'todo'.
+    val ?= attribute_node( name ).
   ENDMETHOD.
 
   METHOD if_ixml_element~get_attribute_ns.
+    DATA li_node TYPE REF TO if_ixml_node.
+
+    li_node = attribute_node( iv_name = name
+                              iv_uri  = uri ).
+    IF li_node IS NOT INITIAL.
+      val = li_node->get_value( ).
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD attribute_node.
 * without a uri the name is taken as it stands, prefix included. With one,
 * the name is the local part and the prefix of the attribute has to resolve
 * to that uri - an attribute without a prefix is in no namespace, a default
@@ -633,11 +654,8 @@ CLASS lcl_node IMPLEMENTATION.
 
     li_map = if_ixml_node~get_attributes( ).
 
-    IF uri IS INITIAL.
-      li_node = li_map->get_named_item_ns( name ).
-      IF li_node IS NOT INITIAL.
-        val = li_node->get_value( ).
-      ENDIF.
+    IF iv_uri IS INITIAL.
+      ri_node = li_map->get_named_item_ns( iv_name ).
       RETURN.
     ENDIF.
 
@@ -650,8 +668,8 @@ CLASS lcl_node IMPLEMENTATION.
       ENDIF.
 
       SPLIT lv_name AT ':' INTO lv_prefix lv_local.
-      IF lv_local = name AND uri_of_prefix( lv_prefix ) = uri.
-        val = li_node->get_value( ).
+      IF lv_local = iv_name AND uri_of_prefix( lv_prefix ) = iv_uri.
+        ri_node = li_node.
         RETURN.
       ENDIF.
     ENDDO.
