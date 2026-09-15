@@ -65,6 +65,10 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS clone_is_deep FOR TESTING RAISING cx_static_check.
     METHODS clone_has_no_parent FOR TESTING RAISING cx_static_check.
     METHODS clone_is_independent FOR TESTING RAISING cx_static_check.
+    METHODS attribute_node_by_name FOR TESTING RAISING cx_static_check.
+    METHODS attribute_node_missing FOR TESTING RAISING cx_static_check.
+    METHODS attribute_node_by_uri FOR TESTING RAISING cx_static_check.
+    METHODS attribute_node_is_live FOR TESTING RAISING cx_static_check.
     METHODS attribute IMPORTING iv_xml TYPE string iv_name TYPE string RETURNING VALUE(rv_value) TYPE string.
     METHODS parse_value_with_newline FOR TESTING RAISING cx_static_check.
     METHODS parse_bom FOR TESTING RAISING cx_static_check.
@@ -1175,6 +1179,61 @@ CLASS ltcl_xml IMPLEMENTATION.
 
     cl_abap_unit_assert=>assert_equals(
       act = li_clone->get_attribute( `foo` )
+      exp = `2` ).
+
+  ENDMETHOD.
+
+  METHOD attribute_node_by_name.
+
+    DATA li_item TYPE REF TO if_ixml_element.
+
+    li_item = parse( |<root><item foo="1"/></root>| )->find_from_name( `item` ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_item->get_attribute_node( `foo` )->get_value( )
+      exp = `1` ).
+
+  ENDMETHOD.
+
+  METHOD attribute_node_missing.
+
+    DATA li_item TYPE REF TO if_ixml_element.
+    DATA li_attr TYPE REF TO if_ixml_attribute.
+
+    li_item = parse( |<root><item foo="1"/></root>| )->find_from_name( `item` ).
+
+    li_attr = li_item->get_attribute_node( `nope` ).
+
+    cl_abap_unit_assert=>assert_initial( act = li_attr ).
+
+  ENDMETHOD.
+
+  METHOD attribute_node_by_uri.
+
+    DATA li_item TYPE REF TO if_ixml_element.
+
+    li_item = parse( |<root xmlns:n="urn:x"><item n:bar="2"/></root>| )->find_from_name( `item` ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_item->get_attribute_node_ns( name = `bar`
+                                            uri  = `urn:x` )->get_value( )
+      exp = `2` ).
+
+  ENDMETHOD.
+
+  METHOD attribute_node_is_live.
+
+    DATA li_item TYPE REF TO if_ixml_element.
+    DATA li_attr TYPE REF TO if_ixml_attribute.
+
+    " the node is the attribute of the element, not a copy of it
+    li_item = parse( |<root><item foo="1"/></root>| )->find_from_name( `item` ).
+
+    li_attr = li_item->get_attribute_node( `foo` ).
+    li_attr->set_value( `2` ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_item->get_attribute( `foo` )
       exp = `2` ).
 
   ENDMETHOD.
