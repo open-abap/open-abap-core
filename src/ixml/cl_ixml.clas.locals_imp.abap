@@ -16,11 +16,13 @@ ENDCLASS.
 CLASS lcl_escape IMPLEMENTATION.
   METHOD unescape_value.
     rv_value = iv_value.
-    REPLACE ALL OCCURRENCES OF '&amp;' IN rv_value WITH '&'.
     REPLACE ALL OCCURRENCES OF '&lt;' IN rv_value WITH '<'.
     REPLACE ALL OCCURRENCES OF '&gt;' IN rv_value WITH '>'.
     REPLACE ALL OCCURRENCES OF '&quot;' IN rv_value WITH '"'.
     REPLACE ALL OCCURRENCES OF '&apos;' IN rv_value WITH |'|.
+* "&amp;" must be last, otherwise an escaped "&amp;lt;" is unescaped twice and
+* a value that literally contains "&lt;" comes back as "<"
+    REPLACE ALL OCCURRENCES OF '&amp;' IN rv_value WITH '&'.
   ENDMETHOD.
 
   METHOD escape_value.
@@ -203,6 +205,7 @@ ENDCLASS.
 CLASS lcl_node DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_ixml_element.
+    INTERFACES if_ixml_text.
 
     METHODS constructor
       IMPORTING
@@ -410,7 +413,10 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~find_from_name.
-    ASSERT 1 = 'todo'.
+    val = if_ixml_element~find_from_name_ns(
+      name      = name
+      depth     = depth
+      namespace = namespace ).
   ENDMETHOD.
 
   METHOD if_ixml_element~get_attribute_node.
@@ -1057,6 +1063,12 @@ CLASS lcl_document IMPLEMENTATION.
     root ?= if_ixml_document~get_first_child( ).
   ENDMETHOD.
 
+  METHOD if_ixml_document~create_text.
+    CREATE OBJECT rval TYPE lcl_node.
+    rval->if_ixml_node~set_name( '#text' ).
+    rval->if_ixml_node~set_value( string ).
+  ENDMETHOD.
+
 ENDCLASS.
 
 ****************************************************************
@@ -1262,8 +1274,9 @@ CLASS lcl_parser DEFINITION.
         istream  TYPE REF TO if_ixml_istream
         document TYPE REF TO if_ixml_document.
   PRIVATE SECTION.
-    CONSTANTS lc_regex_tag  TYPE string VALUE '<\/?([\w:\.]+)( [\w:]+="[\w\.,:\-\/#; %\(\){}&]+")* */?>'.
-    CONSTANTS lc_regex_attr TYPE string VALUE '([\w:]+)="([\w\.,:\-\/#; %\(\){}&]+)"'.
+* an attribute value is anything up to the closing quote, it may be empty
+    CONSTANTS lc_regex_tag  TYPE string VALUE '<\/?([\w:\.]+)( [\w:]+="[^"]*")* */?>'.
+    CONSTANTS lc_regex_attr TYPE string VALUE '([\w:]+)="([^"]*)"'.
 
     DATA mi_istream  TYPE REF TO if_ixml_istream.
     DATA mi_document TYPE REF TO if_ixml_document.
