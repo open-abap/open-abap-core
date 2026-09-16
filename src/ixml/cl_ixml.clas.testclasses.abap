@@ -69,6 +69,10 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS attribute_node_missing FOR TESTING RAISING cx_static_check.
     METHODS attribute_node_by_uri FOR TESTING RAISING cx_static_check.
     METHODS attribute_node_is_live FOR TESTING RAISING cx_static_check.
+    METHODS remove_node_from_parent FOR TESTING RAISING cx_static_check.
+    METHODS remove_node_clears_parent FOR TESTING RAISING cx_static_check.
+    METHODS remove_node_without_parent FOR TESTING RAISING cx_static_check.
+    METHODS remove_node_via_node FOR TESTING RAISING cx_static_check.
     METHODS attribute IMPORTING iv_xml TYPE string iv_name TYPE string RETURNING VALUE(rv_value) TYPE string.
     METHODS parse_value_with_newline FOR TESTING RAISING cx_static_check.
     METHODS parse_bom FOR TESTING RAISING cx_static_check.
@@ -1235,6 +1239,74 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = li_item->get_attribute( `foo` )
       exp = `2` ).
+
+  ENDMETHOD.
+
+  METHOD remove_node_from_parent.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+    DATA li_item TYPE REF TO if_ixml_element.
+
+    li_root = parse( |<root><a/><b/></root>| )->get_root_element( ).
+    li_item = li_root->find_from_name( `a` ).
+
+    li_item->remove_node( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_children( )->get_length( )
+      exp = 1 ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_name( )
+      exp = `b` ).
+
+  ENDMETHOD.
+
+  METHOD remove_node_clears_parent.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+    DATA li_node TYPE REF TO if_ixml_node.
+
+    li_root = parse( |<root><a/></root>| )->get_root_element( ).
+    li_node = li_root->find_from_name( `a` ).
+
+    li_node->remove_node( ).
+
+    cl_abap_unit_assert=>assert_initial( act = li_node->get_parent( ) ).
+
+  ENDMETHOD.
+
+  METHOD remove_node_without_parent.
+
+    DATA li_root  TYPE REF TO if_ixml_element.
+    DATA li_clone TYPE REF TO if_ixml_node.
+
+    " a clone has no parent, so there is nothing to remove it from
+    li_root = parse( |<root><a/></root>| )->get_root_element( ).
+    li_clone = li_root->find_from_name( `a` )->clone( ).
+
+    li_clone->remove_node( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_children( )->get_length( )
+      exp = 1 ).
+
+  ENDMETHOD.
+
+  METHOD remove_node_via_node.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+    DATA li_node TYPE REF TO if_ixml_node.
+
+    " the node interface declares its own remove_node next to the element one
+    li_root = parse( |<root><a/><b/></root>| )->get_root_element( ).
+    li_node = li_root->get_first_child( ).
+
+    li_node->remove_node( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_name( )
+      exp = `b` ).
 
   ENDMETHOD.
 
