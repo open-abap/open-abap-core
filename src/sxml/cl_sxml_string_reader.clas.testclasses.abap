@@ -31,6 +31,8 @@ CLASS ltcl_json DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS integer_array FOR TESTING RAISING cx_static_check.
     METHODS key_value FOR TESTING RAISING cx_static_check.
     METHODS key_empty FOR TESTING RAISING cx_static_check.
+    METHODS empty_key_has_name_attribute FOR TESTING RAISING cx_static_check.
+    METHODS array_element_has_no_attribute FOR TESTING RAISING cx_static_check.
     METHODS two_keys FOR TESTING RAISING cx_static_check.
     METHODS two_array FOR TESTING RAISING cx_static_check.
     METHODS array_with_object FOR TESTING RAISING cx_static_check.
@@ -241,6 +243,54 @@ CLASS ltcl_json IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lt_actual
       exp = mt_expected ).
+
+  ENDMETHOD.
+
+  METHOD empty_key_has_name_attribute.
+* "" is a legal JSON key. The member carries a name attribute whose value is
+* empty - the attribute has to BE there, otherwise the element is
+* indistinguishable from an element of an array and a consumer that reads the
+* attribute by index has nothing to read
+    DATA li_reader TYPE REF TO if_sxml_reader.
+    DATA li_node   TYPE REF TO if_sxml_node.
+    DATA li_open   TYPE REF TO if_sxml_open_element.
+    DATA lt_attr   TYPE if_sxml_attribute=>attributes.
+    DATA li_attr   TYPE REF TO if_sxml_attribute.
+
+    li_reader = cl_sxml_string_reader=>create( cl_abap_codepage=>convert_to( '{"": 1}' ) ).
+
+    li_node = li_reader->read_next_node( ).
+    li_node = li_reader->read_next_node( ).
+    li_open ?= li_node.
+
+    lt_attr = li_open->get_attributes( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( lt_attr )
+      exp = 1 ).
+
+    READ TABLE lt_attr INDEX 1 INTO li_attr.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_attr->qname-name
+      exp = 'name' ).
+    cl_abap_unit_assert=>assert_initial( li_attr->get_value( ) ).
+
+  ENDMETHOD.
+
+  METHOD array_element_has_no_attribute.
+* the other side of the same distinction: an element of an array has no name,
+* so it carries no attribute at all
+    DATA li_reader TYPE REF TO if_sxml_reader.
+    DATA li_node   TYPE REF TO if_sxml_node.
+    DATA li_open   TYPE REF TO if_sxml_open_element.
+
+    li_reader = cl_sxml_string_reader=>create( cl_abap_codepage=>convert_to( '[1]' ) ).
+
+    li_node = li_reader->read_next_node( ).
+    li_node = li_reader->read_next_node( ).
+    li_open ?= li_node.
+
+    cl_abap_unit_assert=>assert_initial( li_open->get_attributes( ) ).
 
   ENDMETHOD.
 

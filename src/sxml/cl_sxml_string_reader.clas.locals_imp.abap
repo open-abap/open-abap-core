@@ -3,10 +3,11 @@
 CLASS lcl_json_parser DEFINITION.
   PUBLIC SECTION.
     TYPES: BEGIN OF ty_node,
-             type  TYPE if_sxml_node=>node_type,
-             name  TYPE string,
-             key   TYPE string,
-             value TYPE string,
+             type    TYPE if_sxml_node=>node_type,
+             name    TYPE string,
+             key     TYPE string,
+             has_key TYPE abap_bool,
+             value   TYPE string,
            END OF ty_node.
 
     TYPES ty_nodes TYPE STANDARD TABLE OF ty_node WITH DEFAULT KEY.
@@ -21,23 +22,27 @@ CLASS lcl_json_parser DEFINITION.
 
     METHODS append
       IMPORTING
-        iv_type  TYPE if_sxml_node=>node_type
-        iv_name  TYPE string OPTIONAL
-        iv_key   TYPE string OPTIONAL
-        iv_value TYPE string OPTIONAL.
+        iv_type    TYPE if_sxml_node=>node_type
+        iv_name    TYPE string OPTIONAL
+        iv_key     TYPE string OPTIONAL
+        iv_has_key TYPE abap_bool DEFAULT abap_false
+        iv_value   TYPE string OPTIONAL.
 
     METHODS traverse
       IMPORTING
-        iv_json TYPE any
-        iv_key  TYPE string OPTIONAL.
+        iv_json    TYPE any
+        iv_key     TYPE string OPTIONAL
+        iv_has_key TYPE abap_bool DEFAULT abap_false.
     METHODS traverse_object
       IMPORTING
-        iv_json TYPE any
-        iv_key  TYPE string OPTIONAL.
+        iv_json    TYPE any
+        iv_key     TYPE string OPTIONAL
+        iv_has_key TYPE abap_bool DEFAULT abap_false.
     METHODS traverse_array
       IMPORTING
-        iv_json TYPE any
-        iv_key  TYPE string OPTIONAL.
+        iv_json    TYPE any
+        iv_key     TYPE string OPTIONAL
+        iv_has_key TYPE abap_bool DEFAULT abap_false.
 
 ENDCLASS.
 
@@ -76,6 +81,7 @@ CLASS lcl_json_parser IMPLEMENTATION.
     ls_node-type = iv_type.
     ls_node-name = iv_name.
     ls_node-key = iv_key.
+    ls_node-has_key = iv_has_key.
     ls_node-value = iv_value.
     APPEND ls_node TO mt_nodes->*.
   ENDMETHOD.
@@ -89,11 +95,13 @@ CLASS lcl_json_parser IMPLEMENTATION.
 
     CASE lv_type.
       WHEN 'object'.
-        traverse_object( iv_json = iv_json
-                         iv_key  = iv_key ).
+        traverse_object( iv_json    = iv_json
+                         iv_key     = iv_key
+                         iv_has_key = iv_has_key ).
       WHEN 'array'.
-        traverse_array( iv_json = iv_json
-                        iv_key  = iv_key ).
+        traverse_array( iv_json    = iv_json
+                        iv_key     = iv_key
+                        iv_has_key = iv_has_key ).
       WHEN 'string' OR 'boolean' OR 'number' OR 'null'.
         WRITE '@KERNEL iv_json = iv_json.value + "";'.
 
@@ -106,9 +114,10 @@ CLASS lcl_json_parser IMPLEMENTATION.
             lv_type = 'bool'.
         ENDCASE.
 
-        append( iv_type = if_sxml_node=>co_nt_element_open
-                iv_name = lv_type
-                iv_key  = iv_key ).
+        append( iv_type    = if_sxml_node=>co_nt_element_open
+                iv_name    = lv_type
+                iv_key     = iv_key
+                iv_has_key = iv_has_key ).
         IF lv_type <> 'null'.
           append( iv_type  = if_sxml_node=>co_nt_value
                   iv_value = iv_json ).
@@ -131,9 +140,10 @@ CLASS lcl_json_parser IMPLEMENTATION.
     WRITE '@KERNEL let parsed = iv_json.value;'.
     WRITE '@KERNEL lv_length.set(parsed.length);'.
 
-    append( iv_type = if_sxml_node=>co_nt_element_open
-            iv_name = 'array'
-            iv_key  = iv_key ).
+    append( iv_type    = if_sxml_node=>co_nt_element_open
+            iv_name    = 'array'
+            iv_key     = iv_key
+            iv_has_key = iv_has_key ).
 
     DO lv_length TIMES.
       lv_index = sy-index - 1.
@@ -153,15 +163,17 @@ CLASS lcl_json_parser IMPLEMENTATION.
 
     WRITE '@KERNEL let parsed = iv_json.value;'.
 
-    append( iv_type = if_sxml_node=>co_nt_element_open
-            iv_name = 'object'
-            iv_key  = iv_key ).
+    append( iv_type    = if_sxml_node=>co_nt_element_open
+            iv_name    = 'object'
+            iv_key     = iv_key
+            iv_has_key = iv_has_key ).
 
     WRITE '@KERNEL for (const k of Object.keys(parsed)) {'.
     WRITE '@KERNEL   lv_key.set(k);'.
     WRITE '@KERNEL   lv_value = {value: parsed[k]};'.
-    traverse( iv_json = lv_value
-              iv_key  = lv_key ).
+    traverse( iv_json    = lv_value
+              iv_key     = lv_key
+              iv_has_key = abap_true ).
     WRITE '@KERNEL };'.
 
     append( iv_type = if_sxml_node=>co_nt_element_close
@@ -359,7 +371,7 @@ CLASS lcl_reader IMPLEMENTATION.
       CASE <ls_parsed>-type.
         WHEN if_sxml_node=>co_nt_element_open.
           CLEAR lt_attributes.
-          IF <ls_parsed>-key IS NOT INITIAL.
+          IF <ls_parsed>-has_key = abap_true.
             CREATE OBJECT li_attribute TYPE lcl_attribute
               EXPORTING
                 name       = 'name'
