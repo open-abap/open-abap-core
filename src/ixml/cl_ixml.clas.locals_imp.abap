@@ -279,6 +279,10 @@ CLASS lcl_node_list DEFINITION.
     INTERFACES if_ixml_node_collection.
     METHODS append IMPORTING ii_node TYPE REF TO if_ixml_node.
     METHODS remove IMPORTING ii_node TYPE REF TO if_ixml_node.
+    METHODS insert
+      IMPORTING
+        ii_node TYPE REF TO if_ixml_node
+        ii_ref  TYPE REF TO if_ixml_node OPTIONAL.
   PRIVATE SECTION.
     DATA mt_list TYPE STANDARD TABLE OF REF TO if_ixml_node WITH DEFAULT KEY.
 ENDCLASS.
@@ -293,6 +297,25 @@ CLASS lcl_node_list IMPLEMENTATION.
     READ TABLE mt_list WITH KEY table_line = ii_node TRANSPORTING NO FIELDS.
     IF sy-subrc = 0.
       DELETE mt_list INDEX sy-tabix.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD insert.
+* in front of ii_ref, or at the end when there is no ii_ref in the list
+    DATA lv_index TYPE i.
+
+    ASSERT ii_node IS NOT INITIAL.
+    IF ii_ref IS NOT INITIAL.
+      READ TABLE mt_list WITH KEY table_line = ii_ref TRANSPORTING NO FIELDS.
+      IF sy-subrc = 0.
+        lv_index = sy-tabix.
+      ENDIF.
+    ENDIF.
+
+    IF lv_index > 0.
+      INSERT ii_node INTO mt_list INDEX lv_index.
+    ELSE.
+      APPEND ii_node TO mt_list.
     ENDIF.
   ENDMETHOD.
 
@@ -427,7 +450,34 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~insert_child.
-    ASSERT 1 = 'todo'.
+* new_child goes in front of ref_child, or to the end when ref_child is
+* initial; a node that has a parent already is moved. 0 means it was done
+    DATA lo_node   TYPE REF TO lcl_node.
+    DATA li_parent TYPE REF TO if_ixml_node.
+
+    rval = 4.
+    IF new_child IS INITIAL.
+      RETURN.
+    ENDIF.
+* checked before anything moves, so a wrong ref_child leaves the tree alone
+    IF ref_child IS NOT INITIAL AND ref_child->get_parent( ) <> me.
+      RETURN.
+    ENDIF.
+    IF new_child = ref_child.
+      rval = 0.
+      RETURN.
+    ENDIF.
+
+    lo_node ?= new_child.
+    li_parent = lo_node->get_parent( ).
+    IF li_parent IS NOT INITIAL.
+      li_parent->remove_child( new_child ).
+    ENDIF.
+    lo_node->set_parent( me ).
+
+    mo_children->insert( ii_node = new_child
+                         ii_ref  = ref_child ).
+    rval = 0.
   ENDMETHOD.
 
   METHOD if_ixml_node~clone.

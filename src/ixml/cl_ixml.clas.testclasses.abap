@@ -130,6 +130,12 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS element_create_iterator FOR TESTING RAISING cx_static_check.
     METHODS get_next_last_sibling FOR TESTING RAISING cx_static_check.
     METHODS get_next_after_move FOR TESTING RAISING cx_static_check.
+    METHODS insert_child FOR TESTING RAISING cx_static_check.
+    METHODS child_names
+      IMPORTING
+        ii_node         TYPE REF TO if_ixml_node
+      RETURNING
+        VALUE(rv_names) TYPE string.
     METHODS find_from_path FOR TESTING RAISING cx_static_check.
     METHODS find_from_path_relative FOR TESTING RAISING cx_static_check.
     METHODS find_from_path_not_found FOR TESTING RAISING cx_static_check.
@@ -2660,6 +2666,72 @@ CLASS ltcl_xml IMPLEMENTATION.
       exp = 'second' ).
 
     cl_abap_unit_assert=>assert_initial( li_second->get_next( ) ).
+
+  ENDMETHOD.
+
+  METHOD insert_child.
+
+    DATA li_doc     TYPE REF TO if_ixml_document.
+    DATA li_root    TYPE REF TO if_ixml_node.
+    DATA li_new     TYPE REF TO if_ixml_element.
+    DATA li_first   TYPE REF TO if_ixml_node.
+    DATA li_last    TYPE REF TO if_ixml_node.
+    DATA li_none    TYPE REF TO if_ixml_node.
+    DATA li_foreign TYPE REF TO if_ixml_element.
+
+    li_doc = parse( |<root><a/><c/></root>| ).
+    li_root = li_doc->get_root_element( ).
+    li_first = li_root->get_first_child( ).
+    li_last = li_first->get_next( ).
+
+* in front of another child, the way bizhuka/xtt adds an element
+    li_new = li_doc->create_element( 'b' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->insert_child( new_child = li_new
+                                   ref_child = li_last )
+      exp = 0 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = child_names( li_root )
+      exp = `a,b,c,` ).
+    cl_abap_unit_assert=>assert_true( boolc( li_new->if_ixml_node~get_parent( ) = li_root ) ).
+
+* a child that is there already is moved
+    li_root->insert_child( new_child = li_last
+                           ref_child = li_first ).
+    cl_abap_unit_assert=>assert_equals(
+      act = child_names( li_root )
+      exp = `c,a,b,` ).
+
+* without ref_child it goes to the end
+    li_root->insert_child( new_child = li_first
+                           ref_child = li_none ).
+    cl_abap_unit_assert=>assert_equals(
+      act = child_names( li_root )
+      exp = `c,b,a,` ).
+
+* a ref_child of another parent is refused and nothing moves
+    li_foreign = li_doc->create_element( 'x' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->insert_child( new_child = li_last
+                                   ref_child = li_foreign )
+      exp = 4 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = child_names( li_root )
+      exp = `c,b,a,` ).
+
+  ENDMETHOD.
+
+  METHOD child_names.
+
+    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+    DATA li_child    TYPE REF TO if_ixml_node.
+
+    li_iterator = ii_node->get_children( )->create_iterator( ).
+    li_child = li_iterator->get_next( ).
+    WHILE li_child IS BOUND.
+      rv_names = rv_names && li_child->get_name( ) && `,`.
+      li_child = li_iterator->get_next( ).
+    ENDWHILE.
 
   ENDMETHOD.
 
