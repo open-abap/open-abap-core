@@ -145,6 +145,10 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS num_children_leaf FOR TESTING RAISING cx_static_check.
     METHODS num_children_document FOR TESTING RAISING cx_static_check.
     METHODS num_children_after_append FOR TESTING RAISING cx_static_check.
+    METHODS replace_child FOR TESTING RAISING cx_static_check.
+    METHODS replace_child_moves FOR TESTING RAISING cx_static_check.
+    METHODS replace_child_same FOR TESTING RAISING cx_static_check.
+    METHODS replace_child_foreign FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml     TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -1389,6 +1393,90 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = li_root->if_ixml_node~num_children( )
       exp = 2 ).
+  ENDMETHOD.
+
+  METHOD replace_child.
+
+    DATA li_doc  TYPE REF TO if_ixml_document.
+    DATA li_root TYPE REF TO if_ixml_node.
+    DATA li_old  TYPE REF TO if_ixml_node.
+    DATA li_new  TYPE REF TO if_ixml_element.
+
+    li_doc = parse( |<root><a/><b/><c/></root>| ).
+    li_root = li_doc->get_root_element( ).
+    li_old = li_root->get_first_child( )->get_next( ).
+
+    li_new = li_doc->create_element( 'x' ).
+    li_root->replace_child( new_child = li_new
+                            old_child = li_old ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = child_names( li_root )
+      exp = `a,x,c,` ).
+    cl_abap_unit_assert=>assert_true( boolc( li_new->if_ixml_node~get_parent( ) = li_root ) ).
+
+  ENDMETHOD.
+
+  METHOD replace_child_moves.
+* a new_child that is a child already is moved into the place of old_child
+    DATA li_doc  TYPE REF TO if_ixml_document.
+    DATA li_root TYPE REF TO if_ixml_node.
+    DATA li_a    TYPE REF TO if_ixml_node.
+    DATA li_c    TYPE REF TO if_ixml_node.
+
+    li_doc = parse( |<root><a/><b/><c/></root>| ).
+    li_root = li_doc->get_root_element( ).
+    li_a = li_root->get_first_child( ).
+    li_c = li_a->get_next( )->get_next( ).
+
+    li_root->replace_child( new_child = li_c
+                            old_child = li_a ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = child_names( li_root )
+      exp = `c,b,` ).
+
+  ENDMETHOD.
+
+  METHOD replace_child_same.
+* replacing a child with itself leaves the tree alone
+    DATA li_doc  TYPE REF TO if_ixml_document.
+    DATA li_root TYPE REF TO if_ixml_node.
+    DATA li_b    TYPE REF TO if_ixml_node.
+
+    li_doc = parse( |<root><a/><b/><c/></root>| ).
+    li_root = li_doc->get_root_element( ).
+    li_b = li_root->get_first_child( )->get_next( ).
+
+    li_root->replace_child( new_child = li_b
+                            old_child = li_b ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = child_names( li_root )
+      exp = `a,b,c,` ).
+
+  ENDMETHOD.
+
+  METHOD replace_child_foreign.
+* an old_child of another parent is refused and nothing moves
+    DATA li_doc     TYPE REF TO if_ixml_document.
+    DATA li_root    TYPE REF TO if_ixml_node.
+    DATA li_new     TYPE REF TO if_ixml_element.
+    DATA li_foreign TYPE REF TO if_ixml_element.
+
+    li_doc = parse( |<root><a/><b/></root>| ).
+    li_root = li_doc->get_root_element( ).
+
+    li_new = li_doc->create_element( 'x' ).
+    li_foreign = li_doc->create_element( 'y' ).
+    li_root->replace_child( new_child = li_new
+                            old_child = li_foreign ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = child_names( li_root )
+      exp = `a,b,` ).
+    cl_abap_unit_assert=>assert_initial( li_new->if_ixml_node~get_parent( ) ).
+
   ENDMETHOD.
 
   METHOD parse_bom.
