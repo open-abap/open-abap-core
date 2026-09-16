@@ -62,6 +62,8 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS attribute_ns_wrong_uri FOR TESTING RAISING cx_static_check.
     METHODS attribute_ns_unprefixed FOR TESTING RAISING cx_static_check.
     METHODS attribute_ns_without_uri FOR TESTING RAISING cx_static_check.
+    METHODS attribute_local_name FOR TESTING RAISING cx_static_check.
+    METHODS attribute_same_local_name FOR TESTING RAISING cx_static_check.
     METHODS clone_element FOR TESTING RAISING cx_static_check.
     METHODS clone_is_deep FOR TESTING RAISING cx_static_check.
     METHODS clone_has_no_parent FOR TESTING RAISING cx_static_check.
@@ -1128,6 +1130,63 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = li_item->get_attribute( `foo` )
       exp = `1` ).
+
+  ENDMETHOD.
+
+  METHOD attribute_local_name.
+
+    DATA li_item TYPE REF TO if_ixml_element.
+    DATA li_attr TYPE REF TO if_ixml_node.
+    DATA li_copy TYPE REF TO if_ixml_element.
+
+    " as in workbook.xml, where a sheet refers to its part through r:id
+    li_item = parse( |<sheets xmlns:r="urn:rel"><sheet name="Sheet1" r:id="rId1"/></sheets>| )->find_from_name( `sheet` ).
+
+    " get_name returns the local part, the prefix is kept apart
+    li_attr = li_item->get_attributes( )->get_item( 2 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_attr->get_name( )
+      exp = `id` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_attr->get_namespace_prefix( )
+      exp = `r` ).
+
+    " found through the uri and through the qualified name, written back with the prefix
+    cl_abap_unit_assert=>assert_equals(
+      act = li_item->get_attribute_ns( name = `id`
+                                       uri  = `urn:rel` )
+      exp = `rId1` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_item->get_attribute( `r:id` )
+      exp = `rId1` ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = render( )
+      exp = '*<sheet name="Sheet1" r:id="rId1"/>*' ).
+
+    " a copy keeps the prefix
+    li_copy ?= li_item->clone( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_copy->get_attribute( `r:id` )
+      exp = `rId1` ).
+
+  ENDMETHOD.
+
+  METHOD attribute_same_local_name.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    " two attributes may share the local part, the prefix tells them apart
+    li_root = parse( |<a xmlns:r="urn:rel" id="1" r:id="2"/>| )->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_attributes( )->get_length( )
+      exp = 3 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_attribute( `id` )
+      exp = `1` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_attribute( `r:id` )
+      exp = `2` ).
 
   ENDMETHOD.
 
