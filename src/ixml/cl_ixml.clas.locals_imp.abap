@@ -428,7 +428,8 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~num_children.
-    ASSERT 1 = 'todo'.
+* the number of direct children, attributes are not children
+    rval = mo_children->if_ixml_node_list~get_length( ).
   ENDMETHOD.
 
   METHOD constructor.
@@ -1102,7 +1103,7 @@ CLASS lcl_document IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~num_children.
-    ASSERT 1 = 'todo'.
+    rval = mi_node->if_ixml_node~num_children( ).
   ENDMETHOD.
 
   METHOD constructor.

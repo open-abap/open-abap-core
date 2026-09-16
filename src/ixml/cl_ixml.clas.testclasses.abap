@@ -140,6 +140,11 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS find_from_path_relative FOR TESTING RAISING cx_static_check.
     METHODS find_from_path_not_found FOR TESTING RAISING cx_static_check.
     METHODS find_from_name_element FOR TESTING RAISING cx_static_check.
+    METHODS num_children FOR TESTING RAISING cx_static_check.
+    METHODS num_children_nested FOR TESTING RAISING cx_static_check.
+    METHODS num_children_leaf FOR TESTING RAISING cx_static_check.
+    METHODS num_children_document FOR TESTING RAISING cx_static_check.
+    METHODS num_children_after_append FOR TESTING RAISING cx_static_check.
 
     DATA mi_ixml     TYPE REF TO if_ixml.
     DATA mi_document TYPE REF TO if_ixml_document.
@@ -1317,6 +1322,73 @@ CLASS ltcl_xml IMPLEMENTATION.
       act = li_root->get_first_child( )->get_name( )
       exp = `b` ).
 
+  ENDMETHOD.
+
+  METHOD num_children.
+    DATA li_doc  TYPE REF TO if_ixml_document.
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    li_doc = parse( '<root><one/><two/><three/></root>' ).
+    li_root = li_doc->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->if_ixml_node~num_children( )
+      exp = 3 ).
+  ENDMETHOD.
+
+  METHOD num_children_nested.
+* only the direct children count, not the whole subtree
+    DATA li_doc  TYPE REF TO if_ixml_document.
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    li_doc = parse( '<root><one><deep/></one><two/></root>' ).
+    li_root = li_doc->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->if_ixml_node~num_children( )
+      exp = 2 ).
+  ENDMETHOD.
+
+  METHOD num_children_leaf.
+* attributes are not children
+    DATA li_doc  TYPE REF TO if_ixml_document.
+    DATA li_root TYPE REF TO if_ixml_element.
+
+    li_doc = parse( '<root foo="bar"/>' ).
+    li_root = li_doc->get_root_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->if_ixml_node~num_children( )
+      exp = 0 ).
+  ENDMETHOD.
+
+  METHOD num_children_document.
+* the document has the root element as its only child
+    DATA li_doc TYPE REF TO if_ixml_document.
+
+    li_doc = parse( '<root><one/><two/></root>' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_doc->if_ixml_node~num_children( )
+      exp = 1 ).
+  ENDMETHOD.
+
+  METHOD num_children_after_append.
+    DATA li_doc   TYPE REF TO if_ixml_document.
+    DATA li_root  TYPE REF TO if_ixml_element.
+    DATA li_child TYPE REF TO if_ixml_element.
+
+    li_doc = parse( '<root><one/></root>' ).
+    li_root = li_doc->get_root_element( ).
+
+    li_child = li_doc->create_simple_element(
+      name   = 'two'
+      parent = li_root ).
+    cl_abap_unit_assert=>assert_bound( li_child ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->if_ixml_node~num_children( )
+      exp = 2 ).
   ENDMETHOD.
 
   METHOD parse_bom.
