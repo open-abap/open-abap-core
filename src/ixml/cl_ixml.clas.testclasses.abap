@@ -15,6 +15,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS render_nested FOR TESTING RAISING cx_static_check.
     METHODS render_document_namespace_pref FOR TESTING RAISING cx_static_check.
     METHODS parse_basic FOR TESTING RAISING cx_static_check.
+    METHODS parse_no_validation FOR TESTING RAISING cx_static_check.
     METHODS root_element_after_crlf FOR TESTING RAISING cx_static_check.
     METHODS first_child_after_crlf FOR TESTING RAISING cx_static_check.
     METHODS parse_blank_only_value FOR TESTING RAISING cx_static_check.
@@ -69,6 +70,10 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS attribute_node_missing FOR TESTING RAISING cx_static_check.
     METHODS attribute_node_by_uri FOR TESTING RAISING cx_static_check.
     METHODS attribute_node_is_live FOR TESTING RAISING cx_static_check.
+    METHODS remove_node_from_parent FOR TESTING RAISING cx_static_check.
+    METHODS remove_node_clears_parent FOR TESTING RAISING cx_static_check.
+    METHODS remove_node_without_parent FOR TESTING RAISING cx_static_check.
+    METHODS remove_node_via_node FOR TESTING RAISING cx_static_check.
     METHODS attribute IMPORTING iv_xml TYPE string iv_name TYPE string RETURNING VALUE(rv_value) TYPE string.
     METHODS parse_value_with_newline FOR TESTING RAISING cx_static_check.
     METHODS parse_bom FOR TESTING RAISING cx_static_check.
@@ -119,8 +124,10 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS get_elements_by_tag_name FOR TESTING RAISING cx_static_check.
     METHODS get_elements_by_tag_name_elem FOR TESTING RAISING cx_static_check.
     METHODS get_elements_by_tag_name_ns FOR TESTING RAISING cx_static_check.
+    METHODS get_elements_by_tag_name_uri FOR TESTING RAISING cx_static_check.
     METHODS get_elements_by_tag_name_empty FOR TESTING RAISING cx_static_check.
     METHODS get_next_sibling FOR TESTING RAISING cx_static_check.
+    METHODS element_create_iterator FOR TESTING RAISING cx_static_check.
     METHODS get_next_last_sibling FOR TESTING RAISING cx_static_check.
     METHODS get_next_after_move FOR TESTING RAISING cx_static_check.
     METHODS insert_child FOR TESTING RAISING cx_static_check.
@@ -1244,6 +1251,74 @@ CLASS ltcl_xml IMPLEMENTATION.
 
   ENDMETHOD.
 
+  METHOD remove_node_from_parent.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+    DATA li_item TYPE REF TO if_ixml_element.
+
+    li_root = parse( |<root><a/><b/></root>| )->get_root_element( ).
+    li_item = li_root->find_from_name( `a` ).
+
+    li_item->remove_node( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_children( )->get_length( )
+      exp = 1 ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_name( )
+      exp = `b` ).
+
+  ENDMETHOD.
+
+  METHOD remove_node_clears_parent.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+    DATA li_node TYPE REF TO if_ixml_node.
+
+    li_root = parse( |<root><a/></root>| )->get_root_element( ).
+    li_node = li_root->find_from_name( `a` ).
+
+    li_node->remove_node( ).
+
+    cl_abap_unit_assert=>assert_initial( act = li_node->get_parent( ) ).
+
+  ENDMETHOD.
+
+  METHOD remove_node_without_parent.
+
+    DATA li_root  TYPE REF TO if_ixml_element.
+    DATA li_clone TYPE REF TO if_ixml_node.
+
+    " a clone has no parent, so there is nothing to remove it from
+    li_root = parse( |<root><a/></root>| )->get_root_element( ).
+    li_clone = li_root->find_from_name( `a` )->clone( ).
+
+    li_clone->remove_node( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_children( )->get_length( )
+      exp = 1 ).
+
+  ENDMETHOD.
+
+  METHOD remove_node_via_node.
+
+    DATA li_root TYPE REF TO if_ixml_element.
+    DATA li_node TYPE REF TO if_ixml_node.
+
+    " the node interface declares its own remove_node next to the element one
+    li_root = parse( |<root><a/><b/></root>| )->get_root_element( ).
+    li_node = li_root->get_first_child( ).
+
+    li_node->remove_node( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_root->get_first_child( )->get_name( )
+      exp = `b` ).
+
+  ENDMETHOD.
+
   METHOD parse_bom.
 
     DATA lv_bom  TYPE c LENGTH 1.
@@ -1286,6 +1361,29 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_dump
       exp = lv_expected ).
+
+  ENDMETHOD.
+
+  METHOD parse_no_validation.
+
+    DATA li_factory TYPE REF TO if_ixml_stream_factory.
+    DATA li_istream TYPE REF TO if_ixml_istream.
+    DATA li_parser  TYPE REF TO if_ixml_parser.
+
+* abap2xlsx switches validation off before it parses a file
+    li_factory = mi_ixml->create_stream_factory( ).
+    li_istream = li_factory->create_istream_string( |<root>1</root>| ).
+    li_parser = mi_ixml->create_parser( stream_factory = li_factory
+                                        istream        = li_istream
+                                        document       = mi_document ).
+    li_parser->set_validating( mode = if_ixml_parser=>co_no_validation ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_parser->parse( )
+      exp = 0 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = mi_document->get_root_element( )->get_value( )
+      exp = '1' ).
 
   ENDMETHOD.
 
@@ -2426,6 +2524,40 @@ CLASS ltcl_xml IMPLEMENTATION.
 
   ENDMETHOD.
 
+  METHOD get_elements_by_tag_name_uri.
+
+    DATA li_doc        TYPE REF TO if_ixml_document.
+    DATA li_collection TYPE REF TO if_ixml_node_collection.
+
+* as in an xlsx sheet: the elements have no prefix, their namespace is the default one
+    li_doc = parse( |<worksheet xmlns="urn:main" xmlns:x="urn:other"><row>1</row><x:row>2</x:row><row>3</row></worksheet>| ).
+
+    li_collection = li_doc->get_elements_by_tag_name_ns(
+      name = 'row'
+      uri  = 'urn:main' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_collection->get_length( )
+      exp = 2 ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_collection->get_item( 2 )->get_value( )
+      exp = '3' ).
+
+    li_collection = li_doc->get_elements_by_tag_name_ns(
+      name = 'row'
+      uri  = 'urn:other' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_collection->get_length( )
+      exp = 1 ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_collection->get_item( 1 )->get_value( )
+      exp = '2' ).
+
+  ENDMETHOD.
+
   METHOD get_elements_by_tag_name_empty.
 
     DATA li_doc        TYPE REF TO if_ixml_document.
@@ -2483,6 +2615,29 @@ CLASS ltcl_xml IMPLEMENTATION.
     li_next = li_node->get_next( ).
 
     cl_abap_unit_assert=>assert_initial( li_next ).
+
+  ENDMETHOD.
+
+  METHOD element_create_iterator.
+
+    DATA li_doc      TYPE REF TO if_ixml_document.
+    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+    DATA li_node     TYPE REF TO if_ixml_node.
+    DATA lv_names    TYPE string.
+
+    li_doc = parse( |<a><b><c/></b><d>text</d></a>| ).
+    li_iterator = li_doc->get_root_element( )->create_iterator( ).
+
+    li_node = li_iterator->get_next( ).
+    WHILE li_node IS BOUND.
+      lv_names = lv_names && li_node->get_name( ) && `,`.
+      li_node = li_iterator->get_next( ).
+    ENDWHILE.
+
+* the element itself first, then everything below it in document order
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_names
+      exp = `a,b,c,d,#text,` ).
 
   ENDMETHOD.
 

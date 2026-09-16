@@ -385,10 +385,15 @@ CLASS lcl_node DEFINITION.
       RETURNING
         VALUE(rv_has) TYPE abap_bool.
 
+    METHODS collect_subtree
+      CHANGING
+        ct_nodes TYPE lcl_node_iterator=>ty_list.
+
     METHODS collect_elements_by_tag_name
       IMPORTING
         iv_name      TYPE string
         iv_namespace TYPE string
+        iv_uri       TYPE string
         io_list      TYPE REF TO lcl_node_list.
 
     METHODS uri_of_prefix
@@ -634,7 +639,30 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~create_iterator.
-    ASSERT 1 = 'todo'.
+* the element itself, then everything below it in document order
+    DATA lt_nodes TYPE lcl_node_iterator=>ty_list.
+
+    collect_subtree( CHANGING ct_nodes = lt_nodes ).
+    CREATE OBJECT val TYPE lcl_node_iterator
+      EXPORTING
+        it_list = lt_nodes.
+  ENDMETHOD.
+
+  METHOD collect_subtree.
+    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+    DATA li_node     TYPE REF TO if_ixml_node.
+    DATA lo_node     TYPE REF TO lcl_node.
+
+    APPEND me TO ct_nodes.
+    li_iterator = mo_children->if_ixml_node_list~create_iterator( ).
+    DO.
+      li_node = li_iterator->get_next( ).
+      IF li_node IS INITIAL.
+        EXIT. " current loop
+      ENDIF.
+      lo_node ?= li_node.
+      lo_node->collect_subtree( CHANGING ct_nodes = ct_nodes ).
+    ENDDO.
   ENDMETHOD.
 
   METHOD if_ixml_element~find_from_name_ns.
@@ -739,6 +767,7 @@ CLASS lcl_node IMPLEMENTATION.
     collect_elements_by_tag_name(
       iv_name      = name
       iv_namespace = namespace
+      iv_uri       = ''
       io_list      = lo_list ).
     val = lo_list.
   ENDMETHOD.
@@ -748,7 +777,8 @@ CLASS lcl_node IMPLEMENTATION.
     CREATE OBJECT lo_list.
     collect_elements_by_tag_name(
       iv_name      = name
-      iv_namespace = uri
+      iv_namespace = ''
+      iv_uri       = uri
       io_list      = lo_list ).
     val = lo_list.
   ENDMETHOD.
@@ -766,7 +796,7 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~remove_node.
-    ASSERT 1 = 'todo'.
+    if_ixml_node~remove_node( ).
   ENDMETHOD.
 
   METHOD has_direct_text.
@@ -805,10 +835,17 @@ CLASS lcl_node IMPLEMENTATION.
 
       IF li_node->get_name( ) <> '#text'.
         lv_matches = boolc( iv_name = '*' OR li_node->get_name( ) = iv_name ).
+* a uri is compared with the uri the prefix of the element is bound to. A
+* prefix is still accepted in its place, as before; it has no colon, so it
+* never equals an absolute uri
         IF lv_matches = abap_true
             AND ( iv_namespace IS INITIAL
               OR iv_namespace = '*'
-              OR li_node->get_namespace( ) = iv_namespace ).
+              OR li_node->get_namespace( ) = iv_namespace )
+            AND ( iv_uri IS INITIAL
+              OR iv_uri = '*'
+              OR li_node->get_namespace( ) = iv_uri
+              OR li_node->get_namespace_uri( ) = iv_uri ).
           io_list->append( li_node ).
         ENDIF.
       ENDIF.
@@ -817,6 +854,7 @@ CLASS lcl_node IMPLEMENTATION.
       lo_node->collect_elements_by_tag_name(
         iv_name      = iv_name
         iv_namespace = iv_namespace
+        iv_uri       = iv_uri
         io_list      = io_list ).
     ENDDO.
   ENDMETHOD.
@@ -950,7 +988,13 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~remove_node.
-    ASSERT 1 = 'todo'.
+* takes the node out of its parent, it is not part of the document
+* afterwards. A node that has no parent is not in one to begin with, and
+* removing it is not an error
+    IF mi_parent IS BOUND.
+      mi_parent->remove_child( me ).
+      CLEAR mi_parent.
+    ENDIF.
   ENDMETHOD.
 
   METHOD if_ixml_node~get_parent.
@@ -1594,7 +1638,9 @@ CLASS lcl_parser IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_parser~set_validating.
-    ASSERT 1 = 'todo'.
+* the parser does not validate, so only "no validation" can be honoured
+    ASSERT mode = if_ixml_parser=>co_no_validation.
+    rval = abap_true.
   ENDMETHOD.
 
   METHOD if_ixml_parser~parse.
