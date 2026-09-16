@@ -362,6 +362,10 @@ CLASS lcl_node DEFINITION.
       RETURNING
         VALUE(rv_has) TYPE abap_bool.
 
+    METHODS collect_subtree
+      CHANGING
+        ct_nodes TYPE lcl_node_iterator=>ty_list.
+
     METHODS collect_elements_by_tag_name
       IMPORTING
         iv_name      TYPE string
@@ -584,7 +588,30 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_element~create_iterator.
-    ASSERT 1 = 'todo'.
+* the element itself, then everything below it in document order
+    DATA lt_nodes TYPE lcl_node_iterator=>ty_list.
+
+    collect_subtree( CHANGING ct_nodes = lt_nodes ).
+    CREATE OBJECT val TYPE lcl_node_iterator
+      EXPORTING
+        it_list = lt_nodes.
+  ENDMETHOD.
+
+  METHOD collect_subtree.
+    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+    DATA li_node     TYPE REF TO if_ixml_node.
+    DATA lo_node     TYPE REF TO lcl_node.
+
+    APPEND me TO ct_nodes.
+    li_iterator = mo_children->if_ixml_node_list~create_iterator( ).
+    DO.
+      li_node = li_iterator->get_next( ).
+      IF li_node IS INITIAL.
+        EXIT. " current loop
+      ENDIF.
+      lo_node ?= li_node.
+      lo_node->collect_subtree( CHANGING ct_nodes = ct_nodes ).
+    ENDDO.
   ENDMETHOD.
 
   METHOD if_ixml_element~find_from_name_ns.
