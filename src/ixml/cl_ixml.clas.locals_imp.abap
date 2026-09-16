@@ -1003,7 +1003,22 @@ CLASS lcl_node IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_node~replace_child.
-    ASSERT 1 = 'todo'.
+* new_child takes the place of old_child, old_child leaves the tree. A
+* new_child that sits somewhere else is moved, the same way insert_child
+* moves it. Anything that does not add up leaves the tree untouched
+    IF new_child IS INITIAL OR old_child IS INITIAL.
+      RETURN.
+    ENDIF.
+    IF old_child->get_parent( ) <> me.
+      RETURN.
+    ENDIF.
+    IF new_child = old_child.
+      RETURN.
+    ENDIF.
+
+    if_ixml_node~insert_child( new_child = new_child
+                               ref_child = old_child ).
+    if_ixml_node~remove_child( old_child ).
   ENDMETHOD.
 
   METHOD if_ixml_node~get_name.
