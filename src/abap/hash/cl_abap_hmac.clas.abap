@@ -45,8 +45,10 @@ CLASS cl_abap_hmac IMPLEMENTATION.
     " todo,
     ASSERT if_length = 0.
 
+* validates the name the same way the digest class does (raises for unknown algorithms)
+    cl_abap_message_digest=>get_instance( if_algorithm ).
     lv_algorithm = to_lower( if_algorithm ).
-    ASSERT lv_algorithm = 'sha1' OR lv_algorithm = 'md5' OR lv_algorithm = 'sha256'.
+    REPLACE ALL OCCURRENCES OF '-' IN lv_algorithm WITH ''.
 
 * todo, this doesnt work in browser?
     WRITE '@KERNEL const crypto = await import("crypto");'.
