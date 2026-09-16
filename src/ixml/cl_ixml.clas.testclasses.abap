@@ -124,6 +124,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS get_elements_by_tag_name FOR TESTING RAISING cx_static_check.
     METHODS get_elements_by_tag_name_elem FOR TESTING RAISING cx_static_check.
     METHODS get_elements_by_tag_name_ns FOR TESTING RAISING cx_static_check.
+    METHODS get_elements_by_tag_name_uri FOR TESTING RAISING cx_static_check.
     METHODS get_elements_by_tag_name_empty FOR TESTING RAISING cx_static_check.
     METHODS get_next_sibling FOR TESTING RAISING cx_static_check.
     METHODS element_create_iterator FOR TESTING RAISING cx_static_check.
@@ -2514,6 +2515,40 @@ CLASS ltcl_xml IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = li_collection->get_item( 2 )->get_value( )
       exp = '3' ).
+
+  ENDMETHOD.
+
+  METHOD get_elements_by_tag_name_uri.
+
+    DATA li_doc        TYPE REF TO if_ixml_document.
+    DATA li_collection TYPE REF TO if_ixml_node_collection.
+
+* as in an xlsx sheet: the elements have no prefix, their namespace is the default one
+    li_doc = parse( |<worksheet xmlns="urn:main" xmlns:x="urn:other"><row>1</row><x:row>2</x:row><row>3</row></worksheet>| ).
+
+    li_collection = li_doc->get_elements_by_tag_name_ns(
+      name = 'row'
+      uri  = 'urn:main' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_collection->get_length( )
+      exp = 2 ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_collection->get_item( 2 )->get_value( )
+      exp = '3' ).
+
+    li_collection = li_doc->get_elements_by_tag_name_ns(
+      name = 'row'
+      uri  = 'urn:other' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_collection->get_length( )
+      exp = 1 ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = li_collection->get_item( 1 )->get_value( )
+      exp = '2' ).
 
   ENDMETHOD.
 
