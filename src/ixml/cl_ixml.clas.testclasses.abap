@@ -127,6 +127,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS get_elements_by_tag_name_uri FOR TESTING RAISING cx_static_check.
     METHODS get_elements_by_tag_name_empty FOR TESTING RAISING cx_static_check.
     METHODS get_next_sibling FOR TESTING RAISING cx_static_check.
+    METHODS element_create_iterator FOR TESTING RAISING cx_static_check.
     METHODS get_next_last_sibling FOR TESTING RAISING cx_static_check.
     METHODS get_next_after_move FOR TESTING RAISING cx_static_check.
     METHODS find_from_path FOR TESTING RAISING cx_static_check.
@@ -2608,6 +2609,29 @@ CLASS ltcl_xml IMPLEMENTATION.
     li_next = li_node->get_next( ).
 
     cl_abap_unit_assert=>assert_initial( li_next ).
+
+  ENDMETHOD.
+
+  METHOD element_create_iterator.
+
+    DATA li_doc      TYPE REF TO if_ixml_document.
+    DATA li_iterator TYPE REF TO if_ixml_node_iterator.
+    DATA li_node     TYPE REF TO if_ixml_node.
+    DATA lv_names    TYPE string.
+
+    li_doc = parse( |<a><b><c/></b><d>text</d></a>| ).
+    li_iterator = li_doc->get_root_element( )->create_iterator( ).
+
+    li_node = li_iterator->get_next( ).
+    WHILE li_node IS BOUND.
+      lv_names = lv_names && li_node->get_name( ) && `,`.
+      li_node = li_iterator->get_next( ).
+    ENDWHILE.
+
+* the element itself first, then everything below it in document order
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_names
+      exp = `a,b,c,d,#text,` ).
 
   ENDMETHOD.
 
