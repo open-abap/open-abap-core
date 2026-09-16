@@ -1550,7 +1550,9 @@ CLASS lcl_parser IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_ixml_parser~set_validating.
-    ASSERT 1 = 'todo'.
+* the parser does not validate, so only "no validation" can be honoured
+    ASSERT mode = if_ixml_parser=>co_no_validation.
+    rval = abap_true.
   ENDMETHOD.
 
   METHOD if_ixml_parser~parse.
