@@ -5,7 +5,7 @@ CLASS cl_abap_context_info DEFINITION PUBLIC FINAL CREATE PUBLIC.
     TYPES ty_user_alias TYPE c LENGTH 40.
     TYPES ty_user_name TYPE c LENGTH 12.
     TYPES ty_language_key TYPE c LENGTH 1.
-    
+
     CLASS-METHODS get_system_date
       RETURNING
         VALUE(rv_date) TYPE ty_system_date.
