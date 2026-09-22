@@ -143,8 +143,29 @@ CLASS cl_abap_dyn_prg IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD check_table_name_str.
-* allow everything
+    DATA lv_check  TYPE string.
+    DATA lv_exists TYPE abap_bool.
+
     val_str = val.
+    lv_check = val_str.
+    TRANSLATE lv_check TO UPPER CASE.
+
+    IF val_str IS INITIAL OR strlen( val_str ) > 30.
+      RAISE EXCEPTION TYPE cx_abap_not_a_table.
+    ENDIF.
+
+    FIND REGEX '^([A-Z_][A-Z0-9_]*|/[A-Z0-9_]+/[A-Z0-9_]+)$' IN lv_check.
+    IF sy-subrc <> 0.
+      RAISE EXCEPTION TYPE cx_abap_not_a_table.
+    ENDIF.
+
+* the table must be known to the DDIC of the transpiled bundle
+    WRITE '@KERNEL lv_exists.set(abap.DDIC[lv_check.get()]?.objectType === "TABL" ? "X" : "");'.
+    IF lv_exists = abap_false.
+      RAISE EXCEPTION TYPE cx_abap_not_a_table.
+    ENDIF.
+
+* there is no package information off-stack, every known table is accepted
   ENDMETHOD.
 
   METHOD check_whitelist_str.
