@@ -110,12 +110,27 @@ CLASS ltcl_test IMPLEMENTATION.
 
     DATA lo_element TYPE REF TO cl_abap_elemdescr.
     DATA li_values  TYPE cl_abap_elemdescr=>fixvalues.
+    DATA ls_value   TYPE cl_abap_elemdescr=>fixvalue.
     lo_element ?= cl_abap_elemdescr=>describe_by_name( 'ABAP_BOOLEAN' ).
     li_values = lo_element->get_ddic_fixed_values( ).
 
     cl_abap_unit_assert=>assert_equals(
       act = lines( li_values )
       exp = 2 ).
+
+    READ TABLE li_values INDEX 2 INTO ls_value.
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_value-low
+      exp = 'X' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_value-option
+      exp = 'EQ' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_value-ddlanguage
+      exp = 'E' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_value-ddtext
+      exp = 'True' ).
 
   ENDMETHOD.
 
