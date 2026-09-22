@@ -158,13 +158,14 @@ CLASS cl_abap_elemdescr IMPLEMENTATION.
 
     SPLIT absolute_name AT '=' INTO lv_dummy lv_name.
 
+* the transpiler serializes abaplint's DomainValue as-is: {low, high, description, language}
     WRITE '@KERNEL for (const f of abap.DDIC[lv_name.get()]?.fixedValues || []) {'.
     CLEAR ls_row.
     WRITE '@KERNEL   ls_row.get().low.set(f.low || "");'.
     WRITE '@KERNEL   ls_row.get().high.set(f.high || "");'.
-    WRITE '@KERNEL   ls_row.get().option.set(f.option || "");'.
-    WRITE '@KERNEL   ls_row.get().ddlanguage.set(f.ddlanguage || "");'.
-    WRITE '@KERNEL   ls_row.get().ddtext.set(f.ddtext || "");'.
+    WRITE '@KERNEL   ls_row.get().option.set(f.high ? "BT" : "EQ");'.
+    WRITE '@KERNEL   ls_row.get().ddlanguage.set(f.language || "");'.
+    WRITE '@KERNEL   ls_row.get().ddtext.set(f.description || "");'.
     APPEND ls_row TO p_fixed_values.
     WRITE '@KERNEL }'.
 
