@@ -61,6 +61,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS xsdboolean_absolute FOR TESTING.
     METHODS timestampl_absolute FOR TESTING.
     METHODS class_type_absolute FOR TESTING.
+    METHODS describe_by_name_datum FOR TESTING RAISING cx_static_check.
     METHODS describe_by_name_t000 FOR TESTING.
     METHODS describe_by_name_t000_space FOR TESTING.
     METHODS describe_by_name_not_found FOR TESTING.
@@ -624,6 +625,17 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_type->absolute_name
       exp = '\TYPE=TIMESTAMPL' ).
+  ENDMETHOD.
+
+  METHOD describe_by_name_datum.
+    DATA lo_type TYPE REF TO cl_abap_typedescr.
+    lo_type = cl_abap_typedescr=>describe_by_name( 'DATUM' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_type->type_kind
+      exp = cl_abap_typedescr=>typekind_date ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_type->absolute_name
+      exp = '\TYPE=DATUM' ).
   ENDMETHOD.
 
   METHOD describe_by_name_t000.
