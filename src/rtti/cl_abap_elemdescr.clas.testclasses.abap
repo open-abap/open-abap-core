@@ -13,10 +13,58 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS sylangu_mask1 FOR TESTING RAISING cx_static_check.
     METHODS sylangu_mask2 FOR TESTING RAISING cx_static_check.
     METHODS get_uctlong FOR TESTING RAISING cx_static_check.
+    METHODS get_ddic_field_convexit FOR TESTING RAISING cx_static_check.
+    METHODS get_ddic_field_datatype FOR TESTING RAISING cx_static_check.
+    METHODS get_ddic_field_no_convexit FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
+
+  METHOD get_ddic_field_convexit.
+    DATA lo_element TYPE REF TO cl_abap_elemdescr.
+    DATA ls_dfies   TYPE dfies.
+    DATA lv_langu   TYPE sy-langu.
+    lo_element ?= cl_abap_typedescr=>describe_by_data( lv_langu ).
+    ls_dfies = lo_element->get_ddic_field( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-convexit
+      exp = 'ISOLA' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-datatype
+      exp = 'CHAR' ).
+  ENDMETHOD.
+
+  METHOD get_ddic_field_datatype.
+    DATA lo_element TYPE REF TO cl_abap_elemdescr.
+    DATA ls_dfies   TYPE dfies.
+    DATA lv_date    TYPE d.
+    DATA lv_int     TYPE i.
+    lo_element ?= cl_abap_typedescr=>describe_by_data( lv_date ).
+    ls_dfies = lo_element->get_ddic_field( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-datatype
+      exp = 'DATS' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-inttype
+      exp = 'D' ).
+    lo_element ?= cl_abap_typedescr=>describe_by_data( lv_int ).
+    ls_dfies = lo_element->get_ddic_field( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-datatype
+      exp = 'INT4' ).
+  ENDMETHOD.
+
+  METHOD get_ddic_field_no_convexit.
+    DATA lo_element TYPE REF TO cl_abap_elemdescr.
+    DATA ls_dfies   TYPE dfies.
+    lo_element ?= cl_abap_elemdescr=>describe_by_name( 'ABAP_BOOLEAN' ).
+    ls_dfies = lo_element->get_ddic_field( ).
+    cl_abap_unit_assert=>assert_initial( ls_dfies-convexit ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-rollname
+      exp = 'ABAP_BOOLEAN' ).
+  ENDMETHOD.
 
   METHOD get_uctlong.
     DATA lo_descr TYPE REF TO cl_abap_elemdescr.

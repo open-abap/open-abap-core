@@ -63,6 +63,13 @@ CLASS cl_abap_elemdescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
       RETURNING
         VALUE(p_result) TYPE REF TO cl_abap_elemdescr.
 
+  PRIVATE SECTION.
+    "! open-abap: DDIC datatype derived from the internal type, when no dictionary type is known
+    CLASS-METHODS ddic_datatype_from_typekind
+      IMPORTING
+        typekind           TYPE abap_typekind
+      RETURNING
+        VALUE(rv_datatype) TYPE string.
 ENDCLASS.
 
 CLASS cl_abap_elemdescr IMPLEMENTATION.
@@ -94,16 +101,66 @@ CLASS cl_abap_elemdescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_ddic_field.
+    DATA lv_datatype TYPE string.
+
     p_flddescr-tabname  = absolute_name.
+    p_flddescr-rollname = relative_name.
     p_flddescr-inttype  = type_kind.
     p_flddescr-langu    = sy-langu.
     p_flddescr-position = 1.
     p_flddescr-leng     = length.
     p_flddescr-decimals = decimals.
+    p_flddescr-outputlen = output_length.
 
     WRITE '@KERNEL p_flddescr.get().domname.set(abap.DDIC[this.relative_name.get()]?.domain || "");'.
+    WRITE '@KERNEL lv_datatype.set(abap.DDIC[this.relative_name.get()]?.datatype || "");'.
+    IF lv_datatype IS INITIAL.
+      lv_datatype = ddic_datatype_from_typekind( type_kind ).
+    ENDIF.
+    p_flddescr-datatype = lv_datatype.
 
-* todo, dfies-convexit
+    IF edit_mask CP '==*'.
+      p_flddescr-convexit = edit_mask+2.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD ddic_datatype_from_typekind.
+    CASE typekind.
+      WHEN cl_abap_typedescr=>typekind_char.
+        rv_datatype = 'CHAR'.
+      WHEN cl_abap_typedescr=>typekind_num.
+        rv_datatype = 'NUMC'.
+      WHEN cl_abap_typedescr=>typekind_date.
+        rv_datatype = 'DATS'.
+      WHEN cl_abap_typedescr=>typekind_time.
+        rv_datatype = 'TIMS'.
+      WHEN cl_abap_typedescr=>typekind_packed.
+        rv_datatype = 'DEC'.
+      WHEN cl_abap_typedescr=>typekind_int.
+        rv_datatype = 'INT4'.
+      WHEN cl_abap_typedescr=>typekind_int8.
+        rv_datatype = 'INT8'.
+      WHEN cl_abap_typedescr=>typekind_int1.
+        rv_datatype = 'INT1'.
+      WHEN cl_abap_typedescr=>typekind_int2.
+        rv_datatype = 'INT2'.
+      WHEN cl_abap_typedescr=>typekind_float.
+        rv_datatype = 'FLTP'.
+      WHEN cl_abap_typedescr=>typekind_hex.
+        rv_datatype = 'RAW'.
+      WHEN cl_abap_typedescr=>typekind_string.
+        rv_datatype = 'STRG'.
+      WHEN cl_abap_typedescr=>typekind_xstring.
+        rv_datatype = 'RSTR'.
+      WHEN cl_abap_typedescr=>typekind_decfloat16.
+        rv_datatype = 'D16N'.
+      WHEN cl_abap_typedescr=>typekind_decfloat34.
+        rv_datatype = 'D34N'.
+      WHEN cl_abap_typedescr=>typekind_utclong.
+        rv_datatype = 'UTCL'.
+      WHEN OTHERS.
+        rv_datatype = ''.
+    ENDCASE.
   ENDMETHOD.
 
   METHOD get_i.
