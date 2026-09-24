@@ -6,8 +6,10 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS delete FOR TESTING RAISING cx_static_check.
     METHODS get_missing FOR TESTING RAISING cx_static_check.
     METHODS crc FOR TESTING RAISING cx_static_check.
+    METHODS crc_check_values FOR TESTING RAISING cx_static_check.
     METHODS save FOR TESTING RAISING cx_static_check.
     METHODS load FOR TESTING RAISING cx_static_check.
+    METHODS load_save FOR TESTING RAISING cx_static_check.
     METHODS load_stored FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
@@ -20,6 +22,27 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_crc
       exp = 950032937 ).
+  ENDMETHOD.
+
+  METHOD crc_check_values.
+* inputs of 0, 1, 3, 4 and 9 bytes: every remainder after whole 4-byte words
+    DATA lv_empty TYPE xstring.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_zip=>crc32( lv_empty )
+      exp = 0 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_zip=>crc32( '61' )
+      exp = -390611389 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_zip=>crc32( '616263' )
+      exp = 891568578 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_zip=>crc32( '61626364' )
+      exp = -310194927 ).
+* "123456789", the CRC-32 check value CBF43926
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_zip=>crc32( '313233343536373839' )
+      exp = -873187034 ).
   ENDMETHOD.
 
   METHOD test1.
@@ -98,6 +121,30 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_act
       exp = lv_content ).
+  ENDMETHOD.
+
+  METHOD load_save.
+* SAVE after LOAD reuses the CRC of the loaded local header
+    DATA lo_zip     TYPE REF TO cl_abap_zip.
+    DATA lv_content TYPE xstring.
+    DATA lv_first   TYPE xstring.
+    DATA lv_second  TYPE xstring.
+
+    lv_content = '1122334455667788AABBCCDDEEFF'.
+    CREATE OBJECT lo_zip.
+    lo_zip->add( name    = 'foo'
+                 content = lv_content ).
+    lo_zip->add( name    = 'bar'
+                 content = lv_content ).
+    lv_first = lo_zip->save( ).
+
+    CREATE OBJECT lo_zip.
+    lo_zip->load( lv_first ).
+    lv_second = lo_zip->save( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_second
+      exp = lv_first ).
   ENDMETHOD.
 
   METHOD delete.
