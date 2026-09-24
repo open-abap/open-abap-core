@@ -9,6 +9,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS crc_check_values FOR TESTING RAISING cx_static_check.
     METHODS save FOR TESTING RAISING cx_static_check.
     METHODS load FOR TESTING RAISING cx_static_check.
+    METHODS load_save FOR TESTING RAISING cx_static_check.
     METHODS load_stored FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
@@ -120,6 +121,30 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_act
       exp = lv_content ).
+  ENDMETHOD.
+
+  METHOD load_save.
+* SAVE after LOAD reuses the CRC of the loaded local header
+    DATA lo_zip     TYPE REF TO cl_abap_zip.
+    DATA lv_content TYPE xstring.
+    DATA lv_first   TYPE xstring.
+    DATA lv_second  TYPE xstring.
+
+    lv_content = '1122334455667788AABBCCDDEEFF'.
+    CREATE OBJECT lo_zip.
+    lo_zip->add( name    = 'foo'
+                 content = lv_content ).
+    lo_zip->add( name    = 'bar'
+                 content = lv_content ).
+    lv_first = lo_zip->save( ).
+
+    CREATE OBJECT lo_zip.
+    lo_zip->load( lv_first ).
+    lv_second = lo_zip->save( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_second
+      exp = lv_first ).
   ENDMETHOD.
 
   METHOD delete.
