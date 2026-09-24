@@ -14,13 +14,6 @@ CLASS cl_abap_elemdescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
     DATA edit_mask TYPE abap_editmask READ-ONLY.
     DATA help_id TYPE abap_helpid READ-ONLY.
 
-    "! open-abap: DDIC datatype derived from the internal type, when no dictionary type is known
-    CLASS-METHODS ddic_datatype_from_typekind
-      IMPORTING
-        typekind           TYPE abap_typekind
-      RETURNING
-        VALUE(rv_datatype) TYPE string.
-
     METHODS get_ddic_fixed_values
       IMPORTING
         p_langu               TYPE sy-langu DEFAULT sy-langu
@@ -70,6 +63,13 @@ CLASS cl_abap_elemdescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
       RETURNING
         VALUE(p_result) TYPE REF TO cl_abap_elemdescr.
 
+  PRIVATE SECTION.
+    "! open-abap: DDIC datatype derived from the internal type, when no dictionary type is known
+    CLASS-METHODS ddic_datatype_from_typekind
+      IMPORTING
+        typekind           TYPE abap_typekind
+      RETURNING
+        VALUE(rv_datatype) TYPE string.
 ENDCLASS.
 
 CLASS cl_abap_elemdescr IMPLEMENTATION.
