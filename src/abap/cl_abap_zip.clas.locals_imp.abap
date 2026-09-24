@@ -25,7 +25,11 @@ CLASS lcl_stream DEFINITION.
       RETURNING
         VALUE(rv_int) TYPE i.
   PRIVATE SECTION.
+* slice-by-4 lookup tables, 256 entries of 4 bytes, stored little endian
     CLASS-DATA crc32_map TYPE xstring.
+    CLASS-DATA crc32_map1 TYPE xstring.
+    CLASS-DATA crc32_map2 TYPE xstring.
+    CLASS-DATA crc32_map3 TYPE xstring.
     DATA mv_xstr TYPE xstring.
 ENDCLASS.
 
@@ -94,21 +98,22 @@ CLASS lcl_stream IMPLEMENTATION.
 
   METHOD append_crc.
 * https://github.com/kyriosli/node-zip/blob/master/index.js#L369-L389
+* slice-by-4: one step per 4 bytes instead of per byte. The register CRC is
+* kept little endian, so "c >> 8" is crc+1(3) and "c & 0xFF" is crc(1).
 
     CONSTANTS: magic_nr  TYPE x LENGTH 4 VALUE 'EDB88320',
                mffffffff TYPE x LENGTH 4 VALUE 'FFFFFFFF',
-               m7fffffff TYPE x LENGTH 4 VALUE '7FFFFFFF',
-               m00ffffff TYPE x LENGTH 4 VALUE '00FFFFFF',
-               m000000ff TYPE x LENGTH 4 VALUE '000000FF',
-               m000000   TYPE x LENGTH 3 VALUE '000000'.
+               m7fffffff TYPE x LENGTH 4 VALUE '7FFFFFFF'.
 
     DATA: cindex  TYPE x LENGTH 4,
           low_bit TYPE x LENGTH 4,
           len     TYPE i,
-          nindex  TYPE i,
+          words   TYPE i,
+          offset  TYPE i,
+          idx     TYPE i,
           crc     TYPE x LENGTH 4 VALUE mffffffff,
           x4      TYPE x LENGTH 4,
-          idx     TYPE x LENGTH 4.
+          x1      TYPE x LENGTH 1.
 
     IF xstrlen( crc32_map ) = 0.
       DO 256 TIMES.
@@ -122,25 +127,50 @@ CLASS lcl_stream IMPLEMENTATION.
             cindex = cindex BIT-XOR magic_nr.
           ENDIF.
         ENDDO.
-        CONCATENATE crc32_map cindex INTO crc32_map IN BYTE MODE.
+        CONCATENATE crc32_map cindex+3(1) cindex+2(1) cindex+1(1) cindex(1)
+          INTO crc32_map IN BYTE MODE.
+      ENDDO.
+* T1..T3: T(k)[i] = T(k-1)[i] >> 8 XOR T0[T(k-1)[i] & 0xFF]
+      DO 256 TIMES.
+        idx = ( sy-index - 1 ) * 4.
+        x4 = crc32_map+idx(4).
+        idx = x4(1) * 4.
+        x4 = x4+1(3) BIT-XOR crc32_map+idx(4).
+        CONCATENATE crc32_map1 x4 INTO crc32_map1 IN BYTE MODE.
+        idx = x4(1) * 4.
+        x4 = x4+1(3) BIT-XOR crc32_map+idx(4).
+        CONCATENATE crc32_map2 x4 INTO crc32_map2 IN BYTE MODE.
+        idx = x4(1) * 4.
+        x4 = x4+1(3) BIT-XOR crc32_map+idx(4).
+        CONCATENATE crc32_map3 x4 INTO crc32_map3 IN BYTE MODE.
       ENDDO.
     ENDIF.
 
     len = xstrlen( iv_xstring ).
+    words = len DIV 4.
+    DO words TIMES.
+      crc = crc BIT-XOR iv_xstring+offset(4).
+      idx = crc(1) * 4.
+      x4 = crc32_map3+idx(4).
+      idx = crc+1(1) * 4.
+      x4 = x4 BIT-XOR crc32_map2+idx(4).
+      idx = crc+2(1) * 4.
+      x4 = x4 BIT-XOR crc32_map1+idx(4).
+      idx = crc+3(1) * 4.
+      crc = x4 BIT-XOR crc32_map+idx(4).
+      offset = offset + 4.
+    ENDDO.
+    len = len - offset.
     DO len TIMES.
-      nindex = sy-index - 1.
-      CONCATENATE m000000 iv_xstring+nindex(1) INTO idx IN BYTE MODE.
-      idx = ( crc BIT-XOR idx ) BIT-AND m000000ff.
-      idx = idx * 4.
-      x4  = crc32_map+idx(4).
-      crc = crc DIV 256.
-      crc = crc BIT-AND m00ffffff. " c >> 8
-      crc = x4 BIT-XOR crc.
+      x1 = crc(1) BIT-XOR iv_xstring+offset(1).
+      idx = x1 * 4.
+      crc = crc+1(3) BIT-XOR crc32_map+idx(4).
+      offset = offset + 1.
     ENDDO.
     crc = crc BIT-XOR mffffffff.
 
-    IF iv_little_endian = abap_true.
-* convert to little endian
+    IF iv_little_endian = abap_false.
+* convert to big endian
       CONCATENATE crc+3(1) crc+2(1) crc+1(1) crc(1) INTO crc IN BYTE MODE.
     ENDIF.
 
