@@ -135,11 +135,20 @@ CLASS cl_http_client IMPLEMENTATION.
     lv_url = mv_host && lv_url.
     if_http_client~request->get_form_fields( CHANGING fields = lt_form_fields ).
     IF lines( lt_form_fields ) > 0.
+* as on a system: a POST without a body sends the fields as its body, urlencoded;
+* a POST that has a body keeps it, and the fields go into the URL as for a GET
       CASE lv_method.
         WHEN 'GET'.
           lv_url = lv_url && '?' && cl_http_utility=>fields_to_string( lt_form_fields ).
         WHEN 'POST'.
-          if_http_client~request->set_cdata( cl_http_utility=>fields_to_string( lt_form_fields ) ).
+          IF xstrlen( if_http_client~request->get_data( ) ) = 0.
+            if_http_client~request->set_cdata( cl_http_utility=>fields_to_string( lt_form_fields ) ).
+            IF if_http_client~request->get_content_type( ) IS INITIAL.
+              if_http_client~request->set_content_type( 'application/x-www-form-urlencoded' ).
+            ENDIF.
+          ELSE.
+            lv_url = lv_url && '?' && cl_http_utility=>fields_to_string( lt_form_fields ).
+          ENDIF.
       ENDCASE.
     ENDIF.
 *    WRITE '@KERNEL console.dir(lv_url.get());'.
