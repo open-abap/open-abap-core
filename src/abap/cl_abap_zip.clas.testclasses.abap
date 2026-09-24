@@ -6,6 +6,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS delete FOR TESTING RAISING cx_static_check.
     METHODS get_missing FOR TESTING RAISING cx_static_check.
     METHODS crc FOR TESTING RAISING cx_static_check.
+    METHODS crc_check_values FOR TESTING RAISING cx_static_check.
     METHODS save FOR TESTING RAISING cx_static_check.
     METHODS load FOR TESTING RAISING cx_static_check.
     METHODS load_stored FOR TESTING RAISING cx_static_check.
@@ -20,6 +21,27 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_crc
       exp = 950032937 ).
+  ENDMETHOD.
+
+  METHOD crc_check_values.
+* inputs of 0, 1, 3, 4 and 9 bytes: every remainder after whole 4-byte words
+    DATA lv_empty TYPE xstring.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_zip=>crc32( lv_empty )
+      exp = 0 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_zip=>crc32( '61' )
+      exp = -390611389 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_zip=>crc32( '616263' )
+      exp = 891568578 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_zip=>crc32( '61626364' )
+      exp = -310194927 ).
+* "123456789", the CRC-32 check value CBF43926
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_zip=>crc32( '313233343536373839' )
+      exp = -873187034 ).
   ENDMETHOD.
 
   METHOD test1.
