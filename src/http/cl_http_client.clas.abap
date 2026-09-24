@@ -107,7 +107,7 @@ CLASS cl_http_client IMPLEMENTATION.
   METHOD if_http_client~send.
     DATA lv_method        TYPE string.
     DATA lv_url           TYPE string.
-    DATA lv_body          TYPE string.
+    DATA lv_xbody         TYPE xstring.
     DATA lv_name          TYPE string.
     DATA lv_value         TYPE string.
     DATA lv_content_type  TYPE string.
@@ -159,10 +159,10 @@ CLASS cl_http_client IMPLEMENTATION.
 
 *    WRITE '@KERNEL console.dir(headers);'.
 
-    lv_body = if_http_client~request->get_cdata( ).
-*    WRITE '@KERNEL console.dir(lv_body);'.
-    IF strlen( lv_body ) > 0.
-      WRITE '@KERNEL headers["content-length"] = lv_body.get().length;'.
+* the body goes out as the entity's bytes: set_cdata stores UTF-8, set_data any bytes
+    lv_xbody = if_http_client~request->get_data( ).
+    IF xstrlen( lv_xbody ) > 0.
+      WRITE '@KERNEL headers["content-length"] = lv_xbody.get().length / 2;'.
     ENDIF.
 
     WRITE '@KERNEL const https = await import("https");'.
@@ -185,14 +185,14 @@ CLASS cl_http_client IMPLEMENTATION.
     WRITE '@KERNEL         });'.
     WRITE '@KERNEL       });'.
     WRITE '@KERNEL     req.on("error", reject);'.
-    WRITE '@KERNEL     req.write(requestBody, "binary");'.
+    WRITE '@KERNEL     req.write(requestBody);'.
     WRITE '@KERNEL     req.end();'.
     WRITE '@KERNEL   });'.
     WRITE '@KERNEL }'.
 
     WRITE '@KERNEL const prot = lv_url.get().startsWith("http://") ? http : https;'.
     WRITE '@KERNEL if (this.agent === undefined) {this.agent = new prot.Agent({keepAlive: true, maxSockets: 1});}'.
-    WRITE '@KERNEL let response = await postData(lv_url.get(), {method: lv_method.get(), headers: headers, agent: this.agent}, lv_body.get());'.
+    WRITE '@KERNEL let response = await postData(lv_url.get(), {method: lv_method.get(), headers: headers, agent: this.agent}, Buffer.from(lv_xbody.get(), "hex"));'.
 
     " WRITE '@KERNEL console.dir(response);'.
     " WRITE '@KERNEL console.dir(response.headers);'.
