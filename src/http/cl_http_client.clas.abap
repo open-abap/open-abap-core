@@ -178,7 +178,7 @@ CLASS cl_http_client IMPLEMENTATION.
     WRITE '@KERNEL         res.on("end", () => {'.
 *    WRITE '@KERNEL           console.dir(res.statusCode + " " + JSON.stringify(res.headers));'.
 *    WRITE '@KERNEL           if (res.statusCode >= 200 && res.statusCode <= 299) {'.
-    WRITE '@KERNEL             resolve({statusCode: res.statusCode, headers: res.headers, body: Buffer.concat(chunks)});'.
+    WRITE '@KERNEL             resolve({statusCode: res.statusCode, statusMessage: res.statusMessage, httpVersion: res.httpVersion, headers: res.headers, body: Buffer.concat(chunks)});'.
 *    WRITE '@KERNEL           } else {'.
 *    WRITE '@KERNEL             reject("Request failed. status: " + res.statusCode + ", body: " + Buffer.concat(chunks).toString());'.
 *    WRITE '@KERNEL           }'.
@@ -206,10 +206,25 @@ CLASS cl_http_client IMPLEMENTATION.
       value = lv_value ).
     WRITE '@KERNEL }'.
 
+* the pseudo header fields a system sets on every response it received
+    WRITE '@KERNEL lv_value.set(String(response.statusCode));'.
+    if_http_client~response->set_header_field(
+      name  = '~status_code'
+      value = lv_value ).
+    WRITE '@KERNEL lv_value.set(response.statusMessage || "");'.
+    if_http_client~response->set_header_field(
+      name  = '~status_reason'
+      value = lv_value ).
+    WRITE '@KERNEL lv_value.set("HTTP/" + response.httpVersion);'.
+    if_http_client~response->set_header_field(
+      name  = '~server_protocol'
+      value = lv_value ).
+
     lo_entity ?= if_http_client~response.
 
     WRITE '@KERNEL lo_entity.get().mv_content_type.set(response.headers["content-type"] || "");'.
     WRITE '@KERNEL lo_entity.get().mv_status.set(response.statusCode);'.
+    WRITE '@KERNEL lo_entity.get().mv_reason.set(response.statusMessage || "");'.
     WRITE '@KERNEL lo_entity.get().mv_data.set(response.body.toString("hex").toUpperCase());'.
 *    WRITE '@KERNEL console.dir(this.if_http_client$response.get().mv_data);'.
 
