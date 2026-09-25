@@ -514,7 +514,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
         ASSIGN data TO <at>.
         LOOP AT lt_members INTO lv_member.
 *          WRITE '@KERNEL console.dir(lv_member.get());'.
-          CREATE DATA ref LIKE LINE OF data.
+          CREATE DATA ref LIKE LINE OF <at>.
           ASSIGN ref->* TO <any>.
           _deserialize(
             EXPORTING
