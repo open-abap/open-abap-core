@@ -19,6 +19,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION MEDIUM FINAL
     METHODS request_uri_with_host FOR TESTING RAISING cx_static_check.
     METHODS default_user_agent FOR TESTING RAISING cx_static_check.
     METHODS post_content_type FOR TESTING RAISING cx_static_check.
+    METHODS post_query_with_body FOR TESTING RAISING cx_static_check.
+    METHODS post_query_without_body FOR TESTING RAISING cx_static_check.
     METHODS status_500 FOR TESTING RAISING cx_static_check.
     METHODS decode_gzip FOR TESTING RAISING cx_static_check.
     METHODS accepts_gzip FOR TESTING RAISING cx_static_check.
@@ -522,6 +524,69 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = lv_cdata
       exp = '*application/x-www-form-urlencoded*' ).
+  ENDMETHOD.
+
+  METHOD post_query_with_body.
+* an ABAP 7.5x system keeps the body and sends the query on the request line
+
+    DATA li_client TYPE REF TO if_http_client.
+    DATA lv_cdata  TYPE string.
+
+    DATA(lv_host) = get_http_bin_host( ).
+
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = |{ lv_host }/anything?k=v&z=1|
+        ssl_id = 'ANONYM'
+      IMPORTING
+        client = li_client ).
+    li_client->request->set_method( 'POST' ).
+    li_client->request->set_content_type( 'text/plain' ).
+    li_client->request->set_cdata( 'BODY' ).
+
+    li_client->send( ).
+    li_client->receive( ).
+
+    lv_cdata = li_client->response->get_cdata( ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = |*"url": "{ lv_host }/anything?k=v&z=1"*| ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = '*"data": "BODY"*' ).
+
+  ENDMETHOD.
+
+  METHOD post_query_without_body.
+* an ABAP 7.5x system sends the query as the body, urlencoded, and none on the request line
+
+    DATA li_client TYPE REF TO if_http_client.
+    DATA lv_cdata  TYPE string.
+
+    DATA(lv_host) = get_http_bin_host( ).
+
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = |{ lv_host }/anything?k=v|
+        ssl_id = 'ANONYM'
+      IMPORTING
+        client = li_client ).
+    li_client->request->set_method( 'POST' ).
+
+    li_client->send( ).
+    li_client->receive( ).
+
+    lv_cdata = li_client->response->get_cdata( ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = |*"url": "{ lv_host }/anything"*| ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = '*"Content-Type": "application/x-www-form-urlencoded"*' ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = '*"form": {*"k": "v"*' ).
+
   ENDMETHOD.
 
   METHOD status_500.
