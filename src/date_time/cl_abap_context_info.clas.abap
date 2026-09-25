@@ -3,6 +3,8 @@ CLASS cl_abap_context_info DEFINITION PUBLIC FINAL CREATE PUBLIC.
     TYPES ty_system_date TYPE d.
     TYPES ty_system_time TYPE t.
     TYPES ty_user_alias TYPE c LENGTH 40.
+    TYPES ty_user_name TYPE c LENGTH 12.
+    TYPES ty_language_key TYPE c LENGTH 1.
 
     CLASS-METHODS get_system_date
       RETURNING
@@ -25,6 +27,15 @@ CLASS cl_abap_context_info DEFINITION PUBLIC FINAL CREATE PUBLIC.
     CLASS-METHODS get_user_technical_name
       RETURNING
         VALUE(rv_technical_name) TYPE string.
+
+    CLASS-METHODS get_user_language_abap_format
+      IMPORTING
+        iv_buser           TYPE ty_user_name OPTIONAL
+      RETURNING
+        VALUE(rv_language) TYPE ty_language_key
+      RAISING
+        cx_abap_context_info_error.
+
 ENDCLASS.
 
 CLASS cl_abap_context_info IMPLEMENTATION.
@@ -46,6 +57,10 @@ CLASS cl_abap_context_info IMPLEMENTATION.
 
   METHOD get_user_alias.
     rv_alias = sy-uname.
+  ENDMETHOD.
+
+  METHOD get_user_language_abap_format.
+    rv_language = sy-langu.
   ENDMETHOD.
 
 ENDCLASS.

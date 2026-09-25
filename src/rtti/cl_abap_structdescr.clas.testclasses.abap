@@ -131,6 +131,25 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = ls_ddfields-leng
       exp = 3 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_ddfields-inttype
+      exp = 'C' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_ddfields-position
+      exp = 1 ).
+    cl_abap_unit_assert=>assert_not_initial( ls_ddfields-datatype ).
+
+    READ TABLE lt_ddfields INTO ls_ddfields WITH KEY fieldname = 'CHANGEDATE'.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_ddfields-inttype
+      exp = 'D' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_ddfields-datatype
+      exp = 'DATS' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_ddfields-keyflag
+      exp = abap_false ).
 
   ENDMETHOD.
 

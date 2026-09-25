@@ -37,6 +37,10 @@ CLASS ltcl_dyn_prg DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FIN
     METHODS check_column_name_strict FOR TESTING RAISING cx_static_check.
     METHODS check_column_name_invalid FOR TESTING RAISING cx_static_check.
     METHODS check_column_name_empty FOR TESTING RAISING cx_static_check.
+    METHODS check_table_name_known FOR TESTING RAISING cx_static_check.
+    METHODS check_table_name_lower FOR TESTING RAISING cx_static_check.
+    METHODS check_table_name_unknown FOR TESTING RAISING cx_static_check.
+    METHODS check_table_name_invalid FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -179,6 +183,44 @@ CLASS ltcl_dyn_prg IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = cl_abap_dyn_prg=>escape_xss_xml_html( |a{ cl_abap_char_utilities=>horizontal_tab }b| )
       exp = 'a&#x9;b' ).
+  ENDMETHOD.
+
+  METHOD check_table_name_known.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>check_table_name_str(
+        val      = 'T000'
+        packages = '' )
+      exp = 'T000' ).
+  ENDMETHOD.
+
+  METHOD check_table_name_lower.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>check_table_name_str(
+        val      = 't000'
+        packages = '' )
+      exp = 't000' ).
+  ENDMETHOD.
+
+  METHOD check_table_name_unknown.
+    TRY.
+        cl_abap_dyn_prg=>check_table_name_str(
+          val      = 'ZNOT_A_TABLE'
+          packages = '' ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_abap_not_a_table.
+        " expected
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD check_table_name_invalid.
+    TRY.
+        cl_abap_dyn_prg=>check_table_name_str(
+          val      = 'T000; DROP TABLE'
+          packages = '' ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_abap_not_a_table.
+        " expected
+    ENDTRY.
   ENDMETHOD.
 
   METHOD check_table_or_view_name.

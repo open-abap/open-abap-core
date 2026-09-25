@@ -273,11 +273,18 @@ CLASS cl_http_entity IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_entity~get_form_field.
+* the name is compared case insensitively on both sides: the setters store
+* the name as given, so lower casing only the name asked for made a field
+* whose name is not already lower case unreachable by any spelling
     DATA ls_field LIKE LINE OF mt_form_fields.
-    READ TABLE mt_form_fields INTO ls_field WITH KEY name = to_lower( name ).
-    IF sy-subrc = 0.
-      value = ls_field-value.
-    ENDIF.
+    DATA lv_name TYPE string.
+    lv_name = to_lower( name ).
+    LOOP AT mt_form_fields INTO ls_field.
+      IF to_lower( ls_field-name ) = lv_name.
+        value = ls_field-value.
+        RETURN.
+      ENDIF.
+    ENDLOOP.
   ENDMETHOD.
 
   METHOD if_http_entity~set_header_field.

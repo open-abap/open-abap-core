@@ -163,6 +163,7 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     DATA lv_name       TYPE string.
     DATA lv_keyfield   TYPE string.
     DATA lo_elemdescr  TYPE REF TO cl_abap_elemdescr.
+    DATA ls_field      TYPE dfies.
     FIELD-SYMBOLS <component> LIKE LINE OF rt_components.
 
     lt_components = get_components( ).
@@ -174,11 +175,20 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
       CLEAR ls_return.
       ls_return-tabname = lv_name.
       ls_return-fieldname = ls_component-name.
+      ls_return-position = sy-tabix.
       IF ls_component-type->kind = cl_abap_typedescr=>kind_elem.
         lo_elemdescr ?= ls_component-type.
-        ls_return-leng = lo_elemdescr->output_length.
+        ls_field = lo_elemdescr->get_ddic_field( ).
+        ls_return-leng      = lo_elemdescr->output_length.
+        ls_return-intlen    = lo_elemdescr->length.
+        ls_return-outputlen = lo_elemdescr->output_length.
+        ls_return-decimals  = lo_elemdescr->decimals.
+        ls_return-inttype   = lo_elemdescr->type_kind.
+        ls_return-datatype  = ls_field-datatype.
+        ls_return-domname   = ls_field-domname.
+        ls_return-rollname  = ls_field-rollname.
+        ls_return-convexit  = ls_field-convexit.
       ENDIF.
-* todo, fill more fields in ls_return
       APPEND ls_return TO rt_components.
     ENDLOOP.
 

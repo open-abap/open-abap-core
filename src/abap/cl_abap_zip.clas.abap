@@ -47,6 +47,8 @@ CLASS cl_abap_zip DEFINITION PUBLIC.
 * todo, optimize memory usage, dont store both compressed and original,
              content    TYPE xstring,
              compressed TYPE xstring,
+* CRC-32 from the local header (little endian) of a LOADed entry, SAVE reuses it
+             crc        TYPE x LENGTH 4,
            END OF ty_contents.
     DATA mt_contents TYPE STANDARD TABLE OF ty_contents WITH DEFAULT KEY.
 
@@ -123,6 +125,7 @@ CLASS cl_abap_zip IMPLEMENTATION.
     DATA lv_extra_len  TYPE i.
     DATA lv_name_x     TYPE xstring.
     DATA lv_name_off   TYPE i.
+    DATA lv_crc_off    TYPE i.
     DATA ls_contents   LIKE LINE OF mt_contents.
     DATA ls_file       LIKE LINE OF files.
     DATA lv_out_len    TYPE i.
@@ -146,6 +149,9 @@ CLASS cl_abap_zip IMPLEMENTATION.
 * 8, 2, Compression method
       lv_comp_method = lcl_stream=>read_int2( iv_xstr    = zip
                                                iv_offset = lv_offset + 8 ).
+* 14, 4, CRC-32 of uncompressed data (zero when it follows in a data descriptor)
+      lv_crc_off = lv_offset + 14.
+      ls_contents-crc = zip+lv_crc_off(4).
 * 18, 4, Compressed size
       lv_comp_size = lcl_stream=>read_int4( iv_xstr   = zip
                                             iv_offset = lv_offset + 18 ).
@@ -235,9 +241,13 @@ CLASS cl_abap_zip IMPLEMENTATION.
 * 12, 2, File last modification date
       lo_file->append( 'F856' ). "lo_stream->append_date( sy-datum ).
 * 14, 4, CRC-32 of uncompressed data
-      lo_file->append_crc(
-        iv_little_endian = abap_true
-        iv_xstring       = ls_contents-content ).
+      IF ls_contents-crc IS INITIAL.
+        lo_file->append_crc(
+          iv_little_endian = abap_true
+          iv_xstring       = ls_contents-content ).
+      ELSE.
+        lo_file->append( ls_contents-crc ).
+      ENDIF.
 * 18, 4, Compressed size (or 0xffffffff for ZIP64)
       lo_file->append_int4( xstrlen( ls_contents-compressed ) ).
 * 22, 4, Uncompressed size (or 0xffffffff for ZIP64)

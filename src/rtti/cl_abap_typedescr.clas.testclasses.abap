@@ -61,6 +61,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS xsdboolean_absolute FOR TESTING.
     METHODS timestampl_absolute FOR TESTING.
     METHODS class_type_absolute FOR TESTING.
+    METHODS describe_by_name_datum FOR TESTING RAISING cx_static_check.
+    METHODS describe_by_name_msgv FOR TESTING RAISING cx_static_check.
     METHODS describe_by_name_t000 FOR TESTING.
     METHODS describe_by_name_t000_space FOR TESTING.
     METHODS describe_by_name_not_found FOR TESTING.
@@ -624,6 +626,39 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_type->absolute_name
       exp = '\TYPE=TIMESTAMPL' ).
+  ENDMETHOD.
+
+  METHOD describe_by_name_datum.
+    DATA lo_type TYPE REF TO cl_abap_typedescr.
+    lo_type = cl_abap_typedescr=>describe_by_name( 'DATUM' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_type->type_kind
+      exp = cl_abap_typedescr=>typekind_date ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_type->absolute_name
+      exp = '\TYPE=DATUM' ).
+  ENDMETHOD.
+
+  METHOD describe_by_name_msgv.
+    DATA lt_names TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA lv_name TYPE string.
+    DATA lo_elem TYPE REF TO cl_abap_elemdescr.
+
+    APPEND 'MSGV1' TO lt_names.
+    APPEND 'MSGV2' TO lt_names.
+    APPEND 'MSGV3' TO lt_names.
+    APPEND 'MSGV4' TO lt_names.
+    LOOP AT lt_names INTO lv_name.
+      lo_elem ?= cl_abap_typedescr=>describe_by_name( lv_name ).
+      cl_abap_unit_assert=>assert_equals(
+        act = lo_elem->type_kind
+        exp = cl_abap_typedescr=>typekind_char
+        msg = lv_name ).
+      cl_abap_unit_assert=>assert_equals(
+        act = lo_elem->output_length
+        exp = 50
+        msg = lv_name ).
+    ENDLOOP.
   ENDMETHOD.
 
   METHOD describe_by_name_t000.
