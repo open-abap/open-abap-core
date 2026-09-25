@@ -32,6 +32,9 @@ CLASS cl_http_client DEFINITION PUBLIC CREATE PRIVATE.
 
   PRIVATE SECTION.
     DATA mv_host TYPE string.
+    DATA mv_sent TYPE abap_bool.
+* the error of the last SEND, reported by RECEIVE and GET_LAST_ERROR
+    DATA mv_error TYPE string.
 
 ENDCLASS.
 
@@ -107,7 +110,7 @@ CLASS cl_http_client IMPLEMENTATION.
   METHOD if_http_client~send.
     DATA lv_method        TYPE string.
     DATA lv_url           TYPE string.
-    DATA lv_body          TYPE string.
+    DATA lv_xbody         TYPE xstring.
     DATA lv_name          TYPE string.
     DATA lv_value         TYPE string.
     DATA lv_content_type  TYPE string.
@@ -116,6 +119,11 @@ CLASS cl_http_client IMPLEMENTATION.
     DATA lt_header_fields TYPE tihttpnvp.
     DATA ls_field         LIKE LINE OF lt_header_fields.
     DATA lo_entity        TYPE REF TO cl_http_entity.
+    DATA lv_error         TYPE string.
+    DATA lv_before_send   TYPE abap_bool.
+
+    CLEAR mv_error.
+    mv_sent = abap_true.
 
     lv_method = if_http_client~request->get_method( ).
     IF lv_method IS INITIAL.
@@ -135,11 +143,20 @@ CLASS cl_http_client IMPLEMENTATION.
     lv_url = mv_host && lv_url.
     if_http_client~request->get_form_fields( CHANGING fields = lt_form_fields ).
     IF lines( lt_form_fields ) > 0.
+* as on a system: a POST without a body sends the fields as its body, urlencoded;
+* a POST that has a body keeps it, and the fields go into the URL as for a GET
       CASE lv_method.
         WHEN 'GET'.
           lv_url = lv_url && '?' && cl_http_utility=>fields_to_string( lt_form_fields ).
         WHEN 'POST'.
-          if_http_client~request->set_cdata( cl_http_utility=>fields_to_string( lt_form_fields ) ).
+          IF xstrlen( if_http_client~request->get_data( ) ) = 0.
+            if_http_client~request->set_cdata( cl_http_utility=>fields_to_string( lt_form_fields ) ).
+            IF if_http_client~request->get_content_type( ) IS INITIAL.
+              if_http_client~request->set_content_type( 'application/x-www-form-urlencoded' ).
+            ENDIF.
+          ELSE.
+            lv_url = lv_url && '?' && cl_http_utility=>fields_to_string( lt_form_fields ).
+          ENDIF.
       ENDCASE.
     ENDIF.
 *    WRITE '@KERNEL console.dir(lv_url.get());'.
@@ -159,18 +176,21 @@ CLASS cl_http_client IMPLEMENTATION.
 
 *    WRITE '@KERNEL console.dir(headers);'.
 
-    lv_body = if_http_client~request->get_cdata( ).
-*    WRITE '@KERNEL console.dir(lv_body);'.
-    IF strlen( lv_body ) > 0.
-      WRITE '@KERNEL headers["content-length"] = lv_body.get().length;'.
+* the body goes out as the entity's bytes: set_cdata stores UTF-8, set_data any bytes
+    lv_xbody = if_http_client~request->get_data( ).
+    IF xstrlen( lv_xbody ) > 0.
+      WRITE '@KERNEL headers["content-length"] = lv_xbody.get().length / 2;'.
     ENDIF.
 
     WRITE '@KERNEL const https = await import("https");'.
     WRITE '@KERNEL const http = await import("http");'.
     WRITE '@KERNEL function postData(url, options, requestBody) {'.
-    WRITE '@KERNEL   return new Promise((resolve, reject) => {'.
+    WRITE '@KERNEL   return new Promise((resolve) => {'.
+    WRITE '@KERNEL     const reject = (error) => resolve({error});'.
     WRITE '@KERNEL     const prot = url.startsWith("http://") ? http : https;'.
-    WRITE '@KERNEL     const req = prot.request(url, options,'.
+    WRITE '@KERNEL     let req;'.
+    WRITE '@KERNEL     try {'.
+    WRITE '@KERNEL     req = prot.request(url, options,'.
     WRITE '@KERNEL       (res) => {'.
     WRITE '@KERNEL         let chunks = [];'.
     WRITE '@KERNEL         res.on("data", (chunk) => {chunks.push(chunk);});'.
@@ -184,18 +204,44 @@ CLASS cl_http_client IMPLEMENTATION.
 *    WRITE '@KERNEL           }'.
     WRITE '@KERNEL         });'.
     WRITE '@KERNEL       });'.
+* thrown here, nothing was sent yet: an invalid header, method or URL
+    WRITE '@KERNEL     } catch (error) { resolve({error, beforeSend: true}); return; }'.
     WRITE '@KERNEL     req.on("error", reject);'.
-    WRITE '@KERNEL     req.write(requestBody, "binary");'.
+    WRITE '@KERNEL     req.write(requestBody);'.
     WRITE '@KERNEL     req.end();'.
     WRITE '@KERNEL   });'.
     WRITE '@KERNEL }'.
 
     WRITE '@KERNEL const prot = lv_url.get().startsWith("http://") ? http : https;'.
     WRITE '@KERNEL if (this.agent === undefined) {this.agent = new prot.Agent({keepAlive: true, maxSockets: 1});}'.
-    WRITE '@KERNEL let response = await postData(lv_url.get(), {method: lv_method.get(), headers: headers, agent: this.agent}, lv_body.get());'.
+    WRITE '@KERNEL let response = await postData(lv_url.get(), {method: lv_method.get(), headers: headers, agent: this.agent}, Buffer.from(lv_xbody.get(), "hex"));'.
 
     " WRITE '@KERNEL console.dir(response);'.
     " WRITE '@KERNEL console.dir(response.headers);'.
+
+    WRITE '@KERNEL if (response.error) {'.
+* on a dual-stack host a refused "localhost" is an AggregateError with an empty message
+    WRITE '@KERNEL   const e = response.error;'.
+    WRITE '@KERNEL   lv_error.set(String(e.message || (e.errors || []).map(x => x.message).join("; ") || e.code || e));'.
+    WRITE '@KERNEL   if (response.beforeSend === true) lv_before_send.set("X");'.
+    WRITE '@KERNEL }'.
+    IF lv_error IS NOT INITIAL.
+* no response: a reused client must not show the previous one's status, fields or body
+      lo_entity ?= if_http_client~response.
+      WRITE '@KERNEL lo_entity.get().mt_headers.clear();'.
+      WRITE '@KERNEL lo_entity.get().mv_content_type.clear();'.
+      if_http_client~response->set_data( lv_xstr ).
+      if_http_client~response->set_status(
+        code   = 0
+        reason = '' ).
+      mv_error = lv_error.
+* as on a system: a request that cannot be written fails SEND, a connection that fails fails RECEIVE
+      IF lv_before_send = abap_true.
+        mv_sent = abap_false.
+        RAISE http_communication_failure.
+      ENDIF.
+      RETURN.
+    ENDIF.
 
     WRITE '@KERNEL for (const h in response.headers) {'.
     WRITE '@KERNEL   lv_name.set(h);'.
@@ -244,16 +290,26 @@ CLASS cl_http_client IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_client~receive.
-* handled in send()
+* the request and its response are handled in send()
+    IF mv_sent = abap_false.
+      RAISE http_invalid_state.
+    ENDIF.
+    IF mv_error IS NOT INITIAL.
+      RAISE http_communication_failure.
+    ENDIF.
 
-* workaround for classic exceptions, this should work sometime in the transpiler instead
     sy-subrc = 0.
 
   ENDMETHOD.
 
   METHOD if_http_client~get_last_error.
     if_http_client~response->get_status( IMPORTING code = code ).
-    message = 'todo_open_abap'. " get from one of the response headers?
+    IF mv_error IS NOT INITIAL.
+* the message is Node's; a system answers the ICM's text and code, e.g. 411 for a refused connection
+      message = mv_error.
+    ELSE.
+      message = 'todo_open_abap'. " get from one of the response headers?
+    ENDIF.
   ENDMETHOD.
 
   METHOD if_http_client~send_sap_logon_ticket.
