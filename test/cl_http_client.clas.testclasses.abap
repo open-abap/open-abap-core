@@ -6,6 +6,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION MEDIUM FINAL
     METHODS basic_get_https FOR TESTING RAISING cx_static_check.
     METHODS basic_get_http FOR TESTING RAISING cx_static_check.
     METHODS basic_post FOR TESTING RAISING cx_static_check.
+    METHODS post_cdata_utf8 FOR TESTING RAISING cx_static_check.
+    METHODS post_data_not_utf8 FOR TESTING RAISING cx_static_check.
     METHODS basic_auth FOR TESTING RAISING cx_static_check.
     METHODS call_set_method FOR TESTING RAISING cx_static_check.
     METHODS request_header_fields FOR TESTING RAISING cx_static_check.
@@ -17,10 +19,16 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION MEDIUM FINAL
     METHODS request_uri_with_host FOR TESTING RAISING cx_static_check.
     METHODS default_user_agent FOR TESTING RAISING cx_static_check.
     METHODS post_content_type FOR TESTING RAISING cx_static_check.
+    METHODS post_query_with_body FOR TESTING RAISING cx_static_check.
+    METHODS post_query_without_body FOR TESTING RAISING cx_static_check.
     METHODS status_500 FOR TESTING RAISING cx_static_check.
     METHODS decode_gzip FOR TESTING RAISING cx_static_check.
     METHODS accepts_gzip FOR TESTING RAISING cx_static_check.
     METHODS initial_url_path_and_query FOR TESTING RAISING cx_static_check.
+    METHODS connection_refused FOR TESTING RAISING cx_static_check.
+    METHODS header_with_newline FOR TESTING RAISING cx_static_check.
+    METHODS receive_without_send FOR TESTING RAISING cx_static_check.
+    METHODS reused_client_failure FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -158,6 +166,65 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = lv_cdata
       exp = '*HELLO_WORLD*' ).
+
+  ENDMETHOD.
+
+  METHOD post_cdata_utf8.
+* a, e-acute, euro sign, z: 4 characters, 7 bytes of UTF-8. An ABAP 7.5x
+* system sends these 7 bytes, whatever charset the content type names
+
+    DATA li_client TYPE REF TO if_http_client.
+    DATA lv_cdata  TYPE string.
+
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = |{ get_http_bin_host( ) }/anything|
+        ssl_id = 'ANONYM'
+      IMPORTING
+        client = li_client ).
+    li_client->request->set_method( 'POST' ).
+    li_client->request->set_content_type( 'text/plain; charset=iso-8859-1' ).
+    li_client->request->set_cdata( cl_abap_codepage=>convert_from( CONV xstring( '61C3A9E282AC7A' ) ) ).
+
+    li_client->send( ).
+    li_client->receive( ).
+
+    lv_cdata = li_client->response->get_cdata( ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = '*"Content-Length": "7"*' ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = '*"data": "a\u00e9\u20acz"*' ).
+
+  ENDMETHOD.
+
+  METHOD post_data_not_utf8.
+* bytes that are not UTF-8 go out as they are
+
+    DATA li_client TYPE REF TO if_http_client.
+    DATA lv_cdata  TYPE string.
+
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = |{ get_http_bin_host( ) }/anything|
+        ssl_id = 'ANONYM'
+      IMPORTING
+        client = li_client ).
+    li_client->request->set_method( 'POST' ).
+    li_client->request->set_content_type( 'application/octet-stream' ).
+    li_client->request->set_data( '61E97A' ).
+
+    li_client->send( ).
+    li_client->receive( ).
+
+    lv_cdata = li_client->response->get_cdata( ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = '*"Content-Length": "3"*' ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = '*base64,Yel6*' ).
 
   ENDMETHOD.
 
@@ -459,10 +526,74 @@ CLASS ltcl_test IMPLEMENTATION.
       exp = '*application/x-www-form-urlencoded*' ).
   ENDMETHOD.
 
+  METHOD post_query_with_body.
+* an ABAP 7.5x system keeps the body and sends the query on the request line
+
+    DATA li_client TYPE REF TO if_http_client.
+    DATA lv_cdata  TYPE string.
+
+    DATA(lv_host) = get_http_bin_host( ).
+
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = |{ lv_host }/anything?k=v&z=1|
+        ssl_id = 'ANONYM'
+      IMPORTING
+        client = li_client ).
+    li_client->request->set_method( 'POST' ).
+    li_client->request->set_content_type( 'text/plain' ).
+    li_client->request->set_cdata( 'BODY' ).
+
+    li_client->send( ).
+    li_client->receive( ).
+
+    lv_cdata = li_client->response->get_cdata( ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = |*"url": "{ lv_host }/anything?k=v&z=1"*| ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = '*"data": "BODY"*' ).
+
+  ENDMETHOD.
+
+  METHOD post_query_without_body.
+* an ABAP 7.5x system sends the query as the body, urlencoded, and none on the request line
+
+    DATA li_client TYPE REF TO if_http_client.
+    DATA lv_cdata  TYPE string.
+
+    DATA(lv_host) = get_http_bin_host( ).
+
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = |{ lv_host }/anything?k=v|
+        ssl_id = 'ANONYM'
+      IMPORTING
+        client = li_client ).
+    li_client->request->set_method( 'POST' ).
+
+    li_client->send( ).
+    li_client->receive( ).
+
+    lv_cdata = li_client->response->get_cdata( ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = |*"url": "{ lv_host }/anything"*| ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = '*"Content-Type": "application/x-www-form-urlencoded"*' ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = '*"form": {*"k": "v"*' ).
+
+  ENDMETHOD.
+
   METHOD status_500.
 
     DATA li_client TYPE REF TO if_http_client.
     DATA lv_code TYPE i.
+    DATA lv_reason TYPE string.
 
     cl_http_client=>create_by_url(
       EXPORTING
@@ -475,10 +606,22 @@ CLASS ltcl_test IMPLEMENTATION.
     li_client->send( ).
     li_client->receive( ).
 
-    li_client->response->get_status( IMPORTING code = lv_code ).
+    li_client->response->get_status( IMPORTING code = lv_code reason = lv_reason ).
     cl_abap_unit_assert=>assert_equals(
       act = lv_code
       exp = 500 ).
+    cl_abap_unit_assert=>assert_not_initial( lv_reason ).
+
+* an ABAP 7.5x system also sets these pseudo header fields on the response
+    cl_abap_unit_assert=>assert_equals(
+      act = li_client->response->get_header_field( '~status_code' )
+      exp = '500' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_client->response->get_header_field( '~status_reason' )
+      exp = lv_reason ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = li_client->response->get_header_field( '~server_protocol' )
+      exp = 'HTTP/1.+' ).
 
   ENDMETHOD.
 
@@ -527,6 +670,127 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = lv_cdata
       exp = '*"Accept-Encoding": "gzip"*' ).
+
+  ENDMETHOD.
+
+  METHOD connection_refused.
+* on an ABAP 7.5x system SEND returns 0 and RECEIVE fails with
+* http_communication_failure; nothing is raised as a class-based exception
+
+    DATA li_client TYPE REF TO if_http_client.
+    DATA lv_code   TYPE i.
+    DATA lv_msg    TYPE string.
+
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = 'http://127.0.0.1:1/nothing'
+      IMPORTING
+        client = li_client ).
+
+    li_client->send(
+      EXCEPTIONS
+        http_communication_failure = 1
+        OTHERS                     = 4 ).
+    cl_abap_unit_assert=>assert_subrc( exp = 0 ).
+
+    li_client->receive(
+      EXCEPTIONS
+        http_communication_failure = 1
+        OTHERS                     = 4 ).
+    cl_abap_unit_assert=>assert_subrc( exp = 1 ).
+
+    li_client->get_last_error( IMPORTING code = lv_code message = lv_msg ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_msg
+      exp = '*ECONNREFUSED*' ).
+
+  ENDMETHOD.
+
+  METHOD header_with_newline.
+* a request that cannot be written fails SEND on a system; RECEIVE is then an invalid state
+
+    DATA li_client TYPE REF TO if_http_client.
+
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = |{ get_http_bin_host( ) }/get|
+        ssl_id = 'ANONYM'
+      IMPORTING
+        client = li_client ).
+    li_client->request->set_header_field(
+      name  = 'x-bad'
+      value = |a{ cl_abap_char_utilities=>newline }b| ).
+
+    li_client->send(
+      EXCEPTIONS
+        http_communication_failure = 1
+        OTHERS                     = 4 ).
+    cl_abap_unit_assert=>assert_subrc( exp = 1 ).
+
+    li_client->receive(
+      EXCEPTIONS
+        http_communication_failure = 1
+        http_invalid_state         = 2
+        OTHERS                     = 4 ).
+    cl_abap_unit_assert=>assert_subrc( exp = 2 ).
+
+  ENDMETHOD.
+
+  METHOD receive_without_send.
+
+    DATA li_client TYPE REF TO if_http_client.
+
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = |{ get_http_bin_host( ) }/get|
+      IMPORTING
+        client = li_client ).
+
+    li_client->receive(
+      EXCEPTIONS
+        http_communication_failure = 1
+        http_invalid_state         = 2
+        OTHERS                     = 4 ).
+    cl_abap_unit_assert=>assert_subrc( exp = 2 ).
+
+  ENDMETHOD.
+
+  METHOD reused_client_failure.
+* a failed request leaves no response: the status, fields and body of the one before are not kept
+
+    DATA li_client TYPE REF TO if_http_client.
+    DATA lv_code   TYPE i.
+
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = |{ get_http_bin_host( ) }/get|
+        ssl_id = 'ANONYM'
+      IMPORTING
+        client = li_client ).
+    li_client->send( ).
+    li_client->receive( ).
+    li_client->response->get_status( IMPORTING code = lv_code ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_code
+      exp = 200 ).
+
+    li_client->request->set_header_field(
+      name  = 'x-bad'
+      value = |a{ cl_abap_char_utilities=>newline }b| ).
+    li_client->send(
+      EXCEPTIONS
+        http_communication_failure = 1
+        OTHERS                     = 4 ).
+    cl_abap_unit_assert=>assert_subrc( exp = 1 ).
+
+    li_client->response->get_status( IMPORTING code = lv_code ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_code
+      exp = 0 ).
+    cl_abap_unit_assert=>assert_initial( li_client->response->get_data( ) ).
+    cl_abap_unit_assert=>assert_initial( li_client->response->get_content_type( ) ).
+    cl_abap_unit_assert=>assert_initial( li_client->response->get_header_field( 'content-length' ) ).
+    cl_abap_unit_assert=>assert_initial( li_client->response->get_header_field( '~status_code' ) ).
 
   ENDMETHOD.
 
