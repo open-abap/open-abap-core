@@ -10,6 +10,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS output_length_hex FOR TESTING RAISING cx_static_check.
     METHODS output_length_numc FOR TESTING RAISING cx_static_check.
     METHODS output_length_int FOR TESTING RAISING cx_static_check.
+    METHODS output_length_float FOR TESTING RAISING cx_static_check.
+    METHODS output_length_packed FOR TESTING RAISING cx_static_check.
     METHODS sylangu_mask1 FOR TESTING RAISING cx_static_check.
     METHODS sylangu_mask2 FOR TESTING RAISING cx_static_check.
     METHODS get_uctlong FOR TESTING RAISING cx_static_check.
@@ -152,6 +154,30 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = descr->output_length
       exp = 11 ).
+  ENDMETHOD.
+
+  METHOD output_length_float.
+    DATA data TYPE f.
+    DATA descr TYPE REF TO cl_abap_elemdescr.
+    descr ?= cl_abap_typedescr=>describe_by_data( data ).
+    cl_abap_unit_assert=>assert_equals(
+      act = descr->length
+      exp = 8 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = descr->output_length
+      exp = 24 ).
+  ENDMETHOD.
+
+  METHOD output_length_packed.
+    DATA data TYPE p LENGTH 8 DECIMALS 2.
+    DATA descr TYPE REF TO cl_abap_elemdescr.
+    descr ?= cl_abap_typedescr=>describe_by_data( data ).
+    cl_abap_unit_assert=>assert_equals(
+      act = descr->length
+      exp = 8 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = descr->output_length
+      exp = 17 ).
   ENDMETHOD.
 
   METHOD get_ddic_fixed_values.
