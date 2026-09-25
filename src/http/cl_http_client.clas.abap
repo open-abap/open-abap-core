@@ -32,6 +32,9 @@ CLASS cl_http_client DEFINITION PUBLIC CREATE PRIVATE.
 
   PRIVATE SECTION.
     DATA mv_host TYPE string.
+    DATA mv_sent TYPE abap_bool.
+* the error of the last SEND, reported by RECEIVE and GET_LAST_ERROR
+    DATA mv_error TYPE string.
 
 ENDCLASS.
 
@@ -116,6 +119,11 @@ CLASS cl_http_client IMPLEMENTATION.
     DATA lt_header_fields TYPE tihttpnvp.
     DATA ls_field         LIKE LINE OF lt_header_fields.
     DATA lo_entity        TYPE REF TO cl_http_entity.
+    DATA lv_error         TYPE string.
+    DATA lv_before_send   TYPE abap_bool.
+
+    CLEAR mv_error.
+    mv_sent = abap_true.
 
     lv_method = if_http_client~request->get_method( ).
     IF lv_method IS INITIAL.
@@ -168,9 +176,12 @@ CLASS cl_http_client IMPLEMENTATION.
     WRITE '@KERNEL const https = await import("https");'.
     WRITE '@KERNEL const http = await import("http");'.
     WRITE '@KERNEL function postData(url, options, requestBody) {'.
-    WRITE '@KERNEL   return new Promise((resolve, reject) => {'.
+    WRITE '@KERNEL   return new Promise((resolve) => {'.
+    WRITE '@KERNEL     const reject = (error) => resolve({error});'.
     WRITE '@KERNEL     const prot = url.startsWith("http://") ? http : https;'.
-    WRITE '@KERNEL     const req = prot.request(url, options,'.
+    WRITE '@KERNEL     let req;'.
+    WRITE '@KERNEL     try {'.
+    WRITE '@KERNEL     req = prot.request(url, options,'.
     WRITE '@KERNEL       (res) => {'.
     WRITE '@KERNEL         let chunks = [];'.
     WRITE '@KERNEL         res.on("data", (chunk) => {chunks.push(chunk);});'.
@@ -184,6 +195,8 @@ CLASS cl_http_client IMPLEMENTATION.
 *    WRITE '@KERNEL           }'.
     WRITE '@KERNEL         });'.
     WRITE '@KERNEL       });'.
+* thrown here, nothing was sent yet: an invalid header, method or URL
+    WRITE '@KERNEL     } catch (error) { resolve({error, beforeSend: true}); return; }'.
     WRITE '@KERNEL     req.on("error", reject);'.
     WRITE '@KERNEL     req.write(requestBody);'.
     WRITE '@KERNEL     req.end();'.
@@ -196,6 +209,30 @@ CLASS cl_http_client IMPLEMENTATION.
 
     " WRITE '@KERNEL console.dir(response);'.
     " WRITE '@KERNEL console.dir(response.headers);'.
+
+    WRITE '@KERNEL if (response.error) {'.
+* on a dual-stack host a refused "localhost" is an AggregateError with an empty message
+    WRITE '@KERNEL   const e = response.error;'.
+    WRITE '@KERNEL   lv_error.set(String(e.message || (e.errors || []).map(x => x.message).join("; ") || e.code || e));'.
+    WRITE '@KERNEL   if (response.beforeSend === true) lv_before_send.set("X");'.
+    WRITE '@KERNEL }'.
+    IF lv_error IS NOT INITIAL.
+* no response: a reused client must not show the previous one's status, fields or body
+      lo_entity ?= if_http_client~response.
+      WRITE '@KERNEL lo_entity.get().mt_headers.clear();'.
+      WRITE '@KERNEL lo_entity.get().mv_content_type.clear();'.
+      if_http_client~response->set_data( lv_xstr ).
+      if_http_client~response->set_status(
+        code   = 0
+        reason = '' ).
+      mv_error = lv_error.
+* as on a system: a request that cannot be written fails SEND, a connection that fails fails RECEIVE
+      IF lv_before_send = abap_true.
+        mv_sent = abap_false.
+        RAISE http_communication_failure.
+      ENDIF.
+      RETURN.
+    ENDIF.
 
     WRITE '@KERNEL for (const h in response.headers) {'.
     WRITE '@KERNEL   lv_name.set(h);'.
@@ -229,16 +266,26 @@ CLASS cl_http_client IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_client~receive.
-* handled in send()
+* the request and its response are handled in send()
+    IF mv_sent = abap_false.
+      RAISE http_invalid_state.
+    ENDIF.
+    IF mv_error IS NOT INITIAL.
+      RAISE http_communication_failure.
+    ENDIF.
 
-* workaround for classic exceptions, this should work sometime in the transpiler instead
     sy-subrc = 0.
 
   ENDMETHOD.
 
   METHOD if_http_client~get_last_error.
     if_http_client~response->get_status( IMPORTING code = code ).
-    message = 'todo_open_abap'. " get from one of the response headers?
+    IF mv_error IS NOT INITIAL.
+* the message is Node's; a system answers the ICM's text and code, e.g. 411 for a refused connection
+      message = mv_error.
+    ELSE.
+      message = 'todo_open_abap'. " get from one of the response headers?
+    ENDIF.
   ENDMETHOD.
 
   METHOD if_http_client~send_sap_logon_ticket.
