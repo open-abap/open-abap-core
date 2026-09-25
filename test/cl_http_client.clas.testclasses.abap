@@ -6,6 +6,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION MEDIUM FINAL
     METHODS basic_get_https FOR TESTING RAISING cx_static_check.
     METHODS basic_get_http FOR TESTING RAISING cx_static_check.
     METHODS basic_post FOR TESTING RAISING cx_static_check.
+    METHODS post_cdata_utf8 FOR TESTING RAISING cx_static_check.
+    METHODS post_data_not_utf8 FOR TESTING RAISING cx_static_check.
     METHODS basic_auth FOR TESTING RAISING cx_static_check.
     METHODS call_set_method FOR TESTING RAISING cx_static_check.
     METHODS request_header_fields FOR TESTING RAISING cx_static_check.
@@ -162,6 +164,65 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_char_cp(
       act = lv_cdata
       exp = '*HELLO_WORLD*' ).
+
+  ENDMETHOD.
+
+  METHOD post_cdata_utf8.
+* a, e-acute, euro sign, z: 4 characters, 7 bytes of UTF-8. An ABAP 7.5x
+* system sends these 7 bytes, whatever charset the content type names
+
+    DATA li_client TYPE REF TO if_http_client.
+    DATA lv_cdata  TYPE string.
+
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = |{ get_http_bin_host( ) }/anything|
+        ssl_id = 'ANONYM'
+      IMPORTING
+        client = li_client ).
+    li_client->request->set_method( 'POST' ).
+    li_client->request->set_content_type( 'text/plain; charset=iso-8859-1' ).
+    li_client->request->set_cdata( cl_abap_codepage=>convert_from( CONV xstring( '61C3A9E282AC7A' ) ) ).
+
+    li_client->send( ).
+    li_client->receive( ).
+
+    lv_cdata = li_client->response->get_cdata( ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = '*"Content-Length": "7"*' ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = '*"data": "a\u00e9\u20acz"*' ).
+
+  ENDMETHOD.
+
+  METHOD post_data_not_utf8.
+* bytes that are not UTF-8 go out as they are
+
+    DATA li_client TYPE REF TO if_http_client.
+    DATA lv_cdata  TYPE string.
+
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = |{ get_http_bin_host( ) }/anything|
+        ssl_id = 'ANONYM'
+      IMPORTING
+        client = li_client ).
+    li_client->request->set_method( 'POST' ).
+    li_client->request->set_content_type( 'application/octet-stream' ).
+    li_client->request->set_data( '61E97A' ).
+
+    li_client->send( ).
+    li_client->receive( ).
+
+    lv_cdata = li_client->response->get_cdata( ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = '*"Content-Length": "3"*' ).
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_cdata
+      exp = '*base64,Yel6*' ).
 
   ENDMETHOD.
 
