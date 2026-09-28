@@ -18,6 +18,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS get_ddic_field_convexit FOR TESTING RAISING cx_static_check.
     METHODS get_ddic_field_datatype FOR TESTING RAISING cx_static_check.
     METHODS get_ddic_field_no_convexit FOR TESTING RAISING cx_static_check.
+    METHODS get_p_basic FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -74,6 +75,22 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_descr->type_kind
       exp = cl_abap_typedescr=>typekind_utclong ).
+  ENDMETHOD.
+
+  METHOD get_p_basic.
+    DATA lo_descr TYPE REF TO cl_abap_elemdescr.
+    lo_descr = cl_abap_elemdescr=>get_p(
+      p_length   = 3
+      p_decimals = 2 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_descr->type_kind
+      exp = cl_abap_typedescr=>typekind_packed ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_descr->length
+      exp = 3 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_descr->decimals
+      exp = 2 ).
   ENDMETHOD.
 
   METHOD sylangu_mask1.
