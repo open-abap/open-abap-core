@@ -115,6 +115,7 @@ CLASS cl_abap_elemdescr IMPLEMENTATION.
     p_flddescr-outputlen = output_length.
 
     WRITE '@KERNEL p_flddescr.get().domname.set(abap.DDIC[this.relative_name.get()]?.domain || "");'.
+    WRITE '@KERNEL p_flddescr.get().fieldtext.set(abap.DDIC[this.relative_name.get()]?.description || "");'.
     WRITE '@KERNEL lv_datatype.set(abap.DDIC[this.relative_name.get()]?.datatype || "");'.
     IF lv_datatype IS INITIAL.
       lv_datatype = ddic_datatype_from_typekind( type_kind ).
