@@ -75,7 +75,9 @@ ENDCLASS.
 CLASS cl_abap_elemdescr IMPLEMENTATION.
 
   METHOD get_p.
-    ASSERT 1 = 'todo'.
+    DATA foo TYPE REF TO data.
+    CREATE DATA foo TYPE p LENGTH p_length DECIMALS p_decimals.
+    p_result ?= cl_abap_typedescr=>describe_by_data_ref( foo ).
   ENDMETHOD.
 
   METHOD get_decfloat16.
