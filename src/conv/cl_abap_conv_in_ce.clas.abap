@@ -57,6 +57,12 @@ CLASS cl_abap_conv_in_ce IMPLEMENTATION.
         ret->mv_js_encoding = 'utf8'.
       WHEN '4103'.
         ret->mv_js_encoding = 'utf-16le'.
+      WHEN 'UTF-16LE'.
+        ret->mv_js_encoding = 'utf-16le'.
+      WHEN 'UTF-16BE'.
+        ret->mv_js_encoding = 'utf-16be'.
+      WHEN 'ISO-8859-1' OR 'iso-8859-1'.
+        ret->mv_js_encoding = 'iso-8859-1'.
       WHEN OTHERS.
         ASSERT 1 = 'not supported'.
     ENDCASE.

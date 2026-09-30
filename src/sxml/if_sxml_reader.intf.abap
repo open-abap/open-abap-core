@@ -2,6 +2,8 @@ INTERFACE if_sxml_reader PUBLIC.
 
   DATA node_type  TYPE if_sxml_node=>node_type READ-ONLY.
   DATA name       TYPE string READ-ONLY.
+  DATA prefix     TYPE string READ-ONLY.
+  DATA nsuri      TYPE string READ-ONLY.
   DATA value_type TYPE if_sxml_value=>value_type READ-ONLY.
   DATA value      TYPE string READ-ONLY.
   DATA value_raw  TYPE xstring READ-ONLY.
