@@ -190,6 +190,8 @@ CLASS lcl_attribute DEFINITION.
     METHODS constructor
       IMPORTING
         name       TYPE string
+        prefix     TYPE string OPTIONAL
+        nsuri      TYPE string OPTIONAL
         value      TYPE string
         value_type TYPE if_sxml_value=>value_type.
 
@@ -200,6 +202,8 @@ ENDCLASS.
 CLASS lcl_attribute IMPLEMENTATION.
   METHOD constructor.
     if_sxml_attribute~qname-name = name.
+    if_sxml_attribute~prefix = prefix.
+    if_sxml_attribute~qname-namespace = nsuri.
     if_sxml_attribute~value_type = value_type.
     mv_value = value.
   ENDMETHOD.
@@ -215,6 +219,8 @@ CLASS lcl_open_node DEFINITION.
     METHODS constructor
       IMPORTING
         name       TYPE string
+        prefix     TYPE string OPTIONAL
+        nsuri      TYPE string OPTIONAL
         attributes TYPE if_sxml_attribute=>attributes OPTIONAL.
   PRIVATE SECTION.
     DATA mt_attributes TYPE if_sxml_attribute=>attributes.
@@ -225,6 +231,8 @@ CLASS lcl_open_node IMPLEMENTATION.
   METHOD constructor.
     if_sxml_node~type = if_sxml_node=>co_nt_element_open.
     if_sxml_open_element~qname-name = name.
+    if_sxml_open_element~prefix = prefix.
+    if_sxml_open_element~qname-namespace = nsuri.
     mt_attributes = attributes.
   ENDMETHOD.
 
@@ -253,13 +261,14 @@ CLASS lcl_close_node DEFINITION.
   PUBLIC SECTION.
     INTERFACES if_sxml_close_element.
     METHODS constructor
-      IMPORTING name TYPE string.
+      IMPORTING name TYPE string prefix TYPE string OPTIONAL nsuri TYPE string OPTIONAL.
 ENDCLASS.
 
 CLASS lcl_close_node IMPLEMENTATION.
   METHOD constructor.
     if_sxml_node~type = if_sxml_node=>co_nt_element_close.
     if_sxml_close_element~qname-name = name.
+    if_sxml_close_element~qname-namespace = nsuri.
   ENDMETHOD.
 ENDCLASS.
 
@@ -297,6 +306,553 @@ CLASS lcl_value_node IMPLEMENTATION.
   ENDMETHOD.
 ENDCLASS.
 
+CLASS lcl_xml_parser DEFINITION.
+  PUBLIC SECTION.
+    TYPES: BEGIN OF ty_item,
+             kind   TYPE i,
+             name   TYPE string,
+             prefix TYPE string,
+             nsuri  TYPE string,
+             value  TYPE string,
+             attrs  TYPE if_sxml_attribute=>attributes,
+           END OF ty_item.
+    METHODS constructor IMPORTING source TYPE string.
+    METHODS next RETURNING VALUE(item) TYPE ty_item RAISING cx_sxml_parse_error.
+  PRIVATE SECTION.
+    TYPES: BEGIN OF ty_element,
+             name       TYPE string,
+             local_name TYPE string,
+             prefix     TYPE string,
+             nsuri      TYPE string,
+             has_child  TYPE abap_bool,
+           END OF ty_element.
+    TYPES: BEGIN OF ty_binding,
+             depth        TYPE i,
+             prefix       TYPE string,
+             nsuri        TYPE string,
+             previous     TYPE string,
+             had_previous TYPE abap_bool,
+           END OF ty_binding.
+    DATA mv_source TYPE string.
+    DATA mv_length TYPE i.
+    DATA mv_pos TYPE i.
+    DATA mv_done TYPE abap_bool.
+    DATA mv_pending_close TYPE abap_bool.
+    DATA mt_elements TYPE STANDARD TABLE OF ty_element WITH DEFAULT KEY.
+    DATA mt_bindings TYPE STANDARD TABLE OF ty_binding WITH DEFAULT KEY.
+    DATA mt_current TYPE HASHED TABLE OF if_sxml_named=>nsbinding WITH UNIQUE KEY prefix.
+    METHODS fail IMPORTING reason TYPE string RAISING cx_sxml_parse_error.
+    METHODS starts IMPORTING needle TYPE string RETURNING VALUE(yes) TYPE abap_bool.
+    METHODS take_name RETURNING VALUE(name) TYPE string RAISING cx_sxml_parse_error.
+    METHODS whitespace.
+    METHODS decode IMPORTING raw TYPE string RETURNING VALUE(decoded) TYPE string RAISING cx_sxml_parse_error.
+    METHODS lookup IMPORTING prefix TYPE string RETURNING VALUE(nsuri) TYPE string.
+    METHODS restore IMPORTING depth TYPE i.
+ENDCLASS.
+
+CLASS lcl_xml_parser IMPLEMENTATION.
+  METHOD constructor.
+    mv_source = source.
+    mv_length = strlen( source ).
+  ENDMETHOD.
+
+  METHOD fail.
+    DATA error TYPE REF TO cx_sxml_parse_error.
+    CREATE OBJECT error EXPORTING xml_offset = mv_pos.
+    error->error_text = reason.
+    error->rawstring = 'Error while parsing an XML stream:' && | | && reason && '.'.
+    RAISE EXCEPTION error.
+  ENDMETHOD.
+
+  METHOD starts.
+    DATA n TYPE i.
+    n = strlen( needle ).
+    IF mv_pos + n <= mv_length AND mv_source+mv_pos(n) = needle.
+      yes = abap_true.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD whitespace.
+    DATA c TYPE c LENGTH 1.
+    WHILE mv_pos < mv_length.
+      c = mv_source+mv_pos(1).
+      CASE c.
+        WHEN space OR cl_abap_char_utilities=>horizontal_tab
+            OR cl_abap_char_utilities=>newline OR cl_abap_char_utilities=>cr_lf(1).
+          mv_pos = mv_pos + 1.
+        WHEN OTHERS.
+          EXIT.
+      ENDCASE.
+    ENDWHILE.
+  ENDMETHOD.
+
+  METHOD take_name.
+    DATA begin TYPE i.
+    DATA c TYPE c LENGTH 1.
+    DATA length TYPE i.
+    begin = mv_pos.
+    WHILE mv_pos < mv_length.
+      c = mv_source+mv_pos(1).
+      IF c = space OR c = '/' OR c = '>' OR c = '=' OR c = '?' OR c = cl_abap_char_utilities=>newline
+          OR c = cl_abap_char_utilities=>horizontal_tab OR c = cl_abap_char_utilities=>cr_lf(1).
+        EXIT.
+      ENDIF.
+      mv_pos = mv_pos + 1.
+    ENDWHILE.
+    IF begin = mv_pos.
+      fail( 'document not wellformed' ).
+    ENDIF.
+    length = mv_pos - begin.
+    name = mv_source+begin(length).
+    c = name(1).
+    IF ( c >= '0' AND c <= '9' ) OR c = '.' OR c = '-'.
+      fail( 'invalid character after ''<''' ).
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD lookup.
+    DATA current TYPE if_sxml_named=>nsbinding.
+    IF prefix = 'xml'.
+      nsuri = 'http://www.w3.org/XML/1998/namespace'.
+      RETURN.
+    ENDIF.
+    READ TABLE mt_current WITH TABLE KEY prefix = prefix INTO current.
+    IF sy-subrc = 0.
+      nsuri = current-nsuri.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD restore.
+    DATA binding TYPE ty_binding.
+    DATA current TYPE if_sxml_named=>nsbinding.
+    DATA last TYPE i.
+    last = lines( mt_bindings ).
+    WHILE last > 0.
+      READ TABLE mt_bindings INDEX last INTO binding.
+      IF binding-depth <> depth.
+        EXIT.
+      ENDIF.
+      DELETE mt_bindings INDEX last.
+      DELETE TABLE mt_current WITH TABLE KEY prefix = binding-prefix.
+      IF binding-had_previous = abap_true.
+        current-prefix = binding-prefix.
+        current-nsuri = binding-previous.
+        INSERT current INTO TABLE mt_current.
+      ENDIF.
+      last = last - 1.
+    ENDWHILE.
+  ENDMETHOD.
+
+  METHOD decode.
+    DATA pos TYPE i.
+    DATA begin TYPE i.
+    DATA n TYPE i.
+    DATA code TYPE i.
+    DATA digit TYPE i.
+    DATA base TYPE i.
+    DATA entity TYPE string.
+    DATA part TYPE string.
+    DATA parts TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA c TYPE c LENGTH 1.
+    DATA length TYPE i.
+    DATA chars TYPE string VALUE '0123456789ABCDEF'.
+    n = strlen( raw ).
+    WHILE pos < n.
+      IF raw+pos(1) <> '&'.
+        begin = pos.
+        WHILE pos < n AND raw+pos(1) <> '&'.
+          pos = pos + 1.
+        ENDWHILE.
+        length = pos - begin.
+        part = raw+begin(length).
+        APPEND part TO parts.
+        CONTINUE.
+      ENDIF.
+      pos = pos + 1.
+      begin = pos.
+      WHILE pos < n AND raw+pos(1) <> ';'.
+        pos = pos + 1.
+      ENDWHILE.
+      IF pos = n.
+        fail( 'unresolveable entity reference in content' ).
+      ENDIF.
+      length = pos - begin.
+      entity = raw+begin(length).
+      pos = pos + 1.
+      CASE entity.
+        WHEN 'amp'.
+          part = '&'.
+        WHEN 'lt'.
+          part = '<'.
+        WHEN 'gt'.
+          part = '>'.
+        WHEN 'quot'.
+          part = '"'.
+        WHEN 'apos'.
+          part = ''''.
+        WHEN OTHERS.
+          IF entity(1) <> '#' OR strlen( entity ) < 2.
+            fail( 'unresolveable entity reference in content' ).
+          ENDIF.
+          base = 10.
+          begin = 1.
+          IF entity+1(1) = 'x' OR entity+1(1) = 'X'.
+            base = 16.
+            begin = 2.
+          ENDIF.
+          code = 0.
+          WHILE begin < strlen( entity ).
+            c = entity+begin(1).
+            TRANSLATE c TO UPPER CASE.
+            FIND c IN chars MATCH OFFSET digit.
+            IF sy-subrc <> 0 OR digit >= base.
+              fail( 'unresolveable entity reference in content' ).
+            ENDIF.
+            IF code > ( 1114111 - digit ) DIV base.
+              fail( 'illegal charref value' ).
+            ENDIF.
+            code = code * base + digit.
+            begin = begin + 1.
+          ENDWHILE.
+          IF code > 1114111 OR ( code >= 55296 AND code <= 57343 ).
+            fail( 'illegal charref value' ).
+          ENDIF.
+          part = cl_abap_conv_in_ce=>uccpi( code ).
+      ENDCASE.
+      APPEND part TO parts.
+    ENDWHILE.
+    CONCATENATE LINES OF parts INTO decoded RESPECTING BLANKS.
+  ENDMETHOD.
+
+  METHOD next.
+    DATA begin TYPE i.
+    DATA i TYPE i.
+    DATA j TYPE i.
+    DATA name TYPE string.
+    DATA attr_name TYPE string.
+    DATA attr_value TYPE string.
+    DATA prefix TYPE string.
+    DATA attr_nsuri TYPE string.
+    DATA local_name TYPE string.
+    DATA quote TYPE c LENGTH 1.
+    DATA element TYPE ty_element.
+    DATA binding TYPE ty_binding.
+    DATA current TYPE if_sxml_named=>nsbinding.
+    DATA attribute TYPE REF TO if_sxml_attribute.
+    DATA attrs TYPE if_sxml_attribute=>attributes.
+    DATA names TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA values TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA lv_depth TYPE i.
+    DATA length TYPE i.
+    DATA only_space TYPE abap_bool.
+    DATA has_entity TYPE abap_bool.
+    DATA c TYPE c LENGTH 1.
+    FIELD-SYMBOLS <parent> TYPE ty_element.
+    IF mv_done = abap_true.
+      item-kind = if_sxml_node=>co_nt_final.
+      RETURN.
+    ENDIF.
+    IF mv_pending_close = abap_true.
+      mv_pending_close = abap_false.
+      READ TABLE mt_elements INDEX lines( mt_elements ) INTO element.
+      item-kind = if_sxml_node=>co_nt_element_close.
+      item-name = element-local_name.
+      item-prefix = element-prefix.
+      item-nsuri = element-nsuri.
+      lv_depth = lines( mt_elements ).
+      DELETE mt_elements INDEX lv_depth.
+      restore( lv_depth ).
+      IF mt_elements IS INITIAL.
+        mv_done = abap_true.
+      ENDIF.
+      RETURN.
+    ENDIF.
+    WHILE mv_pos < mv_length.
+      IF starts( '<?' ) = abap_true.
+        mv_pos = mv_pos + 2.
+        WHILE mv_pos < mv_length AND starts( '?>' ) = abap_false.
+          mv_pos = mv_pos + 1.
+        ENDWHILE.
+        IF mv_pos = mv_length.
+
+          fail( '<EOF> reached' ).
+
+        ENDIF.
+        mv_pos = mv_pos + 2.
+        CONTINUE.
+      ENDIF.
+      IF starts( '<!--' ) = abap_true.
+        mv_pos = mv_pos + 4.
+        WHILE mv_pos < mv_length AND starts( '-->' ) = abap_false.
+          IF starts( '--' ) = abap_true.
+            fail( '-- in comment' ).
+          ENDIF.
+          mv_pos = mv_pos + 1.
+        ENDWHILE.
+        IF mv_pos = mv_length.
+
+          fail( '<EOF> reached' ).
+
+        ENDIF.
+        mv_pos = mv_pos + 3.
+        CONTINUE.
+      ENDIF.
+      IF starts( '<![CDATA[' ) = abap_true.
+        mv_pos = mv_pos + 9.
+        begin = mv_pos.
+        WHILE mv_pos < mv_length AND starts( ']]>' ) = abap_false.
+          mv_pos = mv_pos + 1.
+        ENDWHILE.
+        IF mv_pos = mv_length.
+
+          fail( '<EOF> reached' ).
+
+        ENDIF.
+        item-kind = if_sxml_node=>co_nt_value.
+        length = mv_pos - begin.
+        item-value = mv_source+begin(length).
+        mv_pos = mv_pos + 3.
+        RETURN.
+      ENDIF.
+      IF starts( '<!' ) = abap_true.
+        fail( '''<!--'' or ''<![CDATA['' expected' ).
+      ENDIF.
+      IF starts( '</' ) = abap_true.
+        mv_pos = mv_pos + 2.
+        name = take_name( ).
+        whitespace( ).
+        IF mv_pos = mv_length.
+
+          fail( '<EOF> reached' ).
+
+        ENDIF.
+        IF starts( '>' ) = abap_false.
+
+          fail( 'document not wellformed' ).
+
+        ENDIF.
+        mv_pos = mv_pos + 1.
+        lv_depth = lines( mt_elements ).
+        IF lv_depth = 0.
+
+          fail( 'document not wellformed' ).
+
+        ENDIF.
+        READ TABLE mt_elements INDEX lv_depth INTO element.
+        IF element-name <> name.
+
+          fail( 'document not wellformed' ).
+
+        ENDIF.
+        item-kind = if_sxml_node=>co_nt_element_close.
+        item-name = element-local_name.
+        item-prefix = element-prefix.
+        item-nsuri = element-nsuri.
+        DELETE mt_elements INDEX lv_depth.
+        restore( lv_depth ).
+        IF mt_elements IS INITIAL.
+          mv_done = abap_true.
+        ENDIF.
+        RETURN.
+      ENDIF.
+      IF starts( '<' ) = abap_true.
+        mv_pos = mv_pos + 1.
+        name = take_name( ).
+        CLEAR: attrs, names, values.
+        lv_depth = lines( mt_elements ) + 1.
+        DO.
+          whitespace( ).
+          IF mv_pos = mv_length.
+
+            fail( '<EOF> reached' ).
+
+          ENDIF.
+          IF starts( '/>' ) = abap_true.
+            mv_pos = mv_pos + 2.
+            mv_pending_close = abap_true.
+            EXIT.
+          ENDIF.
+          IF starts( '>' ) = abap_true.
+            mv_pos = mv_pos + 1.
+            EXIT.
+          ENDIF.
+          attr_name = take_name( ).
+          whitespace( ).
+          IF starts( '=' ) = abap_false.
+
+            fail( 'document not wellformed' ).
+
+          ENDIF.
+          mv_pos = mv_pos + 1.
+          whitespace( ).
+          IF mv_pos = mv_length.
+
+            fail( '<EOF> reached' ).
+
+          ENDIF.
+          quote = mv_source+mv_pos(1).
+          IF quote <> '"' AND quote <> ''''.
+            fail( 'opening ''"'' or '''''' expected' ).
+          ENDIF.
+          mv_pos = mv_pos + 1.
+          begin = mv_pos.
+          has_entity = abap_false.
+          WHILE mv_pos < mv_length AND mv_source+mv_pos(1) <> quote.
+            IF mv_source+mv_pos(1) = '<'.
+              fail( 'closing ''"'' expected' ).
+            ENDIF.
+            IF mv_source+mv_pos(1) = '&'.
+              has_entity = abap_true.
+            ENDIF.
+            mv_pos = mv_pos + 1.
+          ENDWHILE.
+          IF mv_pos = mv_length.
+
+            fail( '<EOF> reached' ).
+
+          ENDIF.
+          length = mv_pos - begin.
+          attr_value = mv_source+begin(length).
+          IF has_entity = abap_true.
+            attr_value = decode( attr_value ).
+          ENDIF.
+          mv_pos = mv_pos + 1.
+          IF attr_name = 'xmlns' OR ( strlen( attr_name ) >= 6 AND attr_name(6) = 'xmlns:' ).
+            CLEAR binding.
+            binding-depth = lv_depth.
+            IF attr_name <> 'xmlns'.
+              binding-prefix = attr_name+6.
+            ENDIF.
+            binding-nsuri = attr_value.
+            READ TABLE mt_current WITH TABLE KEY prefix = binding-prefix INTO current.
+            IF sy-subrc = 0.
+              binding-had_previous = abap_true.
+              binding-previous = current-nsuri.
+              DELETE TABLE mt_current WITH TABLE KEY prefix = binding-prefix.
+            ENDIF.
+            APPEND binding TO mt_bindings.
+            current-prefix = binding-prefix.
+            current-nsuri = binding-nsuri.
+            INSERT current INTO TABLE mt_current.
+          ELSE.
+            APPEND attr_name TO names.
+            APPEND attr_value TO values.
+          ENDIF.
+        ENDDO.
+        CLEAR element.
+        element-name = name.
+        SPLIT name AT ':' INTO prefix local_name.
+        IF local_name IS INITIAL.
+          local_name = name.
+          CLEAR prefix.
+        ENDIF.
+        element-local_name = local_name.
+        element-prefix = prefix.
+        element-nsuri = lookup( prefix ).
+        IF prefix IS NOT INITIAL AND element-nsuri IS INITIAL.
+          fail( 'undeclared namespace prefix' ).
+        ENDIF.
+        IF lv_depth > 1.
+          i = lv_depth - 1.
+          READ TABLE mt_elements INDEX i ASSIGNING <parent>.
+          <parent>-has_child = abap_true.
+        ENDIF.
+        APPEND element TO mt_elements.
+        LOOP AT names INTO attr_name.
+          i = sy-tabix.
+          READ TABLE values INDEX i INTO attr_value.
+          SPLIT attr_name AT ':' INTO prefix local_name.
+          IF local_name IS INITIAL.
+            local_name = attr_name.
+            CLEAR prefix.
+          ENDIF.
+          CLEAR attr_nsuri.
+          IF prefix IS NOT INITIAL.
+            attr_nsuri = lookup( prefix ).
+            IF attr_nsuri IS INITIAL.
+              fail( 'undeclared namespace prefix' ).
+            ENDIF.
+          ENDIF.
+          CREATE OBJECT attribute TYPE lcl_attribute
+            EXPORTING
+              name       = local_name
+              prefix     = prefix
+              nsuri      = attr_nsuri
+              value      = attr_value
+              value_type = if_sxml_value=>co_vt_text.
+          APPEND attribute TO attrs.
+        ENDLOOP.
+        item-kind = if_sxml_node=>co_nt_element_open.
+        item-name = element-local_name.
+        item-prefix = element-prefix.
+        item-nsuri = element-nsuri.
+        item-attrs = attrs.
+        RETURN.
+      ENDIF.
+      begin = mv_pos.
+      only_space = abap_true.
+      has_entity = abap_false.
+      WHILE mv_pos < mv_length.
+        c = mv_source+mv_pos(1).
+        IF c = '<'.
+          EXIT.
+        ENDIF.
+        IF c <> space AND c <> cl_abap_char_utilities=>horizontal_tab
+            AND c <> cl_abap_char_utilities=>newline AND c <> cl_abap_char_utilities=>cr_lf(1).
+          only_space = abap_false.
+        ENDIF.
+        IF c = '&'.
+          has_entity = abap_true.
+        ENDIF.
+        mv_pos = mv_pos + 1.
+      ENDWHILE.
+      IF mt_elements IS INITIAL.
+
+        CONTINUE.
+
+      ENDIF.
+      length = mv_pos - begin.
+      IF length = 0.
+
+        CONTINUE.
+
+      ENDIF.
+      IF mv_pos = mv_length.
+
+        fail( '<EOF> reached' ).
+
+      ENDIF.
+      IF only_space = abap_true.
+        IF starts( '</' ) = abap_false.
+          CONTINUE.
+        ENDIF.
+        READ TABLE mt_elements INDEX lines( mt_elements ) INTO element.
+        IF element-has_child = abap_true.
+          CONTINUE.
+        ENDIF.
+      ENDIF.
+      item-kind = if_sxml_node=>co_nt_value.
+      name = mv_source+begin(length).
+      IF has_entity = abap_true.
+        item-value = decode( name ).
+      ELSE.
+        item-value = name.
+      ENDIF.
+      RETURN.
+    ENDWHILE.
+    IF mt_elements IS NOT INITIAL.
+      fail( '<EOF> reached' ).
+    ENDIF.
+    IF mv_length = 0.
+
+      fail( 'BOM / charset detection failed' ).
+
+    ENDIF.
+    mv_done = abap_true.
+    item-kind = if_sxml_node=>co_nt_final.
+  ENDMETHOD.
+ENDCLASS.
+
 CLASS lcl_reader DEFINITION.
   PUBLIC SECTION.
     TYPES ty_nodes TYPE STANDARD TABLE OF REF TO if_sxml_node WITH DEFAULT KEY.
@@ -307,6 +863,9 @@ CLASS lcl_reader DEFINITION.
   PRIVATE SECTION.
     METHODS initialize.
     DATA mv_json    TYPE string.
+    DATA mo_xml TYPE REF TO lcl_xml_parser.
+    DATA mt_xml_attrs TYPE if_sxml_attribute=>attributes.
+    DATA mv_xml_attr TYPE i.
     DATA mt_nodes   TYPE ty_nodes.
     DATA mv_pointer TYPE i.
     DATA mv_initialized TYPE abap_bool.
@@ -338,7 +897,24 @@ CLASS lcl_reader IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD constructor.
+    DATA first TYPE i.
+    DATA size TYPE i.
+    DATA c TYPE c LENGTH 1.
     mv_json = iv_json.
+    size = strlen( iv_json ).
+    WHILE first < size.
+      c = iv_json+first(1).
+      IF c = space OR c = cl_abap_char_utilities=>newline OR c = cl_abap_char_utilities=>horizontal_tab
+          OR c = cl_abap_char_utilities=>cr_lf(1).
+        first = first + 1.
+      ELSE.
+        EXIT.
+      ENDIF.
+    ENDWHILE.
+    IF iv_json IS INITIAL OR ( first < size AND iv_json+first(1) = '<' ).
+      CREATE OBJECT mo_xml EXPORTING source = iv_json.
+      CLEAR mv_json.
+    ENDIF.
     mv_initialized = abap_false.
   ENDMETHOD.
 
@@ -403,24 +979,102 @@ CLASS lcl_reader IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_sxml_reader~next_attribute.
-    ASSERT 1 = 'todo'.
+    DATA attr TYPE REF TO if_sxml_attribute.
+    mv_xml_attr = mv_xml_attr + 1.
+    READ TABLE mt_xml_attrs INDEX mv_xml_attr INTO attr.
+    IF sy-subrc = 0.
+      if_sxml_reader~node_type = if_sxml_node=>co_nt_attribute.
+      if_sxml_reader~name = attr->qname-name.
+      if_sxml_reader~prefix = attr->prefix.
+      if_sxml_reader~nsuri = attr->qname-namespace.
+      if_sxml_reader~value = attr->get_value( ).
+      if_sxml_reader~value_type = if_sxml_value=>co_vt_text.
+    ELSE.
+      if_sxml_reader~node_type = if_sxml_node=>co_nt_final.
+    ENDIF.
   ENDMETHOD.
 
   METHOD if_sxml_reader~next_node.
+    DATA xml TYPE lcl_xml_parser=>ty_item.
+    IF mo_xml IS BOUND.
+      xml = mo_xml->next( ).
+      if_sxml_reader~node_type = xml-kind.
+      IF xml-kind = if_sxml_node=>co_nt_final.
+        RETURN.
+      ENDIF.
+      if_sxml_reader~name = xml-name.
+      if_sxml_reader~prefix = xml-prefix.
+      if_sxml_reader~nsuri = xml-nsuri.
+      CLEAR mt_xml_attrs.
+      mv_xml_attr = 0.
+      IF xml-kind = if_sxml_node=>co_nt_element_open.
+        mt_xml_attrs = xml-attrs.
+      ELSEIF xml-kind = if_sxml_node=>co_nt_value.
+        if_sxml_reader~value = xml-value.
+        if_sxml_reader~value_type = if_sxml_value=>co_vt_text.
+      ENDIF.
+      RETURN.
+    ENDIF.
     if_sxml_reader~read_next_node( ).
   ENDMETHOD.
 
   METHOD if_sxml_reader~skip_node.
-* huh, what should this method do?
+    DATA level TYPE i.
+    IF mo_xml IS NOT BOUND OR if_sxml_reader~node_type <> if_sxml_node=>co_nt_element_open.
+      RETURN.
+    ENDIF.
+    level = 1.
+    WHILE level > 0.
+      if_sxml_reader~next_node( ).
+      IF if_sxml_reader~node_type = if_sxml_node=>co_nt_element_open.
+        level = level + 1.
+      ELSEIF if_sxml_reader~node_type = if_sxml_node=>co_nt_element_close.
+        level = level - 1.
+      ELSEIF if_sxml_reader~node_type = if_sxml_node=>co_nt_final.
+        EXIT.
+      ENDIF.
+    ENDWHILE.
   ENDMETHOD.
 
   METHOD if_sxml_reader~read_next_node.
-    DATA open  TYPE REF TO if_sxml_open_element.
+    DATA xml TYPE lcl_xml_parser=>ty_item.
+    DATA open TYPE REF TO if_sxml_open_element.
     DATA close TYPE REF TO if_sxml_close_element.
     DATA value TYPE REF TO if_sxml_value_node.
-    DATA attr  TYPE REF TO if_sxml_attribute.
+    DATA attr TYPE REF TO if_sxml_attribute.
     DATA attrs TYPE if_sxml_attribute=>attributes.
-
+    IF mo_xml IS BOUND.
+      xml = mo_xml->next( ).
+      if_sxml_reader~node_type = xml-kind.
+      IF xml-kind = if_sxml_node=>co_nt_final.
+        RETURN.
+      ENDIF.
+      if_sxml_reader~name = xml-name.
+      if_sxml_reader~prefix = xml-prefix.
+      if_sxml_reader~nsuri = xml-nsuri.
+      CLEAR mt_xml_attrs.
+      mv_xml_attr = 0.
+      CASE xml-kind.
+        WHEN if_sxml_node=>co_nt_element_open.
+          mt_xml_attrs = xml-attrs.
+          CREATE OBJECT node TYPE cl_sxml_open_element
+            EXPORTING
+              name       = xml-name
+              prefix     = xml-prefix
+              nsuri      = xml-nsuri
+              attributes = xml-attrs.
+        WHEN if_sxml_node=>co_nt_element_close.
+          CREATE OBJECT node TYPE cl_sxml_close_element
+            EXPORTING
+              name  = xml-name
+              nsuri = xml-nsuri.
+        WHEN if_sxml_node=>co_nt_value.
+          if_sxml_reader~value = xml-value.
+          if_sxml_reader~value_type = if_sxml_value=>co_vt_text.
+          CREATE OBJECT node TYPE cl_sxml_value EXPORTING value = xml-value.
+      ENDCASE.
+      RETURN.
+    ENDIF.
     IF mv_initialized = abap_false.
       initialize( ).
     ENDIF.
