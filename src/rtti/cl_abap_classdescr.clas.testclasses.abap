@@ -21,6 +21,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS describe_by_object_ref1 FOR TESTING RAISING cx_static_check.
     METHODS describe_by_object_ref2 FOR TESTING RAISING cx_static_check.
     METHODS describe_by_object_ref3 FOR TESTING RAISING cx_static_check.
+    METHODS test_get_super_class_type FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -95,6 +96,33 @@ CLASS ltcl_test IMPLEMENTATION.
 * just check it doesnt crash
     CREATE OBJECT ref.
     cl_abap_objectdescr=>describe_by_object_ref( ref ).
+
+  ENDMETHOD.
+
+  METHOD test_get_super_class_type.
+
+    DATA ref      TYPE REF TO cx_sy_dyn_call_illegal_class.
+    DATA obj_root TYPE REF TO cl_abap_codepage.
+    DATA type     TYPE REF TO cl_abap_classdescr.
+    DATA lo_super TYPE REF TO cl_abap_classdescr.
+
+    CREATE OBJECT ref.
+    type ?= cl_abap_typedescr=>describe_by_object_ref( ref ).
+    lo_super = type->get_super_class_type( ).
+    cl_abap_unit_assert=>assert_bound( lo_super ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_super->get_relative_name( )
+      exp = 'CX_SY_DYN_CALL_ERROR' ).
+
+    CREATE OBJECT obj_root.
+    type ?= cl_abap_typedescr=>describe_by_object_ref( obj_root ).
+    type->get_super_class_type(
+      EXCEPTIONS
+        super_class_not_found = 1
+        OTHERS                = 2 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = sy-subrc
+      exp = 1 ).
 
   ENDMETHOD.
 
