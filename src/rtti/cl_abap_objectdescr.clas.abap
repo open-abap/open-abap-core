@@ -126,6 +126,8 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     <method>-name = lv_name.
     WRITE '@KERNEL   lv_char1.set(p_object.METHODS[a].visibility);'.
     <method>-visibility = lv_char1.
+    WRITE '@KERNEL   lv_char1.set(Object.prototype.hasOwnProperty.call(p_object, a.toLowerCase()) ? "X" : "");'.
+    <method>-is_class = lv_char1.
 * set parameters of methods
     WRITE '@KERNEL for (const p in p_object.METHODS[a].parameters || []) {'.
     APPEND INITIAL LINE TO descr->mt_parameter_types ASSIGNING <ptype>.
