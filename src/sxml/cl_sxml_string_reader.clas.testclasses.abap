@@ -1149,3 +1149,163 @@ CLASS ltcl_xml IMPLEMENTATION.
       exp = if_sxml_node=>co_nt_element_close ).
   ENDMETHOD.
 ENDCLASS.
+
+* A UTF-8 document with characters outside ASCII, given in hex so the source
+* stays ASCII: e acute C3A9, euro E282AC, U+1F600 F09F9880. Expected values
+* and offsets measured on a system: offsets count bytes.
+CLASS ltcl_xml_utf8 DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+  PRIVATE SECTION.
+    METHODS text IMPORTING hex TYPE xstring RETURNING VALUE(text) TYPE string.
+    METHODS everywhere FOR TESTING RAISING cx_static_check.
+    METHODS entity_and_four_bytes FOR TESTING RAISING cx_static_check.
+    METHODS lower_case_declaration FOR TESTING RAISING cx_static_check.
+    METHODS close_offset_in_bytes FOR TESTING RAISING cx_static_check.
+    METHODS attribute_lt_offset FOR TESTING RAISING cx_static_check.
+    METHODS invalid_bytes FOR TESTING RAISING cx_static_check.
+    METHODS cut_sequence FOR TESTING RAISING cx_static_check.
+    METHODS value_of IMPORTING xml TYPE xstring RETURNING VALUE(value) TYPE string
+      RAISING cx_sxml_parse_error.
+ENDCLASS.
+
+CLASS ltcl_xml_utf8 IMPLEMENTATION.
+  METHOD text.
+    text = cl_abap_codepage=>convert_from( hex ).
+  ENDMETHOD.
+
+  METHOD everywhere.
+    " <a(e) x(e)="(e)(euro)"><b>(e)(euro)</b><c><![CDATA[(e)]]]]></c><!--(e)--></a(e)>
+    DATA reader TYPE REF TO if_sxml_reader.
+    reader = cl_sxml_string_reader=>create( CONV xstring(
+      '3C61C3A92078C3A93D22C3A9E282AC223E3C623EC3A9E282AC3C2F623E3C633E3C215B43444154415BC3A95D5D5D5D3E3C2F633E3C212D2DC3A92D2D3E3C2F61C3A93E' ) ).
+    reader->next_node( ).
+    cl_abap_unit_assert=>assert_equals( act = reader->name
+                                        exp = text( '61C3A9' ) ).
+    reader->next_attribute( ).
+    cl_abap_unit_assert=>assert_equals( act = reader->name
+                                        exp = text( '78C3A9' ) ).
+    cl_abap_unit_assert=>assert_equals( act = reader->value
+                                        exp = text( 'C3A9E282AC' ) ).
+    reader->next_node( ).
+    reader->next_node( ).
+    cl_abap_unit_assert=>assert_equals( act = reader->value
+                                        exp = text( 'C3A9E282AC' ) ).
+    reader->next_node( ).
+    reader->next_node( ).
+    reader->next_node( ).
+    cl_abap_unit_assert=>assert_equals( act = reader->value
+                                        exp = text( 'C3A95D5D' ) ).
+    reader->next_node( ).
+    reader->next_node( ).
+    cl_abap_unit_assert=>assert_equals( act = reader->node_type
+                                        exp = if_sxml_node=>co_nt_element_close ).
+    cl_abap_unit_assert=>assert_equals( act = reader->name
+                                        exp = text( '61C3A9' ) ).
+  ENDMETHOD.
+
+  METHOD entity_and_four_bytes.
+    " <a>(e)&amp;(U+1F600)</a>
+    DATA reader TYPE REF TO if_sxml_reader.
+    reader = cl_sxml_string_reader=>create( CONV xstring( '3C613EC3A926616D703BF09F98803C2F613E' ) ).
+    reader->next_node( ).
+    reader->next_node( ).
+    cl_abap_unit_assert=>assert_equals( act = reader->value
+                                        exp = text( 'C3A926F09F9880' ) ).
+  ENDMETHOD.
+
+  METHOD lower_case_declaration.
+    " <?xml version="1.0" encoding="utf-8"?><a>(U+1F600)</a>
+    DATA reader TYPE REF TO if_sxml_reader.
+    reader = cl_sxml_string_reader=>create( CONV xstring(
+      '3C3F786D6C2076657273696F6E3D22312E302220656E636F64696E673D227574662D38223F3E3C613EF09F98803C2F613E' ) ).
+    reader->next_node( ).
+    reader->next_node( ).
+    cl_abap_unit_assert=>assert_equals( act = reader->value
+                                        exp = text( 'F09F9880' ) ).
+  ENDMETHOD.
+
+  METHOD close_offset_in_bytes.
+    " <a>(e)(euro)</b>: the value, then the close tag that does not match,
+    " reported at the byte where it starts
+    DATA reader TYPE REF TO if_sxml_reader.
+    DATA error TYPE REF TO cx_sxml_parse_error.
+    reader = cl_sxml_string_reader=>create( CONV xstring( '3C613EC3A9E282AC3C2F623E' ) ).
+    reader->next_node( ).
+    reader->next_node( ).
+    cl_abap_unit_assert=>assert_equals( act = reader->value
+                                        exp = text( 'C3A9E282AC' ) ).
+    TRY.
+        reader->next_node( ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_sxml_parse_error INTO error.
+        cl_abap_unit_assert=>assert_equals( act = error->xml_offset
+                                            exp = 8 ).
+        cl_abap_unit_assert=>assert_equals( act = error->error_text
+                                            exp = 'document not wellformed' ).
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD attribute_lt_offset.
+    " <a x="(e)(e)<"/>: reported at the start of the value
+    DATA reader TYPE REF TO if_sxml_reader.
+    DATA error TYPE REF TO cx_sxml_parse_error.
+    reader = cl_sxml_string_reader=>create( CONV xstring( '3C6120783D22C3A9C3A93C222F3E' ) ).
+    TRY.
+        reader->next_node( ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_sxml_parse_error INTO error.
+        cl_abap_unit_assert=>assert_equals( act = error->xml_offset
+                                            exp = 6 ).
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD invalid_bytes.
+    " <a>FF</a>: not an error, the byte reads as U+FFFD; in a comment it is
+    " not read at all (measured on a system, also the cases below)
+    DATA reader TYPE REF TO if_sxml_reader.
+    reader = cl_sxml_string_reader=>create( CONV xstring( '3C613EFF3C2F613E' ) ).
+    reader->next_node( ).
+    reader->next_node( ).
+    cl_abap_unit_assert=>assert_equals( act = reader->value
+                                        exp = cl_abap_conv_in_ce=>uccpi( 65533 ) ).
+    reader->next_node( ).
+    cl_abap_unit_assert=>assert_equals( act = reader->node_type
+                                        exp = if_sxml_node=>co_nt_element_close ).
+    reader = cl_sxml_string_reader=>create( CONV xstring( '3C613E3C212D2DFF2D2D3E3C2F613E' ) ).
+    reader->next_node( ).
+    reader->next_node( ).
+    cl_abap_unit_assert=>assert_equals( act = reader->node_type
+                                        exp = if_sxml_node=>co_nt_element_close ).
+    " a lone continuation byte: one U+FFFD; the overlong C0 AF: one; a lead
+    " byte and one continuation before more text: two
+    cl_abap_unit_assert=>assert_equals( act = value_of( '3C613E80613C2F613E' )
+                                        exp = cl_abap_conv_in_ce=>uccpi( 65533 ) && 'a' ).
+    cl_abap_unit_assert=>assert_equals( act = value_of( '3C613EC0AF613C2F613E' )
+                                        exp = cl_abap_conv_in_ce=>uccpi( 65533 ) && 'a' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = value_of( '3C613EE282613C2F613E' )
+      exp = cl_abap_conv_in_ce=>uccpi( 65533 ) && cl_abap_conv_in_ce=>uccpi( 65533 ) && 'a' ).
+  ENDMETHOD.
+
+  METHOD value_of.
+    DATA reader TYPE REF TO if_sxml_reader.
+    reader = cl_sxml_string_reader=>create( xml ).
+    reader->next_node( ).
+    reader->next_node( ).
+    value = reader->value.
+  ENDMETHOD.
+
+  METHOD cut_sequence.
+    " a sequence cut off by the markup after it: an error at that markup
+    DATA reader TYPE REF TO if_sxml_reader.
+    DATA error TYPE REF TO cx_sxml_parse_error.
+    reader = cl_sxml_string_reader=>create( CONV xstring( '3C613EE2823C2F613E' ) ).
+    reader->next_node( ).
+    TRY.
+        reader->next_node( ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_sxml_parse_error INTO error.
+        cl_abap_unit_assert=>assert_equals( act = error->xml_offset
+                                            exp = 5 ).
+    ENDTRY.
+  ENDMETHOD.
+ENDCLASS.

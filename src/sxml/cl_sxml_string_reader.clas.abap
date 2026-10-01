@@ -68,6 +68,16 @@ CLASS cl_sxml_string_reader IMPLEMENTATION.
         ENDIF.
       ENDIF.
     ENDIF.
+    TRANSLATE encoding TO UPPER CASE.
+    IF is_xml = abap_true AND ( encoding = 'UTF-8' OR encoding = 'UTF8' ).
+      " the parser crosses UTF-8 in its bytes and decodes names and values
+      CREATE OBJECT reader TYPE lcl_reader
+        EXPORTING
+          iv_json  = ``
+          iv_bytes = bytes
+          iv_utf8  = abap_true.
+      RETURN.
+    ENDIF.
     IF is_xml = abap_true.
       cl_abap_conv_in_ce=>create( encoding = CONV #( encoding ) )->convert(
         EXPORTING input = bytes
