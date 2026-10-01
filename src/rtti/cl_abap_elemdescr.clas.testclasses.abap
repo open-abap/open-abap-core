@@ -10,13 +10,65 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS output_length_hex FOR TESTING RAISING cx_static_check.
     METHODS output_length_numc FOR TESTING RAISING cx_static_check.
     METHODS output_length_int FOR TESTING RAISING cx_static_check.
+    METHODS output_length_float FOR TESTING RAISING cx_static_check.
+    METHODS output_length_packed FOR TESTING RAISING cx_static_check.
     METHODS sylangu_mask1 FOR TESTING RAISING cx_static_check.
     METHODS sylangu_mask2 FOR TESTING RAISING cx_static_check.
     METHODS get_uctlong FOR TESTING RAISING cx_static_check.
+    METHODS get_ddic_field_convexit FOR TESTING RAISING cx_static_check.
+    METHODS get_ddic_field_datatype FOR TESTING RAISING cx_static_check.
+    METHODS get_ddic_field_no_convexit FOR TESTING RAISING cx_static_check.
+    METHODS get_ddic_field_text FOR TESTING RAISING cx_static_check.
+    METHODS get_p_basic FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
+
+  METHOD get_ddic_field_convexit.
+    DATA lo_element TYPE REF TO cl_abap_elemdescr.
+    DATA ls_dfies   TYPE dfies.
+    DATA lv_langu   TYPE sy-langu.
+    lo_element ?= cl_abap_typedescr=>describe_by_data( lv_langu ).
+    ls_dfies = lo_element->get_ddic_field( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-convexit
+      exp = 'ISOLA' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-datatype
+      exp = 'CHAR' ).
+  ENDMETHOD.
+
+  METHOD get_ddic_field_datatype.
+    DATA lo_element TYPE REF TO cl_abap_elemdescr.
+    DATA ls_dfies   TYPE dfies.
+    DATA lv_date    TYPE d.
+    DATA lv_int     TYPE i.
+    lo_element ?= cl_abap_typedescr=>describe_by_data( lv_date ).
+    ls_dfies = lo_element->get_ddic_field( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-datatype
+      exp = 'DATS' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-inttype
+      exp = 'D' ).
+    lo_element ?= cl_abap_typedescr=>describe_by_data( lv_int ).
+    ls_dfies = lo_element->get_ddic_field( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-datatype
+      exp = 'INT4' ).
+  ENDMETHOD.
+
+  METHOD get_ddic_field_no_convexit.
+    DATA lo_element TYPE REF TO cl_abap_elemdescr.
+    DATA ls_dfies   TYPE dfies.
+    lo_element ?= cl_abap_elemdescr=>describe_by_name( 'ABAP_BOOLEAN' ).
+    ls_dfies = lo_element->get_ddic_field( ).
+    cl_abap_unit_assert=>assert_initial( ls_dfies-convexit ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-rollname
+      exp = 'ABAP_BOOLEAN' ).
+  ENDMETHOD.
 
   METHOD get_uctlong.
     DATA lo_descr TYPE REF TO cl_abap_elemdescr.
@@ -24,6 +76,22 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_descr->type_kind
       exp = cl_abap_typedescr=>typekind_utclong ).
+  ENDMETHOD.
+
+  METHOD get_p_basic.
+    DATA lo_descr TYPE REF TO cl_abap_elemdescr.
+    lo_descr = cl_abap_elemdescr=>get_p(
+      p_length   = 3
+      p_decimals = 2 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_descr->type_kind
+      exp = cl_abap_typedescr=>typekind_packed ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_descr->length
+      exp = 3 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_descr->decimals
+      exp = 2 ).
   ENDMETHOD.
 
   METHOD sylangu_mask1.
@@ -106,6 +174,30 @@ CLASS ltcl_test IMPLEMENTATION.
       exp = 11 ).
   ENDMETHOD.
 
+  METHOD output_length_float.
+    DATA data TYPE f.
+    DATA descr TYPE REF TO cl_abap_elemdescr.
+    descr ?= cl_abap_typedescr=>describe_by_data( data ).
+    cl_abap_unit_assert=>assert_equals(
+      act = descr->length
+      exp = 8 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = descr->output_length
+      exp = 24 ).
+  ENDMETHOD.
+
+  METHOD output_length_packed.
+    DATA data TYPE p LENGTH 8 DECIMALS 2.
+    DATA descr TYPE REF TO cl_abap_elemdescr.
+    descr ?= cl_abap_typedescr=>describe_by_data( data ).
+    cl_abap_unit_assert=>assert_equals(
+      act = descr->length
+      exp = 8 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = descr->output_length
+      exp = 17 ).
+  ENDMETHOD.
+
   METHOD get_ddic_fixed_values.
 
     DATA lo_element TYPE REF TO cl_abap_elemdescr.
@@ -145,6 +237,16 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = ls_dfies-domname
       exp = 'ABAP_BOOLEAN' ).
+  ENDMETHOD.
+
+  METHOD get_ddic_field_text.
+    DATA lo_element TYPE REF TO cl_abap_elemdescr.
+    DATA ls_dfies   TYPE dfies.
+    lo_element ?= cl_abap_elemdescr=>describe_by_name( 'ABAP_MSIZE' ).
+    ls_dfies = lo_element->get_ddic_field( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-fieldtext
+      exp = 'Memory Size' ).
   ENDMETHOD.
 
   METHOD get_ddic_field2.

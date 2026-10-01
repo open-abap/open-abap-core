@@ -5,6 +5,7 @@ CLASS ltcl_deserialize DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
     METHODS structure_string FOR TESTING RAISING cx_static_check.
     METHODS structure_nested FOR TESTING RAISING cx_static_check.
     METHODS basic_array FOR TESTING RAISING cx_static_check.
+    METHODS array_order FOR TESTING RAISING cx_static_check.
     METHODS parse_abap_true FOR TESTING RAISING cx_static_check.
     METHODS parse_abap_true_flag FOR TESTING RAISING cx_static_check.
     METHODS parse_abap_false FOR TESTING RAISING cx_static_check.
@@ -296,6 +297,47 @@ CLASS ltcl_deserialize IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_int
       exp = 7 ).
+  ENDMETHOD.
+
+  METHOD array_order.
+* the elements of an array, and of arrays inside objects inside an array,
+* come out in the order they are written, whatever order a runtime keeps
+* rows with equal secondary key values in
+    TYPES: BEGIN OF ty_row,
+             name TYPE string,
+             vals TYPE STANDARD TABLE OF i WITH DEFAULT KEY,
+           END OF ty_row.
+    DATA: BEGIN OF stru,
+            foo  TYPE STANDARD TABLE OF i WITH DEFAULT KEY,
+            rows TYPE STANDARD TABLE OF ty_row WITH DEFAULT KEY,
+          END OF stru.
+    DATA ls_row LIKE LINE OF stru-rows.
+    DATA lv_int TYPE i.
+    DATA lv_act TYPE string.
+    DATA lv_json TYPE string.
+    lv_json = '{"foo": [3, 1, 4, 1, 5, 9, 2, 6], "rows": [{"name": "c", "vals": [30, 10]}, {"name": "a", "vals": [20]}, {"name": "b", "vals": []}]}'.
+    /ui2/cl_json=>deserialize(
+      EXPORTING
+        json = lv_json
+      CHANGING
+        data = stru ).
+    LOOP AT stru-foo INTO lv_int.
+      lv_act = |{ lv_act }{ lv_int },|.
+    ENDLOOP.
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_act
+      exp = '3,1,4,1,5,9,2,6,' ).
+    CLEAR lv_act.
+    LOOP AT stru-rows INTO ls_row.
+      lv_act = |{ lv_act }{ ls_row-name }:|.
+      LOOP AT ls_row-vals INTO lv_int.
+        lv_act = |{ lv_act }{ lv_int },|.
+      ENDLOOP.
+      lv_act = |{ lv_act };|.
+    ENDLOOP.
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_act
+      exp = 'c:30,10,;a:20,;b:;' ).
   ENDMETHOD.
 
   METHOD short_timestamp.

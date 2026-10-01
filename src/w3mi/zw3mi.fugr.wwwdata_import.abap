@@ -15,15 +15,22 @@ FUNCTION wwwdata_import.
   DATA row      TYPE w3mime.
   DATA len      TYPE i.
   DATA lv_error TYPE abap_bool.
+  DATA off      TYPE i.
+  DATA total    TYPE i.
 
-  CLEAR mime.
+  IF key-relid <> 'MI'.
+    RAISE wrong_object_type.
+  ENDIF.
 
   WRITE '@KERNEL const w3obj = abap.W3MI?.[key.get().objid.get().trimEnd()];'.
   WRITE '@KERNEL lv_error.set(w3obj === undefined ? "X" : " ");'.
 
+* an object that is not there leaves MIME as it was
   IF lv_error = abap_true.
     RAISE import_error.
   ENDIF.
+
+  CLEAR mime.
 
   " Reuse w3obj directly
   WRITE '@KERNEL filename.set(w3obj.filename);'.
@@ -35,14 +42,17 @@ FUNCTION wwwdata_import.
   WRITE '@KERNEL const __dirname = path.dirname(__filename);'.
   WRITE '@KERNEL xstr.set(fs.readFileSync(__dirname + path.sep + filename.get()).toString("hex").toUpperCase());'.
 
-  WHILE xstrlen( xstr ) > 0.
+* walked with an offset: taking the remainder each time copies it, which
+* is quadratic, and a file of a few megabytes takes minutes
+  total = xstrlen( xstr ).
+  WHILE off < total.
     len = 255.
-    IF xstrlen( xstr ) < len.
-      len = xstrlen( xstr ).
+    IF total - off < len.
+      len = total - off.
     ENDIF.
-    row-line = xstr(len).
+    row-line = xstr+off(len).
     APPEND row TO mime.
-    xstr = xstr+len.
+    off = off + len.
   ENDWHILE.
 
 * temp workaround, classic exceptions not really handled in transpiler yet

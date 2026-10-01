@@ -10,6 +10,7 @@ CLASS ltcl_conv_out DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FI
     METHODS empty FOR TESTING RAISING cx_static_check.
     METHODS utf16le FOR TESTING RAISING cx_static_check.
     METHODS uccpi_2 FOR TESTING RAISING cx_static_check.
+    METHODS uccpi_high_byte FOR TESTING RAISING cx_static_check.
     METHODS buffer FOR TESTING RAISING cx_static_check.
     METHODS uccp1 FOR TESTING RAISING cx_static_check.
     METHODS uccp2 FOR TESTING RAISING cx_static_check.
@@ -26,6 +27,21 @@ CLASS ltcl_conv_out IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_int
       exp = 50 ).
+  ENDMETHOD.
+
+  METHOD uccpi_high_byte.
+    DATA lv_char TYPE c LENGTH 1.
+    DATA lv_int  TYPE i.
+    lv_char = cl_abap_conv_in_ce=>uccp( '0100' ).
+    lv_int = cl_abap_conv_out_ce=>uccpi( lv_char ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_int
+      exp = 256 ).
+    lv_char = cl_abap_conv_in_ce=>uccp( 'FEFF' ).
+    lv_int = cl_abap_conv_out_ce=>uccpi( lv_char ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_int
+      exp = 65279 ).
   ENDMETHOD.
 
   METHOD convert1.

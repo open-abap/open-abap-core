@@ -14,6 +14,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS equals_tol FOR TESTING RAISING cx_static_check.
     METHODS equals_tol_fail FOR TESTING RAISING cx_static_check.
     METHODS differs FOR TESTING RAISING cx_static_check.
+    METHODS differs_fails_when_equal FOR TESTING RAISING cx_static_check.
     METHODS cp1 FOR TESTING RAISING cx_static_check.
     METHODS cp2 FOR TESTING RAISING cx_static_check.
     METHODS cp3 FOR TESTING RAISING cx_static_check.
@@ -208,6 +209,23 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lt_tab1
       exp = lt_tab2 ).
+  ENDMETHOD.
+
+  METHOD differs_fails_when_equal.
+    DATA lx_assert TYPE REF TO kernel_cx_assert.
+    DATA lv_failed TYPE abap_bool.
+    TRY.
+        cl_abap_unit_assert=>assert_differs(
+          act = 2
+          exp = 2
+          msg = 'same' ).
+      CATCH kernel_cx_assert INTO lx_assert.
+        lv_failed = abap_true.
+        cl_abap_unit_assert=>assert_equals(
+          act = lx_assert->msg
+          exp = 'same' ).
+    ENDTRY.
+    cl_abap_unit_assert=>assert_true( lv_failed ).
   ENDMETHOD.
 
   METHOD differs.

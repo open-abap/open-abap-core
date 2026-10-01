@@ -127,12 +127,13 @@ CLASS lcl_parser DEFINITION.
          full_name_upper TYPE string,
          value           TYPE string,
          type            TYPE string,
+         seq             TYPE i,
        END OF ty_data.
 
     TYPES ty_data_tt TYPE STANDARD TABLE OF ty_data WITH DEFAULT KEY
       WITH UNIQUE SORTED KEY key_full_name COMPONENTS full_name
       WITH UNIQUE SORTED KEY key_full_name_upper COMPONENTS full_name_upper
-      WITH NON-UNIQUE SORTED KEY key_parent COMPONENTS parent.
+      WITH NON-UNIQUE SORTED KEY key_parent COMPONENTS parent seq.
 
     DATA mt_data TYPE ty_data_tt.
 ENDCLASS.
@@ -168,6 +169,9 @@ CLASS lcl_parser IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD members.
+* the members in the order they were parsed: seq is part of key_parent,
+* as the order of rows with equal key values is not the order they were
+* appended in on every runtime (on a system the newest comes first)
     DATA ls_data LIKE LINE OF mt_data.
     LOOP AT mt_data INTO ls_data USING KEY key_parent WHERE parent = iv_path.
       APPEND ls_data-name TO rt_members.
@@ -261,6 +265,7 @@ CLASS lcl_parser IMPLEMENTATION.
               ls_data-value = li_value->get_value( ).
             ENDIF.
 
+            ls_data-seq = lines( mt_data ) + 1.
             APPEND ls_data TO mt_data.
 
             lo_stack->push(
@@ -275,6 +280,7 @@ CLASS lcl_parser IMPLEMENTATION.
             ls_data-full_name = ls_data-parent && ls_data-name.
             ls_data-full_name_upper = to_upper( ls_data-full_name ).
             ls_data-type = li_open->qname-name.
+            ls_data-seq = lines( mt_data ) + 1.
             APPEND ls_data TO mt_data.
 
             lo_stack->push(

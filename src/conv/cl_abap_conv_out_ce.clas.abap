@@ -75,7 +75,7 @@ CLASS cl_abap_conv_out_ce IMPLEMENTATION.
         buffer = lv_hex ).
     ASSERT xstrlen( lv_hex ) = 2.
     ret = lv_hex(1).
-    ret = ret + lv_hex+1(1) * 255.
+    ret = ret + lv_hex+1(1) * 256.
   ENDMETHOD.
 
   METHOD write.

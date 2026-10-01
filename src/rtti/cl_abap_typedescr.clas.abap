@@ -393,6 +393,11 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->kind = kind_elem.
         type->length = lv_length.
         type->decimals = lv_decimals.
+        lo_elem ?= type.
+        lo_elem->output_length = lv_length * 2.
+        IF lv_decimals > 0.
+          lo_elem->output_length = lo_elem->output_length + 1.
+        ENDIF.
       WHEN 'Time'.
         CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_time.
@@ -405,6 +410,9 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         CREATE OBJECT type TYPE cl_abap_elemdescr.
         type->type_kind = typekind_float.
         type->kind = kind_elem.
+        type->length = 8.
+        lo_elem ?= type.
+        lo_elem->output_length = 24.
         type->absolute_name = 'F'.
       WHEN 'DecFloat34'.
         CREATE OBJECT type TYPE cl_abap_elemdescr.
