@@ -317,6 +317,7 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD assert_differs.
+    DATA lv_msg TYPE string.
     check_comparable(
       act = act
       exp = exp ).
@@ -324,14 +325,20 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
         assert_equals(
           act = act
           exp = exp ).
-        RAISE EXCEPTION TYPE kernel_cx_assert
-          EXPORTING
-            msg      = |Expected different values|
-            actual   = act
-            expected = exp.
       CATCH kernel_cx_assert.
         RETURN.
     ENDTRY.
+    " raised outside the TRY, whose CATCH would take it
+    IF msg <> ''.
+      lv_msg = msg.
+    ELSE.
+      lv_msg = |Expected different values|.
+    ENDIF.
+    RAISE EXCEPTION TYPE kernel_cx_assert
+      EXPORTING
+        msg      = lv_msg
+        actual   = act
+        expected = exp.
   ENDMETHOD.
 
   METHOD assert_true.
