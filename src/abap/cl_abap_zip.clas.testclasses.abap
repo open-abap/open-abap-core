@@ -11,6 +11,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS load FOR TESTING RAISING cx_static_check.
     METHODS load_save FOR TESTING RAISING cx_static_check.
     METHODS load_stored FOR TESTING RAISING cx_static_check.
+    METHODS read_int4 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -234,6 +235,25 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_act
       exp = lv_exp ).
+  ENDMETHOD.
+
+  METHOD read_int4.
+* little endian, read as a signed i the way x LENGTH 4 converts to i
+    cl_abap_unit_assert=>assert_equals(
+      act = lcl_stream=>read_int4( iv_xstr = '0001000000' iv_offset = 1 )
+      exp = 1 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lcl_stream=>read_int4( iv_xstr = '78563412' iv_offset = 0 )
+      exp = 305419896 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lcl_stream=>read_int4( iv_xstr = 'FFFFFF7F' iv_offset = 0 )
+      exp = 2147483647 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lcl_stream=>read_int4( iv_xstr = '00000080' iv_offset = 0 )
+      exp = -2147483648 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lcl_stream=>read_int4( iv_xstr = 'FFFFFFFF' iv_offset = 0 )
+      exp = -1 ).
   ENDMETHOD.
 
 ENDCLASS.
