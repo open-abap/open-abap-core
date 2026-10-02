@@ -29,8 +29,15 @@ ENDCLASS.
 CLASS lcl_static DEFINITION.
   PUBLIC SECTION.
     CLASS-DATA foo TYPE string.
+    CLASS-METHODS bar.
+    METHODS baz.
 ENDCLASS.
 CLASS lcl_static IMPLEMENTATION.
+  METHOD bar.
+  ENDMETHOD.
+
+  METHOD baz.
+  ENDMETHOD.
 ENDCLASS.
 
 CLASS lcl_str DEFINITION.
@@ -273,9 +280,10 @@ CLASS ltcl_test IMPLEMENTATION.
 
   METHOD is_class.
 
-    DATA lo_foo TYPE REF TO lcl_static.
-    DATA lo_obj TYPE REF TO cl_abap_objectdescr.
+    DATA lo_foo  TYPE REF TO lcl_static.
+    DATA lo_obj  TYPE REF TO cl_abap_objectdescr.
     DATA ls_attr TYPE abap_attrdescr.
+    DATA ls_meth TYPE abap_methdescr.
 
     CREATE OBJECT lo_foo.
 
@@ -294,6 +302,18 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = ls_attr-length
       exp = 8 ).
+
+    READ TABLE lo_obj->methods WITH KEY name = 'BAR' INTO ls_meth.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_meth-is_class
+      exp = abap_true ).
+
+    READ TABLE lo_obj->methods WITH KEY name = 'BAZ' INTO ls_meth.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_meth-is_class
+      exp = abap_false ).
 
   ENDMETHOD.
 

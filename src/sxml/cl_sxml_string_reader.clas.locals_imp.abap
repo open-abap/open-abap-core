@@ -316,7 +316,9 @@ CLASS lcl_xml_parser DEFINITION.
              value  TYPE string,
              attrs  TYPE if_sxml_attribute=>attributes,
            END OF ty_item.
-    METHODS constructor IMPORTING source TYPE string.
+    METHODS constructor IMPORTING source TYPE string OPTIONAL
+                                  bytes  TYPE xstring OPTIONAL
+                                  binary TYPE abap_bool DEFAULT abap_false.
     METHODS next RETURNING VALUE(item) TYPE ty_item RAISING cx_sxml_parse_error.
   PRIVATE SECTION.
     TYPES: BEGIN OF ty_element,
@@ -334,6 +336,12 @@ CLASS lcl_xml_parser DEFINITION.
              had_previous TYPE abap_bool,
            END OF ty_binding.
     DATA mv_source TYPE string.
+    " a UTF-8 document is kept as its bytes: the markup is ASCII and no byte
+    " of a multi-byte character is below 80, so '<', '>' and the quotes are
+    " found in the bytes, and only the names and values between them are
+    " decoded; positions are then bytes
+    DATA mv_bytes TYPE xstring.
+    DATA mv_binary TYPE abap_bool.
     DATA mv_length TYPE i.
     DATA mv_pos TYPE i.
     DATA mv_done TYPE abap_bool.
@@ -348,12 +356,135 @@ CLASS lcl_xml_parser DEFINITION.
     METHODS decode IMPORTING raw TYPE string RETURNING VALUE(decoded) TYPE string RAISING cx_sxml_parse_error.
     METHODS lookup IMPORTING prefix TYPE string RETURNING VALUE(nsuri) TYPE string.
     METHODS restore IMPORTING depth TYPE i.
+    TYPES ty_char TYPE c LENGTH 1.
+    METHODS at IMPORTING pos TYPE i RETURNING VALUE(c) TYPE ty_char.
+    METHODS piece IMPORTING begin TYPE i length TYPE i RETURNING VALUE(text) TYPE string
+      RAISING cx_sxml_parse_error.
+    METHODS replaced IMPORTING part TYPE xstring begin TYPE i RETURNING VALUE(text) TYPE string
+      RAISING cx_sxml_parse_error.
+    METHODS seek IMPORTING sub TYPE string off TYPE i RETURNING VALUE(found) TYPE i.
 ENDCLASS.
 
 CLASS lcl_xml_parser IMPLEMENTATION.
   METHOD constructor.
+    IF binary = abap_true.
+      mv_binary = abap_true.
+      mv_bytes = bytes.
+      mv_length = xstrlen( bytes ).
+      RETURN.
+    ENDIF.
     mv_source = source.
     mv_length = strlen( source ).
+  ENDMETHOD.
+
+  METHOD at.
+    DATA byte TYPE x LENGTH 1.
+    DATA code TYPE i.
+    IF mv_binary = abap_false.
+      c = mv_source+pos(1).
+      RETURN.
+    ENDIF.
+    byte = mv_bytes+pos(1).
+    code = byte.
+    IF code < 128.
+      c = cl_abap_conv_in_ce=>uccpi( code ).
+    ELSE.
+      " part of a multi-byte character: never markup
+      c = 'x'.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD piece.
+    DATA part TYPE xstring.
+    IF mv_binary = abap_false.
+      text = mv_source+begin(length).
+      RETURN.
+    ENDIF.
+    IF length > 0.
+      part = mv_bytes+begin(length).
+      TRY.
+          text = cl_abap_codepage=>convert_from( part ).
+        CATCH cx_sy_conversion_codepage.
+          text = replaced( part  = part
+                           begin = begin ).
+      ENDTRY.
+    ENDIF.
+  ENDMETHOD.
+
+  METHOD replaced.
+    " a byte that does not start or continue a UTF-8 character reads as
+    " U+FFFD, as a system reads it (<a>FF</a> is a value
+    " U+FFFD; a lone 80 one U+FFFD; E2 82 before more text two; the overlong
+    " C0 AF one). A sequence cut off by the markup after it is an error at
+    " that markup (E2 82 then '<'). A system passes an encoded surrogate
+    " (ED A0 80) through as a lone D800; here it is U+FFFD
+    DATA pos TYPE i.
+    DATA lead TYPE x LENGTH 1.
+    DATA code TYPE i.
+    DATA size TYPE i.
+    DATA good TYPE abap_bool.
+    DATA chunk TYPE xstring.
+    WHILE pos < xstrlen( part ).
+      lead = part+pos(1).
+      code = lead.
+      IF code < 128.
+        size = 1.
+      ELSEIF code = 192 OR code = 193.
+        " an overlong form of an ASCII character: one U+FFFD for both bytes
+        size = -2.
+      ELSEIF code >= 194 AND code <= 223.
+        size = 2.
+      ELSEIF code >= 224 AND code <= 239.
+        size = 3.
+      ELSEIF code >= 240 AND code <= 244.
+        size = 4.
+      ELSE.
+        size = 0.
+      ENDIF.
+      IF size = -2 AND pos + 2 <= xstrlen( part ).
+        text = text && cl_abap_conv_in_ce=>uccpi( 65533 ).
+        pos = pos + 2.
+        CONTINUE.
+      ENDIF.
+      IF size > 1 AND pos + size > xstrlen( part ).
+        mv_pos = begin + xstrlen( part ).
+        fail( 'invalid UTF-8 sequence' ).
+      ENDIF.
+      " the conversion of the whole sequence checks its continuation bytes
+      good = boolc( size > 0 AND pos + size <= xstrlen( part ) ).
+      IF good = abap_true AND size > 1.
+        TRY.
+            chunk = part+pos(size).
+            text = text && cl_abap_codepage=>convert_from( chunk ).
+          CATCH cx_sy_conversion_codepage.
+            good = abap_false.
+        ENDTRY.
+      ELSEIF good = abap_true.
+        chunk = part+pos(1).
+        text = text && cl_abap_codepage=>convert_from( chunk ).
+      ENDIF.
+      IF good = abap_true.
+        pos = pos + size.
+      ELSE.
+        text = text && cl_abap_conv_in_ce=>uccpi( 65533 ).
+        pos = pos + 1.
+      ENDIF.
+    ENDWHILE.
+  ENDMETHOD.
+
+  METHOD seek.
+    DATA needle TYPE xstring.
+    IF mv_binary = abap_false.
+      found = find( val = mv_source
+                    sub = sub
+                    off = off ).
+      RETURN.
+    ENDIF.
+    needle = cl_abap_codepage=>convert_to( sub ).
+    FIND needle IN SECTION OFFSET off OF mv_bytes IN BYTE MODE MATCH OFFSET found.
+    IF sy-subrc <> 0.
+      found = -1.
+    ENDIF.
   ENDMETHOD.
 
   METHOD fail.
@@ -366,16 +497,30 @@ CLASS lcl_xml_parser IMPLEMENTATION.
 
   METHOD starts.
     DATA n TYPE i.
+    DATA k TYPE i.
     n = strlen( needle ).
-    IF mv_pos + n <= mv_length AND mv_source+mv_pos(n) = needle.
-      yes = abap_true.
+    IF mv_pos + n > mv_length.
+      RETURN.
     ENDIF.
+    IF mv_binary = abap_false.
+      IF mv_source+mv_pos(n) = needle.
+        yes = abap_true.
+      ENDIF.
+      RETURN.
+    ENDIF.
+    WHILE k < n.
+      IF at( mv_pos + k ) <> needle+k(1).
+        RETURN.
+      ENDIF.
+      k = k + 1.
+    ENDWHILE.
+    yes = abap_true.
   ENDMETHOD.
 
   METHOD whitespace.
     DATA c TYPE c LENGTH 1.
     WHILE mv_pos < mv_length.
-      c = mv_source+mv_pos(1).
+      c = at( mv_pos ).
       CASE c.
         WHEN space OR cl_abap_char_utilities=>horizontal_tab
             OR cl_abap_char_utilities=>newline OR cl_abap_char_utilities=>cr_lf(1).
@@ -392,7 +537,7 @@ CLASS lcl_xml_parser IMPLEMENTATION.
     DATA length TYPE i.
     begin = mv_pos.
     WHILE mv_pos < mv_length.
-      c = mv_source+mv_pos(1).
+      c = at( mv_pos ).
       IF c = space OR c = '/' OR c = '>' OR c = '=' OR c = '?' OR c = cl_abap_char_utilities=>newline
           OR c = cl_abap_char_utilities=>horizontal_tab OR c = cl_abap_char_utilities=>cr_lf(1).
         EXIT.
@@ -403,7 +548,8 @@ CLASS lcl_xml_parser IMPLEMENTATION.
       fail( 'document not wellformed' ).
     ENDIF.
     length = mv_pos - begin.
-    name = mv_source+begin(length).
+    name = piece( begin  = begin
+                  length = length ).
     c = name(1).
     IF ( c >= '0' AND c <= '9' ) OR c = '.' OR c = '-'.
       fail( 'invalid character after ''<''' ).
@@ -535,6 +681,7 @@ CLASS lcl_xml_parser IMPLEMENTATION.
     DATA attr_nsuri TYPE string.
     DATA local_name TYPE string.
     DATA quote TYPE c LENGTH 1.
+    DATA quote_text TYPE string.
     DATA element TYPE ty_element.
     DATA binding TYPE ty_binding.
     DATA current TYPE if_sxml_named=>nsbinding.
@@ -543,10 +690,14 @@ CLASS lcl_xml_parser IMPLEMENTATION.
     DATA names TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
     DATA values TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
     DATA lv_depth TYPE i.
+    DATA close_at TYPE i.
     DATA length TYPE i.
     DATA only_space TYPE abap_bool.
     DATA has_entity TYPE abap_bool.
     DATA c TYPE c LENGTH 1.
+    DATA c2 TYPE c LENGTH 1.
+    DATA found TYPE i.
+    DATA spaces TYPE string.
     FIELD-SYMBOLS <parent> TYPE ty_element.
     IF mv_done = abap_true.
       item-kind = if_sxml_node=>co_nt_final.
@@ -568,56 +719,65 @@ CLASS lcl_xml_parser IMPLEMENTATION.
       RETURN.
     ENDIF.
     WHILE mv_pos < mv_length.
-      IF starts( '<?' ) = abap_true.
+      " one look at the character after '<' decides the kind of markup, and
+      " runs of text, comments and values are crossed with find( ) instead
+      " of a character at a time
+      CLEAR: c, c2.
+      c = at( mv_pos ).
+      IF c = '<' AND mv_pos + 1 < mv_length.
+        i = mv_pos + 1.
+        c2 = at( i ).
+      ENDIF.
+      IF c = '<' AND c2 = '?'.
         mv_pos = mv_pos + 2.
-        WHILE mv_pos < mv_length AND starts( '?>' ) = abap_false.
-          mv_pos = mv_pos + 1.
-        ENDWHILE.
-        IF mv_pos = mv_length.
-
+        found = seek( sub = '?>'
+                      off = mv_pos ).
+        IF found < 0.
+          mv_pos = mv_length.
           fail( '<EOF> reached' ).
-
         ENDIF.
-        mv_pos = mv_pos + 2.
+        mv_pos = found + 2.
         CONTINUE.
       ENDIF.
-      IF starts( '<!--' ) = abap_true.
+      IF c2 = '!' AND starts( '<!--' ) = abap_true.
         mv_pos = mv_pos + 4.
-        WHILE mv_pos < mv_length AND starts( '-->' ) = abap_false.
-          IF starts( '--' ) = abap_true.
-            fail( '-- in comment' ).
-          ENDIF.
-          mv_pos = mv_pos + 1.
-        ENDWHILE.
-        IF mv_pos = mv_length.
-
+        " the first '--' ends the comment when it is '-->', and is an error
+        " otherwise
+        found = seek( sub = '--'
+                      off = mv_pos ).
+        IF found < 0.
+          mv_pos = mv_length.
           fail( '<EOF> reached' ).
-
+        ENDIF.
+        mv_pos = found.
+        IF starts( '-->' ) = abap_false.
+          fail( '-- in comment' ).
         ENDIF.
         mv_pos = mv_pos + 3.
         CONTINUE.
       ENDIF.
-      IF starts( '<![CDATA[' ) = abap_true.
+      IF c2 = '!' AND starts( '<![CDATA[' ) = abap_true.
         mv_pos = mv_pos + 9.
         begin = mv_pos.
-        WHILE mv_pos < mv_length AND starts( ']]>' ) = abap_false.
-          mv_pos = mv_pos + 1.
-        ENDWHILE.
-        IF mv_pos = mv_length.
-
+        found = seek( sub = ']]>'
+                      off = mv_pos ).
+        IF found < 0.
+          mv_pos = mv_length.
           fail( '<EOF> reached' ).
-
         ENDIF.
+        mv_pos = found.
         item-kind = if_sxml_node=>co_nt_value.
         length = mv_pos - begin.
-        item-value = mv_source+begin(length).
+        item-value = piece( begin  = begin
+                            length = length ).
         mv_pos = mv_pos + 3.
         RETURN.
       ENDIF.
-      IF starts( '<!' ) = abap_true.
+      IF c2 = '!'.
         fail( '''<!--'' or ''<![CDATA['' expected' ).
       ENDIF.
-      IF starts( '</' ) = abap_true.
+      IF c = '<' AND c2 = '/'.
+        close_at = mv_pos.
         mv_pos = mv_pos + 2.
         name = take_name( ).
         whitespace( ).
@@ -640,7 +800,8 @@ CLASS lcl_xml_parser IMPLEMENTATION.
         ENDIF.
         READ TABLE mt_elements INDEX lv_depth INTO element.
         IF element-name <> name.
-
+          " a system reports the close tag where it starts (<a>e</b> at 4)
+          mv_pos = close_at.
           fail( 'document not wellformed' ).
 
         ENDIF.
@@ -655,7 +816,7 @@ CLASS lcl_xml_parser IMPLEMENTATION.
         ENDIF.
         RETURN.
       ENDIF.
-      IF starts( '<' ) = abap_true.
+      IF c = '<'.
         mv_pos = mv_pos + 1.
         name = take_name( ).
         CLEAR: attrs, names, values.
@@ -690,29 +851,41 @@ CLASS lcl_xml_parser IMPLEMENTATION.
             fail( '<EOF> reached' ).
 
           ENDIF.
-          quote = mv_source+mv_pos(1).
+          quote = at( mv_pos ).
           IF quote <> '"' AND quote <> ''''.
             fail( 'opening ''"'' or '''''' expected' ).
           ENDIF.
           mv_pos = mv_pos + 1.
           begin = mv_pos.
-          has_entity = abap_false.
-          WHILE mv_pos < mv_length AND mv_source+mv_pos(1) <> quote.
-            IF mv_source+mv_pos(1) = '<'.
+          quote_text = quote.
+          found = seek( sub = quote_text
+                        off = mv_pos ).
+          IF found < 0.
+            found = seek( sub = '<'
+                          off = mv_pos ).
+            IF found >= 0.
+              mv_pos = found.
               fail( 'closing ''"'' expected' ).
             ENDIF.
-            IF mv_source+mv_pos(1) = '&'.
-              has_entity = abap_true.
-            ENDIF.
-            mv_pos = mv_pos + 1.
-          ENDWHILE.
-          IF mv_pos = mv_length.
-
+            mv_pos = mv_length.
             fail( '<EOF> reached' ).
-
           ENDIF.
-          length = mv_pos - begin.
-          attr_value = mv_source+begin(length).
+          length = found - begin.
+          attr_value = piece( begin  = begin
+                              length = length ).
+          " searched in the value, never on through the document; a system
+          " reports it at the start of the value (<a x="ab<"/> at 6)
+          IF find( val = attr_value
+                   sub = '<' ) >= 0.
+            mv_pos = begin.
+            fail( 'closing ''"'' expected' ).
+          ENDIF.
+          mv_pos = found.
+          has_entity = abap_false.
+          IF find( val = attr_value
+                   sub = '&' ) >= 0.
+            has_entity = abap_true.
+          ENDIF.
           IF has_entity = abap_true.
             attr_value = decode( attr_value ).
           ENDIF.
@@ -790,22 +963,26 @@ CLASS lcl_xml_parser IMPLEMENTATION.
         RETURN.
       ENDIF.
       begin = mv_pos.
-      only_space = abap_true.
+      found = seek( sub = '<'
+                    off = mv_pos ).
+      IF found < 0.
+        mv_pos = mv_length.
+      ELSE.
+        mv_pos = found.
+      ENDIF.
+      length = mv_pos - begin.
+      name = piece( begin  = begin
+                    length = length ).
+      spaces = ` ` && cl_abap_char_utilities=>horizontal_tab && cl_abap_char_utilities=>newline && cl_abap_char_utilities=>cr_lf(1).
+      only_space = abap_false.
+      IF name CO spaces.
+        only_space = abap_true.
+      ENDIF.
       has_entity = abap_false.
-      WHILE mv_pos < mv_length.
-        c = mv_source+mv_pos(1).
-        IF c = '<'.
-          EXIT.
-        ENDIF.
-        IF c <> space AND c <> cl_abap_char_utilities=>horizontal_tab
-            AND c <> cl_abap_char_utilities=>newline AND c <> cl_abap_char_utilities=>cr_lf(1).
-          only_space = abap_false.
-        ENDIF.
-        IF c = '&'.
-          has_entity = abap_true.
-        ENDIF.
-        mv_pos = mv_pos + 1.
-      ENDWHILE.
+      IF find( val = name
+               sub = '&' ) >= 0.
+        has_entity = abap_true.
+      ENDIF.
       IF mt_elements IS INITIAL.
 
         CONTINUE.
@@ -832,7 +1009,6 @@ CLASS lcl_xml_parser IMPLEMENTATION.
         ENDIF.
       ENDIF.
       item-kind = if_sxml_node=>co_nt_value.
-      name = mv_source+begin(length).
       IF has_entity = abap_true.
         item-value = decode( name ).
       ELSE.
@@ -858,7 +1034,9 @@ CLASS lcl_reader DEFINITION.
     TYPES ty_nodes TYPE STANDARD TABLE OF REF TO if_sxml_node WITH DEFAULT KEY.
     METHODS constructor
       IMPORTING
-        iv_json TYPE string.
+        iv_json  TYPE string
+        iv_bytes TYPE xstring OPTIONAL
+        iv_utf8  TYPE abap_bool DEFAULT abap_false.
     INTERFACES if_sxml_reader.
   PRIVATE SECTION.
     METHODS initialize.
@@ -900,6 +1078,14 @@ CLASS lcl_reader IMPLEMENTATION.
     DATA first TYPE i.
     DATA size TYPE i.
     DATA c TYPE c LENGTH 1.
+    IF iv_utf8 = abap_true.
+      CREATE OBJECT mo_xml
+        EXPORTING
+          bytes  = iv_bytes
+          binary = abap_true.
+      mv_initialized = abap_false.
+      RETURN.
+    ENDIF.
     mv_json = iv_json.
     size = strlen( iv_json ).
     WHILE first < size.
