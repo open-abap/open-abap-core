@@ -54,18 +54,21 @@ CLASS lcl_stream IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD read_int4.
-    DATA lv_byte   TYPE x LENGTH 1.
-    DATA lv_val    TYPE i.
-    DATA lv_factor TYPE i VALUE 1.
-    DATA lv_pos    TYPE i.
+* little endian in the file; the bytes are turned around into an x LENGTH 4,
+* whose conversion to i is big endian and signed. Summing byte * 256 ** n
+* computed 256 ** 4 in an i, which a SAP system rejects with
+* CX_SY_ARITHMETIC_OVERFLOW
+    DATA lv_hex TYPE x LENGTH 4.
+    DATA lv_pos TYPE i.
 
-    DO 4 TIMES.
-      lv_pos = iv_offset + sy-index - 1.
-      lv_byte = iv_xstr+lv_pos(1).
-      lv_val = lv_byte.
-      rv_int = rv_int + lv_val * lv_factor.
-      lv_factor = lv_factor * 256.
-    ENDDO.
+    lv_pos = iv_offset + 3.
+    lv_hex(1) = iv_xstr+lv_pos(1).
+    lv_pos = iv_offset + 2.
+    lv_hex+1(1) = iv_xstr+lv_pos(1).
+    lv_pos = iv_offset + 1.
+    lv_hex+2(1) = iv_xstr+lv_pos(1).
+    lv_hex+3(1) = iv_xstr+iv_offset(1).
+    rv_int = lv_hex.
   ENDMETHOD.
 
   METHOD get.
