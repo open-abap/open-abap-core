@@ -441,6 +441,10 @@ CLASS lcl_node DEFINITION.
 ENDCLASS.
 
 CLASS lcl_node IMPLEMENTATION.
+  METHOD if_ixml_text~ws_only.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_ixml_node~create_filter_name.
     ASSERT 1 = 'todo'.
   ENDMETHOD.
