@@ -1,0 +1,7 @@
+CLASS cx_fdt_excel_core DEFINITION PUBLIC INHERITING FROM cx_static_check.
+
+ENDCLASS.
+
+CLASS cx_fdt_excel_core IMPLEMENTATION.
+
+ENDCLASS.
