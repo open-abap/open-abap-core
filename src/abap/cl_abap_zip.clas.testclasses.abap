@@ -1,6 +1,9 @@
 CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
+    METHODS get_index FOR TESTING.
+    METHODS delete_index FOR TESTING.
+    METHODS invalid_index FOR TESTING.
     METHODS test1 FOR TESTING RAISING cx_static_check.
     METHODS get FOR TESTING RAISING cx_static_check.
     METHODS delete FOR TESTING RAISING cx_static_check.
@@ -16,6 +19,74 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
+
+  METHOD get_index.
+    DATA lo_zip TYPE REF TO cl_abap_zip.
+    DATA lv_content TYPE xstring.
+    CREATE OBJECT lo_zip.
+    lo_zip->add( name    = 'first'
+                 content = '41' ).
+    lo_zip->add( name    = 'last'
+                 content = '42' ).
+    lo_zip->get( EXPORTING index = 1 IMPORTING content = lv_content ).
+    cl_abap_unit_assert=>assert_equals( act = lv_content
+                                        exp = '41' ).
+    lo_zip->get( EXPORTING index = 2 IMPORTING content = lv_content ).
+    cl_abap_unit_assert=>assert_equals( act = lv_content
+                                        exp = '42' ).
+  ENDMETHOD.
+
+  METHOD delete_index.
+    DATA lo_zip TYPE REF TO cl_abap_zip.
+    DATA lv_content TYPE xstring.
+    DATA lv_saved TYPE xstring.
+    CREATE OBJECT lo_zip.
+    lo_zip->add( name    = 'first'
+                 content = '41' ).
+    lo_zip->add( name    = 'middle'
+                 content = '42' ).
+    lo_zip->add( name    = 'last'
+                 content = '43' ).
+    lv_saved = lo_zip->save( ).
+    lo_zip->load( lv_saved ).
+    lo_zip->delete( index = 2 ).
+    cl_abap_unit_assert=>assert_equals( act = lines( lo_zip->files )
+                                        exp = 2 ).
+    lo_zip->get( EXPORTING index = 2 IMPORTING content = lv_content ).
+    cl_abap_unit_assert=>assert_equals( act = lv_content
+                                        exp = '43' ).
+    lo_zip->delete( index = 2 ).
+    lo_zip->delete( index = 1 ).
+    cl_abap_unit_assert=>assert_equals( act = lines( lo_zip->files )
+                                        exp = 0 ).
+    lo_zip->get( EXPORTING name = 'first' EXCEPTIONS zip_index_error = 1 ).
+    cl_abap_unit_assert=>assert_equals( act = sy-subrc
+                                        exp = 1 ).
+  ENDMETHOD.
+
+  METHOD invalid_index.
+    DATA lo_zip TYPE REF TO cl_abap_zip.
+    DATA lv_index TYPE i.
+    CREATE OBJECT lo_zip.
+    lo_zip->add( name    = 'first'
+                 content = '41' ).
+    DO 3 TIMES.
+      CASE sy-index.
+        WHEN 1.
+          lv_index = -1.
+        WHEN 2.
+          lv_index = 0.
+        WHEN 3.
+          lv_index = 2.
+      ENDCASE.
+      lo_zip->get( EXPORTING index = lv_index EXCEPTIONS zip_index_error = 1 ).
+      cl_abap_unit_assert=>assert_equals( act = sy-subrc
+                                          exp = 1 ).
+      lo_zip->delete( EXPORTING index = lv_index EXCEPTIONS zip_index_error = 1 ).
+      cl_abap_unit_assert=>assert_equals( act = sy-subrc
+                                          exp = 1 ).
+    ENDDO.
+  ENDMETHOD.
 
   METHOD crc.
     DATA lv_crc TYPE i.
