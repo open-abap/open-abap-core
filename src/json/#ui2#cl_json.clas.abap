@@ -454,6 +454,7 @@ CLASS /ui2/cl_json IMPLEMENTATION.
     DATA lo_struct     TYPE REF TO cl_abap_structdescr.
     DATA lo_table      TYPE REF TO cl_abap_tabledescr.
     DATA lo_refdescr   TYPE REF TO cl_abap_refdescr.
+    DATA lo_datadescr  TYPE REF TO cl_abap_datadescr.
     DATA lt_components TYPE cl_abap_structdescr=>component_table.
     DATA ls_component  LIKE LINE OF lt_components.
     DATA lt_members    TYPE string_table.
@@ -592,9 +593,11 @@ CLASS /ui2/cl_json IMPLEMENTATION.
                   ASSERT 1 = 'todo'.
                 ENDIF.
               WHEN 'bool'.
-                CREATE DATA data TYPE HANDLE cl_abap_typedescr=>describe_by_name( 'ABAP_BOOL' ).
+                lo_datadescr ?= cl_abap_typedescr=>describe_by_name( 'ABAP_BOOL' ).
+                CREATE DATA data TYPE HANDLE lo_datadescr.
               WHEN 'str'.
-                CREATE DATA data TYPE HANDLE cl_abap_elemdescr=>get_string( ).
+                lo_datadescr = cl_abap_elemdescr=>get_string( ).
+                CREATE DATA data TYPE HANDLE lo_datadescr.
               WHEN 'null'.
                 CLEAR data.
                 RETURN.
