@@ -87,6 +87,14 @@ CLASS cl_abap_dyn_prg DEFINITION PUBLIC.
         VALUE(val_str) TYPE string
       RAISING
         cx_abap_not_in_whitelist.
+
+  PRIVATE SECTION.
+    CLASS-METHODS check_table_in_packages
+      IMPORTING
+        iv_table    TYPE string
+        iv_packages TYPE csequence
+      RAISING
+        cx_abap_not_in_package.
 ENDCLASS.
 
 CLASS cl_abap_dyn_prg IMPLEMENTATION.
@@ -165,7 +173,59 @@ CLASS cl_abap_dyn_prg IMPLEMENTATION.
       RAISE EXCEPTION TYPE cx_abap_not_a_table.
     ENDIF.
 
-* there is no package information off-stack, every known table is accepted
+    check_table_in_packages(
+      iv_table    = lv_check
+      iv_packages = packages ).
+  ENDMETHOD.
+
+  METHOD check_table_in_packages.
+* the package of the table is read from TADIR. The transpiler registers every object
+* under $TMP, so a table is only checked when its TADIR entry carries a real package,
+* otherwise nothing is known about the package and the table is accepted
+    DATA lo_statement TYPE REF TO cl_sql_statement.
+    DATA lo_result    TYPE REF TO cl_sql_result_set.
+    DATA lr_devclass  TYPE REF TO data.
+    DATA lv_devclass  TYPE string.
+    DATA lv_packages  TYPE string.
+    DATA lv_package   TYPE string.
+    DATA lt_packages  TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+
+    IF iv_packages IS INITIAL.
+      RETURN.
+    ENDIF.
+
+* native SQL, as the check must also see TADIR while Open SQL test doubles are active.
+* the aggregate makes sure one row is returned, also when the table has no TADIR entry
+    TRY.
+        CREATE OBJECT lo_statement.
+        lo_result = lo_statement->execute_query(
+          |SELECT COALESCE(MAX("devclass"), '') FROM "tadir" | &&
+          |WHERE "pgmid" = 'R3TR' AND "object" = 'TABL' AND "obj_name" = '{ iv_table }'| ).
+        GET REFERENCE OF lv_devclass INTO lr_devclass.
+        lo_result->set_param( lr_devclass ).
+        lo_result->next( ).
+        lo_result->close( ).
+      CATCH cx_sql_exception cx_parameter_invalid.
+* no database connected, or no TADIR
+        RETURN.
+    ENDTRY.
+
+    CONDENSE lv_devclass.
+    IF lv_devclass IS INITIAL OR lv_devclass = '$TMP'.
+      RETURN.
+    ENDIF.
+
+    lv_packages = iv_packages.
+    TRANSLATE lv_packages TO UPPER CASE.
+    SPLIT lv_packages AT ',' INTO TABLE lt_packages.
+    LOOP AT lt_packages INTO lv_package.
+      CONDENSE lv_package.
+      IF lv_package = lv_devclass.
+        RETURN.
+      ENDIF.
+    ENDLOOP.
+
+    RAISE EXCEPTION TYPE cx_abap_not_in_package.
   ENDMETHOD.
 
   METHOD check_whitelist_str.
