@@ -328,3 +328,122 @@ CLASS ltcl_dyn_prg IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+
+CLASS ltcl_package_check DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+
+  PRIVATE SECTION.
+    METHODS teardown.
+    METHODS set_package
+      IMPORTING
+        iv_package TYPE tadir-devclass.
+    METHODS package_matches FOR TESTING RAISING cx_static_check.
+    METHODS package_in_list FOR TESTING RAISING cx_static_check.
+    METHODS package_lower_case FOR TESTING RAISING cx_static_check.
+    METHODS package_differs FOR TESTING RAISING cx_static_check.
+    METHODS local_object_accepted FOR TESTING RAISING cx_static_check.
+    METHODS no_packages_accepted FOR TESTING RAISING cx_static_check.
+    METHODS package_differs_with_doubles FOR TESTING RAISING cx_static_check.
+
+ENDCLASS.
+
+CLASS ltcl_package_check IMPLEMENTATION.
+
+  METHOD set_package.
+    UPDATE tadir SET devclass = @iv_package
+      WHERE pgmid = 'R3TR' AND object = 'TABL' AND obj_name = 'T000'.
+    cl_abap_unit_assert=>assert_subrc( ).
+  ENDMETHOD.
+
+  METHOD teardown.
+* the transpiler registers every object under $TMP
+    set_package( '$TMP' ).
+  ENDMETHOD.
+
+  METHOD package_matches.
+    set_package( 'ZPACKAGE' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>check_table_name_str(
+        val      = 'T000'
+        packages = 'ZPACKAGE' )
+      exp = 'T000' ).
+  ENDMETHOD.
+
+  METHOD package_in_list.
+    set_package( 'ZPACKAGE' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>check_table_name_str(
+        val      = 'T000'
+        packages = 'ZOTHER, ZPACKAGE' )
+      exp = 'T000' ).
+  ENDMETHOD.
+
+  METHOD package_lower_case.
+    set_package( 'ZPACKAGE' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>check_table_name_str(
+        val      = 't000'
+        packages = 'zpackage' )
+      exp = 't000' ).
+  ENDMETHOD.
+
+  METHOD package_differs.
+    set_package( 'ZPACKAGE' ).
+
+    TRY.
+        cl_abap_dyn_prg=>check_table_name_str(
+          val      = 'T000'
+          packages = 'ZOTHER' ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_abap_not_in_package.
+        " expected
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD local_object_accepted.
+* nothing is known about the package of a $TMP object
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>check_table_name_str(
+        val      = 'T000'
+        packages = 'ZOTHER' )
+      exp = 'T000' ).
+  ENDMETHOD.
+
+  METHOD no_packages_accepted.
+    set_package( 'ZPACKAGE' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_dyn_prg=>check_table_name_str(
+        val      = 'T000'
+        packages = '' )
+      exp = 'T000' ).
+  ENDMETHOD.
+
+  METHOD package_differs_with_doubles.
+    DATA lt_tables      TYPE if_osql_test_environment=>ty_t_sobjnames.
+    DATA lo_environment TYPE REF TO if_osql_test_environment.
+    DATA lv_raised      TYPE abap_bool.
+
+    set_package( 'ZPACKAGE' ).
+
+* TADIR is not doubled, the check must still find the package
+    APPEND 'T000' TO lt_tables.
+    lo_environment = cl_osql_test_environment=>create( lt_tables ).
+
+    TRY.
+        cl_abap_dyn_prg=>check_table_name_str(
+          val      = 'T000'
+          packages = 'ZOTHER' ).
+      CATCH cx_abap_not_in_package.
+        lv_raised = abap_true.
+    ENDTRY.
+
+    lo_environment->destroy( ).
+
+    cl_abap_unit_assert=>assert_true( lv_raised ).
+  ENDMETHOD.
+
+ENDCLASS.
