@@ -144,7 +144,45 @@ CLASS cl_abap_tstmp IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD systemtstmp_utc2syst.
-    ASSERT 1 = 'todo'.
+    DATA lv_timestamp TYPE n LENGTH 14.
+    DATA lv_date TYPE d.
+    DATA lv_time TYPE t.
+    DATA lv_year TYPE i.
+    DATA lv_month TYPE i.
+    DATA lv_days TYPE i.
+
+    IF utc_tstmp < 10101000000 OR utc_tstmp > 99991231235959.
+      RAISE EXCEPTION TYPE cx_parameter_invalid_range.
+    ENDIF.
+
+    lv_timestamp = utc_tstmp.
+    lv_date = lv_timestamp(8).
+    lv_time = lv_timestamp+8(6).
+    lv_year = lv_date(4).
+    lv_month = lv_date+4(2).
+
+    CASE lv_month.
+      WHEN 1 OR 3 OR 5 OR 7 OR 8 OR 10 OR 12.
+        lv_days = 31.
+      WHEN 4 OR 6 OR 9 OR 11.
+        lv_days = 30.
+      WHEN 2.
+        lv_days = 28.
+        IF lv_year MOD 400 = 0 OR ( lv_year MOD 4 = 0 AND lv_year MOD 100 <> 0 ).
+          lv_days = 29.
+        ENDIF.
+      WHEN OTHERS.
+        RAISE EXCEPTION TYPE cx_parameter_invalid_range.
+    ENDCASE.
+
+    IF lv_date+6(2) < 1 OR lv_date+6(2) > lv_days
+        OR lv_time(2) > 23 OR lv_time+2(2) > 59 OR lv_time+4(2) > 59.
+      RAISE EXCEPTION TYPE cx_parameter_invalid_range.
+    ENDIF.
+
+* system timezone is always UTC for open-abap
+    syst_date = lv_date.
+    syst_time = lv_time.
   ENDMETHOD.
 
   METHOD move.
