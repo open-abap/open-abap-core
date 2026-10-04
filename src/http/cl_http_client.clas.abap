@@ -35,6 +35,7 @@ CLASS cl_http_client DEFINITION PUBLIC CREATE PRIVATE.
     DATA mv_sent TYPE abap_bool.
 * the error of the last SEND, reported by RECEIVE and GET_LAST_ERROR
     DATA mv_error TYPE string.
+    DATA mv_error_code TYPE i.
 
 ENDCLASS.
 
@@ -120,10 +121,24 @@ CLASS cl_http_client IMPLEMENTATION.
     DATA ls_field         LIKE LINE OF lt_header_fields.
     DATA lo_entity        TYPE REF TO cl_http_entity.
     DATA lv_error         TYPE string.
+    DATA lv_error_code    TYPE i.
     DATA lv_before_send   TYPE abap_bool.
 
     CLEAR mv_error.
+    CLEAR mv_error_code.
     mv_sent = abap_true.
+
+    IF timeout < -1.
+      mv_error_code = 17.
+      mv_error = 'Internal error. Handle for this http session was not found or is NULL.'.
+      lo_entity ?= if_http_client~response.
+      WRITE '@KERNEL lo_entity.get().mt_headers.clear();'.
+      WRITE '@KERNEL lo_entity.get().mv_content_type.clear();'.
+      if_http_client~response->set_data( lv_xstr ).
+      if_http_client~response->set_status( code   = 0
+                                           reason = '' ).
+      RAISE http_invalid_timeout.
+    ENDIF.
 
     lv_method = if_http_client~request->get_method( ).
     IF lv_method IS INITIAL.
@@ -184,7 +199,7 @@ CLASS cl_http_client IMPLEMENTATION.
 
     WRITE '@KERNEL const https = await import("https");'.
     WRITE '@KERNEL const http = await import("http");'.
-    WRITE '@KERNEL function postData(url, options, requestBody) {'.
+    WRITE '@KERNEL function postData(url, options, requestBody, timeoutSeconds) {'.
     WRITE '@KERNEL   return new Promise((resolve) => {'.
     WRITE '@KERNEL     const reject = (error) => resolve({error});'.
     WRITE '@KERNEL     const prot = url.startsWith("http://") ? http : https;'.
@@ -207,6 +222,12 @@ CLASS cl_http_client IMPLEMENTATION.
 * thrown here, nothing was sent yet: an invalid header, method or URL
     WRITE '@KERNEL     } catch (error) { resolve({error, beforeSend: true}); return; }'.
     WRITE '@KERNEL     req.on("error", reject);'.
+* setTimeout is an idle timeout; the callback must explicitly abort the request
+* set zero too, to clear the timeout on a socket reused by the keep-alive agent
+    WRITE '@KERNEL     req.setTimeout(Math.max(0, timeoutSeconds) * 1000, () => {'.
+    WRITE '@KERNEL       const error = new Error("Connection to partner timed out after " + timeoutSeconds + "s.");'.
+    WRITE '@KERNEL       error.code = "ETIMEDOUT"; req.destroy(error);'.
+    WRITE '@KERNEL     });'.
     WRITE '@KERNEL     req.write(requestBody);'.
     WRITE '@KERNEL     req.end();'.
     WRITE '@KERNEL   });'.
@@ -214,7 +235,7 @@ CLASS cl_http_client IMPLEMENTATION.
 
     WRITE '@KERNEL const prot = lv_url.get().startsWith("http://") ? http : https;'.
     WRITE '@KERNEL if (this.agent === undefined) {this.agent = new prot.Agent({keepAlive: true, maxSockets: 1});}'.
-    WRITE '@KERNEL let response = await postData(lv_url.get(), {method: lv_method.get(), headers: headers, agent: this.agent}, Buffer.from(lv_xbody.get(), "hex"));'.
+    WRITE '@KERNEL let response = await postData(lv_url.get(), {method: lv_method.get(), headers: headers, agent: this.agent}, Buffer.from(lv_xbody.get(), "hex"), timeout.get());'.
 
     " WRITE '@KERNEL console.dir(response);'.
     " WRITE '@KERNEL console.dir(response.headers);'.
@@ -222,6 +243,7 @@ CLASS cl_http_client IMPLEMENTATION.
     WRITE '@KERNEL if (response.error) {'.
 * on a dual-stack host a refused "localhost" is an AggregateError with an empty message
     WRITE '@KERNEL   const e = response.error;'.
+    WRITE '@KERNEL   if (e.code === "ETIMEDOUT") lv_error_code.set(402);'.
     WRITE '@KERNEL   lv_error.set(String(e.message || (e.errors || []).map(x => x.message).join("; ") || e.code || e));'.
     WRITE '@KERNEL   if (response.beforeSend === true) lv_before_send.set("X");'.
     WRITE '@KERNEL }'.
@@ -235,6 +257,7 @@ CLASS cl_http_client IMPLEMENTATION.
         code   = 0
         reason = '' ).
       mv_error = lv_error.
+      mv_error_code = lv_error_code.
 * as on a system: a request that cannot be written fails SEND, a connection that fails fails RECEIVE
       IF lv_before_send = abap_true.
         mv_sent = abap_false.
@@ -305,6 +328,9 @@ CLASS cl_http_client IMPLEMENTATION.
   METHOD if_http_client~get_last_error.
     if_http_client~response->get_status( IMPORTING code = code ).
     IF mv_error IS NOT INITIAL.
+      IF mv_error_code <> 0.
+        code = mv_error_code.
+      ENDIF.
 * the message is Node's; a system answers the ICM's text and code, e.g. 411 for a refused connection
       message = mv_error.
     ELSE.

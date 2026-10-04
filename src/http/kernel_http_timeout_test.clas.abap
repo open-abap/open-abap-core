@@ -1,0 +1,5 @@
+CLASS kernel_http_timeout_test DEFINITION PUBLIC FINAL CREATE PUBLIC.
+ENDCLASS.
+
+CLASS kernel_http_timeout_test IMPLEMENTATION.
+ENDCLASS.
