@@ -66,8 +66,21 @@ CLASS cl_abap_zip IMPLEMENTATION.
 
   METHOD delete.
     DATA lv_name TYPE string.
+    DATA ls_contents LIKE LINE OF mt_contents.
 
-    ASSERT name IS NOT INITIAL.
+    IF name IS INITIAL.
+      IF index <= 0.
+        RAISE zip_index_error.
+      ENDIF.
+      READ TABLE mt_contents INDEX index INTO ls_contents.
+      IF sy-subrc <> 0.
+        RAISE zip_index_error.
+      ENDIF.
+      DELETE mt_contents INDEX index.
+      DELETE files INDEX index.
+      RETURN.
+    ENDIF.
+
     ASSERT index IS INITIAL.
     lv_name = name.
 
@@ -84,10 +97,15 @@ CLASS cl_abap_zip IMPLEMENTATION.
     DATA ls_length   TYPE i.
     DATA ls_contents LIKE LINE OF mt_contents.
 
-    ASSERT name IS NOT INITIAL.
-    ASSERT index IS INITIAL.
-
-    READ TABLE mt_contents WITH KEY name = name INTO ls_contents.
+    IF name IS INITIAL.
+      IF index <= 0.
+        RAISE zip_index_error.
+      ENDIF.
+      READ TABLE mt_contents INDEX index INTO ls_contents.
+    ELSE.
+      ASSERT index IS INITIAL.
+      READ TABLE mt_contents WITH KEY name = name INTO ls_contents.
+    ENDIF.
     IF sy-subrc <> 0.
       RAISE zip_index_error.
     ENDIF.
