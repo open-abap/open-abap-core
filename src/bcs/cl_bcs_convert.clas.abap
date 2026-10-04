@@ -58,7 +58,22 @@ CLASS cl_bcs_convert IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD xstring_to_solix.
-    ASSERT 1 = 'todo'.
+    DATA lv_offset TYPE i.
+    DATA lv_length TYPE i.
+    DATA lv_remaining TYPE i.
+    DATA ls_solix TYPE solix.
+
+    lv_remaining = xstrlen( iv_xstring ).
+    WHILE lv_remaining > 0.
+      lv_length = lv_remaining.
+      IF lv_length > 255.
+        lv_length = 255.
+      ENDIF.
+      ls_solix-line = iv_xstring+lv_offset(lv_length).
+      APPEND ls_solix TO et_solix.
+      lv_offset = lv_offset + lv_length.
+      lv_remaining = lv_remaining - lv_length.
+    ENDWHILE.
   ENDMETHOD.
 
   METHOD raw_to_string.
