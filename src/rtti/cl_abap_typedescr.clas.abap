@@ -205,8 +205,8 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->relative_name = to_upper( p_name ).
         type->absolute_name = '\CLASS=' && to_upper( p_name ).
         objectdescr ?= type.
-        objectdescr->mv_object_name = to_upper( p_name ). " todo, this should give syntax error, as they are not friends
-        objectdescr->mv_object_type = oo_type. " todo, this should give syntax error, as they are not friends
+        objectdescr->mv_object_name = to_upper( p_name ).
+        objectdescr->mv_object_type = oo_type.
       WHEN 'CLAS'.
 *        WRITE '@KERNEL console.dir(p_name);'.
         type = cl_abap_classdescr=>_construct( lv_any ).
@@ -219,8 +219,8 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
           type->absolute_name = '\CLASS=' && to_upper( p_name ).
         ENDIF.
         objectdescr ?= type.
-        objectdescr->mv_object_name = to_upper( p_name ). " todo, this should give syntax error, as they are not friends
-        objectdescr->mv_object_type = oo_type. " todo, this should give syntax error, as they are not friends
+        objectdescr->mv_object_name = to_upper( p_name ).
+        objectdescr->mv_object_type = oo_type.
       WHEN OTHERS.
         TRY.
             CREATE DATA ref TYPE (p_name).
