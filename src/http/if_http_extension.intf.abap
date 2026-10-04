@@ -10,6 +10,7 @@ INTERFACE if_http_extension PUBLIC.
   CONSTANTS co_lifetime_destroy    TYPE i VALUE 1.
   CONSTANTS co_lifetime_keep       TYPE i VALUE 0.
 
+
   METHODS handle_request IMPORTING server TYPE REF TO if_http_server.
 
 ENDINTERFACE.
