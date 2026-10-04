@@ -9,6 +9,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS move FOR TESTING RAISING cx_static_check.
     METHODS systemtstmp_syst2utc FOR TESTING RAISING cx_static_check.
     METHODS systemtstmp_syst2utc_initial FOR TESTING RAISING cx_static_check.
+    METHODS systemtstmp_utc2syst FOR TESTING RAISING cx_static_check.
+    METHODS systemtstmp_utc2syst_invalid FOR TESTING RAISING cx_static_check.
     METHODS move_to_short1 FOR TESTING RAISING cx_static_check.
     METHODS td_subtract1 FOR TESTING RAISING cx_static_check.
     METHODS td_add1 FOR TESTING RAISING cx_static_check.
@@ -22,6 +24,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS tstmp2utclong FOR TESTING RAISING cx_static_check.
     METHODS utclong2tstmp_short FOR TESTING RAISING cx_static_check.
     METHODS get_system_timezone FOR TESTING RAISING cx_static_check.
+    METHODS syntax1 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -152,6 +155,67 @@ CLASS ltcl_test IMPLEMENTATION.
         RETURN.
     ENDTRY.
 
+  ENDMETHOD.
+
+  METHOD systemtstmp_utc2syst.
+    TYPES: BEGIN OF ty_case,
+             timestamp TYPE timestamp,
+             date      TYPE d,
+             time      TYPE t,
+           END OF ty_case.
+    DATA lt_cases TYPE STANDARD TABLE OF ty_case WITH DEFAULT KEY.
+    DATA lv_date TYPE d.
+    DATA lv_time TYPE t.
+
+    lt_cases = VALUE #(
+      ( timestamp = '20220101112233' date = '20220101' time = '112233' )
+      ( timestamp = '20240229000000' date = '20240229' time = '000000' )
+      ( timestamp = '20000229235959' date = '20000229' time = '235959' )
+      ( timestamp = '19000228235959' date = '19000228' time = '235959' )
+      ( timestamp = '00010101000000' date = '00010101' time = '000000' )
+      ( timestamp = '99991231235959' date = '99991231' time = '235959' ) ).
+
+    LOOP AT lt_cases INTO DATA(ls_case).
+      cl_abap_tstmp=>systemtstmp_utc2syst(
+        EXPORTING
+          utc_tstmp = ls_case-timestamp
+        IMPORTING
+          syst_date = lv_date
+          syst_time = lv_time ).
+
+      cl_abap_unit_assert=>assert_equals( act = lv_date
+                                          exp = ls_case-date ).
+      cl_abap_unit_assert=>assert_equals( act = lv_time
+                                          exp = ls_case-time ).
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD systemtstmp_utc2syst_invalid.
+    DATA lt_timestamps TYPE STANDARD TABLE OF timestamp WITH DEFAULT KEY.
+
+    lt_timestamps = VALUE #(
+      ( 0 )
+      ( -1 )
+      ( '99991231235960' )
+      ( '100001010000000' )
+      ( '20230001000000' )
+      ( '20231301000000' )
+      ( '20230100000000' )
+      ( '20230431000000' )
+      ( '20230229000000' )
+      ( '19000229000000' )
+      ( '20230101240000' )
+      ( '20230101006000' )
+      ( '20230101000060' ) ).
+
+    LOOP AT lt_timestamps INTO DATA(lv_timestamp).
+      TRY.
+          cl_abap_tstmp=>systemtstmp_utc2syst( utc_tstmp = lv_timestamp ).
+          cl_abap_unit_assert=>fail( ).
+        CATCH cx_parameter_invalid_range.
+          CONTINUE.
+      ENDTRY.
+    ENDLOOP.
   ENDMETHOD.
 
   METHOD move_to_short1.
@@ -387,6 +451,20 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = cl_abap_tstmp=>get_system_timezone( )
       exp = 'UTC' ).
+  ENDMETHOD.
+
+  METHOD syntax1.
+
+    CONVERT DATE sy-datum TIME sy-uzeit
+      INTO TIME STAMP DATA(lv_utc_timestamp) TIME ZONE 'UTC'.
+
+    cl_abap_tstmp=>systemtstmp_utc2syst(
+      EXPORTING
+        utc_tstmp = lv_utc_timestamp
+      IMPORTING
+        syst_date = DATA(lv_utc_issue_date)
+        syst_time = DATA(lv_utc_issue_time) ).
+
   ENDMETHOD.
 
 ENDCLASS.

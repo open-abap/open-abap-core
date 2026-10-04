@@ -45,7 +45,7 @@ jobs:
         path: before
     - name: Performance Before
       run: |
-        rm -rf src
+        npx --no-install rimraf src
         cp -rf before/src src
         git status
         npm install && npm run performance
