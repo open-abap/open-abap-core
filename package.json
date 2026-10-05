@@ -5,20 +5,21 @@
   "description": "test",
   "scripts": {
     "lint": "abaplint",
-    "unit": "rm -rf output && abap_transpile && echo RUNNING && node --expose-gc output/index.mjs && echo OK",
+    "unit": "rimraf output && abap_transpile && echo RUNNING && node --expose-gc output/index.mjs && echo OK",
     "flame": "0x -o -- node --expose-gc test/performance.mjs",
-    "performance": "rm -rf output && abap_transpile ./abap_transpile_test.json && node --expose-gc test/performance.mjs",
-    "integration": "rm -rf output && abap_transpile ./abap_transpile_test.json && node --expose-gc output/index.mjs",
+    "performance": "rimraf output && abap_transpile ./abap_transpile_test.json && node --expose-gc test/performance.mjs",
+    "integration": "rimraf output && abap_transpile ./abap_transpile_test.json && node --expose-gc output/index.mjs",
     "postgres:init": "cat test/adbc/init.sql | docker exec -i postgresql psql -U postgres -d postgres",
     "docker:start": "docker compose -p open-abap -f test/stack.yml up -d --wait && npm run postgres:init",
     "test": "npm run lint && npm run unit"
   },
   "license": "MIT",
   "dependencies": {
-    "@abaplint/cli": "^2.120.64",
+    "@abaplint/cli": "^2.120.66",
     "@abaplint/database-pg": "^2.11.83",
     "@abaplint/database-sqlite": "^2.13.83",
-    "@abaplint/runtime": "^2.13.96",
-    "@abaplint/transpiler-cli": "^2.13.96"
+    "@abaplint/runtime": "^2.13.98",
+    "@abaplint/transpiler-cli": "^2.13.98",
+    "rimraf": "^6.1.3"
   }
 }
