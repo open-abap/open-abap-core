@@ -26,6 +26,12 @@
      <MSGNR>003</MSGNR>
      <TEXT>needed by abapGit unit test</TEXT>
     </T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>00</ARBGB>
+     <MSGNR>055</MSGNR>
+     <TEXT>Fill out all required entry fields</TEXT>
+    </T100>
    </T100>
   </asx:values>
  </asx:abap>
