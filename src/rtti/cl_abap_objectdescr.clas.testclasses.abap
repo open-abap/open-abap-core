@@ -563,3 +563,145 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+INTERFACE lif_metadata_base.
+  METHODS run
+    IMPORTING
+      required TYPE i
+      extra    TYPE i OPTIONAL
+    RAISING
+      cx_sy_zerodivide
+      cx_sy_conversion_error.
+  CLASS-METHODS version
+    RETURNING
+      VALUE(result) TYPE string.
+ENDINTERFACE.
+
+INTERFACE lif_metadata.
+  INTERFACES lif_metadata_base.
+  ALIASES go FOR lif_metadata_base~run.
+ENDINTERFACE.
+
+CLASS ltcl_method_metadata DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+
+  PRIVATE SECTION.
+    CLASS-METHODS class_setup.
+    METHODS describe
+      IMPORTING
+        iv_name         TYPE string
+      RETURNING
+        VALUE(ro_descr) TYPE REF TO cl_abap_objectdescr.
+    METHODS optional_parameter FOR TESTING RAISING cx_static_check.
+    METHODS raising_clause FOR TESTING RAISING cx_static_check.
+    METHODS static_method_of_interface FOR TESTING RAISING cx_static_check.
+    METHODS alias FOR TESTING RAISING cx_static_check.
+    METHODS without_metadata FOR TESTING RAISING cx_static_check.
+
+ENDCLASS.
+
+CLASS ltcl_method_metadata IMPLEMENTATION.
+
+  METHOD class_setup.
+* the transpiler does not emit this part of the method metadata yet, so the fixtures get
+* here what their declarations say. Remove once the transpiler emits it
+    WRITE '@KERNEL const base = abap.Classes["CLAS-CL_ABAP_OBJECTDESCR-LIF_METADATA_BASE"].METHODS;'.
+    WRITE '@KERNEL base.RUN.parameters.EXTRA.is_optional = "X";'.
+    WRITE '@KERNEL base.RUN.exceptions = ["CX_SY_ZERODIVIDE", "CX_SY_CONVERSION_ERROR"];'.
+    WRITE '@KERNEL base.VERSION.is_class = "X";'.
+    WRITE '@KERNEL const intf = abap.Classes["CLAS-CL_ABAP_OBJECTDESCR-LIF_METADATA"].METHODS;'.
+    WRITE '@KERNEL intf.GO = {"visibility": "U", "alias_for": "LIF_METADATA_BASE~RUN", "parameters": {}};'.
+  ENDMETHOD.
+
+  METHOD describe.
+    DATA lv_any TYPE string.
+    WRITE '@KERNEL lv_any = abap.Classes["CLAS-CL_ABAP_OBJECTDESCR-" + iv_name.get()];'.
+    ro_descr ?= cl_abap_objectdescr=>_construct( lv_any ).
+  ENDMETHOD.
+
+  METHOD optional_parameter.
+    DATA ls_method    TYPE abap_methdescr.
+    DATA ls_parameter TYPE abap_parmdescr.
+
+    READ TABLE describe( `LIF_METADATA_BASE` )->methods INTO ls_method WITH KEY name = 'RUN'.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    READ TABLE ls_method-parameters INTO ls_parameter WITH KEY name = 'REQUIRED'.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_parameter-is_optional
+      exp = abap_false ).
+
+    READ TABLE ls_method-parameters INTO ls_parameter WITH KEY name = 'EXTRA'.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_parameter-is_optional
+      exp = abap_true ).
+  ENDMETHOD.
+
+  METHOD raising_clause.
+    DATA ls_method    TYPE abap_methdescr.
+    DATA ls_exception TYPE abap_excpdescr.
+
+    READ TABLE describe( `LIF_METADATA_BASE` )->methods INTO ls_method WITH KEY name = 'RUN'.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( ls_method-exceptions )
+      exp = 2 ).
+    READ TABLE ls_method-exceptions INTO ls_exception WITH KEY name = 'CX_SY_ZERODIVIDE'.
+    cl_abap_unit_assert=>assert_subrc( ).
+    READ TABLE ls_method-exceptions INTO ls_exception WITH KEY name = 'CX_SY_CONVERSION_ERROR'.
+    cl_abap_unit_assert=>assert_subrc( ).
+  ENDMETHOD.
+
+  METHOD static_method_of_interface.
+    DATA ls_method TYPE abap_methdescr.
+
+    READ TABLE describe( `LIF_METADATA_BASE` )->methods INTO ls_method WITH KEY name = 'VERSION'.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_method-is_class
+      exp = abap_true ).
+
+    READ TABLE describe( `LIF_METADATA_BASE` )->methods INTO ls_method WITH KEY name = 'RUN'.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_method-is_class
+      exp = abap_false ).
+  ENDMETHOD.
+
+  METHOD alias.
+    DATA ls_method TYPE abap_methdescr.
+
+    READ TABLE describe( `LIF_METADATA` )->methods INTO ls_method WITH KEY name = 'GO'.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_method-alias_for
+      exp = 'LIF_METADATA_BASE~RUN' ).
+  ENDMETHOD.
+
+  METHOD without_metadata.
+* a method without the additional metadata is described as before
+    DATA lo_static TYPE REF TO lcl_static.
+    DATA lo_descr  TYPE REF TO cl_abap_objectdescr.
+    DATA ls_method TYPE abap_methdescr.
+
+    CREATE OBJECT lo_static.
+    lo_descr ?= cl_abap_typedescr=>describe_by_object_ref( lo_static ).
+
+    READ TABLE lo_descr->methods INTO ls_method WITH KEY name = 'BAZ'.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_initial( ls_method-exceptions ).
+    cl_abap_unit_assert=>assert_initial( ls_method-alias_for ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_method-is_class
+      exp = abap_false ).
+
+    READ TABLE lo_descr->methods INTO ls_method WITH KEY name = 'BAR'.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_method-is_class
+      exp = abap_true ).
+  ENDMETHOD.
+
+ENDCLASS.
