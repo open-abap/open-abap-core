@@ -75,7 +75,29 @@ CLASS cl_abap_tabledescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get_keys.
+    DATA ls_key       LIKE LINE OF p_keys.
+    DATA ls_component LIKE LINE OF ls_key-components.
+    DATA ls_name      LIKE LINE OF key.
+
     p_keys = mt_keys.
+    IF p_keys IS NOT INITIAL.
+      RETURN.
+    ENDIF.
+
+* a description built from data or with create( ) carries the primary key in its attributes
+    ls_key-name        = 'PRIMARY_KEY'.
+    ls_key-is_primary  = abap_true.
+    ls_key-access_kind = table_kind.
+    ls_key-is_unique   = has_unique_key.
+    ls_key-key_kind    = key_defkind.
+* the components of a default key are left to the runtime, as for a declared table
+    IF key_defkind <> keydefkind_default.
+      LOOP AT key INTO ls_name.
+        ls_component-name = ls_name-name.
+        APPEND ls_component TO ls_key-components.
+      ENDLOOP.
+    ENDIF.
+    APPEND ls_key TO p_keys.
   ENDMETHOD.
 
   METHOD get_with_keys.
