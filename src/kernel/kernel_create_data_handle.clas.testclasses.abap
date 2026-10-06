@@ -592,3 +592,93 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+INTERFACE lif_handle_target.
+ENDINTERFACE.
+
+CLASS lcl_handle_target DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES lif_handle_target.
+ENDCLASS.
+CLASS lcl_handle_target IMPLEMENTATION.
+ENDCLASS.
+
+CLASS lcl_generic_handles DEFINITION.
+  PUBLIC SECTION.
+    METHODS name
+      IMPORTING
+        any_value    TYPE any
+        data_value   TYPE data
+        simple_value TYPE simple
+        clike_value  TYPE clike
+        text         TYPE csequence
+        number       TYPE numeric
+        bytes        TYPE xsequence.
+ENDCLASS.
+CLASS lcl_generic_handles IMPLEMENTATION.
+  METHOD name.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS ltcl_generic_handles DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+  PRIVATE SECTION.
+    METHODS generic_types_raise FOR TESTING RAISING cx_static_check.
+    METHODS ref_to_interface FOR TESTING RAISING cx_static_check.
+ENDCLASS.
+
+CLASS ltcl_generic_handles IMPLEMENTATION.
+
+  METHOD generic_types_raise.
+    DATA lo_object TYPE REF TO lcl_generic_handles.
+    DATA lo_descr  TYPE REF TO cl_abap_objectdescr.
+    DATA lo_handle TYPE REF TO cl_abap_datadescr.
+    DATA lr_data   TYPE REF TO data.
+    DATA lt_names  TYPE string_table.
+    DATA lv_name   TYPE string.
+    DATA lv_caught TYPE abap_bool.
+
+    APPEND `ANY_VALUE` TO lt_names.
+    APPEND `DATA_VALUE` TO lt_names.
+    APPEND `SIMPLE_VALUE` TO lt_names.
+    APPEND `CLIKE_VALUE` TO lt_names.
+    APPEND `TEXT` TO lt_names.
+    APPEND `NUMBER` TO lt_names.
+    APPEND `BYTES` TO lt_names.
+
+    CREATE OBJECT lo_object.
+    lo_descr ?= cl_abap_typedescr=>describe_by_object_ref( lo_object ).
+
+    LOOP AT lt_names INTO lv_name.
+      lo_handle = lo_descr->get_method_parameter_type(
+        p_method_name    = 'NAME'
+        p_parameter_name = lv_name ).
+      lv_caught = abap_false.
+      TRY.
+          CREATE DATA lr_data TYPE HANDLE lo_handle.
+        CATCH cx_sy_create_data_error.
+          lv_caught = abap_true.
+      ENDTRY.
+      cl_abap_unit_assert=>assert_equals(
+        act = lv_caught
+        exp = abap_true
+        msg = |{ lv_name } is generic| ).
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD ref_to_interface.
+    DATA lo_ref    TYPE REF TO lif_handle_target.
+    DATA lo_handle TYPE REF TO cl_abap_datadescr.
+    DATA lr_data   TYPE REF TO data.
+    FIELD-SYMBOLS <lo_target> TYPE REF TO lif_handle_target.
+
+    lo_handle ?= cl_abap_typedescr=>describe_by_data( lo_ref ).
+    CREATE DATA lr_data TYPE HANDLE lo_handle.
+
+    cl_abap_unit_assert=>assert_bound( lr_data ).
+    ASSIGN lr_data->* TO <lo_target>.
+    CREATE OBJECT <lo_target> TYPE lcl_handle_target.
+    cl_abap_unit_assert=>assert_bound( <lo_target> ).
+  ENDMETHOD.
+
+ENDCLASS.
+
