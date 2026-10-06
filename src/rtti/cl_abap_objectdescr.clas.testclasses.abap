@@ -705,3 +705,177 @@ CLASS ltcl_method_metadata IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+CLASS lcl_generic_parameters DEFINITION.
+  PUBLIC SECTION.
+    METHODS name
+      IMPORTING
+        any_value    TYPE any
+        data_value   TYPE data
+        simple_value TYPE simple
+        bytes        TYPE xsequence
+        text         TYPE c
+        hex          TYPE x
+        packed       TYPE p
+        typed        TYPE char30.
+ENDCLASS.
+CLASS lcl_generic_parameters IMPLEMENTATION.
+  METHOD name.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS lcl_generic_digits DEFINITION.
+  PUBLIC SECTION.
+    METHODS name
+      IMPORTING
+        digits TYPE n.
+ENDCLASS.
+CLASS lcl_generic_digits IMPLEMENTATION.
+  METHOD name.
+  ENDMETHOD.
+ENDCLASS.
+
+CLASS ltcl_generic_parameters DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+  PRIVATE SECTION.
+    DATA mo_descr TYPE REF TO cl_abap_objectdescr.
+
+    METHODS setup.
+    METHODS fully_generic FOR TESTING RAISING cx_static_check.
+    METHODS xsequence FOR TESTING RAISING cx_static_check.
+    METHODS without_length FOR TESTING RAISING cx_static_check.
+    METHODS generic_n FOR TESTING RAISING cx_static_check.
+    METHODS complete_type FOR TESTING RAISING cx_static_check.
+    METHODS parameter_rows FOR TESTING RAISING cx_static_check.
+
+    METHODS type_of
+      IMPORTING
+        iv_parameter    TYPE string
+      RETURNING
+        VALUE(ro_descr) TYPE REF TO cl_abap_datadescr.
+ENDCLASS.
+
+CLASS ltcl_generic_parameters IMPLEMENTATION.
+
+  METHOD setup.
+    DATA lo_object TYPE REF TO lcl_generic_parameters.
+
+    CREATE OBJECT lo_object.
+    mo_descr ?= cl_abap_typedescr=>describe_by_object_ref( lo_object ).
+  ENDMETHOD.
+
+  METHOD type_of.
+    ro_descr = mo_descr->get_method_parameter_type(
+      p_method_name    = 'NAME'
+      p_parameter_name = iv_parameter ).
+  ENDMETHOD.
+
+  METHOD fully_generic.
+    cl_abap_unit_assert=>assert_equals(
+      act = type_of( 'ANY_VALUE' )->type_kind
+      exp = cl_abap_typedescr=>typekind_any ).
+    cl_abap_unit_assert=>assert_equals(
+      act = type_of( 'ANY_VALUE' )->absolute_name
+      exp = '\TYPE=ANY' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = type_of( 'DATA_VALUE' )->type_kind
+      exp = cl_abap_typedescr=>typekind_data ).
+    cl_abap_unit_assert=>assert_equals(
+      act = type_of( 'SIMPLE_VALUE' )->type_kind
+      exp = cl_abap_typedescr=>typekind_simple ).
+  ENDMETHOD.
+
+  METHOD xsequence.
+    cl_abap_unit_assert=>assert_equals(
+      act = type_of( 'BYTES' )->type_kind
+      exp = cl_abap_typedescr=>typekind_xsequence ).
+  ENDMETHOD.
+
+  METHOD without_length.
+    DATA lo_type TYPE REF TO cl_abap_datadescr.
+
+    lo_type = type_of( 'TEXT' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_type->kind
+      exp = cl_abap_typedescr=>kind_elem ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_type->type_kind
+      exp = cl_abap_typedescr=>typekind_char ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_type->length
+      exp = 0 ).
+
+    lo_type = type_of( 'HEX' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_type->type_kind
+      exp = cl_abap_typedescr=>typekind_hex ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_type->length
+      exp = 0 ).
+
+    lo_type = type_of( 'PACKED' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_type->type_kind
+      exp = cl_abap_typedescr=>typekind_packed ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_type->length
+      exp = 0 ).
+  ENDMETHOD.
+
+  METHOD generic_n.
+    DATA lo_object TYPE REF TO lcl_generic_digits.
+    DATA lo_descr  TYPE REF TO cl_abap_objectdescr.
+    DATA lo_type   TYPE REF TO cl_abap_datadescr.
+
+* the transpiler names the type of a parameter TYPE n "NGenericType" from abaplint 2.120.69 on
+    WRITE '@KERNEL abap.Classes["CLAS-CL_ABAP_OBJECTDESCR-LCL_GENERIC_DIGITS"].METHODS.NAME.parameters.DIGITS.type_name = "NGenericType";'.
+
+    CREATE OBJECT lo_object.
+    lo_descr ?= cl_abap_typedescr=>describe_by_object_ref( lo_object ).
+    lo_type = lo_descr->get_method_parameter_type(
+      p_method_name    = 'NAME'
+      p_parameter_name = 'DIGITS' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_type->type_kind
+      exp = cl_abap_typedescr=>typekind_num ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_type->length
+      exp = 0 ).
+  ENDMETHOD.
+
+  METHOD complete_type.
+    DATA lo_type TYPE REF TO cl_abap_datadescr.
+
+    lo_type = type_of( 'TYPED' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_type->type_kind
+      exp = cl_abap_typedescr=>typekind_char ).
+    cl_abap_unit_assert=>assert_differs(
+      act = lo_type->length
+      exp = 0 ).
+  ENDMETHOD.
+
+  METHOD parameter_rows.
+    DATA ls_method    TYPE abap_methdescr.
+    DATA ls_parameter TYPE abap_parmdescr.
+
+    READ TABLE mo_descr->methods INTO ls_method WITH KEY name = 'NAME'.
+    cl_abap_unit_assert=>assert_subrc( ).
+
+    READ TABLE ls_method-parameters INTO ls_parameter WITH KEY name = 'ANY_VALUE'.
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_parameter-type_kind
+      exp = cl_abap_typedescr=>typekind_any ).
+
+    READ TABLE ls_method-parameters INTO ls_parameter WITH KEY name = 'TEXT'.
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_parameter-type_kind
+      exp = cl_abap_typedescr=>typekind_char ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_parameter-length
+      exp = 0 ).
+  ENDMETHOD.
+
+ENDCLASS.
+
