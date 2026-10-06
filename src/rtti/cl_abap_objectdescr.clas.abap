@@ -93,6 +93,7 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     FIELD-SYMBOLS <intf>      TYPE abap_intfdescr.
     FIELD-SYMBOLS <method>    TYPE abap_methdescr.
     FIELD-SYMBOLS <parameter> TYPE abap_parmdescr.
+    FIELD-SYMBOLS <exception> TYPE abap_excpdescr.
     FIELD-SYMBOLS <ptype>     LIKE LINE OF mt_parameter_types.
 
     WRITE '@KERNEL lv_name.set(p_object.INTERNAL_NAME);'.
@@ -127,8 +128,17 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     <method>-name = lv_name.
     WRITE '@KERNEL   lv_char1.set(p_object.METHODS[a].visibility);'.
     <method>-visibility = lv_char1.
-    WRITE '@KERNEL   lv_char1.set(Object.prototype.hasOwnProperty.call(p_object, a.toLowerCase()) ? "X" : "");'.
+* the static flag, alias and RAISING clause are taken from the method metadata when the
+* transpiler emits them; a static method of a class is also found as a property of the class
+    WRITE '@KERNEL   lv_char1.set(p_object.METHODS[a].is_class === "X" || Object.prototype.hasOwnProperty.call(p_object, a.toLowerCase()) ? "X" : "");'.
     <method>-is_class = lv_char1.
+    WRITE '@KERNEL   lv_name.set(p_object.METHODS[a].alias_for || "");'.
+    <method>-alias_for = lv_name.
+    WRITE '@KERNEL   for (const e of p_object.METHODS[a].exceptions || []) {'.
+    WRITE '@KERNEL     lv_name.set(e);'.
+    APPEND INITIAL LINE TO <method>-exceptions ASSIGNING <exception>.
+    <exception>-name = lv_name.
+    WRITE '@KERNEL   }'.
 * set parameters of methods
     WRITE '@KERNEL for (const p in p_object.METHODS[a].parameters || []) {'.
     APPEND INITIAL LINE TO descr->mt_parameter_types ASSIGNING <ptype>.
@@ -163,6 +173,8 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
       " WRITE '@KERNEL   }'.
     ENDIF.
     <parameter>-parm_kind = lv_parm_kind.
+    WRITE '@KERNEL   lv_char1.set(p_object.METHODS[a].parameters[p].is_optional === "X" ? "X" : "");'.
+    <parameter>-is_optional = lv_char1.
     WRITE '@KERNEL }'.
     WRITE '@KERNEL }'.
     SORT descr->methods BY name ASCENDING.
