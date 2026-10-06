@@ -103,6 +103,7 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CONSTANTS typekind_utclong TYPE abap_typekind VALUE 'p'.
     CONSTANTS typekind_w TYPE abap_typekind VALUE 'w'.
     CONSTANTS typekind_xstring TYPE abap_typekind VALUE 'y'.
+    CONSTANTS typekind_xsequence TYPE abap_typekind VALUE '!'.
 
     CONSTANTS kind_elem   TYPE c LENGTH 1 VALUE 'E'.
     CONSTANTS kind_struct TYPE c LENGTH 1 VALUE 'S'.
@@ -186,6 +187,14 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type = describe_by_name( lv_absolute ).
         RETURN.
       ENDIF.
+    ENDIF.
+
+* a type declared in a class or interface, \CLASS=ZCL_X\TYPE=TY_Y, is ZCL_X=>TY_Y
+    IF ( lv_absolute CP '\CLASS=*\TYPE=*' OR lv_absolute CP '\INTERFACE=*\TYPE=*' ) AND lv_absolute NA '%'.
+      REPLACE FIRST OCCURRENCE OF REGEX '^\\(CLASS|INTERFACE)=' IN lv_absolute WITH ''.
+      REPLACE FIRST OCCURRENCE OF '\TYPE=' IN lv_absolute WITH '=>'.
+      type = describe_by_name( lv_absolute ).
+      RETURN.
     ENDIF.
 
 * note, p_name might be internal name, so check and skip these,
