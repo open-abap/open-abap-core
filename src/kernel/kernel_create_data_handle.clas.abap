@@ -36,8 +36,15 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
       RAISE EXCEPTION TYPE cx_sy_ref_is_initial.
     ENDIF.
 
-    IF handle->type_kind = cl_abap_typedescr=>typekind_data
-        AND allow_generic = abap_false.
+* a generic type, like the type of a parameter typed ANY or CSEQUENCE, gives no data object
+    IF allow_generic = abap_false
+        AND ( handle->type_kind = cl_abap_typedescr=>typekind_data
+        OR handle->type_kind = cl_abap_typedescr=>typekind_any
+        OR handle->type_kind = cl_abap_typedescr=>typekind_simple
+        OR handle->type_kind = cl_abap_typedescr=>typekind_clike
+        OR handle->type_kind = cl_abap_typedescr=>typekind_csequence
+        OR handle->type_kind = cl_abap_typedescr=>typekind_numeric
+        OR handle->type_kind = cl_abap_typedescr=>typekind_xsequence ).
       RAISE EXCEPTION TYPE cx_sy_create_data_error.
     ENDIF.
 
@@ -67,7 +74,7 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
   METHOD ref.
     DATA lo_refdescr      TYPE REF TO cl_abap_refdescr.
     DATA lo_datadescr     TYPE REF TO cl_abap_datadescr.
-    DATA lo_classdescr    TYPE REF TO cl_abap_classdescr.
+    DATA lo_objectdescr   TYPE REF TO cl_abap_objectdescr.
     DATA field            TYPE REF TO data.
     DATA lv_relative_name TYPE string.
     DATA lv_absolute_name TYPE string.
@@ -76,10 +83,11 @@ CLASS kernel_create_data_handle IMPLEMENTATION.
 
     CASE lo_refdescr->type_kind.
       WHEN cl_abap_typedescr=>typekind_oref.
-        lo_classdescr ?= lo_refdescr->get_referenced_type( ).
+        " a class or an interface
+        lo_objectdescr ?= lo_refdescr->get_referenced_type( ).
         " todo, call the methods in class "kernel_internal_name" ?
-        lv_relative_name = lo_classdescr->relative_name.
-        lv_absolute_name = lo_classdescr->absolute_name.
+        lv_relative_name = lo_objectdescr->relative_name.
+        lv_absolute_name = lo_objectdescr->absolute_name.
         WRITE '@KERNEL dref.assign(new abap.types.ABAPObject({"qualifiedName": lv_relative_name.get(), "RTTIName": lv_absolute_name.get()}));'.
       WHEN OTHERS.
         lo_datadescr ?= lo_refdescr->get_referenced_type( ).
