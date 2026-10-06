@@ -190,3 +190,225 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+
+CLASS ltcl_keys DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+
+  PRIVATE SECTION.
+    TYPES ty_sorted TYPE SORTED TABLE OF string WITH UNIQUE KEY table_line.
+    TYPES ty_hashed TYPE HASHED TABLE OF string WITH UNIQUE KEY table_line.
+    TYPES ty_default TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+
+    METHODS sorted_from_data FOR TESTING RAISING cx_static_check.
+    METHODS hashed_from_data FOR TESTING RAISING cx_static_check.
+    METHODS default_from_data FOR TESTING RAISING cx_static_check.
+    METHODS from_create FOR TESTING RAISING cx_static_check.
+    METHODS explicit_keys_kept FOR TESTING RAISING cx_static_check.
+    METHODS handle_sorted_sorts FOR TESTING RAISING cx_static_check.
+    METHODS handle_sorted_unique FOR TESTING RAISING cx_static_check.
+    METHODS handle_default_keeps_order FOR TESTING RAISING cx_static_check.
+
+ENDCLASS.
+
+CLASS ltcl_keys IMPLEMENTATION.
+
+  METHOD sorted_from_data.
+    DATA lt_data  TYPE ty_sorted.
+    DATA lo_table TYPE REF TO cl_abap_tabledescr.
+    DATA lt_keys  TYPE abap_table_keydescr_tab.
+    DATA ls_key   LIKE LINE OF lt_keys.
+    DATA ls_component LIKE LINE OF ls_key-components.
+
+    lo_table ?= cl_abap_typedescr=>describe_by_data( lt_data ).
+    lt_keys = lo_table->get_keys( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( lt_keys )
+      exp = 1 ).
+    READ TABLE lt_keys INDEX 1 INTO ls_key.
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_key-is_primary
+      exp = abap_true ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_key-access_kind
+      exp = cl_abap_tabledescr=>tablekind_sorted ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_key-is_unique
+      exp = abap_true ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_key-key_kind
+      exp = cl_abap_tabledescr=>keydefkind_tableline ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( ls_key-components )
+      exp = 1 ).
+    READ TABLE ls_key-components INDEX 1 INTO ls_component.
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_component-name
+      exp = 'TABLE_LINE' ).
+  ENDMETHOD.
+
+  METHOD hashed_from_data.
+    DATA lt_data  TYPE ty_hashed.
+    DATA lo_table TYPE REF TO cl_abap_tabledescr.
+    DATA lt_keys  TYPE abap_table_keydescr_tab.
+    DATA ls_key   LIKE LINE OF lt_keys.
+
+    lo_table ?= cl_abap_typedescr=>describe_by_data( lt_data ).
+    lt_keys = lo_table->get_keys( ).
+
+    READ TABLE lt_keys INDEX 1 INTO ls_key.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_key-access_kind
+      exp = cl_abap_tabledescr=>tablekind_hashed ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_key-is_unique
+      exp = abap_true ).
+  ENDMETHOD.
+
+  METHOD default_from_data.
+    DATA lt_data  TYPE ty_default.
+    DATA lo_table TYPE REF TO cl_abap_tabledescr.
+    DATA lt_keys  TYPE abap_table_keydescr_tab.
+    DATA ls_key   LIKE LINE OF lt_keys.
+
+    lo_table ?= cl_abap_typedescr=>describe_by_data( lt_data ).
+    lt_keys = lo_table->get_keys( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( lt_keys )
+      exp = 1 ).
+    READ TABLE lt_keys INDEX 1 INTO ls_key.
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_key-access_kind
+      exp = cl_abap_tabledescr=>tablekind_std ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_key-is_unique
+      exp = abap_false ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_key-key_kind
+      exp = cl_abap_tabledescr=>keydefkind_default ).
+* the components of a default key are left to the runtime
+    cl_abap_unit_assert=>assert_initial( ls_key-components ).
+  ENDMETHOD.
+
+  METHOD from_create.
+    DATA lo_table TYPE REF TO cl_abap_tabledescr.
+    DATA lt_key   TYPE abap_keydescr_tab.
+    DATA ls_name  LIKE LINE OF lt_key.
+    DATA lt_keys  TYPE abap_table_keydescr_tab.
+    DATA ls_key   LIKE LINE OF lt_keys.
+
+    ls_name-name = 'TABLE_LINE'.
+    APPEND ls_name TO lt_key.
+
+    lo_table = cl_abap_tabledescr=>create(
+      p_line_type  = cl_abap_elemdescr=>get_string( )
+      p_table_kind = cl_abap_tabledescr=>tablekind_sorted
+      p_unique     = abap_true
+      p_key        = lt_key
+      p_key_kind   = cl_abap_tabledescr=>keydefkind_user ).
+    lt_keys = lo_table->get_keys( ).
+
+    READ TABLE lt_keys INDEX 1 INTO ls_key.
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_key-access_kind
+      exp = cl_abap_tabledescr=>tablekind_sorted ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( ls_key-components )
+      exp = 1 ).
+  ENDMETHOD.
+
+  METHOD explicit_keys_kept.
+    DATA lo_table TYPE REF TO cl_abap_tabledescr.
+    DATA lt_keys  TYPE abap_table_keydescr_tab.
+    DATA ls_key   LIKE LINE OF lt_keys.
+
+    ls_key-access_kind = cl_abap_tabledescr=>tablekind_std.
+    ls_key-key_kind    = cl_abap_tabledescr=>keydefkind_default.
+    ls_key-is_primary  = abap_true.
+    APPEND ls_key TO lt_keys.
+
+    lo_table = cl_abap_tabledescr=>get_with_keys(
+      p_line_type = cl_abap_elemdescr=>get_i( )
+      p_keys      = lt_keys ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_table->get_keys( )
+      exp = lt_keys ).
+  ENDMETHOD.
+
+  METHOD handle_sorted_sorts.
+    DATA lt_data  TYPE ty_sorted.
+    DATA lo_table TYPE REF TO cl_abap_tabledescr.
+    DATA lr_data  TYPE REF TO data.
+    DATA lv_row   TYPE string.
+
+    FIELD-SYMBOLS <lt_any> TYPE ANY TABLE.
+
+    lo_table ?= cl_abap_typedescr=>describe_by_data( lt_data ).
+    CREATE DATA lr_data TYPE HANDLE lo_table.
+    ASSIGN lr_data->* TO <lt_any>.
+
+    INSERT `Grace` INTO TABLE <lt_any>.
+    INSERT `Ada` INTO TABLE <lt_any>.
+
+    LOOP AT <lt_any> INTO lv_row.
+      EXIT.
+    ENDLOOP.
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_row
+      exp = `Ada` ).
+  ENDMETHOD.
+
+  METHOD handle_sorted_unique.
+    DATA lt_data  TYPE ty_sorted.
+    DATA lo_table TYPE REF TO cl_abap_tabledescr.
+    DATA lr_data  TYPE REF TO data.
+
+    FIELD-SYMBOLS <lt_any> TYPE ANY TABLE.
+
+    lo_table ?= cl_abap_typedescr=>describe_by_data( lt_data ).
+    CREATE DATA lr_data TYPE HANDLE lo_table.
+    ASSIGN lr_data->* TO <lt_any>.
+
+    INSERT `Ada` INTO TABLE <lt_any>.
+    cl_abap_unit_assert=>assert_subrc( ).
+    INSERT `Ada` INTO TABLE <lt_any>.
+    cl_abap_unit_assert=>assert_equals(
+      act = sy-subrc
+      exp = 4 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( <lt_any> )
+      exp = 1 ).
+  ENDMETHOD.
+
+  METHOD handle_default_keeps_order.
+    DATA lt_data  TYPE ty_default.
+    DATA lo_table TYPE REF TO cl_abap_tabledescr.
+    DATA lr_data  TYPE REF TO data.
+    DATA lv_row   TYPE string.
+
+    FIELD-SYMBOLS <lt_any> TYPE ANY TABLE.
+
+    lo_table ?= cl_abap_typedescr=>describe_by_data( lt_data ).
+    CREATE DATA lr_data TYPE HANDLE lo_table.
+    ASSIGN lr_data->* TO <lt_any>.
+
+    INSERT `Grace` INTO TABLE <lt_any>.
+    INSERT `Ada` INTO TABLE <lt_any>.
+    INSERT `Ada` INTO TABLE <lt_any>.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( <lt_any> )
+      exp = 3 ).
+    LOOP AT <lt_any> INTO lv_row.
+      EXIT.
+    ENDLOOP.
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_row
+      exp = `Grace` ).
+  ENDMETHOD.
+
+ENDCLASS.
