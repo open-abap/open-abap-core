@@ -267,3 +267,52 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+CLASS ltcl_get DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+  PRIVATE SECTION.
+    METHODS get_x FOR TESTING RAISING cx_static_check.
+    METHODS get_xstring FOR TESTING RAISING cx_static_check.
+    METHODS get_decfloat34 FOR TESTING RAISING cx_static_check.
+ENDCLASS.
+
+CLASS ltcl_get IMPLEMENTATION.
+
+  METHOD get_x.
+    DATA lo_elem TYPE REF TO cl_abap_elemdescr.
+    DATA lv_hex  TYPE x LENGTH 4.
+
+    lo_elem = cl_abap_elemdescr=>get_x( 4 ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_elem->type_kind
+      exp = cl_abap_typedescr=>typekind_hex ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_elem->length
+      exp = 4 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_elem->applies_to_data( lv_hex )
+      exp = abap_true ).
+  ENDMETHOD.
+
+  METHOD get_xstring.
+    DATA lo_elem TYPE REF TO cl_abap_elemdescr.
+
+    lo_elem = cl_abap_elemdescr=>get_xstring( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_elem->type_kind
+      exp = cl_abap_typedescr=>typekind_xstring ).
+  ENDMETHOD.
+
+  METHOD get_decfloat34.
+    DATA lo_elem TYPE REF TO cl_abap_elemdescr.
+
+    lo_elem = cl_abap_elemdescr=>get_decfloat34( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_elem->type_kind
+      exp = cl_abap_typedescr=>typekind_decfloat34 ).
+  ENDMETHOD.
+
+ENDCLASS.
+

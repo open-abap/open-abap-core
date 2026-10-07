@@ -147,20 +147,41 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
     WRITE '@KERNEL   lv_name.set(p);'.
     <parameter>-name = lv_name.
     <ptype>-parameter = lv_name.
-    WRITE '@KERNEL   lv_any = p_object.METHODS[a].parameters[p].type();'.
     WRITE '@KERNEL   lv_type_name = p_object.METHODS[a].parameters[p].type_name;'.
     WRITE '@KERNEL   lv_parm_kind = p_object.METHODS[a].parameters[p].parm_kind;'.
 
-    IF lv_type_name = 'CLikeType'.
-      <parameter>-type_kind = cl_abap_typedescr=>typekind_clike.
-      <ptype>-type_kind = cl_abap_typedescr=>typekind_clike.
-    ELSEIF lv_type_name = 'CSequenceType'.
-      <parameter>-type_kind = cl_abap_typedescr=>typekind_csequence.
-      <ptype>-type_kind = cl_abap_typedescr=>typekind_csequence.
-    ELSEIF lv_type_name = 'NumericGenericType'.
-      <parameter>-type_kind = cl_abap_typedescr=>typekind_numeric.
-      <ptype>-type_kind = cl_abap_typedescr=>typekind_numeric.
+* generic types have a type kind of their own; c, n, p and x without a length are elementary
+* types with length 0
+    CASE lv_type_name.
+      WHEN 'CLikeType'.
+        <ptype>-type_kind = cl_abap_typedescr=>typekind_clike.
+      WHEN 'CSequenceType'.
+        <ptype>-type_kind = cl_abap_typedescr=>typekind_csequence.
+      WHEN 'NumericGenericType'.
+        <ptype>-type_kind = cl_abap_typedescr=>typekind_numeric.
+      WHEN 'XSequenceType'.
+        <ptype>-type_kind = cl_abap_typedescr=>typekind_xsequence.
+      WHEN 'AnyType'.
+        <ptype>-type_kind = cl_abap_typedescr=>typekind_any.
+      WHEN 'DataType'.
+        <ptype>-type_kind = cl_abap_typedescr=>typekind_data.
+      WHEN 'SimpleType'.
+        <ptype>-type_kind = cl_abap_typedescr=>typekind_simple.
+      WHEN 'CGenericType'.
+        <ptype>-type_kind = cl_abap_typedescr=>typekind_char.
+      WHEN 'NGenericType'.
+        <ptype>-type_kind = cl_abap_typedescr=>typekind_num.
+      WHEN 'PGenericType'.
+        <ptype>-type_kind = cl_abap_typedescr=>typekind_packed.
+      WHEN 'XGenericType'.
+        <ptype>-type_kind = cl_abap_typedescr=>typekind_hex.
+    ENDCASE.
+
+    IF <ptype>-type_kind IS NOT INITIAL.
+      <parameter>-type_kind = <ptype>-type_kind.
     ELSE.
+* only a parameter with a complete type has a value to describe
+      WRITE '@KERNEL   lv_any = p_object.METHODS[a].parameters[p].type();'.
       GET REFERENCE OF lv_any INTO <ptype>-type.
 "       WRITE '@KERNEL   if (lv_any.constructor.name === "ABAPObject") {'.
 " * avoid recursion into objects
@@ -239,25 +260,35 @@ CLASS cl_abap_objectdescr IMPLEMENTATION.
       RAISE parameter_not_found.
     ENDIF.
 
-    IF ls_row-type_kind = cl_abap_typedescr=>typekind_clike.
-      CREATE OBJECT p_descr_ref TYPE cl_abap_elemdescr.
-      p_descr_ref->absolute_name = '\TYPE=CLIKE'.
-      p_descr_ref->kind = cl_abap_elemdescr=>kind_elem.
-      p_descr_ref->type_kind = cl_abap_typedescr=>typekind_clike.
-    ELSEIF ls_row-type_kind = cl_abap_typedescr=>typekind_csequence.
-      CREATE OBJECT p_descr_ref TYPE cl_abap_elemdescr.
-      p_descr_ref->absolute_name = '\TYPE=CSEQUENCE'.
-      p_descr_ref->kind = cl_abap_elemdescr=>kind_elem.
-      p_descr_ref->type_kind = cl_abap_typedescr=>typekind_csequence.
-    ELSEIF ls_row-type_kind = cl_abap_typedescr=>typekind_numeric.
-      CREATE OBJECT p_descr_ref TYPE cl_abap_elemdescr.
-      p_descr_ref->absolute_name = '\TYPE=NUMERIC'.
-      p_descr_ref->kind = cl_abap_elemdescr=>kind_elem.
-      p_descr_ref->type_kind = cl_abap_typedescr=>typekind_numeric.
-    ELSE.
+    IF ls_row-type_kind IS INITIAL.
       ASSIGN ls_row-type->* TO <type>.
       p_descr_ref ?= describe_by_data( <type> ).
+      RETURN.
     ENDIF.
+
+* a generic type: an elementary description without length
+    CREATE OBJECT p_descr_ref TYPE cl_abap_elemdescr.
+    p_descr_ref->kind = cl_abap_elemdescr=>kind_elem.
+    p_descr_ref->type_kind = ls_row-type_kind.
+    CASE ls_row-type_kind.
+      WHEN cl_abap_typedescr=>typekind_clike.
+        p_descr_ref->absolute_name = '\TYPE=CLIKE'.
+      WHEN cl_abap_typedescr=>typekind_csequence.
+        p_descr_ref->absolute_name = '\TYPE=CSEQUENCE'.
+      WHEN cl_abap_typedescr=>typekind_numeric.
+        p_descr_ref->absolute_name = '\TYPE=NUMERIC'.
+      WHEN cl_abap_typedescr=>typekind_xsequence.
+        p_descr_ref->absolute_name = '\TYPE=XSEQUENCE'.
+      WHEN cl_abap_typedescr=>typekind_any.
+        p_descr_ref->absolute_name = '\TYPE=ANY'.
+      WHEN cl_abap_typedescr=>typekind_data.
+        p_descr_ref->absolute_name = '\TYPE=DATA'.
+      WHEN cl_abap_typedescr=>typekind_simple.
+        p_descr_ref->absolute_name = '\TYPE=SIMPLE'.
+      WHEN OTHERS.
+        " c, n, p, x
+        p_descr_ref->absolute_name = |\\TYPE={ ls_row-type_kind }|.
+    ENDCASE.
   ENDMETHOD.
 
   METHOD get_interface_type.

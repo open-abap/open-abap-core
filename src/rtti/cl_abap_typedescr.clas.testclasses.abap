@@ -911,3 +911,46 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+CLASS ltcl_absolute_names DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+  PRIVATE SECTION.
+    METHODS type_of_class FOR TESTING RAISING cx_static_check.
+    METHODS type_of_interface FOR TESTING RAISING cx_static_check.
+    METHODS xsequence_type_kind FOR TESTING RAISING cx_static_check.
+ENDCLASS.
+
+CLASS ltcl_absolute_names IMPLEMENTATION.
+
+  METHOD type_of_class.
+    DATA lo_absolute TYPE REF TO cl_abap_typedescr.
+    DATA lo_relative TYPE REF TO cl_abap_typedescr.
+
+    lo_absolute = cl_abap_typedescr=>describe_by_name( '\CLASS=CL_ABAP_STRUCTDESCR\TYPE=COMPONENT_TABLE' ).
+    lo_relative = cl_abap_typedescr=>describe_by_name( 'CL_ABAP_STRUCTDESCR=>COMPONENT_TABLE' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_absolute->kind
+      exp = cl_abap_typedescr=>kind_table ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_absolute->absolute_name
+      exp = lo_relative->absolute_name ).
+  ENDMETHOD.
+
+  METHOD type_of_interface.
+    DATA lo_type TYPE REF TO cl_abap_typedescr.
+
+    lo_type = cl_abap_typedescr=>describe_by_name( '\INTERFACE=IF_WEB_HTTP_REQUEST\TYPE=NAME_VALUE_PAIR' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_type->kind
+      exp = cl_abap_typedescr=>kind_struct ).
+  ENDMETHOD.
+
+  METHOD xsequence_type_kind.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_typedescr=>typekind_xsequence
+      exp = '!' ).
+  ENDMETHOD.
+
+ENDCLASS.
+
