@@ -63,6 +63,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS class_type_absolute FOR TESTING.
     METHODS describe_by_name_datum FOR TESTING RAISING cx_static_check.
     METHODS describe_by_name_msgv FOR TESTING RAISING cx_static_check.
+    METHODS describe_by_name_progname FOR TESTING RAISING cx_static_check.
     METHODS describe_by_name_t000 FOR TESTING.
     METHODS describe_by_name_t000_space FOR TESTING.
     METHODS describe_by_name_not_found FOR TESTING.
@@ -659,6 +660,20 @@ CLASS ltcl_test IMPLEMENTATION.
         exp = 50
         msg = lv_name ).
     ENDLOOP.
+  ENDMETHOD.
+
+  METHOD describe_by_name_progname.
+    DATA lo_elem TYPE REF TO cl_abap_elemdescr.
+    lo_elem ?= cl_abap_typedescr=>describe_by_name( 'PROGNAME' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_elem->type_kind
+      exp = cl_abap_typedescr=>typekind_char ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_elem->output_length
+      exp = 40 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_elem->absolute_name
+      exp = '\TYPE=PROGNAME' ).
   ENDMETHOD.
 
   METHOD describe_by_name_t000.
