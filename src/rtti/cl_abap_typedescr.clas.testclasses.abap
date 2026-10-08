@@ -64,6 +64,9 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS describe_by_name_datum FOR TESTING RAISING cx_static_check.
     METHODS describe_by_name_msgv FOR TESTING RAISING cx_static_check.
     METHODS describe_by_name_progname FOR TESTING RAISING cx_static_check.
+    METHODS describe_by_name_vbeln FOR TESTING RAISING cx_static_check.
+    METHODS describe_by_data_vbeln FOR TESTING RAISING cx_static_check.
+    METHODS describe_by_name_ersda FOR TESTING RAISING cx_static_check.
     METHODS describe_by_name_t000 FOR TESTING.
     METHODS describe_by_name_t000_space FOR TESTING.
     METHODS describe_by_name_not_found FOR TESTING.
@@ -674,6 +677,56 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_elem->absolute_name
       exp = '\TYPE=PROGNAME' ).
+  ENDMETHOD.
+
+  METHOD describe_by_name_vbeln.
+    DATA lo_elem  TYPE REF TO cl_abap_elemdescr.
+    DATA ls_dfies TYPE dfies.
+    lo_elem ?= cl_abap_typedescr=>describe_by_name( 'VBELN' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_elem->type_kind
+      exp = cl_abap_typedescr=>typekind_char ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_elem->output_length
+      exp = 10 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_elem->absolute_name
+      exp = '\TYPE=VBELN' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_elem->edit_mask
+      exp = '==ALPHA' ).
+    ls_dfies = lo_elem->get_ddic_field( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-convexit
+      exp = 'ALPHA' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-domname
+      exp = 'VBELN' ).
+  ENDMETHOD.
+
+  METHOD describe_by_data_vbeln.
+    DATA lv_vbeln TYPE vbeln.
+    DATA lo_elem  TYPE REF TO cl_abap_elemdescr.
+    DATA ls_dfies TYPE dfies.
+    lo_elem ?= cl_abap_typedescr=>describe_by_data( lv_vbeln ).
+    ls_dfies = lo_elem->get_ddic_field( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-rollname
+      exp = 'VBELN' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-convexit
+      exp = 'ALPHA' ).
+  ENDMETHOD.
+
+  METHOD describe_by_name_ersda.
+    DATA lo_elem TYPE REF TO cl_abap_elemdescr.
+    lo_elem ?= cl_abap_typedescr=>describe_by_name( 'ERSDA' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_elem->type_kind
+      exp = cl_abap_typedescr=>typekind_date ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_elem->absolute_name
+      exp = '\TYPE=ERSDA' ).
   ENDMETHOD.
 
   METHOD describe_by_name_t000.
