@@ -40,7 +40,15 @@ FUNCTION wwwdata_import.
   WRITE '@KERNEL const url = await import("url");'.
   WRITE '@KERNEL const __filename = url.fileURLToPath(import.meta.url);'.
   WRITE '@KERNEL const __dirname = path.dirname(__filename);'.
-  WRITE '@KERNEL xstr.set(fs.readFileSync(__dirname + path.sep + filename.get()).toString("hex").toUpperCase());'.
+* W3MI filenames are relative to the output root, which contains _top.mjs.
+* Older flat output can keep resolving relative to this module.
+  WRITE '@KERNEL let root = __dirname;'.
+  WRITE '@KERNEL while (!fs.existsSync(path.join(root, "_top.mjs"))) {'.
+  WRITE '@KERNEL   const parent = path.dirname(root);'.
+  WRITE '@KERNEL   if (parent === root) { root = __dirname; break; }'.
+  WRITE '@KERNEL   root = parent;'.
+  WRITE '@KERNEL }'.
+  WRITE '@KERNEL xstr.set(fs.readFileSync(path.resolve(root, filename.get())).toString("hex").toUpperCase());'.
 
 * walked with an offset: taking the remainder each time copies it, which
 * is quadratic, and a file of a few megabytes takes minutes

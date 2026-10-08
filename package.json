@@ -5,7 +5,7 @@
   "description": "test",
   "scripts": {
     "lint": "abaplint",
-    "unit": "rimraf output && abap_transpile && echo RUNNING && node --expose-gc output/index.mjs && echo OK",
+    "unit": "rimraf output && abap_transpile && echo RUNNING && node --expose-gc output/index.mjs && node test/w3mi_paths.mjs && echo OK",
     "flame": "0x -o -- node --expose-gc test/performance.mjs",
     "performance": "rimraf output && abap_transpile ./abap_transpile_test.json && node --expose-gc test/performance.mjs",
     "integration": "rimraf output && abap_transpile ./abap_transpile_test.json && node --expose-gc output/index.mjs",
@@ -15,11 +15,11 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@abaplint/cli": "^2.120.68",
+    "@abaplint/cli": "^2.120.71",
     "@abaplint/database-pg": "^2.11.83",
     "@abaplint/database-sqlite": "^2.13.83",
-    "@abaplint/runtime": "^2.13.99",
-    "@abaplint/transpiler-cli": "^2.13.99",
+    "@abaplint/runtime": "^2.14.0",
+    "@abaplint/transpiler-cli": "^2.14.0",
     "rimraf": "^6.1.3"
   }
 }
