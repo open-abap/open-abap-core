@@ -9,6 +9,9 @@ CLASS ltcl_conv_in DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FIN
     METHODS uccpi_50 FOR TESTING RAISING cx_static_check.
     METHODS uccp_31 FOR TESTING RAISING cx_static_check.
     METHODS uccp_ok FOR TESTING RAISING cx_static_check.
+    METHODS uccp_lone_high FOR TESTING RAISING cx_static_check.
+    METHODS uccp_lone_low FOR TESTING RAISING cx_static_check.
+    METHODS uccp_surrogate_pair FOR TESTING RAISING cx_static_check.
     METHODS uccp_identity_min FOR TESTING RAISING cx_static_check.
     METHODS uccp_identity_max FOR TESTING RAISING cx_static_check.
     METHODS uccp_ca FOR TESTING RAISING cx_static_check.
@@ -18,6 +21,45 @@ CLASS ltcl_conv_in DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FIN
 ENDCLASS.
 
 CLASS ltcl_conv_in IMPLEMENTATION.
+
+  METHOD uccp_lone_high.
+    DATA char TYPE string.
+    char = cl_abap_conv_in_ce=>uccp( 'D83D' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = strlen( char )
+      exp = 1 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_conv_out_ce=>uccp( char )
+      exp = 'D83D' ).
+  ENDMETHOD.
+
+  METHOD uccp_lone_low.
+    DATA char TYPE string.
+    char = cl_abap_conv_in_ce=>uccp( 'DE0A' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = strlen( char )
+      exp = 1 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_conv_out_ce=>uccp( char )
+      exp = 'DE0A' ).
+  ENDMETHOD.
+
+  METHOD uccp_surrogate_pair.
+    DATA pair TYPE string.
+    DATA encoded TYPE xstring.
+    pair = cl_abap_conv_in_ce=>uccp( 'D83D' ) && cl_abap_conv_in_ce=>uccp( 'DE0A' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = strlen( pair )
+      exp = 2 ).
+    cl_abap_conv_out_ce=>create( )->convert(
+      EXPORTING
+        data   = pair
+      IMPORTING
+        buffer = encoded ).
+    cl_abap_unit_assert=>assert_equals(
+      act = encoded
+      exp = 'F09F988A' ).
+  ENDMETHOD.
 
   METHOD uccp_ok.
     cl_abap_conv_in_ce=>uccp( 'D83E' ).
