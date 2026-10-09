@@ -18,8 +18,8 @@
     "@abaplint/cli": "^2.120.71",
     "@abaplint/database-pg": "^2.11.83",
     "@abaplint/database-sqlite": "^2.13.83",
-    "@abaplint/runtime": "^2.14.0",
-    "@abaplint/transpiler-cli": "^2.14.0",
+    "@abaplint/runtime": "^2.14.2",
+    "@abaplint/transpiler-cli": "^2.14.2",
     "rimraf": "^6.1.3"
   }
 }
