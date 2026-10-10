@@ -14,6 +14,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS load FOR TESTING RAISING cx_static_check.
     METHODS load_save FOR TESTING RAISING cx_static_check.
     METHODS load_stored FOR TESTING RAISING cx_static_check.
+    METHODS load_data_descriptor FOR TESTING RAISING cx_static_check.
     METHODS read_int4 FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
@@ -285,11 +286,28 @@ CLASS ltcl_test IMPLEMENTATION.
       `504B0304`            " local file header signature
       `1400` `0000` `0000`  " version, flags, method = STORED
       `0000` `0000`         " mod time, mod date
-      `00000000`            " crc32 (not checked by load)
+      `074C6930`            " crc32
       `02000000` `02000000` " compressed / uncompressed size = 2
       `0100` `0000`         " name length = 1, extra length = 0
       `46`                  " file name F
       `4142`                " stored payload
+      `504B0102`            " central directory file header signature
+      `1400` `1400`         " version made by, version needed
+      `0000` `0000`         " flags, method = STORED
+      `0000` `0000`         " mod time, mod date
+      `074C6930`            " crc32
+      `02000000` `02000000` " compressed / uncompressed size = 2
+      `0100` `0000` `0000`  " name length = 1, extra length, comment length
+      `0000` `0000`         " disk number, internal attributes
+      `00000000`            " external attributes
+      `00000000`            " offset of local file header
+      `46`                  " file name F
+      `504B0506`            " end of central directory signature
+      `0000` `0000`         " disk numbers
+      `0100` `0100`         " records on this disk, total records
+      `2F000000`            " size of central directory = 47
+      `21000000`            " offset of central directory = 33
+      `0000`                " comment length
       INTO lv_hex.
     lv_zip = lv_hex.
 
@@ -303,6 +321,92 @@ CLASS ltcl_test IMPLEMENTATION.
     lo_zip->get( EXPORTING name    = `F`
                  IMPORTING content = lv_act ).
     lv_exp = '4142'.
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_act
+      exp = lv_exp ).
+  ENDMETHOD.
+
+  METHOD load_data_descriptor.
+    " hand-crafted zip as written by LibreOffice or Java ZipOutputStream: flag bit 3 is set,
+    " crc32 and sizes are 0 in the local file headers and follow the data in a data descriptor,
+    " two deflated entries F = 4142 and G = 434445
+    DATA lv_hex TYPE string.
+    DATA lv_zip TYPE xstring.
+    DATA lv_act TYPE xstring.
+    DATA lv_exp TYPE xstring.
+    DATA lo_zip TYPE REF TO cl_abap_zip.
+
+    CONCATENATE
+      `504B0304`            " local file header signature
+      `1400` `0800` `0800`  " version, flags = bit 3, method = DEFLATE
+      `0000` `0000`         " mod time, mod date
+      `00000000`            " crc32 = 0
+      `00000000` `00000000` " compressed / uncompressed size = 0
+      `0100` `0000`         " name length = 1, extra length = 0
+      `46`                  " file name F
+      `73740200`            " deflated 4142
+      `504B0708`            " data descriptor signature
+      `074C6930`            " crc32
+      `04000000` `02000000` " compressed / uncompressed size
+      `504B0304`            " local file header signature
+      `1400` `0800` `0800`  " version, flags = bit 3, method = DEFLATE
+      `0000` `0000`         " mod time, mod date
+      `00000000`            " crc32 = 0
+      `00000000` `00000000` " compressed / uncompressed size = 0
+      `0100` `0000`         " name length = 1, extra length = 0
+      `47`                  " file name G
+      `7376710500`          " deflated 434445
+      `504B0708`            " data descriptor signature
+      `95D53E1F`            " crc32
+      `05000000` `03000000` " compressed / uncompressed size
+      `504B0102`            " central directory file header signature
+      `1400` `1400`         " version made by, version needed
+      `0800` `0800`         " flags = bit 3, method = DEFLATE
+      `0000` `0000`         " mod time, mod date
+      `074C6930`            " crc32
+      `04000000` `02000000` " compressed / uncompressed size
+      `0100` `0000` `0000`  " name length = 1, extra length, comment length
+      `0000` `0000`         " disk number, internal attributes
+      `00000000`            " external attributes
+      `00000000`            " offset of local file header = 0
+      `46`                  " file name F
+      `504B0102`            " central directory file header signature
+      `1400` `1400`         " version made by, version needed
+      `0800` `0800`         " flags = bit 3, method = DEFLATE
+      `0000` `0000`         " mod time, mod date
+      `95D53E1F`            " crc32
+      `05000000` `03000000` " compressed / uncompressed size
+      `0100` `0000` `0000`  " name length = 1, extra length, comment length
+      `0000` `0000`         " disk number, internal attributes
+      `00000000`            " external attributes
+      `33000000`            " offset of local file header = 51
+      `47`                  " file name G
+      `504B0506`            " end of central directory signature
+      `0000` `0000`         " disk numbers
+      `0200` `0200`         " records on this disk, total records
+      `5E000000`            " size of central directory = 94
+      `67000000`            " offset of central directory = 103
+      `0000`                " comment length
+      INTO lv_hex.
+    lv_zip = lv_hex.
+
+    CREATE OBJECT lo_zip.
+    lo_zip->load( lv_zip ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( lo_zip->files )
+      exp = 2 ).
+
+    lo_zip->get( EXPORTING name    = `F`
+                 IMPORTING content = lv_act ).
+    lv_exp = '4142'.
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_act
+      exp = lv_exp ).
+
+    lo_zip->get( EXPORTING name    = `G`
+                 IMPORTING content = lv_act ).
+    lv_exp = '434445'.
     cl_abap_unit_assert=>assert_equals(
       act = lv_act
       exp = lv_exp ).
