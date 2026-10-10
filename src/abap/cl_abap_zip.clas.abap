@@ -47,7 +47,7 @@ CLASS cl_abap_zip DEFINITION PUBLIC.
 * todo, optimize memory usage, dont store both compressed and original,
              content    TYPE xstring,
              compressed TYPE xstring,
-* CRC-32 from the local header (little endian) of a LOADed entry, SAVE reuses it
+* CRC-32 from the central directory (little endian) of a LOADed entry, SAVE reuses it
              crc        TYPE x LENGTH 4,
            END OF ty_contents.
     DATA mt_contents TYPE STANDARD TABLE OF ty_contents WITH DEFAULT KEY.
@@ -132,8 +132,14 @@ CLASS cl_abap_zip IMPLEMENTATION.
 
   METHOD load.
 * https://en.wikipedia.org/wiki/ZIP_(file_format)
-    CONSTANTS lc_local_sig TYPE x LENGTH 4 VALUE '504B0304'.
+* Entries are taken from the central directory: CRC-32 and sizes in the local file
+* header are zero when general purpose bit 3 is set, the values then follow the
+* data in a data descriptor (LibreOffice, Java ZipOutputStream)
+    CONSTANTS lc_central_sig TYPE x LENGTH 4 VALUE '504B0102'.
+    CONSTANTS lc_eocd_sig    TYPE x LENGTH 4 VALUE '504B0506'.
 
+    DATA lv_central    TYPE i.
+    DATA lv_comment_len TYPE i.
     DATA lv_offset     TYPE i.
     DATA lv_length     TYPE i.
     DATA lv_sig        TYPE x LENGTH 4.
@@ -153,26 +159,55 @@ CLASS cl_abap_zip IMPLEMENTATION.
     CLEAR files.
 
     lv_length = xstrlen( zip ).
-    lv_offset = 0.
 
-    WHILE lv_offset + 30 <= lv_length.
-      lv_sig = zip+lv_offset(4).
-      IF lv_sig <> lc_local_sig.
-* end of local file records reached (central directory / EOCD)
+* end of central directory record, 22 bytes followed by an optional comment
+    lv_central = lv_length - 22.
+    WHILE lv_central >= 0.
+      lv_sig = zip+lv_central(4).
+      IF lv_sig = lc_eocd_sig.
+        EXIT.
+      ENDIF.
+      lv_central = lv_central - 1.
+    ENDWHILE.
+    IF lv_central < 0.
+      RETURN.
+    ENDIF.
+* 16, 4, Offset of start of central directory
+    lv_central = lcl_stream=>read_int4( iv_xstr   = zip
+                                        iv_offset = lv_central + 16 ).
+
+    WHILE lv_central + 46 <= lv_length.
+      lv_sig = zip+lv_central(4).
+      IF lv_sig <> lc_central_sig.
+* end of central directory reached
         EXIT.
       ENDIF.
 
       CLEAR ls_contents.
 
+* central directory file header
+* 16, 4, CRC-32 of uncompressed data
+      lv_crc_off = lv_central + 16.
+      ls_contents-crc = zip+lv_crc_off(4).
+* 20, 4, Compressed size
+      lv_comp_size = lcl_stream=>read_int4( iv_xstr   = zip
+                                            iv_offset = lv_central + 20 ).
+* 42, 4, Relative offset of local file header
+      lv_offset = lcl_stream=>read_int4( iv_xstr   = zip
+                                         iv_offset = lv_central + 42 ).
+* 28, 2, File name length (n), 30, 2, Extra field length (m), 32, 2, File comment length (k)
+      lv_name_len = lcl_stream=>read_int2( iv_xstr   = zip
+                                           iv_offset = lv_central + 28 ).
+      lv_extra_len = lcl_stream=>read_int2( iv_xstr   = zip
+                                            iv_offset = lv_central + 30 ).
+      lv_comment_len = lcl_stream=>read_int2( iv_xstr   = zip
+                                              iv_offset = lv_central + 32 ).
+      lv_central = lv_central + 46 + lv_name_len + lv_extra_len + lv_comment_len.
+
+* local file header
 * 8, 2, Compression method
       lv_comp_method = lcl_stream=>read_int2( iv_xstr    = zip
                                                iv_offset = lv_offset + 8 ).
-* 14, 4, CRC-32 of uncompressed data (zero when it follows in a data descriptor)
-      lv_crc_off = lv_offset + 14.
-      ls_contents-crc = zip+lv_crc_off(4).
-* 18, 4, Compressed size
-      lv_comp_size = lcl_stream=>read_int4( iv_xstr   = zip
-                                            iv_offset = lv_offset + 18 ).
 * 26, 2, File name length (n)
       lv_name_len = lcl_stream=>read_int2( iv_xstr   = zip
                                            iv_offset = lv_offset + 26 ).
@@ -194,7 +229,6 @@ CLASS cl_abap_zip IMPLEMENTATION.
       IF lv_comp_size > 0.
         ls_contents-compressed = zip+lv_offset(lv_comp_size).
       ENDIF.
-      lv_offset = lv_offset + lv_comp_size.
 
       IF lv_comp_method = 0.
 * STORED entry (no compression): the block is the content itself.
