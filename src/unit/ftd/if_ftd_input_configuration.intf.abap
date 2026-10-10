@@ -1,11 +1,11 @@
-INTERFACE if_ftd_output_configuration PUBLIC.
+INTERFACE if_ftd_input_configuration PUBLIC.
 
-  METHODS set_exporting_parameter
+  METHODS set_importing_parameter
     IMPORTING
       name        TYPE abap_parmname
       value       TYPE any
     RETURNING
-      VALUE(self) TYPE REF TO if_ftd_output_configuration
+      VALUE(self) TYPE REF TO if_ftd_input_configuration
     RAISING
       cx_ftd_parameter_not_found.
 
@@ -14,7 +14,7 @@ INTERFACE if_ftd_output_configuration PUBLIC.
       name        TYPE abap_parmname
       value       TYPE any
     RETURNING
-      VALUE(self) TYPE REF TO if_ftd_output_configuration
+      VALUE(self) TYPE REF TO if_ftd_input_configuration
     RAISING
       cx_ftd_parameter_not_found.
 
@@ -23,7 +23,7 @@ INTERFACE if_ftd_output_configuration PUBLIC.
       name        TYPE abap_parmname
       value       TYPE any
     RETURNING
-      VALUE(self) TYPE REF TO if_ftd_output_configuration
+      VALUE(self) TYPE REF TO if_ftd_input_configuration
     RAISING
       cx_ftd_parameter_not_found.
 
