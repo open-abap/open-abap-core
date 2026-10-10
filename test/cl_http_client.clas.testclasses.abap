@@ -796,6 +796,73 @@ CLASS ltcl_test IMPLEMENTATION.
 
 ENDCLASS.
 
+CLASS ltcl_url_parsing DEFINITION DEFERRED.
+CLASS cl_http_client DEFINITION LOCAL FRIENDS ltcl_url_parsing.
+
+CLASS ltcl_url_parsing DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+  PRIVATE SECTION.
+    METHODS parses_url_components FOR TESTING RAISING cx_static_check.
+ENDCLASS.
+
+CLASS ltcl_url_parsing IMPLEMENTATION.
+  METHOD parses_url_components.
+
+    TYPES: BEGIN OF ty_url_case,
+             url   TYPE string,
+             host  TYPE string,
+             uri   TYPE string,
+             query TYPE string,
+           END OF ty_url_case.
+
+    DATA lv_host TYPE string.
+    DATA lv_uri TYPE string.
+    DATA lv_query TYPE string.
+    DATA lt_cases TYPE STANDARD TABLE OF ty_url_case WITH EMPTY KEY.
+
+    lt_cases = VALUE #(
+      ( url   = 'https://host/path'
+        host  = 'https://host'
+        uri   = '/path'
+        query = '' )
+      ( url   = 'https://host:5000/v2/a/b/manifests/latest'
+        host  = 'https://host:5000'
+        uri   = '/v2/a/b/manifests/latest'
+        query = '' )
+      ( url   = 'https://host:5000/v2/a/b/blobs/sha256:abc'
+        host  = 'https://host:5000'
+        uri   = '/v2/a/b/blobs/sha256:abc'
+        query = '' )
+      ( url   = 'https://host/p?x=1&y=2'
+        host  = 'https://host'
+        uri   = '/p'
+        query = 'x=1&y=2' )
+      ( url   = 'https://host'
+        host  = 'https://host'
+        uri   = '/'
+        query = '' ) ).
+
+    LOOP AT lt_cases INTO DATA(ls_case).
+      cl_http_client=>parse_url(
+        EXPORTING
+          url   = ls_case-url
+        IMPORTING
+          host  = lv_host
+          uri   = lv_uri
+          query = lv_query ).
+      cl_abap_unit_assert=>assert_equals(
+        act = lv_host
+        exp = ls_case-host ).
+      cl_abap_unit_assert=>assert_equals(
+        act = lv_uri
+        exp = ls_case-uri ).
+      cl_abap_unit_assert=>assert_equals(
+        act = lv_query
+        exp = ls_case-query ).
+    ENDLOOP.
+
+  ENDMETHOD.
+ENDCLASS.
+
 CLASS ltcl_timeout DEFINITION FOR TESTING RISK LEVEL CRITICAL DURATION MEDIUM FINAL.
   PRIVATE SECTION.
     DATA mi_client TYPE REF TO if_http_client.

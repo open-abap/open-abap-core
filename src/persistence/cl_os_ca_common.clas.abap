@@ -53,7 +53,7 @@ CLASS cl_os_ca_common DEFINITION PUBLIC.
     TYPES typ_object_tab TYPE STANDARD TABLE OF typ_object_iref WITH DEFAULT KEY.
     TYPES typ_object_info_tab TYPE SORTED TABLE OF typ_object_info WITH UNIQUE KEY object_id.
 
-    CONSTANTS dmode_direct TYPE os_dmode VALUE oscon_dmode_direct.
+    CONSTANTS dmode_direct TYPE os_dmode VALUE 0.
     CONSTANTS id_status_complete TYPE typ_id_status VALUE 3.
     CONSTANTS id_status_none TYPE typ_id_status VALUE 0.
 
