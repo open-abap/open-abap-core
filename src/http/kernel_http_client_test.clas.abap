@@ -1,0 +1,5 @@
+CLASS kernel_http_client_test DEFINITION PUBLIC FINAL CREATE PRIVATE.
+ENDCLASS.
+
+CLASS kernel_http_client_test IMPLEMENTATION.
+ENDCLASS.
