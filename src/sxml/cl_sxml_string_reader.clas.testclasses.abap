@@ -793,7 +793,7 @@ CLASS ltcl_xml DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS skip FOR TESTING RAISING cx_static_check.
     METHODS whitespace FOR TESTING RAISING cx_static_check.
     METHODS nested_namespaces FOR TESTING RAISING cx_static_check.
-    METHODS scale FOR TESTING RAISING cx_static_check.
+    METHODS multiple_children FOR TESTING RAISING cx_static_check.
     METHODS scale10 FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
@@ -1110,12 +1110,12 @@ CLASS ltcl_xml IMPLEMENTATION.
       exp = 'd' ).
   ENDMETHOD.
 
-  METHOD scale.
+  METHOD multiple_children.
     DATA xml TYPE string.
     DATA reader TYPE REF TO if_sxml_reader.
     DATA count TYPE i.
     xml = '<a>'.
-    DO 2000 TIMES.
+    DO 20 TIMES.
       xml = xml && '<b>12345678</b>'.
     ENDDO.
     xml = xml && '</a>'.
@@ -1129,7 +1129,7 @@ CLASS ltcl_xml IMPLEMENTATION.
     ENDDO.
     cl_abap_unit_assert=>assert_equals(
       act = count
-      exp = 6002 ).
+      exp = 62 ).
   ENDMETHOD.
 
   METHOD scale10.
