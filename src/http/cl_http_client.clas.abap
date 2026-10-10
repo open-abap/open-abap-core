@@ -31,6 +31,14 @@ CLASS cl_http_client DEFINITION PUBLIC CREATE PRIVATE.
         url TYPE string.
 
   PRIVATE SECTION.
+    CLASS-METHODS parse_url
+      IMPORTING
+        url   TYPE string
+      EXPORTING
+        host  TYPE string
+        uri   TYPE string
+        query TYPE string.
+
     DATA mv_host TYPE string.
     DATA mv_sent TYPE abap_bool.
 * the error of the last SEND, reported by RECEIVE and GET_LAST_ERROR
@@ -41,23 +49,56 @@ ENDCLASS.
 
 CLASS cl_http_client IMPLEMENTATION.
 
+  METHOD parse_url.
+
+    DATA lv_url TYPE string.
+    DATA lv_scheme_offset TYPE i.
+    DATA lv_authority_start TYPE i.
+    DATA lv_path_offset TYPE i.
+    DATA lv_authority TYPE string.
+
+* the query string is not part of the host, split it off first
+    CLEAR query.
+    SPLIT url AT '?' INTO lv_url query.
+
+* find the first path slash after the scheme and authority
+    FIND FIRST OCCURRENCE OF '://' IN lv_url MATCH OFFSET lv_scheme_offset.
+    IF sy-subrc = 0.
+      lv_authority_start = lv_scheme_offset + 3.
+      lv_authority = lv_url+lv_authority_start.
+      FIND FIRST OCCURRENCE OF '/' IN lv_authority MATCH OFFSET lv_path_offset.
+      IF sy-subrc = 0.
+        lv_path_offset = lv_path_offset + lv_authority_start.
+      ENDIF.
+    ELSE.
+      FIND FIRST OCCURRENCE OF '/' IN lv_url MATCH OFFSET lv_path_offset.
+    ENDIF.
+
+    IF sy-subrc = 0.
+      host = lv_url(lv_path_offset).
+      uri = lv_url+lv_path_offset.
+    ELSE.
+      host = lv_url.
+      uri = '/'.
+    ENDIF.
+
+  ENDMETHOD.
+
   METHOD constructor.
 * SSL_ID and proxies are currently ignored
 
-    DATA lv_url TYPE string.
     DATA lv_uri TYPE string.
     DATA lv_query TYPE string.
 
     CREATE OBJECT if_http_client~response TYPE cl_http_entity.
 
-* the query string is not part of the host, split it off first
-    SPLIT url AT '?' INTO lv_url lv_query.
-
-    FIND REGEX '\w(\/[\w\d\.\-\/]+)' IN lv_url SUBMATCHES lv_uri.
-    mv_host = lv_url.
-*    WRITE '@KERNEL console.dir(this.mv_host.get());'.
-*    WRITE '@KERNEL console.dir(lv_uri.get());'.
-    REPLACE FIRST OCCURRENCE OF lv_uri IN mv_host WITH ''.
+    parse_url(
+      EXPORTING
+        url   = url
+      IMPORTING
+        host  = mv_host
+        uri   = lv_uri
+        query = lv_query ).
 
     CREATE OBJECT if_http_client~request TYPE cl_http_entity.
     if_http_client~request->set_header_field(
