@@ -282,9 +282,9 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
     READ TABLE mt_refs ASSIGNING <line> WITH KEY name = p_name.
     IF sy-subrc <> 0.
       RAISE component_not_found.
-    ELSE.
-      p_descr_ref = <line>-type.
     ENDIF.
+
+    p_descr_ref = <line>-type.
   ENDMETHOD.
 
 ENDCLASS.
