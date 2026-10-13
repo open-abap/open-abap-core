@@ -71,6 +71,35 @@ CLASS lcl_json_parser IMPLEMENTATION.
           xml_offset = lv_xml_offset.
     ENDIF.
 
+* JSON.parse keeps the last of two equal keys, a system's sXML reader delivers
+* both in document order: so the text, valid by now, is read once more into a
+* tree whose objects are their key/value pairs in order - strings and numbers
+* converted the way JSON.parse converts them
+    WRITE '@KERNEL const text = iv_json.get();'.
+    WRITE '@KERNEL let pos = 0;'.
+    WRITE '@KERNEL const skip = () => { while (pos < text.length && " \t\n\r".includes(text[pos])) { pos++; } };'.
+    WRITE '@KERNEL const strRe = /"(?:[^"\\]|\\.)*"/y;'.
+    WRITE '@KERNEL const litRe = /-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|true|false|null/y;'.
+    WRITE '@KERNEL const str = () => { strRe.lastIndex = pos; const m = strRe.exec(text); pos = strRe.lastIndex; return JSON.parse(m[0]); };'.
+    WRITE '@KERNEL const val = () => {'.
+    WRITE '@KERNEL   skip();'.
+    WRITE '@KERNEL   const c = text[pos];'.
+    WRITE '@KERNEL   if (c === "{") {'.
+    WRITE '@KERNEL     pos++; const pairs = []; skip();'.
+    WRITE '@KERNEL     if (text[pos] === "}") { pos++; return {pairs}; }'.
+    WRITE '@KERNEL     for (;;) { skip(); const k = str(); skip(); pos++; pairs.push([k, val()]); skip(); if (text[pos++] === "}") { return {pairs}; } }'.
+    WRITE '@KERNEL   }'.
+    WRITE '@KERNEL   if (c === "[") {'.
+    WRITE '@KERNEL     pos++; const items = []; skip();'.
+    WRITE '@KERNEL     if (text[pos] === "]") { pos++; return items; }'.
+    WRITE '@KERNEL     for (;;) { items.push(val()); skip(); if (text[pos++] === "]") { return items; } }'.
+    WRITE '@KERNEL   }'.
+    WRITE '@KERNEL   if (c === "\"") { return str(); }'.
+    WRITE '@KERNEL   litRe.lastIndex = pos; const m = litRe.exec(text); pos = litRe.lastIndex;'.
+    WRITE '@KERNEL   return m[0] === "true" ? true : m[0] === "false" ? false : m[0] === "null" ? null : Number(m[0]);'.
+    WRITE '@KERNEL };'.
+    WRITE '@KERNEL lv_json = {value: val()};'.
+
     mt_nodes = it_nodes.
     CLEAR mt_nodes->*.
     traverse( lv_json ).
@@ -168,9 +197,9 @@ CLASS lcl_json_parser IMPLEMENTATION.
             iv_key     = iv_key
             iv_has_key = iv_has_key ).
 
-    WRITE '@KERNEL for (const k of Object.keys(parsed)) {'.
+    WRITE '@KERNEL for (const [k, v] of parsed.pairs) {'.
     WRITE '@KERNEL   lv_key.set(k);'.
-    WRITE '@KERNEL   lv_value = {value: parsed[k]};'.
+    WRITE '@KERNEL   lv_value = {value: v};'.
     traverse( iv_json    = lv_value
               iv_key     = lv_key
               iv_has_key = abap_true ).
