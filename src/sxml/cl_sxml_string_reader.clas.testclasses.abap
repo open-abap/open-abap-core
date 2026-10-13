@@ -55,6 +55,8 @@ CLASS ltcl_xml_probe2 DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT 
     METHODS names FOR TESTING RAISING cx_static_check.
     METHODS prefixes FOR TESTING RAISING cx_static_check.
     METHODS duplicates FOR TESTING RAISING cx_static_check.
+    METHODS json_duplicate_keys FOR TESTING RAISING cx_static_check.
+    METHODS json_values_in_order FOR TESTING RAISING cx_static_check.
     METHODS encodings FOR TESTING RAISING cx_static_check.
     METHODS document_edges FOR TESTING RAISING cx_static_check.
     METHODS token_gaps FOR TESTING RAISING cx_static_check.
@@ -169,6 +171,62 @@ CLASS ltcl_xml_probe2 IMPLEMENTATION.
     reader->next_node( ).
     cl_abap_unit_assert=>assert_equals( act = reader->nsuri
                                         exp = 'urn:second' ).
+  ENDMETHOD.
+
+  METHOD json_duplicate_keys.
+* a system's sXML reader delivers both members of a duplicate key, in order
+    DATA reader TYPE REF TO if_sxml_reader.
+    reader = cl_sxml_string_reader=>create( cl_abap_codepage=>convert_to( '{"a": 1, "a": 2}' ) ).
+    reader->next_node( ).
+    cl_abap_unit_assert=>assert_equals( act = reader->name
+                                        exp = 'object' ).
+    reader->next_node( ).
+    reader->next_attribute( ).
+    cl_abap_unit_assert=>assert_equals( act = reader->value
+                                        exp = 'a' ).
+    reader->next_node( ).
+    cl_abap_unit_assert=>assert_equals( act = reader->value
+                                        exp = '1' ).
+    reader->next_node( ).
+    reader->next_node( ).
+    reader->next_attribute( ).
+    cl_abap_unit_assert=>assert_equals( act = reader->value
+                                        exp = 'a' ).
+    reader->next_node( ).
+    cl_abap_unit_assert=>assert_equals( act = reader->value
+                                        exp = '2' ).
+    reader->next_node( ).
+    reader->next_node( ).
+    cl_abap_unit_assert=>assert_equals( act = reader->node_type
+                                        exp = if_sxml_node=>co_nt_element_close ).
+    cl_abap_unit_assert=>assert_equals( act = reader->name
+                                        exp = 'object' ).
+  ENDMETHOD.
+
+  METHOD json_values_in_order.
+* strings, numbers and literals come out as JSON.parse converts them
+    DATA reader    TYPE REF TO if_sxml_reader.
+    DATA lo_node   TYPE REF TO if_sxml_node.
+    DATA lo_open   TYPE REF TO if_sxml_open_element.
+    DATA lo_value  TYPE REF TO if_sxml_value_node.
+    DATA lv_values TYPE string.
+    reader = cl_sxml_string_reader=>create( cl_abap_codepage=>convert_to(
+      '{ "s" : "a\"bA" , "n":[1, 2.5e1, -0.5 ], "o":{}, "e":[], "t":true, "f":false, "z":null }' ) ).
+    DO 100 TIMES.
+      lo_node = reader->read_next_node( ).
+      IF lo_node IS INITIAL.
+        EXIT.
+      ELSEIF lo_node->type = if_sxml_node=>co_nt_value.
+        lo_value ?= lo_node.
+        lv_values = lv_values && lo_value->get_value( ) && '|'.
+      ELSEIF lo_node->type = if_sxml_node=>co_nt_element_open.
+        lo_open ?= lo_node.
+        lv_values = lv_values && lo_open->qname-name && '|'.
+      ENDIF.
+    ENDDO.
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_values
+      exp = 'object|str|a"bA|array|num|1|num|25|num|-0.5|object|array|bool|true|bool|false|null|' ).
   ENDMETHOD.
 
   METHOD encodings.
