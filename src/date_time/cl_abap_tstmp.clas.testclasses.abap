@@ -4,8 +4,14 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS subtract FOR TESTING RAISING cx_static_check.
     METHODS add FOR TESTING RAISING cx_static_check.
     METHODS add_long FOR TESTING RAISING cx_static_check.
+    METHODS add_keeps_fraction FOR TESTING RAISING cx_static_check.
+    METHODS add_fraction_carries FOR TESTING RAISING cx_static_check.
+    METHODS subtractsecs_keeps_fraction FOR TESTING RAISING cx_static_check.
+    METHODS subtract_fraction FOR TESTING RAISING cx_static_check.
+    METHODS add_subtract_round_trip FOR TESTING RAISING cx_static_check.
     METHODS subtractsecs FOR TESTING RAISING cx_static_check.
     METHODS subtract2 FOR TESTING RAISING cx_static_check.
+    METHODS subtract_initial FOR TESTING RAISING cx_static_check.
     METHODS move FOR TESTING RAISING cx_static_check.
     METHODS systemtstmp_syst2utc FOR TESTING RAISING cx_static_check.
     METHODS systemtstmp_syst2utc_initial FOR TESTING RAISING cx_static_check.
@@ -70,6 +76,74 @@ CLASS ltcl_test IMPLEMENTATION.
 
   ENDMETHOD.
 
+  METHOD add_keeps_fraction.
+    DATA lv_from TYPE timestampl.
+    DATA lv_to   TYPE timestampl.
+    lv_from = '20240229235959.5000000'.
+    lv_to = cl_abap_tstmp=>add(
+      tstmp = lv_from
+      secs  = 60 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_to
+      exp = '20240301000059.5000000' ).
+  ENDMETHOD.
+
+  METHOD add_fraction_carries.
+    DATA lv_from TYPE timestampl.
+    DATA lv_to   TYPE timestampl.
+    DATA lv_secs TYPE p LENGTH 8 DECIMALS 2.
+    lv_from = '20240229235959.7000000'.
+    lv_secs = '0.5'.
+    lv_to = cl_abap_tstmp=>add(
+      tstmp = lv_from
+      secs  = lv_secs ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_to
+      exp = '20240301000000.2000000' ).
+  ENDMETHOD.
+
+  METHOD subtractsecs_keeps_fraction.
+    DATA lv_from TYPE timestampl.
+    DATA lv_to   TYPE timestampl.
+    lv_from = '20240301000000.2500000'.
+    lv_to = cl_abap_tstmp=>subtractsecs(
+      tstmp = lv_from
+      secs  = 1 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_to
+      exp = '20240229235959.2500000' ).
+  ENDMETHOD.
+
+  METHOD subtract_fraction.
+    DATA lv_from TYPE timestampl.
+    DATA lv_to   TYPE timestampl.
+    DATA lv_diff TYPE tzntstmpl.
+    lv_from = '20240229235959.7000000'.
+    lv_to = '20240301000001.2000000'.
+    lv_diff = cl_abap_tstmp=>subtract(
+      tstmp1 = lv_to
+      tstmp2 = lv_from ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_diff
+      exp = '1.5' ).
+  ENDMETHOD.
+
+  METHOD add_subtract_round_trip.
+    DATA lv_from TYPE timestampl.
+    DATA lv_to   TYPE timestampl.
+    DATA lv_diff TYPE i.
+    GET TIME STAMP FIELD lv_from.
+    lv_to = cl_abap_tstmp=>add(
+      tstmp = lv_from
+      secs  = 60 ).
+    lv_diff = cl_abap_tstmp=>subtract(
+      tstmp1 = lv_to
+      tstmp2 = lv_from ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_diff
+      exp = 60 ).
+  ENDMETHOD.
+
   METHOD subtractsecs.
 
     CONSTANTS lc_time TYPE timestamp VALUE '19820201011000'.
@@ -99,6 +173,23 @@ CLASS ltcl_test IMPLEMENTATION.
       tstmp2 = lv_epoch ).
 
     ASSERT lv_result > 0.
+
+  ENDMETHOD.
+
+  METHOD subtract_initial.
+
+    DATA lv_now     TYPE timestamp.
+    DATA lv_initial TYPE timestamp.
+
+    GET TIME STAMP FIELD lv_now.
+    TRY.
+        cl_abap_tstmp=>subtract(
+          tstmp1 = lv_now
+          tstmp2 = lv_initial ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_parameter_invalid_range.
+        RETURN.
+    ENDTRY.
 
   ENDMETHOD.
 

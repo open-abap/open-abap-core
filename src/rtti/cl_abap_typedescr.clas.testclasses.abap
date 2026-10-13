@@ -101,6 +101,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS absolute_name_bool FOR TESTING.
     METHODS include_alias_with_tab FOR TESTING.
 
+    METHODS describe_by_data_ref_ref FOR TESTING.
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
@@ -961,6 +962,32 @@ CLASS ltcl_test IMPLEMENTATION.
     IF ref1 = ref2.
       cl_abap_unit_assert=>fail( ).
     ENDIF.
+  ENDMETHOD.
+
+  METHOD describe_by_data_ref_ref.
+* a reference to a reference: the outer and the inner one are both
+* data references, the inner target is not part of the type
+    DATA mr_ref_ref TYPE REF TO data.
+    DATA lo_ref     TYPE REF TO cl_abap_refdescr.
+    FIELD-SYMBOLS <inner> TYPE REF TO data.
+    FIELD-SYMBOLS <elem>  TYPE any.
+
+    CREATE DATA mr_ref_ref TYPE REF TO data.
+    ASSIGN mr_ref_ref->* TO <inner>.
+    CREATE DATA <inner> TYPE string.
+    ASSIGN <inner>->* TO <elem>.
+    <elem> = `ref-ref`.
+
+    lo_ref ?= cl_abap_typedescr=>describe_by_data_ref( mr_ref_ref ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_ref->kind
+      exp = cl_abap_typedescr=>kind_ref ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_ref->type_kind
+      exp = cl_abap_typedescr=>typekind_dref ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_ref->get_referenced_type( )->type_kind
+      exp = cl_abap_typedescr=>typekind_data ).
   ENDMETHOD.
 
 ENDCLASS.
