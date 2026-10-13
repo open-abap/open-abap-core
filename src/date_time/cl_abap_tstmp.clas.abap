@@ -11,7 +11,10 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
         tstmp1        TYPE p
         tstmp2        TYPE p
       RETURNING
-        VALUE(r_secs) TYPE tzntstmpl.
+        VALUE(r_secs) TYPE tzntstmpl
+      RAISING
+        cx_parameter_invalid_range
+        cx_parameter_invalid_type.
 
     CLASS-METHODS add
       IMPORTING
@@ -208,6 +211,12 @@ CLASS cl_abap_tstmp IMPLEMENTATION.
     DATA lv_part1 TYPE p LENGTH 16 DECIMALS 7.
     DATA lv_part2 TYPE p LENGTH 16 DECIMALS 7.
     DATA lv_secs  TYPE p LENGTH 16 DECIMALS 0.
+    DATA lv_min   TYPE p LENGTH 16 DECIMALS 7 VALUE '10101000000'.
+
+* timestamps before 0001-01-01, including the initial one, are invalid
+    IF tstmp1 < lv_min OR tstmp2 < lv_min.
+      RAISE EXCEPTION TYPE cx_parameter_invalid_range.
+    ENDIF.
 
     str = |{ tstmp1 TIMESTAMP = ISO }|.
     IF str CA ','.
