@@ -225,6 +225,9 @@ CLASS cl_abap_tstmp IMPLEMENTATION.
       ENDIF.
     ENDIF.
     WRITE '@KERNEL let t2 = Date.parse(str.get() + "Z");'.
+* a time stamp Date cannot read, the initial 0 above all, gives 0 - never
+* NaN, which the packed result cannot hold
+    WRITE '@KERNEL if (Number.isNaN(t1 - t2)) { return r_secs; }'.
     WRITE '@KERNEL lv_secs.set(Math.round((t1 - t2) / 1000));'.
     r_secs = lv_secs + lv_part1 - lv_part2.
   ENDMETHOD.

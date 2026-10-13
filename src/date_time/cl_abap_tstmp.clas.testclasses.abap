@@ -8,6 +8,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS add_fraction_carries FOR TESTING RAISING cx_static_check.
     METHODS subtractsecs_keeps_fraction FOR TESTING RAISING cx_static_check.
     METHODS subtract_fraction FOR TESTING RAISING cx_static_check.
+    METHODS subtract_initial FOR TESTING RAISING cx_static_check.
     METHODS add_subtract_round_trip FOR TESTING RAISING cx_static_check.
     METHODS subtractsecs FOR TESTING RAISING cx_static_check.
     METHODS subtract2 FOR TESTING RAISING cx_static_check.
@@ -125,6 +126,20 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lv_diff
       exp = '1.5' ).
+  ENDMETHOD.
+
+  METHOD subtract_initial.
+* open-abap-lock subtracts a time stamp it has not set yet
+    DATA lv_now     TYPE timestamp.
+    DATA lv_initial TYPE timestamp.
+    DATA lv_diff    TYPE tzntstmpl.
+    GET TIME STAMP FIELD lv_now.
+    lv_diff = cl_abap_tstmp=>subtract(
+      tstmp1 = lv_now
+      tstmp2 = lv_initial ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_diff
+      exp = 0 ).
   ENDMETHOD.
 
   METHOD add_subtract_round_trip.
