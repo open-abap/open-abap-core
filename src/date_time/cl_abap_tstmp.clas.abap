@@ -11,21 +11,21 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
         tstmp1        TYPE p
         tstmp2        TYPE p
       RETURNING
-        VALUE(r_secs) TYPE i.
+        VALUE(r_secs) TYPE tzntstmpl.
 
     CLASS-METHODS add
       IMPORTING
         tstmp       TYPE p
         secs        TYPE numeric
       RETURNING
-        VALUE(time) TYPE timestamp.
+        VALUE(time) TYPE tzntstmpl.
 
     CLASS-METHODS subtractsecs
       IMPORTING
         tstmp       TYPE p
         secs        TYPE numeric
       RETURNING
-        VALUE(time) TYPE timestamp.
+        VALUE(time) TYPE tzntstmpl.
 
     CLASS-METHODS td_add
       IMPORTING
@@ -201,37 +201,65 @@ CLASS cl_abap_tstmp IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD subtract.
-* todo: this can be done easier and faster, just subtract the two values?
+* the whole seconds through Date, the fractions (up to 7 digits) as packed
+* numbers below one - a 21 digit timestamp must not pass through a double
     DATA str      TYPE string.
-    DATA lv_dummy TYPE string.
+    DATA lv_frac  TYPE string.
+    DATA lv_part1 TYPE p LENGTH 16 DECIMALS 7.
+    DATA lv_part2 TYPE p LENGTH 16 DECIMALS 7.
+    DATA lv_secs  TYPE p LENGTH 16 DECIMALS 0.
 
     str = |{ tstmp1 TIMESTAMP = ISO }|.
     IF str CA ','.
-      SPLIT str AT ',' INTO str lv_dummy.
+      SPLIT str AT ',' INTO str lv_frac.
+      IF lv_frac CO '0123456789'.
+        lv_part1 = |0.{ lv_frac }|.
+      ENDIF.
     ENDIF.
-    WRITE '@KERNEL let t1 = Date.parse(str.get());'.
+    WRITE '@KERNEL let t1 = Date.parse(str.get() + "Z");'.
     str = |{ tstmp2 TIMESTAMP = ISO }|.
     IF str CA ','.
-      SPLIT str AT ',' INTO str lv_dummy.
+      SPLIT str AT ',' INTO str lv_frac.
+      IF lv_frac CO '0123456789'.
+        lv_part2 = |0.{ lv_frac }|.
+      ENDIF.
     ENDIF.
-    WRITE '@KERNEL let t2 = Date.parse(str.get());'.
-    WRITE '@KERNEL r_secs.set((t1 - t2)/1000);'.
+    WRITE '@KERNEL let t2 = Date.parse(str.get() + "Z");'.
+    WRITE '@KERNEL lv_secs.set(Math.round((t1 - t2) / 1000));'.
+    r_secs = lv_secs + lv_part1 - lv_part2.
   ENDMETHOD.
 
   METHOD add.
-    DATA str      TYPE string.
-    DATA lv_dummy TYPE string.
+* the whole seconds through Date, the fraction as text: a 21 digit
+* timestamp must not pass through a double
+    DATA str       TYPE string.
+    DATA lv_frac   TYPE string.
+    DATA lv_digits TYPE string.
+    DATA lv_part   TYPE p LENGTH 16 DECIMALS 7.
+    DATA lv_whole  TYPE p LENGTH 16 DECIMALS 0.
+
     str = |{ tstmp TIMESTAMP = ISO }|.
     IF str CA ','.
-      SPLIT str AT ',' INTO str lv_dummy.
+      SPLIT str AT ',' INTO str lv_frac.
+      IF lv_frac CO '0123456789'.
+        lv_part = |0.{ lv_frac }|.
+      ENDIF.
     ENDIF.
+    lv_part = lv_part + secs.
+    lv_whole = floor( lv_part ).
+    lv_part = lv_part - lv_whole.
+
     WRITE '@KERNEL let t1 = new Date(Date.parse(str.get() + "Z"));'.
-    WRITE '@KERNEL t1.setSeconds( t1.getSeconds() + secs.get() );'.
-    WRITE '@KERNEL time.set(t1.toISOString().slice(0, 19).replace(/-/g, "").replace(/:/g, "").replace("T", ""));'.
+    WRITE '@KERNEL t1.setUTCSeconds(t1.getUTCSeconds() + Number(lv_whole.get()));'.
+    WRITE '@KERNEL lv_digits.set(t1.toISOString().slice(0, 19).replace(/-/g, "").replace(/:/g, "").replace("T", ""));'.
+
+    lv_frac = |{ lv_part }|.
+    SPLIT lv_frac AT '.' INTO str lv_frac.
+    time = |{ lv_digits }.{ lv_frac }|.
   ENDMETHOD.
 
   METHOD subtractsecs.
-    DATA lv_secs TYPE i.
+    DATA lv_secs TYPE p LENGTH 16 DECIMALS 7.
     lv_secs = secs * -1.
     time = add(
       tstmp = tstmp

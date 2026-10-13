@@ -41,6 +41,14 @@ CLASS cl_abap_refdescr IMPLEMENTATION.
   METHOD create.
     CREATE OBJECT p_result.
     p_result->referenced = p_referenced_type.
+    p_result->kind = cl_abap_typedescr=>kind_ref.
+    IF p_referenced_type IS BOUND
+        AND ( p_referenced_type->kind = cl_abap_typedescr=>kind_class
+        OR p_referenced_type->kind = cl_abap_typedescr=>kind_intf ).
+      p_result->type_kind = cl_abap_typedescr=>typekind_oref.
+    ELSE.
+      p_result->type_kind = cl_abap_typedescr=>typekind_dref.
+    ENDIF.
   ENDMETHOD.
 
   METHOD get_referenced_type.
