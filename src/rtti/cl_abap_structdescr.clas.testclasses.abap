@@ -9,6 +9,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS component_type_kind FOR TESTING RAISING cx_static_check.
     METHODS create_empty FOR TESTING RAISING cx_static_check.
     METHODS create_basic FOR TESTING RAISING cx_static_check.
+    METHODS create_dash_in_name FOR TESTING RAISING cx_static_check.
     METHODS nested_boolean1 FOR TESTING RAISING cx_static_check.
     METHODS nested_boolean2 FOR TESTING RAISING cx_static_check.
     METHODS long_name FOR TESTING RAISING cx_static_check.
@@ -57,6 +58,40 @@ CLASS ltcl_test IMPLEMENTATION.
     ASSIGN COMPONENT 'FIELD' OF STRUCTURE <fs> TO <field>.
     cl_abap_unit_assert=>assert_subrc( ).
     <field> = 2.
+  ENDMETHOD.
+
+  METHOD create_dash_in_name.
+* a component whose name has a dash, as RAP's %ELEMENT-<field> rows have:
+* ASSIGN COMPONENT finds it by its whole name, a dash path still works
+    DATA lt_components TYPE cl_abap_structdescr=>component_table.
+    DATA ls_component  LIKE LINE OF lt_components.
+    DATA lo_struct     TYPE REF TO cl_abap_structdescr.
+    DATA lr_ref        TYPE REF TO data.
+    FIELD-SYMBOLS <fs>    TYPE any.
+    FIELD-SYMBOLS <field> TYPE any.
+
+    ls_component-name = '%ELEMENT-CUSTOMERID'.
+    ls_component-type = cl_abap_elemdescr=>get_c( 1 ).
+    APPEND ls_component TO lt_components.
+    ls_component-name = 'FIELD'.
+    ls_component-type = cl_abap_elemdescr=>get_i( ).
+    APPEND ls_component TO lt_components.
+
+    lo_struct = cl_abap_structdescr=>create( lt_components ).
+    CREATE DATA lr_ref TYPE HANDLE lo_struct.
+    ASSIGN lr_ref->* TO <fs>.
+
+    ASSIGN COMPONENT '%ELEMENT-CUSTOMERID' OF STRUCTURE <fs> TO <field>.
+    cl_abap_unit_assert=>assert_subrc( ).
+    <field> = 'X'.
+    UNASSIGN <field>.
+    ASSIGN COMPONENT 1 OF STRUCTURE <fs> TO <field>.
+    cl_abap_unit_assert=>assert_equals( act = <field>
+                                        exp = 'X' ).
+
+    UNASSIGN <field>.
+    ASSIGN COMPONENT '%ELEMENT-NOPE' OF STRUCTURE <fs> TO <field>.
+    cl_abap_unit_assert=>assert_subrc( exp = 4 ).
   ENDMETHOD.
 
   METHOD component_type_kind.
