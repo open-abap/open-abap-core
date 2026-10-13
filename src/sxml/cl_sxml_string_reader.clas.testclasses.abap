@@ -204,14 +204,16 @@ CLASS ltcl_xml_probe2 IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD json_values_in_order.
-* strings, numbers and literals come out as JSON.parse converts them
+* every member in document order, the open element of its kind and its
+* value - numbers written so that the text is the number, the runtime
+* reads a number as a JS number (2.5e1 would come out as 25)
     DATA reader    TYPE REF TO if_sxml_reader.
     DATA lo_node   TYPE REF TO if_sxml_node.
     DATA lo_open   TYPE REF TO if_sxml_open_element.
     DATA lo_value  TYPE REF TO if_sxml_value_node.
     DATA lv_values TYPE string.
     reader = cl_sxml_string_reader=>create( cl_abap_codepage=>convert_to(
-      '{ "s" : "a\"bA" , "n":[1, 2.5e1, -0.5 ], "o":{}, "e":[], "t":true, "f":false, "z":null }' ) ).
+      '{ "s" : "a\"bA" , "n":[1, 2.5, -0.5 ], "o":{}, "e":[], "t":true, "f":false, "z":null }' ) ).
     DO 100 TIMES.
       lo_node = reader->read_next_node( ).
       IF lo_node IS INITIAL.
@@ -226,7 +228,7 @@ CLASS ltcl_xml_probe2 IMPLEMENTATION.
     ENDDO.
     cl_abap_unit_assert=>assert_equals(
       act = lv_values
-      exp = 'object|str|a"bA|array|num|1|num|25|num|-0.5|object|array|bool|true|bool|false|null|' ).
+      exp = 'object|str|a"bA|array|num|1|num|2.5|num|-0.5|object|array|bool|true|bool|false|null|' ).
   ENDMETHOD.
 
   METHOD encodings.
