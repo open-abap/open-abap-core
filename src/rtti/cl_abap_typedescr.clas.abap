@@ -355,6 +355,9 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     WRITE '@KERNEL lv_length.set(p_data.getLength ? p_data.getLength() : 0);'.
     WRITE '@KERNEL lv_decimals.set(p_data.getDecimals ? p_data.getDecimals() : 0);'.
     WRITE '@KERNEL lv_generic.set(p_data.constructor.name === "DataReference" && p_data.getPointer() === undefined && p_data.type?.constructor?.name === "Character" && p_data.type?.length === 4 && p_data.type?.extra === undefined ? "X" : " ");'.
+* a reference created by CREATE DATA ... TYPE REF TO data carries no static type in the
+* runtime: a REF TO data, whatever it points to - the target is not part of its type
+    WRITE '@KERNEL if (p_data.constructor.name === "DataReference" && p_data.type === undefined) { lv_generic.set("X"); }'.
 
 * These are the constructor names from the js runtime
     CASE lv_name.
