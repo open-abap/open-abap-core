@@ -7,6 +7,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS string_type FOR TESTING RAISING cx_static_check.
     METHODS generic_data_reference FOR TESTING RAISING cx_static_check.
     METHODS generic_object_reference FOR TESTING RAISING cx_static_check.
+    METHODS create_object_reference FOR TESTING RAISING cx_static_check.
+    METHODS create_data_reference FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -109,6 +111,42 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = referenced->type_kind
       exp = cl_abap_typedescr=>typekind_class ).
+  ENDMETHOD.
+
+  METHOD create_object_reference.
+    DATA lo_ref TYPE REF TO cl_abap_refdescr.
+    DATA lo_tab TYPE REF TO cl_abap_tabledescr.
+    DATA lr     TYPE REF TO data.
+
+    lo_ref = cl_abap_refdescr=>create( cl_abap_typedescr=>describe_by_name( 'CX_ROOT' ) ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_ref->kind
+      exp = cl_abap_typedescr=>kind_ref ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_ref->type_kind
+      exp = cl_abap_typedescr=>typekind_oref ).
+
+    lo_tab = cl_abap_tabledescr=>create( lo_ref ).
+    CREATE DATA lr TYPE HANDLE lo_tab.
+    cl_abap_unit_assert=>assert_bound( lr ).
+  ENDMETHOD.
+
+  METHOD create_data_reference.
+    DATA lo_ref TYPE REF TO cl_abap_refdescr.
+    DATA lo_tab TYPE REF TO cl_abap_tabledescr.
+    DATA lr     TYPE REF TO data.
+
+    lo_ref = cl_abap_refdescr=>create( cl_abap_elemdescr=>get_string( ) ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_ref->kind
+      exp = cl_abap_typedescr=>kind_ref ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_ref->type_kind
+      exp = cl_abap_typedescr=>typekind_dref ).
+
+    lo_tab = cl_abap_tabledescr=>create( lo_ref ).
+    CREATE DATA lr TYPE HANDLE lo_tab.
+    cl_abap_unit_assert=>assert_bound( lr ).
   ENDMETHOD.
 
 ENDCLASS.
