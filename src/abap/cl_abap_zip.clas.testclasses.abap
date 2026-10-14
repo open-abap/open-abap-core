@@ -16,6 +16,11 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS load_stored FOR TESTING RAISING cx_static_check.
     METHODS load_data_descriptor FOR TESTING RAISING cx_static_check.
     METHODS read_int4 FOR TESTING RAISING cx_static_check.
+    METHODS add_timestamp FOR TESTING RAISING cx_static_check.
+    METHODS add_lists_file FOR TESTING RAISING cx_static_check.
+    METHODS save_load_timestamp FOR TESTING RAISING cx_static_check.
+    METHODS stored_level FOR TESTING RAISING cx_static_check.
+    METHODS unicode_names_flag FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -429,6 +434,100 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lcl_stream=>read_int4( iv_xstr = 'FFFFFFFF' iv_offset = 0 )
       exp = -1 ).
+  ENDMETHOD.
+
+  METHOD add_timestamp.
+    DATA lo_zip       TYPE REF TO cl_abap_zip.
+    DATA ls_timestamp TYPE cl_abap_zip=>t_file_timestamp.
+    DATA ls_file      LIKE LINE OF lo_zip->files.
+    ls_timestamp-date = '20240102'.
+    ls_timestamp-time = '101112'.
+    CREATE OBJECT lo_zip.
+    lo_zip->add( name           = 'a.txt'
+                 content        = '41'
+                 file_timestamp = ls_timestamp ).
+    READ TABLE lo_zip->files INDEX 1 INTO ls_file.
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_file-date
+      exp = '20240102' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_file-time
+      exp = '101112' ).
+  ENDMETHOD.
+
+  METHOD add_lists_file.
+    DATA lo_zip  TYPE REF TO cl_abap_zip.
+    DATA ls_file LIKE LINE OF lo_zip->files.
+    CREATE OBJECT lo_zip.
+    lo_zip->add( name    = 'a.txt'
+                 content = '414243' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( lo_zip->files )
+      exp = 1 ).
+    READ TABLE lo_zip->files INDEX 1 INTO ls_file.
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_file-name
+      exp = 'a.txt' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_file-size
+      exp = 3 ).
+    cl_abap_unit_assert=>assert_not_initial( ls_file-date ).
+  ENDMETHOD.
+
+  METHOD save_load_timestamp.
+* MS-DOS time stores the seconds divided by two
+    DATA lo_zip       TYPE REF TO cl_abap_zip.
+    DATA lo_loaded    TYPE REF TO cl_abap_zip.
+    DATA ls_timestamp TYPE cl_abap_zip=>t_file_timestamp.
+    DATA ls_file      LIKE LINE OF lo_zip->files.
+    ls_timestamp-date = '20311231'.
+    ls_timestamp-time = '235958'.
+    CREATE OBJECT lo_zip.
+    lo_zip->add( name           = 'a.txt'
+                 content        = '41'
+                 file_timestamp = ls_timestamp ).
+    CREATE OBJECT lo_loaded.
+    lo_loaded->load( lo_zip->save( ) ).
+    READ TABLE lo_loaded->files INDEX 1 INTO ls_file.
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_file-date
+      exp = '20311231' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_file-time
+      exp = '235958' ).
+  ENDMETHOD.
+
+  METHOD stored_level.
+    DATA lo_zip     TYPE REF TO cl_abap_zip.
+    DATA lo_loaded  TYPE REF TO cl_abap_zip.
+    DATA lv_content TYPE xstring.
+    CREATE OBJECT lo_zip.
+    lo_zip->add( name           = 'a.txt'
+                 content        = '414141414141414141414141'
+                 compress_level = 0 ).
+    CREATE OBJECT lo_loaded.
+    lo_loaded->load( lo_zip->save( ) ).
+    lo_loaded->get( EXPORTING name    = 'a.txt'
+                    IMPORTING content = lv_content ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_content
+      exp = '414141414141414141414141' ).
+  ENDMETHOD.
+
+  METHOD unicode_names_flag.
+* general purpose bit flag at offset 6 of the local file header, bit 11, little endian
+    DATA lo_zip   TYPE REF TO cl_abap_zip.
+    DATA lv_saved TYPE xstring.
+    DATA lv_flag  TYPE x LENGTH 2.
+    CREATE OBJECT lo_zip.
+    lo_zip->support_unicode_names = abap_true.
+    lo_zip->add( name    = 'a.txt'
+                 content = '41' ).
+    lv_saved = lo_zip->save( ).
+    lv_flag = lv_saved+6(2).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_flag
+      exp = '0008' ).
   ENDMETHOD.
 
 ENDCLASS.

@@ -34,4 +34,37 @@ INTERFACE if_system_uuid_static PUBLIC.
     RAISING
       cx_uuid_error.
 
+  CLASS-METHODS convert_uuid_c22
+    IMPORTING
+      uuid     TYPE sysuuid_c22
+    EXPORTING
+      uuid_x16 TYPE sysuuid_x16
+      uuid_c32 TYPE sysuuid_c32
+*      uuid_c26 TYPE sysuuid_c26
+      uuid_c36 TYPE sysuuid_c36
+    RAISING
+      cx_uuid_error.
+
+  CLASS-METHODS convert_uuid_c32
+    IMPORTING
+      uuid     TYPE sysuuid_c32
+    EXPORTING
+      uuid_x16 TYPE sysuuid_x16
+      uuid_c22 TYPE sysuuid_c22
+*      uuid_c26 TYPE sysuuid_c26
+      uuid_c36 TYPE sysuuid_c36
+    RAISING
+      cx_uuid_error.
+
+  CLASS-METHODS convert_uuid_c36
+    IMPORTING
+      uuid     TYPE sysuuid_c36
+    EXPORTING
+      uuid_x16 TYPE sysuuid_x16
+      uuid_c22 TYPE sysuuid_c22
+*      uuid_c26 TYPE sysuuid_c26
+      uuid_c32 TYPE sysuuid_c32
+    RAISING
+      cx_uuid_error.
+
 ENDINTERFACE.

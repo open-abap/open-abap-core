@@ -309,3 +309,147 @@ CLASS ltcl_xml IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+CLASS ltcl_xml_format DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+
+  PRIVATE SECTION.
+    DATA mi_writer TYPE REF TO if_sxml_writer.
+    DATA mo_writer TYPE REF TO cl_sxml_string_writer.
+
+    METHODS setup.
+    METHODS output RETURNING VALUE(rv_xml) TYPE string.
+
+    METHODS compact FOR TESTING RAISING cx_static_check.
+    METHODS linebreaks FOR TESTING RAISING cx_static_check.
+    METHODS linebreaks_indent FOR TESTING RAISING cx_static_check.
+    METHODS prefix_declared_once FOR TESTING RAISING cx_static_check.
+    METHODS default_namespace FOR TESTING RAISING cx_static_check.
+    METHODS default_namespace_reset FOR TESTING RAISING cx_static_check.
+    METHODS namespace_out_of_scope FOR TESTING RAISING cx_static_check.
+    METHODS attribute_namespace FOR TESTING RAISING cx_static_check.
+
+ENDCLASS.
+
+CLASS ltcl_xml_format IMPLEMENTATION.
+
+  METHOD setup.
+    mo_writer = cl_sxml_string_writer=>create( ).
+    mi_writer = mo_writer.
+  ENDMETHOD.
+
+  METHOD output.
+    rv_xml = cl_abap_conv_codepage=>create_in( )->convert( mo_writer->get_output( ) ).
+  ENDMETHOD.
+
+  METHOD compact.
+    mi_writer->open_element( 'a' ).
+    mi_writer->open_element( 'b' ).
+    mi_writer->write_value( '1' ).
+    mi_writer->close_element( ).
+    mi_writer->close_element( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = output( )
+      exp = '<a><b>1</b></a>' ).
+  ENDMETHOD.
+
+  METHOD linebreaks.
+    mi_writer->set_option( if_sxml_writer=>co_opt_linebreaks ).
+    mi_writer->open_element( 'a' ).
+    mi_writer->open_element( 'b' ).
+    mi_writer->write_value( '1' ).
+    mi_writer->close_element( ).
+    mi_writer->open_element( 'c' ).
+    mi_writer->close_element( ).
+    mi_writer->close_element( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = output( )
+      exp = |<a>\n<b>1</b>\n<c/>\n</a>| ).
+  ENDMETHOD.
+
+  METHOD linebreaks_indent.
+    mi_writer->set_option( if_sxml_writer=>co_opt_linebreaks ).
+    mi_writer->set_option( if_sxml_writer=>co_opt_indent ).
+    mi_writer->open_element( 'a' ).
+    mi_writer->open_element( 'b' ).
+    mi_writer->open_element( 'c' ).
+    mi_writer->write_value( '1' ).
+    mi_writer->close_element( ).
+    mi_writer->close_element( ).
+    mi_writer->close_element( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = output( )
+      exp = |<a>\n <b>\n  <c>1</c>\n </b>\n</a>| ).
+  ENDMETHOD.
+
+  METHOD prefix_declared_once.
+    mi_writer->open_element( name   = 'Envelope'
+                             nsuri  = 'urn:soap'
+                             prefix = 's' ).
+    mi_writer->open_element( name   = 'Body'
+                             nsuri  = 'urn:soap'
+                             prefix = 's' ).
+    mi_writer->close_element( ).
+    mi_writer->close_element( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = output( )
+      exp = '<s:Envelope xmlns:s="urn:soap"><s:Body/></s:Envelope>' ).
+  ENDMETHOD.
+
+  METHOD default_namespace.
+    mi_writer->open_element( name   = 'order'
+                             nsuri  = 'urn:shop'
+                             prefix = if_sxml_named=>co_use_default_xmlns ).
+    mi_writer->open_element( name   = 'id'
+                             nsuri  = 'urn:shop'
+                             prefix = if_sxml_named=>co_use_default_xmlns ).
+    mi_writer->write_value( '1' ).
+    mi_writer->close_element( ).
+    mi_writer->close_element( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = output( )
+      exp = '<order xmlns="urn:shop"><id>1</id></order>' ).
+  ENDMETHOD.
+
+  METHOD default_namespace_reset.
+* an element without namespace inside a default namespace
+    mi_writer->open_element( name   = 'order'
+                             nsuri  = 'urn:shop'
+                             prefix = if_sxml_named=>co_use_default_xmlns ).
+    mi_writer->open_element( 'note' ).
+    mi_writer->close_element( ).
+    mi_writer->close_element( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = output( )
+      exp = '<order xmlns="urn:shop"><note xmlns=""/></order>' ).
+  ENDMETHOD.
+
+  METHOD namespace_out_of_scope.
+* a binding ends with its element, the sibling declares it again
+    mi_writer->open_element( 'root' ).
+    mi_writer->open_element( name   = 'a'
+                             nsuri  = 'urn:x'
+                             prefix = 'x' ).
+    mi_writer->close_element( ).
+    mi_writer->open_element( name   = 'b'
+                             nsuri  = 'urn:x'
+                             prefix = 'x' ).
+    mi_writer->close_element( ).
+    mi_writer->close_element( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = output( )
+      exp = '<root><x:a xmlns:x="urn:x"/><x:b xmlns:x="urn:x"/></root>' ).
+  ENDMETHOD.
+
+  METHOD attribute_namespace.
+    mi_writer->open_element( 'a' ).
+    mi_writer->write_attribute( name   = 'lang'
+                                nsuri  = 'urn:x'
+                                prefix = 'x'
+                                value  = 'en' ).
+    mi_writer->close_element( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = output( )
+      exp = '<a xmlns:x="urn:x" x:lang="en"/>' ).
+  ENDMETHOD.
+
+ENDCLASS.

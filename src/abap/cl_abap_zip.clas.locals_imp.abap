@@ -76,11 +76,13 @@ CLASS lcl_stream IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD append_date.
-    ASSERT 1 = 'todo'.
+* MS-DOS date: bits 15-9 year since 1980, 8-5 month, 4-0 day
+    append_int2( ( iv_date(4) - 1980 ) * 512 + iv_date+4(2) * 32 + iv_date+6(2) ).
   ENDMETHOD.
 
   METHOD append_time.
-    ASSERT 1 = 'todo'.
+* MS-DOS time: bits 15-11 hour, 10-5 minute, 4-0 second divided by two
+    append_int2( iv_time(2) * 2048 + iv_time+2(2) * 32 + iv_time+4(2) DIV 2 ).
   ENDMETHOD.
 
   METHOD append_int2.
