@@ -73,7 +73,9 @@ CLASS cl_abap_matcher DEFINITION PUBLIC.
     DATA mv_pattern TYPE string.
     DATA mv_ignore_case TYPE abap_bool.
 
-    METHODS scan.
+    METHODS scan
+      IMPORTING
+        iv_offset TYPE i DEFAULT 0.
     METHODS expand
       IMPORTING
         iv_newtext     TYPE clike
@@ -94,12 +96,34 @@ CLASS cl_abap_matcher IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD scan.
+* searches from iv_offset on, the offsets of the matches count from the start of the text
+    DATA lv_rest  TYPE string.
+    DATA ls_match LIKE LINE OF mt_matches.
+    FIELD-SYMBOLS <ls_match> LIKE LINE OF mt_matches.
+    FIELD-SYMBOLS <ls_sub> LIKE LINE OF ls_match-submatches.
+
+    CLEAR mt_matches.
+    CLEAR mv_index.
+    IF iv_offset > strlen( text ).
+      RETURN.
+    ENDIF.
+    lv_rest = text+iv_offset.
+
     IF regex IS BOUND.
-      FIND ALL OCCURRENCES OF REGEX regex IN text RESULTS mt_matches.
+      FIND ALL OCCURRENCES OF REGEX regex IN lv_rest RESULTS mt_matches.
     ELSEIF mv_ignore_case = abap_true.
-      FIND ALL OCCURRENCES OF REGEX mv_pattern IN text RESULTS mt_matches IGNORING CASE.
+      FIND ALL OCCURRENCES OF REGEX mv_pattern IN lv_rest RESULTS mt_matches IGNORING CASE.
     ELSE.
-      FIND ALL OCCURRENCES OF REGEX mv_pattern IN text RESULTS mt_matches.
+      FIND ALL OCCURRENCES OF REGEX mv_pattern IN lv_rest RESULTS mt_matches.
+    ENDIF.
+
+    IF iv_offset > 0.
+      LOOP AT mt_matches ASSIGNING <ls_match>.
+        <ls_match>-offset = <ls_match>-offset + iv_offset.
+        LOOP AT <ls_match>-submatches ASSIGNING <ls_sub> WHERE offset >= 0.
+          <ls_sub>-offset = <ls_sub>-offset + iv_offset.
+        ENDLOOP.
+      ENDLOOP.
     ENDIF.
   ENDMETHOD.
 
@@ -207,16 +231,16 @@ CLASS cl_abap_matcher IMPLEMENTATION.
 
     lv_replacement = expand( iv_newtext = newtext
                              is_match   = ls_match ).
-    lv_continue = ls_match-offset + strlen( lv_replacement ).
     lv_after = ls_match-offset + ls_match-length.
     text = text+0(ls_match-offset) && lv_replacement && text+lv_after.
 
-* the search goes on behind the replacement
-    scan( ).
-    CLEAR mv_index.
-    LOOP AT mt_matches INTO ls_match WHERE offset < lv_continue.
-      mv_index = sy-tabix.
-    ENDLOOP.
+* the search goes on from behind the replacement, not from the start of the text. Behind an
+* empty match it skips one character, else it finds the same empty match again
+    lv_continue = ls_match-offset + strlen( lv_replacement ).
+    IF ls_match-length = 0.
+      lv_continue = lv_continue + 1.
+    ENDIF.
+    scan( lv_continue ).
     success = abap_true.
   ENDMETHOD.
 
