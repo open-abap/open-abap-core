@@ -1,10 +1,19 @@
 CLASS cl_abap_zip DEFINITION PUBLIC.
 
   PUBLIC SECTION.
+    TYPES: BEGIN OF t_file_timestamp,
+             date TYPE d,
+             time TYPE t,
+           END OF t_file_timestamp.
+
+    DATA support_unicode_names TYPE abap_bool VALUE abap_false.
+
     METHODS add
       IMPORTING
-        name    TYPE string
-        content TYPE xstring.
+        name           TYPE string
+        content        TYPE xstring
+        compress_level TYPE i DEFAULT 6
+        file_timestamp TYPE t_file_timestamp OPTIONAL.
 
     METHODS save
       RETURNING
@@ -21,7 +30,8 @@ CLASS cl_abap_zip DEFINITION PUBLIC.
       EXPORTING
         content TYPE xstring
       EXCEPTIONS
-        zip_index_error.
+        zip_index_error
+        zip_decompression_error.
 
     METHODS delete
       IMPORTING
@@ -36,6 +46,8 @@ CLASS cl_abap_zip DEFINITION PUBLIC.
 
     TYPES: BEGIN OF t_file,
              name TYPE string,
+             date TYPE d,
+             time TYPE t,
              size TYPE i,
            END OF t_file.
     TYPES t_files TYPE STANDARD TABLE OF t_file WITH DEFAULT KEY.
@@ -49,6 +61,8 @@ CLASS cl_abap_zip DEFINITION PUBLIC.
              compressed TYPE xstring,
 * CRC-32 from the central directory (little endian) of a LOADed entry, SAVE reuses it
              crc        TYPE x LENGTH 4,
+             date       TYPE d,
+             time       TYPE t,
            END OF ty_contents.
     DATA mt_contents TYPE STANDARD TABLE OF ty_contents WITH DEFAULT KEY.
 
@@ -119,15 +133,30 @@ CLASS cl_abap_zip IMPLEMENTATION.
 
   METHOD add.
     DATA ls_contents LIKE LINE OF mt_contents.
+    DATA ls_file     LIKE LINE OF files.
 
     ls_contents-name = name.
     ls_contents-content = content.
+    IF file_timestamp IS INITIAL.
+      ls_contents-date = sy-datum.
+      ls_contents-time = sy-uzeit.
+    ELSE.
+      ls_contents-date = file_timestamp-date.
+      ls_contents-time = file_timestamp-time.
+    ENDIF.
     cl_abap_gzip=>compress_binary(
       EXPORTING
-        raw_in   = content
+        raw_in         = content
+        compress_level = compress_level
       IMPORTING
-        gzip_out = ls_contents-compressed ).
+        gzip_out       = ls_contents-compressed ).
     INSERT ls_contents INTO TABLE mt_contents.
+
+    ls_file-name = name.
+    ls_file-date = ls_contents-date.
+    ls_file-time = ls_contents-time.
+    ls_file-size = xstrlen( content ).
+    INSERT ls_file INTO TABLE files.
   ENDMETHOD.
 
   METHOD load.
@@ -150,6 +179,7 @@ CLASS cl_abap_zip IMPLEMENTATION.
     DATA lv_name_x     TYPE xstring.
     DATA lv_name_off   TYPE i.
     DATA lv_crc_off    TYPE i.
+    DATA lv_dos        TYPE i.
     DATA ls_contents   LIKE LINE OF mt_contents.
     DATA ls_file       LIKE LINE OF files.
     DATA lv_out_len    TYPE i.
@@ -186,6 +216,17 @@ CLASS cl_abap_zip IMPLEMENTATION.
       CLEAR ls_contents.
 
 * central directory file header
+* 12, 2, File last modification time, 14, 2, File last modification date
+      lv_dos = lcl_stream=>read_int2( iv_xstr   = zip
+                                      iv_offset = lv_central + 12 ).
+      ls_contents-time = |{ lv_dos DIV 2048 WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
+                         |{ lv_dos MOD 2048 DIV 32 WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
+                         |{ lv_dos MOD 32 * 2 WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
+      lv_dos = lcl_stream=>read_int2( iv_xstr   = zip
+                                      iv_offset = lv_central + 14 ).
+      ls_contents-date = |{ lv_dos DIV 512 + 1980 WIDTH = 4 ALIGN = RIGHT PAD = '0' }| &&
+                         |{ lv_dos MOD 512 DIV 32 WIDTH = 2 ALIGN = RIGHT PAD = '0' }| &&
+                         |{ lv_dos MOD 32 WIDTH = 2 ALIGN = RIGHT PAD = '0' }|.
 * 16, 4, CRC-32 of uncompressed data
       lv_crc_off = lv_central + 16.
       ls_contents-crc = zip+lv_crc_off(4).
@@ -251,6 +292,8 @@ CLASS cl_abap_zip IMPLEMENTATION.
       INSERT ls_contents INTO TABLE mt_contents.
 
       ls_file-name = ls_contents-name.
+      ls_file-date = ls_contents-date.
+      ls_file-time = ls_contents-time.
       ls_file-size = xstrlen( ls_contents-content ).
       INSERT ls_file INTO TABLE files.
     ENDWHILE.
@@ -284,14 +327,18 @@ CLASS cl_abap_zip IMPLEMENTATION.
       lo_file->append( '504B0304' ).
 * 4, 2, Version needed to extract (minimum)
       lo_file->append( '1400' ).
-* 6, 2, General purpose bit flag
-      lo_file->append( '0000' ).
+* 6, 2, General purpose bit flag, bit 11 marks the file name as UTF-8
+      IF support_unicode_names = abap_true.
+        lo_file->append( '0008' ).
+      ELSE.
+        lo_file->append( '0000' ).
+      ENDIF.
 * 8, 2, Compression method; e.g. none = 0, DEFLATE = 8 (or "0x08 0x00")
       lo_file->append( '0800' ).
 * 10, 2, File last modification time
-      lo_file->append( '0699' ). "lo_stream->append_time( sy-uzeit ).
+      lo_file->append_time( ls_contents-time ).
 * 12, 2, File last modification date
-      lo_file->append( 'F856' ). "lo_stream->append_date( sy-datum ).
+      lo_file->append_date( ls_contents-date ).
 * 14, 4, CRC-32 of uncompressed data
       IF ls_contents-crc IS INITIAL.
         lo_file->append_crc(
