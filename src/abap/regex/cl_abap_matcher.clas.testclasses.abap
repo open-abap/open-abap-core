@@ -10,6 +10,9 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS replace_next FOR TESTING RAISING cx_static_check.
     METHODS replace_next_twice FOR TESTING RAISING cx_static_check.
     METHODS replace_next_none FOR TESTING RAISING cx_static_check.
+    METHODS replace_next_empty_match FOR TESTING RAISING cx_static_check.
+    METHODS replace_next_from_resume FOR TESTING RAISING cx_static_check.
+    METHODS replace_next_submatch FOR TESTING RAISING cx_static_check.
     METHODS match_whole_text FOR TESTING RAISING cx_static_check.
     METHODS match_ignore_case FOR TESTING RAISING cx_static_check.
     METHODS match_line_only FOR TESTING RAISING cx_static_check.
@@ -116,6 +119,51 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_matcher->text
       exp = 'foo' ).
+  ENDMETHOD.
+
+  METHOD replace_next_empty_match.
+* behind an empty match the search moves one character forward, so the loop ends
+* and gives the same text as replace_all
+    DATA lo_matcher TYPE REF TO cl_abap_matcher.
+    DATA lo_all     TYPE REF TO cl_abap_matcher.
+    DATA lv_count   TYPE i.
+    lo_matcher = cl_abap_regex=>create_pcre( 'b*' )->create_matcher( text = 'abc' ).
+    WHILE lo_matcher->replace_next( '-' ) = abap_true.
+      lv_count = lv_count + 1.
+      IF lv_count > 10.
+        cl_abap_unit_assert=>fail( 'replace_next does not stop' ).
+      ENDIF.
+    ENDWHILE.
+    lo_all = cl_abap_regex=>create_pcre( 'b*' )->create_matcher( text = 'abc' ).
+    lo_all->replace_all( '-' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_matcher->text
+      exp = lo_all->text ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_count
+      exp = 4 ).
+  ENDMETHOD.
+
+  METHOD replace_next_from_resume.
+* the next match is searched from behind the replacement, a match starting before it does not hide it
+    DATA lo_matcher TYPE REF TO cl_abap_matcher.
+    lo_matcher = cl_abap_regex=>create_pcre( 'o|y|xy' )->create_matcher( text = 'oy' ).
+    lo_matcher->replace_next( 'x' ).
+    lo_matcher->replace_next( 'Y' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_matcher->text
+      exp = 'xY' ).
+  ENDMETHOD.
+
+  METHOD replace_next_submatch.
+* offsets of the matches behind the resume point count from the start of the text
+    DATA lo_matcher TYPE REF TO cl_abap_matcher.
+    lo_matcher = cl_abap_regex=>create_pcre( '(\w)(\d)' )->create_matcher( text = 'a1 b2' ).
+    lo_matcher->replace_next( '$2$1' ).
+    lo_matcher->replace_next( '$2$1' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_matcher->text
+      exp = '1a 2b' ).
   ENDMETHOD.
 
   METHOD match_whole_text.
