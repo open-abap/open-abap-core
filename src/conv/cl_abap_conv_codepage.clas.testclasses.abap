@@ -2,6 +2,10 @@ CLASS ltcl_conv_in DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FIN
 
   PRIVATE SECTION.
     METHODS convert FOR TESTING RAISING cx_static_check.
+    METHODS unknown_in FOR TESTING RAISING cx_static_check.
+    METHODS unknown_out FOR TESTING RAISING cx_static_check.
+    METHODS iso_8859_1 FOR TESTING RAISING cx_static_check.
+    METHODS iso_8859_1_no_byte FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -25,6 +29,48 @@ CLASS ltcl_conv_in IMPLEMENTATION.
       act = char
       exp = 'A ' ).
 
+  ENDMETHOD.
+
+  METHOD unknown_in.
+    TRY.
+        cl_abap_conv_codepage=>create_in( codepage = `NO-SUCH-CODE-PAGE` ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_parameter_invalid_range.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD unknown_out.
+    TRY.
+        cl_abap_conv_codepage=>create_out( codepage = `NO-SUCH-CODE-PAGE` ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_parameter_invalid_range.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD iso_8859_1.
+    DATA lv_text  TYPE string.
+    DATA lv_bytes TYPE xstring.
+
+    lv_text = cl_abap_conv_codepage=>create_in( )->convert( 'C3A9' ).
+    lv_bytes = cl_abap_conv_codepage=>create_out( codepage = `ISO-8859-1` )->convert( lv_text ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_bytes
+      exp = 'E9' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_conv_codepage=>create_in( codepage = `iso-8859-1` )->convert( lv_bytes )
+      exp = lv_text ).
+  ENDMETHOD.
+
+  METHOD iso_8859_1_no_byte.
+* the euro sign is U+20AC, ISO-8859-1 has no byte for it
+    DATA lv_text TYPE string.
+
+    lv_text = cl_abap_conv_codepage=>create_in( )->convert( 'E282AC' ).
+    TRY.
+        cl_abap_conv_codepage=>create_out( codepage = `ISO-8859-1` )->convert( lv_text ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_sy_conversion_codepage.
+    ENDTRY.
   ENDMETHOD.
 
 ENDCLASS.
