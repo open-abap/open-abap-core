@@ -1,0 +1,3 @@
+INTERFACE if_http_destination PUBLIC.
+
+ENDINTERFACE.
