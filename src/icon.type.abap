@@ -13,6 +13,7 @@ CONSTANTS icon_availability_check TYPE c LENGTH 4 VALUE 'TODO'.
 CONSTANTS icon_include_in_selection TYPE c LENGTH 4 VALUE 'TODO'.
 CONSTANTS icon_supplier TYPE c LENGTH 4 VALUE 'TODO'.
 CONSTANTS icon_val_quantity_structure TYPE c LENGTH 4 VALUE 'TODO'.
+CONSTANTS icon_initial TYPE c LENGTH 4 VALUE 'TODO'.
 
 CONSTANTS icon_abap TYPE c LENGTH 4 VALUE '@9U@'.
 CONSTANTS icon_action_success TYPE c LENGTH 4 VALUE '@9P@'.
