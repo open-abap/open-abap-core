@@ -11,6 +11,7 @@ CLASS ltcl_gzip DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS header_signature FOR TESTING RAISING cx_static_check.
     METHODS header_level_range FOR TESTING RAISING cx_static_check.
     METHODS header_corrupt FOR TESTING RAISING cx_static_check.
+    METHODS decompress_corrupt FOR TESTING RAISING cx_static_check.
     METHODS level_stored FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
@@ -194,6 +195,20 @@ CLASS ltcl_gzip IMPLEMENTATION.
         cl_abap_gzip=>decompress_binary_with_header(
           EXPORTING
             gzip_in = '1F8B0800000000000003FFFF'
+          IMPORTING
+            raw_out = lv_raw ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_sy_compression_error.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD decompress_corrupt.
+* a deflate stream with a distance that points before its start
+    DATA lv_raw TYPE xstring.
+    TRY.
+        cl_abap_gzip=>decompress_binary(
+          EXPORTING
+            gzip_in = 'FFFFFFFFFFFFFFFF'
           IMPORTING
             raw_out = lv_raw ).
         cl_abap_unit_assert=>fail( ).

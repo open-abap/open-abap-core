@@ -5,7 +5,9 @@ CLASS cl_abap_gzip DEFINITION PUBLIC.
         gzip_in     TYPE xstring
       EXPORTING
         raw_out     TYPE xstring
-        raw_out_len TYPE i.
+        raw_out_len TYPE i
+      RAISING
+        cx_sy_compression_error.
 
     CLASS-METHODS compress_binary
       IMPORTING
@@ -103,9 +105,14 @@ CLASS cl_abap_gzip IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD decompress_binary.
+    DATA lv_failed TYPE abap_bool.
     WRITE '@KERNEL const zlib = await import("zlib");'.
     WRITE '@KERNEL const buf = Buffer.from(gzip_in.get(), "hex");'.
-    WRITE '@KERNEL const decompress = zlib.inflateRawSync(buf, {finishFlush: zlib.constants.Z_SYNC_FLUSH}).toString("hex").toUpperCase();'.
+    WRITE '@KERNEL let decompress = "";'.
+    WRITE '@KERNEL try { decompress = zlib.inflateRawSync(buf, {finishFlush: zlib.constants.Z_SYNC_FLUSH}).toString("hex").toUpperCase(); } catch (e) { lv_failed.set("X"); }'.
+    IF lv_failed = abap_true.
+      RAISE EXCEPTION TYPE cx_sy_compression_error.
+    ENDIF.
 
     CLEAR raw_out.
     WRITE '@KERNEL raw_out.set(decompress);'.
