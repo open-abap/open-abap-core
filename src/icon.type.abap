@@ -1,5 +1,13 @@
 TYPE-POOL icon.
 
+CONSTANTS icon_catalog TYPE c LENGTH 4 VALUE 'TODO'.
+CONSTANTS icon_resource TYPE c LENGTH 4 VALUE 'TODO'.
+CONSTANTS icon_ws_post TYPE c LENGTH 4 VALUE 'TODO'.
+CONSTANTS icon_workflow_until TYPE c LENGTH 4 VALUE 'TODO'.
+CONSTANTS icon_workflow_condition TYPE c LENGTH 4 VALUE 'TODO'.
+CONSTANTS icon_adjust_configuration TYPE c LENGTH 4 VALUE 'TODO'.
+CONSTANTS icon_incoming_task TYPE c LENGTH 4 VALUE 'TODO'.
+
 CONSTANTS icon_active_inactive TYPE c LENGTH 4 VALUE 'TODO'.
 CONSTANTS icon_availability_check TYPE c LENGTH 4 VALUE 'TODO'.
 CONSTANTS icon_include_in_selection TYPE c LENGTH 4 VALUE 'TODO'.
