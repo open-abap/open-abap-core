@@ -1,4 +1,4 @@
-CLASS cx_sy_invalid_regex DEFINITION PUBLIC INHERITING FROM cx_dynamic_check.
+CLASS cx_sy_invalid_regex DEFINITION PUBLIC INHERITING FROM cx_sy_regex.
 
 ENDCLASS.
 

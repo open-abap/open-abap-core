@@ -56,8 +56,10 @@ CLASS cl_abap_conv_out_ce IMPLEMENTATION.
     CASE encoding.
       WHEN 'UTF-8' OR ''.
         ret->mv_js_encoding = 'utf8'.
-      WHEN '4103'.
+      WHEN '4103' OR 'UTF-16LE'.
         ret->mv_js_encoding = 'utf16le'.
+      WHEN 'ISO-8859-1' OR '1100'.
+        ret->mv_js_encoding = 'latin1'.
       WHEN OTHERS.
         ASSERT 1 = 'not supported'.
     ENDCASE.

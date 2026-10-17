@@ -56,6 +56,7 @@ CLASS ltcl_xml_probe2 DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT 
     METHODS prefixes FOR TESTING RAISING cx_static_check.
     METHODS duplicates FOR TESTING RAISING cx_static_check.
     METHODS json_duplicate_keys FOR TESTING RAISING cx_static_check.
+    METHODS json_number_text FOR TESTING RAISING cx_static_check.
     METHODS json_values_in_order FOR TESTING RAISING cx_static_check.
     METHODS encodings FOR TESTING RAISING cx_static_check.
     METHODS document_edges FOR TESTING RAISING cx_static_check.
@@ -171,6 +172,23 @@ CLASS ltcl_xml_probe2 IMPLEMENTATION.
     reader->next_node( ).
     cl_abap_unit_assert=>assert_equals( act = reader->nsuri
                                         exp = 'urn:second' ).
+  ENDMETHOD.
+
+  METHOD json_number_text.
+* a number is delivered with the text it is written with, trailing zeros and exponent included
+    DATA reader   TYPE REF TO if_sxml_reader.
+    DATA lv_value TYPE string.
+    reader = cl_sxml_string_reader=>create( cl_abap_codepage=>convert_to( '[199.90, 2.5e1, -0]' ) ).
+    DO 20 TIMES.
+      reader->next_node( ).
+      IF reader->node_type = if_sxml_node=>co_nt_final.
+        EXIT.
+      ELSEIF reader->node_type = if_sxml_node=>co_nt_value.
+        lv_value = lv_value && reader->value && '|'.
+      ENDIF.
+    ENDDO.
+    cl_abap_unit_assert=>assert_equals( act = lv_value
+                                        exp = '199.90|2.5e1|-0|' ).
   ENDMETHOD.
 
   METHOD json_duplicate_keys.

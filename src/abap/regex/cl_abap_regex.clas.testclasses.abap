@@ -12,6 +12,8 @@ CLASS ltcl_test DEFINITION FOR TESTING DURATION SHORT RISK LEVEL HARMLESS FINAL.
     METHODS pcre_slashes FOR TESTING RAISING cx_static_check.
     METHODS digits       FOR TESTING RAISING cx_static_check.
     METHODS classic_slashes FOR TESTING RAISING cx_static_check.
+    METHODS pcre_options FOR TESTING RAISING cx_static_check.
+    METHODS pcre_invalid FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -238,6 +240,38 @@ CLASS ltcl_test IMPLEMENTATION.
       act = l_offset
       exp = 8 ).
 
+  ENDMETHOD.
+
+  METHOD pcre_options.
+    DATA lo_regex TYPE REF TO cl_abap_regex.
+    lo_regex = cl_abap_regex=>create_pcre(
+      pattern          = 'a.b'
+      enable_multiline = abap_true
+      dot_all          = abap_true
+      extended         = abap_false ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_regex->pattern
+      exp = 'a.b' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_regex->mv_multiline
+      exp = abap_true ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_regex->mv_dot_all
+      exp = abap_true ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_regex->mv_extended
+      exp = abap_false ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_regex->mv_pcre
+      exp = abap_true ).
+  ENDMETHOD.
+
+  METHOD pcre_invalid.
+    TRY.
+        cl_abap_regex=>create_pcre( '(unclosed' ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_sy_regex.
+    ENDTRY.
   ENDMETHOD.
 
 ENDCLASS.

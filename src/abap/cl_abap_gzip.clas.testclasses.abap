@@ -7,6 +7,12 @@ CLASS ltcl_gzip DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS identity FOR TESTING RAISING cx_static_check.
     METHODS decompress_header FOR TESTING RAISING cx_static_check.
     METHODS decompress_same_field FOR TESTING RAISING cx_static_check.
+    METHODS header_round_trip FOR TESTING RAISING cx_static_check.
+    METHODS header_signature FOR TESTING RAISING cx_static_check.
+    METHODS header_level_range FOR TESTING RAISING cx_static_check.
+    METHODS header_corrupt FOR TESTING RAISING cx_static_check.
+    METHODS decompress_corrupt FOR TESTING RAISING cx_static_check.
+    METHODS level_stored FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -133,6 +139,101 @@ CLASS ltcl_gzip IMPLEMENTATION.
 
     cl_abap_unit_assert=>assert_equals(
       act = lv_message
+      exp = '68656C6C6F' ).
+  ENDMETHOD.
+
+  METHOD header_round_trip.
+    DATA lv_gzip TYPE xstring.
+    DATA lv_raw  TYPE xstring.
+    cl_abap_gzip=>compress_binary_with_header(
+      EXPORTING
+        raw_in   = '68656C6C6F68656C6C6F'
+      IMPORTING
+        gzip_out = lv_gzip ).
+    cl_abap_gzip=>decompress_binary_with_header(
+      EXPORTING
+        gzip_in = lv_gzip
+      IMPORTING
+        raw_out = lv_raw ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_raw
+      exp = '68656C6C6F68656C6C6F' ).
+  ENDMETHOD.
+
+  METHOD header_signature.
+* RFC 1952: ID1 ID2 and CM = 8 for deflate
+    DATA lv_gzip TYPE xstring.
+    DATA lv_head TYPE x LENGTH 3.
+    cl_abap_gzip=>compress_binary_with_header(
+      EXPORTING
+        raw_in   = '68656C6C6F'
+      IMPORTING
+        gzip_out = lv_gzip ).
+    lv_head = lv_gzip(3).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_head
+      exp = '1F8B08' ).
+  ENDMETHOD.
+
+  METHOD header_level_range.
+    DATA lv_gzip TYPE xstring.
+    TRY.
+        cl_abap_gzip=>compress_binary_with_header(
+          EXPORTING
+            raw_in         = '68656C6C6F'
+            compress_level = 10
+          IMPORTING
+            gzip_out       = lv_gzip ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_parameter_invalid_range.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD header_corrupt.
+    DATA lv_raw TYPE xstring.
+    TRY.
+        cl_abap_gzip=>decompress_binary_with_header(
+          EXPORTING
+            gzip_in = '1F8B0800000000000003FFFF'
+          IMPORTING
+            raw_out = lv_raw ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_sy_compression_error.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD decompress_corrupt.
+* a deflate stream with a distance that points before its start
+    DATA lv_raw TYPE xstring.
+    TRY.
+        cl_abap_gzip=>decompress_binary(
+          EXPORTING
+            gzip_in = 'FFFFFFFFFFFFFFFF'
+          IMPORTING
+            raw_out = lv_raw ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_sy_compression_error.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD level_stored.
+    DATA lv_gzip TYPE xstring.
+    DATA lv_raw  TYPE xstring.
+    DATA lv_len  TYPE i.
+    cl_abap_gzip=>compress_binary(
+      EXPORTING
+        raw_in         = '68656C6C6F'
+        compress_level = 0
+      IMPORTING
+        gzip_out       = lv_gzip ).
+    cl_abap_gzip=>decompress_binary(
+      EXPORTING
+        gzip_in     = lv_gzip
+      IMPORTING
+        raw_out     = lv_raw
+        raw_out_len = lv_len ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_raw
       exp = '68656C6C6F' ).
   ENDMETHOD.
 

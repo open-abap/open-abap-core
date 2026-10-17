@@ -73,8 +73,8 @@ CLASS lcl_json_parser IMPLEMENTATION.
 
 * JSON.parse keeps the last of two equal keys, a system's sXML reader delivers
 * both in document order: so the text, valid by now, is read once more into a
-* tree whose objects are their key/value pairs in order - strings and numbers
-* converted the way JSON.parse converts them
+* tree whose objects are their key/value pairs in order - strings converted the
+* way JSON.parse converts them, numbers kept with the text they are written with
     WRITE '@KERNEL const text = iv_json.get();'.
     WRITE '@KERNEL let pos = 0;'.
     WRITE '@KERNEL const skip = () => { while (pos < text.length && " \t\n\r".includes(text[pos])) { pos++; } };'.
@@ -96,7 +96,7 @@ CLASS lcl_json_parser IMPLEMENTATION.
     WRITE '@KERNEL   }'.
     WRITE '@KERNEL   if (c === "\"") { return str(); }'.
     WRITE '@KERNEL   litRe.lastIndex = pos; const m = litRe.exec(text); pos = litRe.lastIndex;'.
-    WRITE '@KERNEL   return m[0] === "true" ? true : m[0] === "false" ? false : m[0] === "null" ? null : Number(m[0]);'.
+    WRITE '@KERNEL   return m[0] === "true" ? true : m[0] === "false" ? false : m[0] === "null" ? null : {num: m[0]};'.
     WRITE '@KERNEL };'.
     WRITE '@KERNEL lv_json = {value: val()};'.
 
@@ -121,6 +121,7 @@ CLASS lcl_json_parser IMPLEMENTATION.
 
     WRITE '@KERNEL lv_type.set(Array.isArray(iv_json.value) ? "array" : typeof iv_json.value);'.
     WRITE '@KERNEL if (iv_json.value === null) lv_type.set("null");'.
+    WRITE '@KERNEL else if (iv_json.value.num !== undefined) lv_type.set("number");'.
 
     CASE lv_type.
       WHEN 'object'.
@@ -132,7 +133,8 @@ CLASS lcl_json_parser IMPLEMENTATION.
                         iv_key     = iv_key
                         iv_has_key = iv_has_key ).
       WHEN 'string' OR 'boolean' OR 'number' OR 'null'.
-        WRITE '@KERNEL iv_json = iv_json.value + "";'.
+* a number is its text as written, 199.90 stays 199.90
+        WRITE '@KERNEL iv_json = iv_json.value !== null && iv_json.value.num !== undefined ? iv_json.value.num : iv_json.value + "";'.
 
         CASE lv_type.
           WHEN 'string'.

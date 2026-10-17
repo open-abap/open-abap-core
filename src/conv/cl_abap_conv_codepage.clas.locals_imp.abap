@@ -39,6 +39,13 @@ CLASS lcl_out IMPLEMENTATION.
 
   METHOD if_abap_conv_out~convert.
     DATA conv TYPE REF TO cl_abap_conv_out_ce.
+* ISO-8859-1 has a byte for U+0000 to U+00FF only
+    IF mv_encoding = 'ISO-8859-1'.
+      FIND PCRE '[^\x00-\xFF]' IN source.
+      IF sy-subrc = 0.
+        RAISE EXCEPTION TYPE cx_sy_conversion_codepage.
+      ENDIF.
+    ENDIF.
     conv = cl_abap_conv_out_ce=>create( encoding = mv_encoding ).
     conv->convert(
       EXPORTING
