@@ -186,9 +186,9 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
     DATA type2    TYPE REF TO cl_abap_tabledescr.
     DATA lv_match TYPE abap_bool.
 
-    FIELD-SYMBOLS <tab1> TYPE INDEX TABLE.
+    FIELD-SYMBOLS <tab1> TYPE ANY TABLE.
     FIELD-SYMBOLS <row1> TYPE any.
-    FIELD-SYMBOLS <tab2> TYPE INDEX TABLE.
+    FIELD-SYMBOLS <tab2> TYPE ANY TABLE.
     FIELD-SYMBOLS <row2> TYPE any.
 
     IF lines( act ) <> lines( exp ).
