@@ -37,14 +37,36 @@ CLASS cl_sxml_open_element IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_sxml_open_element~set_prefix.
-    ASSERT 1 = 'todo'.
+    if_sxml_open_element~prefix = prefix.
   ENDMETHOD.
 
   METHOD if_sxml_open_element~set_attribute.
-    ASSERT 1 = 'todo'.
+* an attribute set twice keeps its position and takes the new value
+    DATA lv_index TYPE i.
+    DATA li_existing TYPE REF TO if_sxml_attribute.
+    CREATE OBJECT attribute TYPE lcl_attribute
+      EXPORTING
+        name   = name
+        prefix = prefix
+        nsuri  = nsuri
+        value  = value.
+    LOOP AT mt_attributes INTO li_existing.
+      lv_index = sy-tabix.
+      IF li_existing->qname-name = name AND li_existing->qname-namespace = nsuri.
+        MODIFY mt_attributes INDEX lv_index FROM attribute.
+        RETURN.
+      ENDIF.
+    ENDLOOP.
+    APPEND attribute TO mt_attributes.
   ENDMETHOD.
 
   METHOD if_sxml_open_element~set_attributes.
-    ASSERT 1 = 'todo'.
+    DATA li_attribute TYPE REF TO if_sxml_attribute.
+    LOOP AT attributes INTO li_attribute.
+      if_sxml_open_element~set_attribute( name   = li_attribute->qname-name
+                                          nsuri  = li_attribute->qname-namespace
+                                          prefix = li_attribute->prefix
+                                          value  = li_attribute->get_value( ) ).
+    ENDLOOP.
   ENDMETHOD.
 ENDCLASS.

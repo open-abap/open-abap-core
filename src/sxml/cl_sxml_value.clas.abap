@@ -19,11 +19,11 @@ CLASS cl_sxml_value IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_sxml_value_node~set_value.
-    ASSERT 1 = 'todo'.
+    mv_value = value.
   ENDMETHOD.
 
   METHOD if_sxml_value_node~set_value_raw.
-    ASSERT 1 = 'todo'.
+    mv_value = cl_abap_codepage=>convert_from( value ).
   ENDMETHOD.
 
   METHOD if_sxml_value_node~get_value.
@@ -39,10 +39,10 @@ CLASS cl_sxml_value IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_sxml_value~set_value.
-    ASSERT 1 = 'todo'.
+    mv_value = value.
   ENDMETHOD.
 
   METHOD if_sxml_value~set_value_raw.
-    ASSERT 1 = 'todo'.
+    mv_value = cl_abap_codepage=>convert_from( value ).
   ENDMETHOD.
 ENDCLASS.
