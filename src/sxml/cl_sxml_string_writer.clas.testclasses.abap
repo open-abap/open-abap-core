@@ -453,3 +453,167 @@ CLASS ltcl_xml_format IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+CLASS ltcl_xml_node_api DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+
+  PRIVATE SECTION.
+    METHODS output
+      IMPORTING io_writer     TYPE REF TO cl_sxml_string_writer
+      RETURNING VALUE(rv_xml) TYPE string.
+
+    METHODS same_as_convenience_api FOR TESTING RAISING cx_static_check.
+    METHODS set_attribute_replaces FOR TESTING RAISING cx_static_check.
+    METHODS write_value_raw FOR TESTING RAISING cx_static_check.
+    METHODS write_attribute_raw FOR TESTING RAISING cx_static_check.
+    METHODS value_node_set_value_raw FOR TESTING RAISING cx_static_check.
+
+ENDCLASS.
+
+CLASS ltcl_xml_node_api IMPLEMENTATION.
+
+  METHOD output.
+    rv_xml = cl_abap_conv_codepage=>create_in( )->convert( io_writer->get_output( ) ).
+  ENDMETHOD.
+
+  METHOD same_as_convenience_api.
+    DATA lo_nodes TYPE REF TO cl_sxml_string_writer.
+    DATA lo_calls TYPE REF TO cl_sxml_string_writer.
+    DATA li_nodes TYPE REF TO if_sxml_writer.
+    DATA li_calls TYPE REF TO if_sxml_writer.
+    DATA li_open  TYPE REF TO if_sxml_open_element.
+    DATA li_value TYPE REF TO if_sxml_value_node.
+
+    lo_nodes = cl_sxml_string_writer=>create( ).
+    li_nodes = lo_nodes.
+    li_nodes->set_option( if_sxml_writer=>co_opt_linebreaks ).
+    li_nodes->set_option( if_sxml_writer=>co_opt_indent ).
+
+    li_open = cl_sxml_string_writer=>if_sxml_writer~new_open_element( 'root' ).
+    li_open->set_attribute( name  = 'id'
+                            value = '1' ).
+    li_open->set_attribute( name   = 'lang'
+                            nsuri  = 'urn:x'
+                            prefix = 'x'
+                            value  = 'en' ).
+    li_nodes->write_node( li_open ).
+    li_value = cl_sxml_string_writer=>if_sxml_writer~new_value( ).
+    li_value->set_value( 'a & b' ).
+    li_nodes->write_node( li_value ).
+    li_open = cl_sxml_string_writer=>if_sxml_writer~new_open_element(
+      name   = 'child'
+      nsuri  = 'urn:y'
+      prefix = 'y' ).
+    li_nodes->write_node( li_open ).
+    li_value = cl_sxml_string_writer=>if_sxml_writer~new_value( ).
+    li_value->set_value( 'text' ).
+    li_nodes->write_node( li_value ).
+    li_nodes->write_node( cl_sxml_string_writer=>if_sxml_writer~new_close_element( ) ).
+    li_nodes->write_node( cl_sxml_string_writer=>if_sxml_writer~new_close_element( ) ).
+
+    lo_calls = cl_sxml_string_writer=>create( ).
+    li_calls = lo_calls.
+    li_calls->set_option( if_sxml_writer=>co_opt_linebreaks ).
+    li_calls->set_option( if_sxml_writer=>co_opt_indent ).
+    li_calls->open_element( 'root' ).
+    li_calls->write_attribute( name  = 'id'
+                               value = '1' ).
+    li_calls->write_attribute( name   = 'lang'
+                               nsuri  = 'urn:x'
+                               prefix = 'x'
+                               value  = 'en' ).
+    li_calls->write_value( 'a & b' ).
+    li_calls->open_element( name   = 'child'
+                            nsuri  = 'urn:y'
+                            prefix = 'y' ).
+    li_calls->write_value( 'text' ).
+    li_calls->close_element( ).
+    li_calls->close_element( ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = output( lo_nodes )
+      exp = output( lo_calls ) ).
+    cl_abap_unit_assert=>assert_equals(
+      act = output( lo_nodes )
+      exp = |<root id="1" xmlns:x="urn:x" x:lang="en">a &amp; b\n <y:child xmlns:y="urn:y">text</y:child>\n</root>| ).
+  ENDMETHOD.
+
+  METHOD set_attribute_replaces.
+    DATA lo_writer TYPE REF TO cl_sxml_string_writer.
+    DATA li_writer TYPE REF TO if_sxml_writer.
+    DATA li_open   TYPE REF TO if_sxml_open_element.
+    DATA li_value  TYPE REF TO if_sxml_value.
+
+    lo_writer = cl_sxml_string_writer=>create( ).
+    li_writer = lo_writer.
+    li_open = cl_sxml_string_writer=>if_sxml_writer~new_open_element( 'a' ).
+    li_open->set_attribute( name  = 'k'
+                            value = 'old' ).
+    li_open->set_attribute( name  = 'm'
+                            value = '2' ).
+    li_open->set_attribute( name  = 'k'
+                            value = 'new' ).
+    li_value = li_open->get_attribute_value( 'k' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_value->get_value( )
+      exp = 'new' ).
+    li_writer->write_node( li_open ).
+    li_writer->write_node( cl_sxml_string_writer=>if_sxml_writer~new_close_element( ) ).
+    cl_abap_unit_assert=>assert_equals(
+      act = output( lo_writer )
+      exp = '<a k="new" m="2"/>' ).
+  ENDMETHOD.
+
+  METHOD write_value_raw.
+    DATA lo_writer TYPE REF TO cl_sxml_string_writer.
+    DATA li_writer TYPE REF TO if_sxml_writer.
+    DATA lv_raw    TYPE xstring.
+
+    lo_writer = cl_sxml_string_writer=>create( ).
+    li_writer = lo_writer.
+    lv_raw = cl_abap_codepage=>convert_to( 'x < y' ).
+    li_writer->open_element( 'a' ).
+    li_writer->write_value_raw( lv_raw ).
+    li_writer->close_element( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = output( lo_writer )
+      exp = '<a>x &lt; y</a>' ).
+  ENDMETHOD.
+
+  METHOD write_attribute_raw.
+    DATA lo_writer TYPE REF TO cl_sxml_string_writer.
+    DATA li_writer TYPE REF TO if_sxml_writer.
+    DATA lv_raw    TYPE xstring.
+
+    lo_writer = cl_sxml_string_writer=>create( ).
+    li_writer = lo_writer.
+    lv_raw = cl_abap_codepage=>convert_to( 'v"1' ).
+    li_writer->open_element( 'a' ).
+    li_writer->write_attribute_raw( name  = 'k'
+                                    value = lv_raw ).
+    li_writer->close_element( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = output( lo_writer )
+      exp = '<a k="v&quot;1"/>' ).
+  ENDMETHOD.
+
+  METHOD value_node_set_value_raw.
+    DATA lo_writer TYPE REF TO cl_sxml_string_writer.
+    DATA li_writer TYPE REF TO if_sxml_writer.
+    DATA li_value  TYPE REF TO if_sxml_value_node.
+
+    lo_writer = cl_sxml_string_writer=>create( ).
+    li_writer = lo_writer.
+    li_value = cl_sxml_string_writer=>if_sxml_writer~new_value( ).
+    li_value->set_value_raw( cl_abap_codepage=>convert_to( 'raw' ) ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_value->get_value( )
+      exp = 'raw' ).
+    li_writer->write_node( cl_sxml_string_writer=>if_sxml_writer~new_open_element( 'a' ) ).
+    li_writer->write_node( li_value ).
+    li_writer->write_node( cl_sxml_string_writer=>if_sxml_writer~new_close_element( ) ).
+    cl_abap_unit_assert=>assert_equals(
+      act = output( lo_writer )
+      exp = '<a>raw</a>' ).
+  ENDMETHOD.
+
+ENDCLASS.
