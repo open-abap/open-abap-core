@@ -441,6 +441,48 @@
       </RSEXP>
      </EXPORT>
     </item>
+    <item>
+     <FUNCNAME>SEO_INTERFACE_IMPLEM_GET_ALL</FUNCNAME>
+     <SHORT_TEXT>All classes implementing an interface</SHORT_TEXT>
+     <IMPORT>
+      <RSIMP>
+       <PARAMETER>INTKEY</PARAMETER>
+       <TYP>SEOCLSKEY</TYP>
+      </RSIMP>
+     </IMPORT>
+     <EXPORT>
+      <RSEXP>
+       <PARAMETER>IMPKEYS</PARAMETER>
+       <TYP>SEOR_IMPLEMENTING_KEYS</TYP>
+      </RSEXP>
+     </EXPORT>
+     <EXCEPTION>
+      <RSEXC>
+       <EXCEPTION>NOT_EXISTING</EXCEPTION>
+      </RSEXC>
+      <RSEXC>
+       <EXCEPTION>IS_CLASS</EXCEPTION>
+      </RSEXC>
+     </EXCEPTION>
+     <DOCUMENTATION>
+      <RSFDO>
+       <PARAMETER>INTKEY</PARAMETER>
+       <KIND>P</KIND>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IMPKEYS</PARAMETER>
+       <KIND>P</KIND>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>NOT_EXISTING</PARAMETER>
+       <KIND>X</KIND>
+      </RSFDO>
+      <RSFDO>
+       <PARAMETER>IS_CLASS</PARAMETER>
+       <KIND>X</KIND>
+      </RSFDO>
+     </DOCUMENTATION>
+    </item>
    </FUNCTIONS>
   </asx:values>
  </asx:abap>
