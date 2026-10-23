@@ -34,6 +34,15 @@
      <LENG>000010</LENG>
      <MASK>  INT4</MASK>
     </DD03P>
+    <DD03P>
+     <FIELDNAME>INTERNAL</FIELDNAME>
+     <ADMINFIELD>0</ADMINFIELD>
+     <INTTYPE>C</INTTYPE>
+     <INTLEN>000016</INTLEN>
+     <DATATYPE>CHAR</DATATYPE>
+     <LENG>000008</LENG>
+     <MASK>  CHAR</MASK>
+    </DD03P>
    </DD03P_TABLE>
   </asx:values>
  </asx:abap>
