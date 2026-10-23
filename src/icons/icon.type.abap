@@ -1,5 +1,6 @@
 TYPE-POOL icon.
 
+
 CONSTANTS icon_catalog TYPE c LENGTH 4 VALUE 'TODO'.
 CONSTANTS icon_resource TYPE c LENGTH 4 VALUE 'TODO'.
 CONSTANTS icon_ws_post TYPE c LENGTH 4 VALUE 'TODO'.
