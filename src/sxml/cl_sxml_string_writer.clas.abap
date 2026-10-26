@@ -81,23 +81,38 @@ CLASS cl_sxml_string_writer IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_sxml_writer~new_close_element.
-    ASSERT 1 = 'todo'.
+    CREATE OBJECT element TYPE cl_sxml_close_element
+      EXPORTING
+        name = ''.
   ENDMETHOD.
 
   METHOD if_sxml_writer~write_attribute_raw.
-    ASSERT 1 = 'todo'.
+    DATA lv_value TYPE string.
+    lv_value = cl_abap_conv_codepage=>create_in( )->convert( value ).
+    if_sxml_writer~write_attribute( name   = name
+                                    nsuri  = nsuri
+                                    prefix = prefix
+                                    value  = lv_value ).
   ENDMETHOD.
 
   METHOD if_sxml_writer~new_value.
-    ASSERT 1 = 'todo'.
+    CREATE OBJECT value TYPE cl_sxml_value
+      EXPORTING
+        value = ''.
   ENDMETHOD.
 
   METHOD if_sxml_writer~new_open_element.
-    ASSERT 1 = 'todo'.
+    CREATE OBJECT element TYPE cl_sxml_open_element
+      EXPORTING
+        name   = name
+        prefix = prefix
+        nsuri  = nsuri.
   ENDMETHOD.
 
   METHOD if_sxml_writer~write_value_raw.
-    ASSERT 1 = 'todo'.
+    DATA lv_value TYPE string.
+    lv_value = cl_abap_conv_codepage=>create_in( )->convert( value ).
+    if_sxml_writer~write_value( lv_value ).
   ENDMETHOD.
 
   METHOD if_sxml_writer~write_namespace_declaration.
@@ -105,7 +120,32 @@ CLASS cl_sxml_string_writer IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_sxml_writer~write_node.
-    ASSERT 1 = 'todo'.
+    DATA li_open      TYPE REF TO if_sxml_open_element.
+    DATA li_value     TYPE REF TO if_sxml_value_node.
+    DATA li_attribute TYPE REF TO if_sxml_attribute.
+    DATA lt_attributes TYPE if_sxml_attribute=>attributes.
+
+    CASE node->type.
+      WHEN if_sxml_node=>co_nt_element_open.
+        li_open ?= node.
+        if_sxml_writer~open_element( name   = li_open->qname-name
+                                     nsuri  = li_open->qname-namespace
+                                     prefix = li_open->prefix ).
+        lt_attributes = li_open->get_attributes( ).
+        LOOP AT lt_attributes INTO li_attribute.
+          if_sxml_writer~write_attribute( name   = li_attribute->qname-name
+                                          nsuri  = li_attribute->qname-namespace
+                                          prefix = li_attribute->prefix
+                                          value  = li_attribute->get_value( ) ).
+        ENDLOOP.
+      WHEN if_sxml_node=>co_nt_element_close.
+        if_sxml_writer~close_element( ).
+      WHEN if_sxml_node=>co_nt_value.
+        li_value ?= node.
+        if_sxml_writer~write_value( li_value->get_value( ) ).
+      WHEN OTHERS.
+        RAISE EXCEPTION TYPE cx_sxml_state_error.
+    ENDCASE.
   ENDMETHOD.
 
   METHOD create.
