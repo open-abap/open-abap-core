@@ -44,6 +44,13 @@ CLASS cl_demo_output DEFINITION PUBLIC.
         name    TYPE string OPTIONAL
         exclude TYPE string OPTIONAL
         include TYPE string OPTIONAL.
+
+    CLASS-METHODS write_data
+      IMPORTING
+        value   TYPE any
+        name    TYPE string OPTIONAL
+        exclude TYPE string OPTIONAL
+        include TYPE string OPTIONAL.
 ENDCLASS.
 
 CLASS cl_demo_output IMPLEMENTATION.
@@ -52,6 +59,10 @@ CLASS cl_demo_output IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD display_data.
+    ASSERT 1 = 'not supported'.
+  ENDMETHOD.
+
+  METHOD write_data.
     ASSERT 1 = 'not supported'.
   ENDMETHOD.
 
