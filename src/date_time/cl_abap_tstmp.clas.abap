@@ -63,6 +63,15 @@ CLASS cl_abap_tstmp DEFINITION PUBLIC.
         cx_parameter_invalid_type
         cx_parameter_invalid_range.
 
+    CLASS-METHODS move_to_short_trunc
+      IMPORTING
+        tstmp_src        TYPE tzntstmpl
+      RETURNING
+        VALUE(tstmp_out) TYPE tzntstmps
+      RAISING
+        cx_parameter_invalid_type
+        cx_parameter_invalid_range.
+
     CLASS-METHODS td_subtract
       IMPORTING
         date1    TYPE d
@@ -281,6 +290,11 @@ CLASS cl_abap_tstmp IMPLEMENTATION.
         tstmp_src = tstmp_src
       IMPORTING
         tstmp_tgt = tstmp_out ).
+  ENDMETHOD.
+
+  METHOD move_to_short_trunc.
+* drops the fractional seconds instead of rounding
+    tstmp_out = trunc( tstmp_src ).
   ENDMETHOD.
 
   METHOD td_subtract.
