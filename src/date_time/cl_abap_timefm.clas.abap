@@ -3,6 +3,7 @@ CLASS cl_abap_timefm DEFINITION PUBLIC.
     TYPES ty_format TYPE i.
     TYPES ty_timefm TYPE c LENGTH 1.
 
+    CONSTANTS iso TYPE ty_format VALUE 1.
     CONSTANTS environment TYPE ty_format VALUE 3.
 
     CLASS-METHODS conv_time_ext_to_int
