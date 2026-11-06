@@ -1,6 +1,15 @@
 INTERFACE if_fdt_doc_spreadsheet PUBLIC.
   TYPES t_worksheet_names TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
 
+  TYPES: BEGIN OF s_column,
+          id           TYPE sysuuid_c32,
+          name         TYPE string,
+          display_name TYPE string,
+          is_result    TYPE abap_bool,
+          type         TYPE REF TO cl_abap_datadescr,
+        END OF s_column.
+  TYPES t_column TYPE STANDARD TABLE OF s_column WITH DEFAULT KEY.
+
   METHODS get_worksheet_names
     EXPORTING
       worksheet_names TYPE t_worksheet_names.
