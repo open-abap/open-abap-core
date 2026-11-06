@@ -97,6 +97,10 @@ CLASS cl_fdt_xl_spreadsheet IMPLEMENTATION.
     read_shared_strings( ).
   ENDMETHOD.
 
+  METHOD if_fdt_doc_spreadsheet~create_document.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD if_fdt_doc_spreadsheet~get_worksheet_names.
     DATA ls_sheet LIKE LINE OF mt_sheets.
 
