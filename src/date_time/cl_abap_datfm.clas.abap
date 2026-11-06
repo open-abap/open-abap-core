@@ -1,5 +1,7 @@
 CLASS cl_abap_datfm DEFINITION PUBLIC.
   PUBLIC SECTION.
+    TYPES ty_datfm TYPE c LENGTH 1.
+
     CLASS-METHODS conv_date_ext_to_int
       IMPORTING
         im_datext    TYPE csequence
@@ -29,12 +31,25 @@ CLASS cl_abap_datfm DEFINITION PUBLIC.
       RAISING
         cx_abap_datfm.
 
+    CLASS-METHODS conv_date_int_to_ext
+      IMPORTING
+        im_datint    TYPE d
+        im_datfmdes  TYPE ty_datfm OPTIONAL
+      EXPORTING
+        ex_datext    TYPE csequence
+        ex_datfmused TYPE ty_datfm
+      RAISING
+        cx_abap_datfm_format_unknown.
+
   PRIVATE SECTION.
     CONSTANTS ddmmyyyy_dot_seperated TYPE c VALUE '1'.
     CONSTANTS yyyymmdd_dot_seperated TYPE c VALUE '4'.
 ENDCLASS.
 
 CLASS cl_abap_datfm IMPLEMENTATION.
+  METHOD conv_date_int_to_ext.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
 
   METHOD conv_period_ext_to_int.
     ASSERT 1 = 'todo'.
