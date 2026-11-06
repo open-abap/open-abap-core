@@ -1,5 +1,13 @@
 CLASS cx_t100_msg DEFINITION PUBLIC INHERITING FROM cx_static_check.
   PUBLIC SECTION.
+
+    DATA t100_msgid TYPE sy-msgid.
+    DATA t100_msgno TYPE sy-msgno.
+    DATA t100_msgv1 TYPE string.
+    DATA t100_msgv2 TYPE string.
+    DATA t100_msgv3 TYPE string.
+    DATA t100_msgv4 TYPE string.
+
     METHODS constructor
       IMPORTING
         textid     LIKE textid OPTIONAL
@@ -10,6 +18,7 @@ CLASS cx_t100_msg DEFINITION PUBLIC INHERITING FROM cx_static_check.
         t100_msgv2 TYPE string OPTIONAL
         t100_msgv3 TYPE string OPTIONAL
         t100_msgv4 TYPE string OPTIONAL.
+
 ENDCLASS.
 
 CLASS cx_t100_msg IMPLEMENTATION.
