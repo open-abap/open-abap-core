@@ -27,7 +27,12 @@ ENDCLASS.
 CLASS ltcl_tcp DEFINITION FOR TESTING RISK LEVEL CRITICAL DURATION MEDIUM FINAL.
 
   PRIVATE SECTION.
-    METHODS test_port IMPORTING iv_port TYPE string RAISING cx_static_check.
+    METHODS test_port
+      IMPORTING
+        iv_port     TYPE string
+        iv_protocol TYPE i DEFAULT cl_apc_tcp_client_manager=>co_protocol_type_tcp
+      RAISING
+        cx_static_check.
 
     METHODS port_80 FOR TESTING RAISING cx_static_check.
     METHODS port_443 FOR TESTING RAISING cx_static_check.
@@ -52,6 +57,7 @@ CLASS ltcl_tcp IMPLEMENTATION.
     li_client = cl_apc_tcp_client_manager=>create(
       i_host          = 'httpbin.org'
       i_port          = iv_port
+      i_protocol      = iv_protocol
       i_frame         = ls_frame
       i_event_handler = lo_handler ).
 
@@ -78,7 +84,9 @@ CLASS ltcl_tcp IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD port_443.
-    test_port( '443' ).
+    test_port(
+      iv_port     = '443'
+      iv_protocol = cl_apc_tcp_client_manager=>co_protocol_type_tcps ).
   ENDMETHOD.
 
   METHOD on_error.
