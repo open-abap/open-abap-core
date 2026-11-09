@@ -1,6 +1,6 @@
 CLASS kernel_unit_runner DEFINITION PUBLIC.
   PUBLIC SECTION.
-* as of now, only global classes with local testclasses are supported
+* local testclasses of global classes and of programs are supported, class_name is the global class or program
     TYPES: BEGIN OF ty_input_item,
              class_name     TYPE c LENGTH 30,
              testclass_name TYPE c LENGTH 30,
@@ -148,9 +148,15 @@ CLASS kernel_unit_runner IMPLEMENTATION.
     lt_classes = unique_classes( it_input ).
 
     LOOP AT lt_classes INTO ls_class.
-* this is special, and must match the runtime:
-      lv_name = |CLAS-{ ls_class-class_name }-{ ls_class-testclass_name }|.
-      CREATE OBJECT lo_obj TYPE (lv_name).
+* this is special, and must match the runtime: local classes of global classes are "CLAS-",
+* class_name is then the global class, local classes of programs are "PROG-", class_name is the program
+      TRY.
+          lv_name = |CLAS-{ ls_class-class_name }-{ ls_class-testclass_name }|.
+          CREATE OBJECT lo_obj TYPE (lv_name).
+        CATCH cx_sy_create_object_error.
+          lv_name = |PROG-{ ls_class-class_name }-{ ls_class-testclass_name }|.
+          CREATE OBJECT lo_obj TYPE (lv_name).
+      ENDTRY.
 
       TRY.
           CALL METHOD lo_obj->('CLASS_SETUP').
