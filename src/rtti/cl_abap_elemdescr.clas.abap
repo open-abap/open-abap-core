@@ -123,6 +123,11 @@ CLASS cl_abap_elemdescr IMPLEMENTATION.
     WRITE '@KERNEL p_flddescr.get().domname.set(abap.DDIC[this.relative_name.get()]?.domain || "");'.
     WRITE '@KERNEL p_flddescr.get().fieldtext.set(abap.DDIC[this.relative_name.get()]?.description || "");'.
     WRITE '@KERNEL lv_datatype.set(abap.DDIC[this.relative_name.get()]?.datatype || "");'.
+* field labels of the data element, from the transpiler's DDIC information
+    WRITE '@KERNEL p_flddescr.get().scrtext_s.set(abap.DDIC[this.relative_name.get()]?.texts?.short || "");'.
+    WRITE '@KERNEL p_flddescr.get().scrtext_m.set(abap.DDIC[this.relative_name.get()]?.texts?.medium || "");'.
+    WRITE '@KERNEL p_flddescr.get().scrtext_l.set(abap.DDIC[this.relative_name.get()]?.texts?.long || "");'.
+    WRITE '@KERNEL p_flddescr.get().reptext.set(abap.DDIC[this.relative_name.get()]?.texts?.heading || "");'.
     IF lv_datatype IS INITIAL.
       lv_datatype = ddic_datatype_from_typekind( type_kind ).
     ENDIF.
