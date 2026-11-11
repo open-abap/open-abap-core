@@ -30,7 +30,7 @@ FUNCTION wwwdata_import.
     RAISE import_error.
   ENDIF.
 
-  CLEAR mime.
+  CLEAR mime[].
 
   " Reuse w3obj directly
   WRITE '@KERNEL filename.set(w3obj.filename);'.
