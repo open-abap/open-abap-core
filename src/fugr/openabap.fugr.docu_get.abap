@@ -10,7 +10,7 @@ FUNCTION docu_get.
 *"      LINE STRUCTURE  TLINE
 *"----------------------------------------------------------------------
 
-  CLEAR line.
+  CLEAR line[].
 
   IF id = 'NA' AND object = '00001'.
 * message class 00, number 001
