@@ -24,7 +24,15 @@ ENDCLASS.
 CLASS cx_t100_msg IMPLEMENTATION.
 
   METHOD constructor.
-    RETURN.
+    super->constructor(
+      textid   = textid
+      previous = previous ).
+    me->t100_msgid = t100_msgid.
+    me->t100_msgno = t100_msgno.
+    me->t100_msgv1 = t100_msgv1.
+    me->t100_msgv2 = t100_msgv2.
+    me->t100_msgv3 = t100_msgv3.
+    me->t100_msgv4 = t100_msgv4.
   ENDMETHOD.
 
 ENDCLASS.
