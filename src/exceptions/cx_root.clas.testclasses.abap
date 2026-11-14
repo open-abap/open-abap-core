@@ -15,6 +15,7 @@ ENDCLASS.
 
 CLASS lcx_error IMPLEMENTATION.
   METHOD constructor.
+    super->constructor( ).
     me->msgv1 = msgv1.
 
     if_t100_message~t100key = textid.
