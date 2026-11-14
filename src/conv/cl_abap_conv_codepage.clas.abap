@@ -2,19 +2,23 @@ CLASS cl_abap_conv_codepage DEFINITION PUBLIC FINAL CREATE PRIVATE.
 
   PUBLIC SECTION.
 
+    TYPES ty_repl_char TYPE c LENGTH 1.
+
     CLASS-METHODS create_in
       IMPORTING
-        codepage        TYPE string DEFAULT 'UTF-8'
+        codepage         TYPE string DEFAULT 'UTF-8'
+        replacement_char TYPE ty_repl_char OPTIONAL
       RETURNING
-        VALUE(instance) TYPE REF TO if_abap_conv_in
+        VALUE(instance)  TYPE REF TO if_abap_conv_in
       RAISING
         cx_parameter_invalid_range.
 
     CLASS-METHODS create_out
       IMPORTING
-        codepage        TYPE string DEFAULT 'UTF-8'
+        codepage         TYPE string DEFAULT 'UTF-8'
+        replacement_char TYPE ty_repl_char OPTIONAL
       RETURNING
-        VALUE(instance) TYPE REF TO if_abap_conv_out
+        VALUE(instance)  TYPE REF TO if_abap_conv_out
       RAISING
         cx_parameter_invalid_range.
 
@@ -24,6 +28,7 @@ CLASS cl_abap_conv_codepage IMPLEMENTATION.
 
   METHOD create_in.
     DATA lv_codepage TYPE string.
+    ASSERT replacement_char IS INITIAL. " todo
     lv_codepage = to_upper( codepage ).
     CASE lv_codepage.
       WHEN 'UTF-8' OR 'UTF-16' OR 'UTF-16LE' OR 'UTF-16BE' OR 'ISO-8859-1' OR '4103'.
@@ -35,6 +40,7 @@ CLASS cl_abap_conv_codepage IMPLEMENTATION.
 
   METHOD create_out.
     DATA lv_codepage TYPE string.
+    ASSERT replacement_char IS INITIAL. " todo
     lv_codepage = to_upper( codepage ).
     CASE lv_codepage.
       WHEN 'UTF-8' OR 'UTF-16LE' OR 'ISO-8859-1' OR '4103'.
