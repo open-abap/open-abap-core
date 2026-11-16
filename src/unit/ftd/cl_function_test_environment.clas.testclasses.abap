@@ -19,7 +19,7 @@ CLASS ltcl_test IMPLEMENTATION.
 
     test_throws( ).
 
-    INSERT 'ABC' INTO TABLE lt_deps.
+    lt_deps = VALUE #( ( 'ABC' ) ).
     li_env = cl_function_test_environment=>create( lt_deps ).
 
     li_env->get_double( 'ABC' )->configure_call( )->ignore_all_parameters( )->then_answer( me ).
@@ -96,7 +96,7 @@ CLASS ltcl_changing IMPLEMENTATION.
     DATA li_env   TYPE REF TO if_function_test_environment.
     DATA lv_value TYPE string VALUE 'initial'.
 
-    INSERT 'CHANGING_FM' INTO TABLE lt_deps.
+    lt_deps = VALUE #( ( 'CHANGING_FM' ) ).
     li_env = cl_function_test_environment=>create( lt_deps ).
     li_env->get_double( 'CHANGING_FM' )->configure_call( )->ignore_all_parameters( )->then_answer( me ).
 
@@ -142,7 +142,7 @@ CLASS ltcl_no_parameters IMPLEMENTATION.
     DATA lv_message TYPE string.
 
 
-    INSERT 'NOTHING' INTO TABLE lt_deps.
+    lt_deps = VALUE #( ( 'NOTHING' ) ).
     li_env = cl_function_test_environment=>create( lt_deps ).
     li_env->get_double( 'NOTHING' )->configure_call( )->ignore_all_parameters( )->then_answer( me ).
 
@@ -665,10 +665,9 @@ CLASS ltcl_restore IMPLEMENTATION.
   METHOD next_environment_ends_doubles.
     DATA lt_deps TYPE if_function_test_environment=>tt_function_dependencies.
 
-    INSERT 'FTD_FIRST' INTO TABLE lt_deps.
+    lt_deps = VALUE #( ( 'FTD_FIRST' ) ).
     cl_function_test_environment=>create( lt_deps ).
-    CLEAR lt_deps.
-    INSERT 'FTD_SECOND' INTO TABLE lt_deps.
+    lt_deps = VALUE #( ( 'FTD_SECOND' ) ).
     cl_function_test_environment=>create( lt_deps ).
 
     TRY.
@@ -692,7 +691,7 @@ CLASS ltcl_restore IMPLEMENTATION.
       IMPORTING
         output = lv_real.
 
-    INSERT 'CONVERSION_EXIT_ALPHA_INPUT' INTO TABLE lt_deps.
+    lt_deps = VALUE #( ( 'CONVERSION_EXIT_ALPHA_INPUT' ) ).
     li_env = cl_function_test_environment=>create( lt_deps ).
     li_output = li_env->get_double( 'CONVERSION_EXIT_ALPHA_INPUT' )->create_output_configuration( ).
     li_output->set_exporting_parameter( name  = 'OUTPUT'
@@ -708,8 +707,7 @@ CLASS ltcl_restore IMPLEMENTATION.
       act = lv_output
       exp = 'DOUBLE' ).
 
-    CLEAR lt_deps.
-    INSERT 'FTD_OTHER' INTO TABLE lt_deps.
+    lt_deps = VALUE #( ( 'FTD_OTHER' ) ).
     cl_function_test_environment=>create( lt_deps ).
 
     CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
@@ -744,7 +742,7 @@ CLASS ltcl_answer_raises IMPLEMENTATION.
     DATA lt_deps TYPE if_function_test_environment=>tt_function_dependencies.
     DATA li_env  TYPE REF TO if_function_test_environment.
 
-    INSERT 'FTD_ANSWER' INTO TABLE lt_deps.
+    lt_deps = VALUE #( ( 'FTD_ANSWER' ) ).
     li_env = cl_function_test_environment=>create( lt_deps ).
     li_env->get_double( 'FTD_ANSWER' )->configure_call( )->ignore_all_parameters( )->then_answer( me ).
   ENDMETHOD.
