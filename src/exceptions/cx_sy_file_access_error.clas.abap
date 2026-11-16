@@ -1,4 +1,4 @@
-CLASS cx_sy_file_access_error DEFINITION PUBLIC INHERITING FROM cx_dynamic_check.
+CLASS cx_sy_file_access_error DEFINITION PUBLIC INHERITING FROM cx_dynamic_check ABSTRACT.
   PUBLIC SECTION.
     DATA filename TYPE string.
 

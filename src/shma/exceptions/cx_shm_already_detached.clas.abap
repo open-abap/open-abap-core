@@ -12,7 +12,9 @@ ENDCLASS.
 CLASS cx_shm_already_detached IMPLEMENTATION.
 
   METHOD constructor.
-    RETURN.
+    super->constructor(
+      textid   = textid
+      previous = previous ).
   ENDMETHOD.
 
 ENDCLASS.
