@@ -402,6 +402,7 @@ CLASS lcl_object_to_string DEFINITION.
       IMPORTING
         is_options       TYPE kernel_call_transformation=>ty_options
         source           TYPE any
+        iv_encoding      TYPE string DEFAULT 'utf-16'
       RETURNING
         VALUE(rv_result) TYPE string.
   PRIVATE SECTION.
@@ -415,7 +416,8 @@ CLASS lcl_object_to_string IMPLEMENTATION.
     DATA lo_data_to_xml TYPE REF TO lcl_data_to_xml.
     DATA result         TYPE REF TO data.
 
-    rv_result = '<?xml version="1.0" encoding="utf-16"?><asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0"><asx:values>'.
+    rv_result = |<?xml version="1.0" encoding="{ iv_encoding }"?>| &&
+      '<asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0"><asx:values>'.
     CREATE OBJECT lo_data_to_xml
       EXPORTING
         is_options = is_options.
