@@ -13,7 +13,7 @@ FUNCTION convert_itf_to_stream_text.
   CLEAR stream_lines.
   CLEAR text_stream[].
 
-  IF lines( itf_text ) = 0.
+  IF lines( itf_text[] ) = 0.
     RETURN.
   ENDIF.
 
