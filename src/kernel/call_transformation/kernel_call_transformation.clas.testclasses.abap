@@ -71,6 +71,14 @@ ENDCLASS.
 CLASS lcl_ref_table IMPLEMENTATION.
 ENDCLASS.
 
+CLASS lcl_ref_data DEFINITION.
+  PUBLIC SECTION.
+    INTERFACES if_serializable_object.
+    DATA attri TYPE REF TO data.
+ENDCLASS.
+CLASS lcl_ref_data IMPLEMENTATION.
+ENDCLASS.
+
 ***********************************************
 
 CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
@@ -147,6 +155,13 @@ CLASS ltcl_call_transformation DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATI
     METHODS xstring_json_to_data FOR TESTING RAISING cx_static_check.
     METHODS xstring_roundtrip_utf8 FOR TESTING RAISING cx_static_check.
     METHODS obj_to_xstring_to_obj FOR TESTING RAISING cx_static_check.
+    METHODS ref_unnamed_table_raises FOR TESTING RAISING cx_static_check.
+    METHODS ref_unnamed_struc_raises FOR TESTING RAISING cx_static_check.
+    METHODS ref_unnamed_in_obj_raises FOR TESTING RAISING cx_static_check.
+    METHODS ref_unnamed_ignored FOR TESTING RAISING cx_static_check.
+    METHODS ref_unnamed_in_obj_ignored FOR TESTING RAISING cx_static_check.
+    METHODS ref_unnamed_elementary FOR TESTING RAISING cx_static_check.
+    METHODS options_reset_per_call FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_call_transformation IMPLEMENTATION.
@@ -1610,6 +1625,164 @@ CLASS ltcl_call_transformation IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo->foo
       exp = 5 ).
+
+  ENDMETHOD.
+
+  METHOD ref_unnamed_table_raises.
+* a table type declared with the variable has only a technical name
+
+    DATA lt_unnamed  TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA lr_data     TYPE REF TO data.
+    DATA lv_xml      TYPE string.
+    DATA lx_error    TYPE REF TO cx_xslt_serialization_error.
+    DATA lx_previous TYPE REF TO cx_reference_not_serializable.
+
+    CREATE DATA lr_data LIKE lt_unnamed.
+
+    TRY.
+        CALL TRANSFORMATION id
+          SOURCE data = lr_data
+          RESULT XML lv_xml.
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_xslt_serialization_error INTO lx_error.
+        lx_previous ?= lx_error->previous.
+        cl_abap_unit_assert=>assert_bound( lx_previous ).
+    ENDTRY.
+
+  ENDMETHOD.
+
+  METHOD ref_unnamed_struc_raises.
+
+    DATA: BEGIN OF ls_unnamed,
+            foo TYPE i,
+          END OF ls_unnamed.
+    DATA lr_data TYPE REF TO data.
+    DATA lv_xml  TYPE string.
+
+    CREATE DATA lr_data LIKE ls_unnamed.
+
+    TRY.
+        CALL TRANSFORMATION id
+          SOURCE data = lr_data
+          RESULT XML lv_xml.
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_xslt_serialization_error.
+        RETURN.
+    ENDTRY.
+
+  ENDMETHOD.
+
+  METHOD ref_unnamed_in_obj_raises.
+
+    DATA lt_unnamed TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA lo_obj     TYPE REF TO lcl_ref_data.
+    DATA lv_xml     TYPE string.
+
+    CREATE OBJECT lo_obj.
+    CREATE DATA lo_obj->attri LIKE lt_unnamed.
+
+    TRY.
+        CALL TRANSFORMATION id
+          SOURCE data = lo_obj
+          RESULT XML lv_xml.
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_xslt_serialization_error.
+        RETURN.
+    ENDTRY.
+
+  ENDMETHOD.
+
+  METHOD ref_unnamed_ignored.
+
+    DATA lt_unnamed TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA lr_data    TYPE REF TO data.
+    DATA lv_xml     TYPE string.
+
+    CREATE DATA lr_data LIKE lt_unnamed.
+
+    CALL TRANSFORMATION id
+      OPTIONS technical_types = 'ignore'
+      SOURCE data = lr_data
+      RESULT XML lv_xml.
+
+    cl_abap_unit_assert=>assert_char_np(
+      act = lv_xml
+      exp = '*href*' ).
+
+  ENDMETHOD.
+
+  METHOD ref_unnamed_in_obj_ignored.
+* the option also reaches a reference that is an attribute of an object in the heap
+
+    DATA lt_unnamed TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
+    DATA lo_obj     TYPE REF TO lcl_ref_data.
+    DATA lv_xml     TYPE string.
+
+    CREATE OBJECT lo_obj.
+    CREATE DATA lo_obj->attri LIKE lt_unnamed.
+
+    CALL TRANSFORMATION id
+      OPTIONS technical_types = 'ignore'
+      SOURCE data = lo_obj
+      RESULT XML lv_xml.
+
+    CLEAR lo_obj.
+
+    CALL TRANSFORMATION id
+      SOURCE XML lv_xml
+      RESULT data = lo_obj.
+
+    cl_abap_unit_assert=>assert_not_initial( lo_obj ).
+    cl_abap_unit_assert=>assert_initial( lo_obj->attri ).
+
+  ENDMETHOD.
+
+  METHOD ref_unnamed_elementary.
+* an elementary type needs no name of its own
+
+    DATA lv_unnamed TYPE c LENGTH 10.
+    DATA lr_data    TYPE REF TO data.
+    DATA lv_xml     TYPE string.
+
+    FIELD-SYMBOLS <lv_data> TYPE any.
+
+    CREATE DATA lr_data LIKE lv_unnamed.
+    ASSIGN lr_data->* TO <lv_data>.
+    <lv_data> = 'hello'.
+
+    CALL TRANSFORMATION id
+      SOURCE data = lr_data
+      RESULT XML lv_xml.
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_xml
+      exp = '*hello*' ).
+
+  ENDMETHOD.
+
+  METHOD options_reset_per_call.
+
+    DATA: BEGIN OF ls_data,
+            foo TYPE i,
+          END OF ls_data.
+    DATA lv_xml TYPE string.
+
+    CALL TRANSFORMATION id
+      OPTIONS initial_components = 'suppress'
+      SOURCE data = ls_data
+      RESULT XML lv_xml.
+
+    cl_abap_unit_assert=>assert_char_np(
+      act = lv_xml
+      exp = '*<FOO>*' ).
+
+    CALL TRANSFORMATION id
+      SOURCE data = ls_data
+      RESULT XML lv_xml.
+
+    cl_abap_unit_assert=>assert_char_cp(
+      act = lv_xml
+      exp = '*<FOO>0</FOO>*' ).
 
   ENDMETHOD.
 
