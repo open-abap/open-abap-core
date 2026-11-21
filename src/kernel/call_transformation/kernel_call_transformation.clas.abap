@@ -4,10 +4,12 @@ CLASS kernel_call_transformation DEFINITION PUBLIC.
     TYPES: BEGIN OF ty_options,
              initial_components TYPE string,
              xml_header         TYPE string,
+             technical_types    TYPE string,
            END OF ty_options.
 
     CONSTANTS: BEGIN OF gc_options,
                  suppress TYPE string VALUE 'suppress',
+                 ignore   TYPE string VALUE 'ignore',
                END OF gc_options.
 
     CLASS-METHODS call
@@ -209,6 +211,9 @@ CLASS kernel_call_transformation IMPLEMENTATION.
 
     FIELD-SYMBOLS <lv_field> TYPE string.
 
+
+* the options of one call do not carry over to the next
+    CLEAR ms_options.
 
     WRITE '@KERNEL for (const name in INPUT.options || {}) {'.
     WRITE '@KERNEL   lv_name.set(name);'.
