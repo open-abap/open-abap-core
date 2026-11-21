@@ -44,7 +44,7 @@ CLASS cl_abap_classdescr IMPLEMENTATION.
       EXPORTING
         p_name         = lv_super_name
       RECEIVING
-        type           = lo_type
+        p_descr_ref    = lo_type
       EXCEPTIONS
         type_not_found = 1
         OTHERS         = 2 ).
