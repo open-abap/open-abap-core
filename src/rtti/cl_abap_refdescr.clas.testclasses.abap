@@ -81,6 +81,11 @@ CLASS ltcl_test IMPLEMENTATION.
     lo_type = lo_refdescr->get_referenced_type( ).
 
     ASSERT lo_type->type_kind = cl_abap_typedescr=>typekind_data.
+    ASSERT lo_type->kind = cl_abap_typedescr=>kind_elem.
+    ASSERT lo_type IS INSTANCE OF cl_abap_elemdescr.
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_type->absolute_name
+      exp = '\TYPE=DATA' ).
   ENDMETHOD.
 
   METHOD generic_object_reference.
