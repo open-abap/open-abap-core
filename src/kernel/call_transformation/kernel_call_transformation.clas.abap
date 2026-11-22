@@ -4,10 +4,12 @@ CLASS kernel_call_transformation DEFINITION PUBLIC.
     TYPES: BEGIN OF ty_options,
              initial_components TYPE string,
              xml_header         TYPE string,
+             technical_types    TYPE string,
            END OF ty_options.
 
     CONSTANTS: BEGIN OF gc_options,
                  suppress TYPE string VALUE 'suppress',
+                 ignore   TYPE string VALUE 'ignore',
                END OF gc_options.
 
     CLASS-METHODS call
@@ -45,6 +47,7 @@ CLASS kernel_call_transformation IMPLEMENTATION.
     DATA lv_bom_big TYPE string.
     DATA lv_bom_little TYPE string.
     DATA lv_xstring TYPE xstring.
+    DATA lv_bytes TYPE xstring.
 
 
     CLEAR mi_doc.
@@ -70,6 +73,11 @@ CLASS kernel_call_transformation IMPLEMENTATION.
 * Handle input SOURCE
     WRITE '@KERNEL if (INPUT.sourceXML?.constructor.name === "ABAPObject") this.mi_doc.set(INPUT.sourceXML);'.
     WRITE '@KERNEL if (INPUT.sourceXML?.constructor.name === "String") lv_source.set(INPUT.sourceXML);'.
+* a byte string holds the characters of the XML or JSON data in UTF-8
+    WRITE '@KERNEL if (INPUT.sourceXML?.constructor.name === "XString") lv_bytes.set(INPUT.sourceXML);'.
+    IF lv_bytes IS NOT INITIAL.
+      lv_source = cl_abap_codepage=>convert_from( lv_bytes ).
+    ENDIF.
     IF lv_source IS NOT INITIAL.
       IF lv_source(1) = '<'
           OR ( strlen( lv_source ) > 1 AND ( lv_source(1) = lv_bom_big OR lv_source(1) = lv_bom_little ) AND lv_source+1(1) = '<' ).
@@ -142,6 +150,21 @@ CLASS kernel_call_transformation IMPLEMENTATION.
       RETURN.
     ENDIF.
 
+* input = object, output = xstring: the characters in UTF-8, without byte order mark
+    WRITE '@KERNEL if (INPUT.resultXML && INPUT.resultXML.constructor.name === "XString") {'.
+    WRITE '@KERNEL   lv_result.set("X");'.
+    WRITE '@KERNEL   lv_dummy = INPUT.source;'.
+    WRITE '@KERNEL }'.
+    IF lv_result = abap_true.
+      lv_result = lcl_object_to_string=>run(
+        is_options  = ms_options
+        source      = lv_dummy
+        iv_encoding = 'utf-8' ).
+      lv_bytes = cl_abap_codepage=>convert_to( lv_result ).
+      WRITE '@KERNEL   INPUT.resultXML.set(lv_bytes);'.
+      RETURN.
+    ENDIF.
+
     IF lv_source IS INITIAL AND mi_doc IS INITIAL.
       RAISE EXCEPTION TYPE cx_xslt_runtime_error.
     ENDIF.
@@ -188,6 +211,9 @@ CLASS kernel_call_transformation IMPLEMENTATION.
 
     FIELD-SYMBOLS <lv_field> TYPE string.
 
+
+* the options of one call do not carry over to the next
+    CLEAR ms_options.
 
     WRITE '@KERNEL for (const name in INPUT.options || {}) {'.
     WRITE '@KERNEL   lv_name.set(name);'.

@@ -102,6 +102,10 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS include_alias_with_tab FOR TESTING.
 
     METHODS describe_by_data_ref_ref FOR TESTING.
+    METHODS describe_by_data_ref_initial FOR TESTING.
+    METHODS describe_by_data_ref_receiving FOR TESTING.
+    METHODS describe_by_name_receiving FOR TESTING.
+    METHODS describe_by_name_receiving_nf FOR TESTING.
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
@@ -988,6 +992,78 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = lo_ref->get_referenced_type( )->type_kind
       exp = cl_abap_typedescr=>typekind_data ).
+  ENDMETHOD.
+
+  METHOD describe_by_data_ref_initial.
+    DATA lr_data TYPE REF TO data.
+    DATA lo_type TYPE REF TO cl_abap_typedescr.
+
+    cl_abap_typedescr=>describe_by_data_ref(
+      EXPORTING
+        p_data_ref           = lr_data
+      RECEIVING
+        p_descr_ref          = lo_type
+      EXCEPTIONS
+        reference_is_initial = 1
+        OTHERS               = 2 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = sy-subrc
+      exp = 1 ).
+    cl_abap_unit_assert=>assert_initial( lo_type ).
+  ENDMETHOD.
+
+  METHOD describe_by_data_ref_receiving.
+    DATA lv_str  TYPE string.
+    DATA lr_data TYPE REF TO data.
+    DATA lo_type TYPE REF TO cl_abap_typedescr.
+
+    GET REFERENCE OF lv_str INTO lr_data.
+    cl_abap_typedescr=>describe_by_data_ref(
+      EXPORTING
+        p_data_ref           = lr_data
+      RECEIVING
+        p_descr_ref          = lo_type
+      EXCEPTIONS
+        reference_is_initial = 1
+        OTHERS               = 2 ).
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_type->type_kind
+      exp = cl_abap_typedescr=>typekind_string ).
+  ENDMETHOD.
+
+  METHOD describe_by_name_receiving.
+    DATA lo_type TYPE REF TO cl_abap_typedescr.
+
+    cl_abap_typedescr=>describe_by_name(
+      EXPORTING
+        p_name         = 'T000'
+      RECEIVING
+        p_descr_ref    = lo_type
+      EXCEPTIONS
+        type_not_found = 1
+        OTHERS         = 2 ).
+    cl_abap_unit_assert=>assert_subrc( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_type->kind
+      exp = cl_abap_typedescr=>kind_struct ).
+  ENDMETHOD.
+
+  METHOD describe_by_name_receiving_nf.
+    DATA lo_type TYPE REF TO cl_abap_typedescr.
+
+    cl_abap_typedescr=>describe_by_name(
+      EXPORTING
+        p_name         = 'SDFSDFSDF'
+      RECEIVING
+        p_descr_ref    = lo_type
+      EXCEPTIONS
+        type_not_found = 1
+        OTHERS         = 2 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = sy-subrc
+      exp = 1 ).
+    cl_abap_unit_assert=>assert_initial( lo_type ).
   ENDMETHOD.
 
 ENDCLASS.

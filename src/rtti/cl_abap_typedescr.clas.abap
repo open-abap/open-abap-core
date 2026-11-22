@@ -9,16 +9,20 @@ CLASS cl_abap_typedescr DEFINITION PUBLIC.
     CLASS-METHODS
       describe_by_name
         IMPORTING
-          p_name      TYPE clike
+          p_name             TYPE clike
         RETURNING
-          VALUE(type) TYPE REF TO cl_abap_typedescr
+          VALUE(p_descr_ref) TYPE REF TO cl_abap_typedescr
         EXCEPTIONS
           type_not_found.
 
     CLASS-METHODS
       describe_by_data_ref
-        IMPORTING p_data_ref  TYPE REF TO data
-        RETURNING VALUE(type) TYPE REF TO cl_abap_typedescr.
+        IMPORTING
+          p_data_ref         TYPE REF TO data
+        RETURNING
+          VALUE(p_descr_ref) TYPE REF TO cl_abap_typedescr
+        EXCEPTIONS
+          reference_is_initial.
 
     CLASS-METHODS
       describe_by_object_ref
@@ -184,7 +188,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
       IF sy-subrc = 0.
         lv_offset = lv_offset + 6.
         lv_absolute = lv_absolute+lv_offset.
-        type = describe_by_name( lv_absolute ).
+        p_descr_ref = describe_by_name( lv_absolute ).
         RETURN.
       ENDIF.
     ENDIF.
@@ -193,13 +197,13 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
     IF ( lv_absolute CP '\CLASS=*\TYPE=*' OR lv_absolute CP '\INTERFACE=*\TYPE=*' ) AND lv_absolute NA '%'.
       REPLACE FIRST OCCURRENCE OF REGEX '^\\(CLASS|INTERFACE)=' IN lv_absolute WITH ''.
       REPLACE FIRST OCCURRENCE OF '\TYPE=' IN lv_absolute WITH '=>'.
-      type = describe_by_name( lv_absolute ).
+      p_descr_ref = describe_by_name( lv_absolute ).
       RETURN.
     ENDIF.
 
 * note, p_name might be internal name, so check and skip these,
     IF p_name CA '-' AND p_name NP 'CLAS-*' AND p_name NP 'PROG-*'.
-      type = describe_by_dashes( p_name ).
+      p_descr_ref = describe_by_dashes( p_name ).
       RETURN.
     ENDIF.
 
@@ -208,26 +212,26 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 
     CASE oo_type.
       WHEN 'INTF'.
-        type = cl_abap_intfdescr=>_construct( lv_any ).
-        type->type_kind = typekind_intf.
-        type->kind = kind_intf.
-        type->relative_name = to_upper( p_name ).
-        type->absolute_name = '\CLASS=' && to_upper( p_name ).
-        objectdescr ?= type.
+        p_descr_ref = cl_abap_intfdescr=>_construct( lv_any ).
+        p_descr_ref->type_kind = typekind_intf.
+        p_descr_ref->kind = kind_intf.
+        p_descr_ref->relative_name = to_upper( p_name ).
+        p_descr_ref->absolute_name = '\CLASS=' && to_upper( p_name ).
+        objectdescr ?= p_descr_ref.
         objectdescr->mv_object_name = to_upper( p_name ).
         objectdescr->mv_object_type = oo_type.
       WHEN 'CLAS'.
 *        WRITE '@KERNEL console.dir(p_name);'.
-        type = cl_abap_classdescr=>_construct( lv_any ).
-        type->type_kind = typekind_class.
-        type->kind = kind_class.
-        type->relative_name = to_upper( p_name ).
+        p_descr_ref = cl_abap_classdescr=>_construct( lv_any ).
+        p_descr_ref->type_kind = typekind_class.
+        p_descr_ref->kind = kind_class.
+        p_descr_ref->relative_name = to_upper( p_name ).
         IF p_name CP 'CLAS-*'.
-          type->absolute_name = kernel_internal_name=>internal_to_rtti( p_name ).
+          p_descr_ref->absolute_name = kernel_internal_name=>internal_to_rtti( p_name ).
         ELSE.
-          type->absolute_name = '\CLASS=' && to_upper( p_name ).
+          p_descr_ref->absolute_name = '\CLASS=' && to_upper( p_name ).
         ENDIF.
-        objectdescr ?= type.
+        objectdescr ?= p_descr_ref.
         objectdescr->mv_object_name = to_upper( p_name ).
         objectdescr->mv_object_type = oo_type.
       WHEN OTHERS.
@@ -236,7 +240,7 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
           CATCH cx_sy_create_data_error.
             RAISE type_not_found.
         ENDTRY.
-        type = describe_by_data_ref( ref ).
+        p_descr_ref = describe_by_data_ref( ref ).
     ENDCASE.
   ENDMETHOD.
 
@@ -254,8 +258,13 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
 
   METHOD describe_by_data_ref.
     FIELD-SYMBOLS <ref> TYPE any.
+
+    IF p_data_ref IS INITIAL.
+      RAISE reference_is_initial.
+    ENDIF.
+
     ASSIGN p_data_ref->* TO <ref>.
-    type = describe_by_data( <ref> ).
+    p_descr_ref = describe_by_data( <ref> ).
   ENDMETHOD.
 
   METHOD describe_by_object_ref.

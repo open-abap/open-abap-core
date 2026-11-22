@@ -1,10 +1,14 @@
 CLASS lcl_heap DEFINITION.
   PUBLIC SECTION.
+    METHODS constructor
+      IMPORTING
+        iv_technical_types TYPE string OPTIONAL.
     METHODS add_object
       IMPORTING
         iv_ref       TYPE any
       RETURNING
         VALUE(rv_id) TYPE string.
+* the id stays initial for a reference that is left out, see option technical_types
     METHODS add_data
       IMPORTING
         iv_ref       TYPE any
@@ -14,8 +18,15 @@ CLASS lcl_heap DEFINITION.
       RETURNING
         VALUE(rv_xml) TYPE string.
   PRIVATE SECTION.
-    DATA mv_counter TYPE i.
-    DATA mv_data    TYPE string.
+    DATA mv_counter         TYPE i.
+    DATA mv_data            TYPE string.
+    DATA mv_technical_types TYPE string.
+
+    METHODS has_technical_type
+      IMPORTING
+        iv_ref              TYPE any
+      RETURNING
+        VALUE(rv_technical) TYPE abap_bool.
 ENDCLASS.
 
 CLASS lcl_data_to_xml DEFINITION.
@@ -47,6 +58,30 @@ CLASS lcl_data_to_xml DEFINITION.
 ENDCLASS.
 
 CLASS lcl_heap IMPLEMENTATION.
+  METHOD constructor.
+    mv_technical_types = iv_technical_types.
+  ENDMETHOD.
+
+  METHOD has_technical_type.
+* a structure or table type that was never given a name has only a technical name,
+* and with that there is no type to write for the element in the heap
+
+    DATA lv_ref  TYPE REF TO data.
+    DATA lo_type TYPE REF TO cl_abap_typedescr.
+
+    FIELD-SYMBOLS <data> TYPE any.
+
+
+    lv_ref = iv_ref.
+    ASSIGN lv_ref->* TO <data>.
+    lo_type = cl_abap_typedescr=>describe_by_data( <data> ).
+
+    IF lo_type->kind = cl_abap_typedescr=>kind_struct OR lo_type->kind = cl_abap_typedescr=>kind_table.
+      rv_technical = boolc( lo_type->absolute_name CP '\TYPE=%_T*' ).
+    ENDIF.
+
+  ENDMETHOD.
+
   METHOD serialize.
 * todo
     IF mv_counter = 0.
@@ -65,7 +100,18 @@ CLASS lcl_heap IMPLEMENTATION.
     DATA lv_name        TYPE string.
     DATA lo_data_to_xml TYPE REF TO lcl_data_to_xml.
     DATA lv_counter     LIKE mv_counter.
+    DATA lx_reference   TYPE REF TO cx_reference_not_serializable.
 
+
+    IF has_technical_type( iv_ref ) = abap_true.
+      IF mv_technical_types = kernel_call_transformation=>gc_options-ignore.
+        RETURN.
+      ENDIF.
+      CREATE OBJECT lx_reference.
+      RAISE EXCEPTION TYPE cx_xslt_serialization_error
+        EXPORTING
+          previous = lx_reference.
+    ENDIF.
 
     mv_counter = mv_counter + 1.
     lv_counter = mv_counter.
@@ -153,7 +199,9 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
 
   METHOD constructor.
     IF io_heap IS INITIAL.
-      CREATE OBJECT mo_heap.
+      CREATE OBJECT mo_heap
+        EXPORTING
+          iv_technical_types = is_options-technical_types.
     ELSE.
       mo_heap = io_heap.
     ENDIF.
@@ -183,6 +231,7 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
     DATA lt_comps TYPE cl_abap_structdescr=>component_table.
     DATA ls_compo LIKE LINE OF lt_comps.
     DATA lv_ref   TYPE REF TO data.
+    DATA lv_id    TYPE string.
 
     FIELD-SYMBOLS <any>   TYPE any.
     FIELD-SYMBOLS <table> TYPE ANY TABLE.
@@ -253,10 +302,13 @@ CLASS lcl_data_to_xml IMPLEMENTATION.
               rv_xml = |<{ iv_name } href="#o{ mo_heap->add_object( <ref> ) }"/>|.
             ENDIF.
           WHEN OTHERS.
-            IF <ref> IS INITIAL.
+            IF <ref> IS NOT INITIAL.
+              lv_id = mo_heap->add_data( <ref> ).
+            ENDIF.
+            IF lv_id IS INITIAL.
               rv_xml = |<{ iv_name }/>|.
             ELSE.
-              rv_xml = |<{ iv_name } href="#d{ mo_heap->add_data( <ref> ) }"/>|.
+              rv_xml = |<{ iv_name } href="#d{ lv_id }"/>|.
             ENDIF.
         ENDCASE.
       WHEN OTHERS.
@@ -402,6 +454,7 @@ CLASS lcl_object_to_string DEFINITION.
       IMPORTING
         is_options       TYPE kernel_call_transformation=>ty_options
         source           TYPE any
+        iv_encoding      TYPE string DEFAULT 'utf-16'
       RETURNING
         VALUE(rv_result) TYPE string.
   PRIVATE SECTION.
@@ -415,7 +468,8 @@ CLASS lcl_object_to_string IMPLEMENTATION.
     DATA lo_data_to_xml TYPE REF TO lcl_data_to_xml.
     DATA result         TYPE REF TO data.
 
-    rv_result = '<?xml version="1.0" encoding="utf-16"?><asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0"><asx:values>'.
+    rv_result = |<?xml version="1.0" encoding="{ iv_encoding }"?>| &&
+      '<asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0"><asx:values>'.
     CREATE OBJECT lo_data_to_xml
       EXPORTING
         is_options = is_options.

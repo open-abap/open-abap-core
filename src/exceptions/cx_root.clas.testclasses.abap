@@ -75,9 +75,10 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA lv_float       TYPE f.
     DATA lv_program_name TYPE syrepid.
     DATA lv_line        TYPE i.
+    DATA lv_text        TYPE string VALUE `not a number`.
 
     TRY.
-        lv_float = CONV f( 'not a number' ).
+        lv_float = lv_text.
         cl_abap_unit_assert=>fail( 'expected CX_SY_CONVERSION_NO_NUMBER' ).
       CATCH cx_root INTO DATA(lx_error).
         lx_error->get_source_position(
