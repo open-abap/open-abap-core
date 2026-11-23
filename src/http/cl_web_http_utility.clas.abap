@@ -54,11 +54,11 @@ CLASS cl_web_http_utility IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD decode_base64.
-    decoded = cl_abap_codepage=>convert_from( cl_http_utility=>decode_x_base64( encoded ) ).
+    decoded = cl_http_utility=>decode_base64( encoded ).
   ENDMETHOD.
 
   METHOD encode_base64.
-    encoded = cl_http_utility=>encode_x_base64( cl_abap_codepage=>convert_to( unencoded ) ).
+    encoded = cl_http_utility=>encode_base64( unencoded ).
   ENDMETHOD.
 
   METHOD unescape_url.
