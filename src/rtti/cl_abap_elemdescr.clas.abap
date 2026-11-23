@@ -5,7 +5,7 @@ CLASS cl_abap_elemdescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
         low        TYPE c LENGTH 10,
         high       TYPE c LENGTH 10,
         option     TYPE c LENGTH 2,
-        ddlanguage TYPE c,
+        ddlanguage TYPE c LENGTH 1,
         ddtext     TYPE c LENGTH 60,
       END OF fixvalue.
     TYPES fixvalues TYPE STANDARD TABLE OF fixvalue WITH DEFAULT KEY.
