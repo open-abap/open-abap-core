@@ -278,6 +278,15 @@ CLASS ltcl_escaping DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FI
     METHODS escape_html_keep_references FOR TESTING RAISING cx_static_check.
     METHODS encode_base64_latin1 FOR TESTING RAISING cx_static_check.
     METHODS decode_base64_latin1 FOR TESTING RAISING cx_static_check.
+    METHODS unescape_url_error_codes FOR TESTING RAISING cx_static_check.
+    METHODS last_error_reset FOR TESTING RAISING cx_static_check.
+    METHODS string_to_fields_error FOR TESTING RAISING cx_static_check.
+    METHODS escape_javascript_ascii FOR TESTING RAISING cx_static_check.
+    METHODS escape_javascript_html FOR TESTING RAISING cx_static_check.
+    METHODS escape_javascript_control FOR TESTING RAISING cx_static_check.
+    METHODS escape_javascript_script FOR TESTING RAISING cx_static_check.
+    METHODS escape_xml_attr_value FOR TESTING RAISING cx_static_check.
+    METHODS normalize_url FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
 
@@ -420,10 +429,243 @@ CLASS ltcl_escaping IMPLEMENTATION.
       exp = `A` ).
   ENDMETHOD.
 
+  METHOD unescape_url_error_codes.
+* an escaped NUL, also two non-hex digits, gives 3 and wins over an invalid or
+* cut-off escape, 29, which wins over a UTF-8 sequence cut off by the end, 512
+    TYPES: BEGIN OF ty_case,
+             input TYPE string,
+             rc    TYPE i,
+           END OF ty_case.
+    DATA lt_cases TYPE STANDARD TABLE OF ty_case WITH EMPTY KEY.
+    DATA ls_case LIKE LINE OF lt_cases.
+    DATA lv_result TYPE string.
+
+    lt_cases = VALUE #(
+      ( input = `ok`         rc = 0 )
+      ( input = `%80`        rc = 0 )
+      ( input = `%zz%`       rc = 3 )
+      ( input = `%gg`        rc = 3 )
+      ( input = `%00a`       rc = 3 )
+      ( input = `%g1%zz`     rc = 3 )
+      ( input = `%zz%g1`     rc = 3 )
+      ( input = `a%2`        rc = 29 )
+      ( input = `%`          rc = 29 )
+      ( input = `%g1`        rc = 29 )
+      ( input = `%1g`        rc = 29 )
+      ( input = `%e4%g1`     rc = 29 )
+      ( input = `%e4`        rc = 512 )
+      ( input = `%E2%82`     rc = 512 )
+      ( input = `%C3%A4%E4x` rc = 512 ) ).
+
+    LOOP AT lt_cases INTO ls_case.
+      lv_result = cl_http_utility=>unescape_url( ls_case-input ).
+      cl_abap_unit_assert=>assert_equals(
+        act = cl_http_utility=>get_last_error( )
+        exp = ls_case-rc
+        msg = ls_case-input ).
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD last_error_reset.
+    DATA lv_result TYPE string.
+
+    lv_result = cl_http_utility=>unescape_url( `%zz` ).
+    lv_result = cl_http_utility=>escape_xml_attr_value( `a` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>get_last_error( )
+      exp = 3 ).
+
+    lv_result = cl_http_utility=>escape_url( `a` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>get_last_error( )
+      exp = 0 ).
+
+    lv_result = cl_http_utility=>unescape_url( `%zz` ).
+    lv_result = cl_http_utility=>encode_base64( `a` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>get_last_error( )
+      exp = 0 ).
+
+    lv_result = cl_http_utility=>unescape_url( `%zz` ).
+    lv_result = cl_http_utility=>normalize_url( `/a` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>get_last_error( )
+      exp = 0 ).
+  ENDMETHOD.
+
+  METHOD string_to_fields_error.
+    DATA lt_fields TYPE tihttpnvp.
+    DATA ls_field LIKE LINE OF lt_fields.
+
+* the field that fails is kept with an empty value, the fields after it are dropped
+    lt_fields = cl_http_utility=>string_to_fields( `a=1&b=%zz&c=3` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>get_last_error( )
+      exp = 28 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( lt_fields )
+      exp = 2 ).
+    READ TABLE lt_fields INDEX 2 INTO ls_field.
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_field-name
+      exp = `b` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_field-value
+      exp = `` ).
+
+* a name that fails gives an empty name and value
+    lt_fields = cl_http_utility=>string_to_fields( `a%zz=1&b=2` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>get_last_error( )
+      exp = 28 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( lt_fields )
+      exp = 1 ).
+    CLEAR ls_field.
+    READ TABLE lt_fields INDEX 1 INTO ls_field.
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_field-name
+      exp = `` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_field-value
+      exp = `` ).
+
+    lt_fields = cl_http_utility=>string_to_fields( `a=1` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>get_last_error( )
+      exp = 0 ).
+  ENDMETHOD.
+
+  METHOD escape_javascript_ascii.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>escape_javascript( c_ascii )
+      exp = ` !\"#$%&\'()*+,-./0123456789:;\x3c=\x3e?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_``abcdefghijklmnopqrstuvwxyz{|}~` ).
+  ENDMETHOD.
+
+  METHOD escape_javascript_html.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>escape_javascript( unescaped   = c_ascii
+                                                inside_html = abap_true )
+      exp = ` !&quot;#$%&amp;\'()*+,-./0123456789:;&lt;=&gt;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_``abcdefghijklmnopqrstuvwxyz{|}~` ).
+  ENDMETHOD.
+
+  METHOD escape_javascript_control.
+    DATA lv_input TYPE string.
+    DATA lv_expected TYPE string.
+
+    lv_input = |a{ cl_abap_char_utilities=>horizontal_tab }b{ cl_abap_char_utilities=>newline }c|
+      && |{ cl_abap_char_utilities=>cr_lf(1) }d{ cl_abap_conv_in_ce=>uccp( '2028' ) }|
+      && |{ cl_abap_conv_in_ce=>uccp( '2029' ) }{ cl_abap_conv_in_ce=>uccp( '00E4' ) }|.
+* tabs and characters outside ASCII stay as they are
+    lv_expected = `a` && cl_abap_char_utilities=>horizontal_tab && `b\nc\rd\x2028\x2029`
+      && cl_abap_conv_in_ce=>uccp( '00E4' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>escape_javascript( lv_input )
+      exp = lv_expected ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>escape_javascript( unescaped   = lv_input
+                                                inside_html = abap_true )
+      exp = lv_expected ).
+  ENDMETHOD.
+
+  METHOD escape_javascript_script.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>escape_javascript( `</script><!-- ]]>` )
+      exp = `\x3c/script\x3e\x3c!-- ]]\x3e` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>escape_javascript( unescaped   = `</script><!-- ]]>`
+                                                inside_html = abap_true )
+      exp = `&lt;/script&gt;&lt;!-- ]]&gt;` ).
+  ENDMETHOD.
+
+  METHOD escape_xml_attr_value.
+    DATA lv_input TYPE string.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>escape_xml_attr_value( c_ascii )
+      exp = ` !&quot;#$%&amp;&apos;()*+,-./0123456789:;&lt;=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_``abcdefghijklmnopqrstuvwxyz{|}~` ).
+
+    lv_input = |a{ cl_abap_char_utilities=>horizontal_tab }b{ cl_abap_char_utilities=>newline }c|.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>escape_xml_attr_value( lv_input )
+      exp = lv_input ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>escape_xml_attr_value( `&amp;&#65;` )
+      exp = `&amp;amp;&amp;#65;` ).
+  ENDMETHOD.
+
+  METHOD normalize_url.
+    TYPES: BEGIN OF ty_case,
+             input    TYPE string,
+             expected TYPE string,
+           END OF ty_case.
+    DATA lt_cases TYPE STANDARD TABLE OF ty_case WITH EMPTY KEY.
+    DATA ls_case LIKE LINE OF lt_cases.
+
+    lt_cases = VALUE #(
+      ( input = `HTTP://Example.COM:80/a/./b/../c?X=1#F` expected = `HTTP://Example.COM:80/a/c?X=1#F` )
+      ( input = `/a//b/./c/../d`        expected = `/a//b/d` )
+      ( input = `/%7e%41%2f%2F%20`      expected = `/%7e%41%2f%2F%20` )
+      ( input = `/a b/c`                expected = `/a b/c` )
+      ( input = `a/../../b`             expected = `b` )
+      ( input = `https://h:443/`        expected = `https://h:443/` )
+      ( input = ``                      expected = `` )
+      ( input = `/A/B/`                 expected = `/A/B/` )
+      ( input = `/a/..`                 expected = `/` )
+      ( input = `/a/.`                  expected = `/a/` )
+      ( input = `/../a`                 expected = `/a` )
+      ( input = `/..`                   expected = `/` )
+      ( input = `//a`                   expected = `//a` )
+      ( input = `//..`                  expected = `//..` )
+      ( input = `//h/a/../b`            expected = `//h/b` )
+      ( input = `a/./b`                 expected = `a/b` )
+      ( input = `./a`                   expected = `a` )
+      ( input = `../a`                  expected = `a` )
+      ( input = `a/..`                  expected = `` )
+      ( input = `a/.`                   expected = `a/` )
+      ( input = `a/b/..`                expected = `a/` )
+      ( input = `./`                    expected = `` )
+      ( input = `a/../`                 expected = `` )
+      ( input = `.`                     expected = `` )
+      ( input = `..`                    expected = `` )
+      ( input = `/`                     expected = `/` )
+      ( input = `/.`                    expected = `/` )
+      ( input = `/a/b/c/./../../g`      expected = `/a/g` )
+      ( input = `/a/b/.././../c/./d`    expected = `/c/d` )
+      ( input = `/a/b/..c/.d/...`       expected = `/a/b/..c/.d/...` )
+      ( input = `/a/%2e%2e/b`           expected = `/a/%2e%2e/b` )
+      ( input = `a//../b`               expected = `b` )
+      ( input = `a/b//../c`             expected = `a/c` )
+      ( input = `/a//..`                expected = `/` )
+      ( input = `/a?x=/../b`            expected = `/b` )
+      ( input = `/a/./b#/../c`          expected = `/a/c` )
+      ( input = `?x=../y`               expected = `?x=../y` )
+      ( input = `http://h/../a`         expected = `http://h/a` )
+      ( input = `http://h//../a`        expected = `http://h/a` )
+      ( input = `http://h/a/..`         expected = `http://h/` )
+      ( input = `http://h`              expected = `http://h` )
+      ( input = `http://h/.`            expected = `http://h/` )
+      ( input = `http://h:80/a/./../b/` expected = `http://h:80/b/` )
+      ( input = `http://h?x/../y`       expected = `http://hy` )
+      ( input = `/x?u=http://h/../a`    expected = `/x?u=http://a` )
+      ( input = `a?b://h/../c`          expected = `a?b://c` )
+      ( input = `://b/../c`             expected = `://b/c` )
+      ( input = `x:/a/../b`             expected = `x:/b` )
+      ( input = `http:a/../b`           expected = `b` ) ).
+
+    LOOP AT lt_cases INTO ls_case.
+      cl_abap_unit_assert=>assert_equals(
+        act = cl_http_utility=>normalize_url( ls_case-input )
+        exp = ls_case-expected
+        msg = ls_case-input ).
+    ENDLOOP.
+  ENDMETHOD.
+
 ENDCLASS.
 
-* expected values verified on a real SAP system
-CLASS ltcl_sap_reference DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+CLASS ltcl_more_escaping DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
 
   PRIVATE SECTION.
     METHODS escape_url_non_bmp FOR TESTING RAISING cx_static_check.
@@ -438,7 +680,7 @@ CLASS ltcl_sap_reference DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHO
 
 ENDCLASS.
 
-CLASS ltcl_sap_reference IMPLEMENTATION.
+CLASS ltcl_more_escaping IMPLEMENTATION.
 
   METHOD emoji.
 * U+1F600, a surrogate pair

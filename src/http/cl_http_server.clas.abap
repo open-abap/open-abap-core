@@ -22,7 +22,16 @@ CLASS cl_http_server IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_server~append_field_url.
-    ASSERT 1 = 'todo'.
+* name and value are escaped as by ESCAPE_URL; a fragment is not looked at
+    DATA lv_separator TYPE string.
+    IF url CA '?'.
+      lv_separator = '&'.
+    ELSE.
+      lv_separator = '?'.
+    ENDIF.
+    url = url && lv_separator
+      && cl_http_utility=>do_escape_url( name ) && '='
+      && cl_http_utility=>do_escape_url( value ).
   ENDMETHOD.
 
   METHOD if_http_server~create_abs_url.
@@ -34,7 +43,7 @@ CLASS cl_http_server IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_server~decode_base64.
-    ASSERT 1 = 'todo'.
+    decoded = cl_http_utility=>do_decode_base64( encoded ).
   ENDMETHOD.
 
   METHOD if_http_server~enable_foreign_session_access.
@@ -42,15 +51,15 @@ CLASS cl_http_server IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_server~encode_base64.
-    ASSERT 1 = 'todo'.
+    encoded = cl_http_utility=>do_encode_base64( unencoded ).
   ENDMETHOD.
 
   METHOD if_http_server~escape_html.
-    ASSERT 1 = 'todo'.
+    escaped = cl_http_utility=>do_escape_html( unescaped ).
   ENDMETHOD.
 
   METHOD if_http_server~escape_url.
-    ASSERT 1 = 'todo'.
+    escaped = cl_http_utility=>do_escape_url( unescaped ).
   ENDMETHOD.
 
   METHOD if_http_server~get_extension_info.
@@ -97,7 +106,12 @@ CLASS cl_http_server IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_server~unescape_url.
-    ASSERT 1 = 'todo'.
+* as CL_HTTP_UTILITY, but without an error code: a failure gives an empty result
+    cl_http_utility=>do_unescape_url(
+      EXPORTING
+        escaped   = escaped
+      IMPORTING
+        unescaped = unescaped ).
   ENDMETHOD.
 
   METHOD if_http_server~validate_xsrf_token.
