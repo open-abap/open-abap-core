@@ -35,7 +35,8 @@ CLASS cl_abap_regex DEFINITION PUBLIC.
       RETURNING
         VALUE(regex)     TYPE REF TO cl_abap_regex
       RAISING
-        cx_sy_regex.
+        cx_sy_regex
+        cx_sy_invalid_regex_operation.
 
   PRIVATE SECTION.
 
