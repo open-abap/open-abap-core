@@ -3,10 +3,10 @@ INTERFACE if_abap_lock_object PUBLIC.
   TYPES tv_name           TYPE c LENGTH 30.
   TYPES tv_table_name     TYPE tabname.
   TYPES tv_parameter_name TYPE c LENGTH 30.
-  TYPES tv_mode           TYPE c.
+  TYPES tv_mode           TYPE c LENGTH 1.
   TYPES tv_scope          TYPE n LENGTH 1.
-  TYPES tv_wait           TYPE c.
-  TYPES tv_synchronous    TYPE c.
+  TYPES tv_wait           TYPE c LENGTH 1.
+  TYPES tv_synchronous    TYPE c LENGTH 1.
 
   TYPES: BEGIN OF ts_table_mode,
            table_name TYPE tv_table_name,
