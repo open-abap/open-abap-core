@@ -276,9 +276,7 @@ CLASS cl_abap_corresponding IMPLEMENTATION.
               iv_level       = iv_level + 1 ).
           ENDIF.
         WHEN mapping_except_component.
-          IF ls_rule-srcname IS INITIAL.
-            ls_rule-srcname = ls_rule-dstname.
-          ENDIF.
+* the excluded component is a component of the source structure, given in SRCNAME
           IF has_component( io_struct = lo_src_struct
                             iv_name   = ls_rule-srcname ) = abap_false
               OR ls_rule-from <= ls_rule-to.
@@ -374,10 +372,6 @@ CLASS cl_abap_corresponding IMPLEMENTATION.
           CONTINUE.
         ENDIF.
         READ TABLE lt_rules WITH KEY kind = mapping_except_component srcname = lv_dstname TRANSPORTING NO FIELDS.
-        IF sy-subrc = 0.
-          CONTINUE.
-        ENDIF.
-        READ TABLE lt_rules WITH KEY kind = mapping_except_component srcname = `` dstname = lv_dstname TRANSPORTING NO FIELDS.
         IF sy-subrc = 0.
           CONTINUE.
         ENDIF.
