@@ -49,6 +49,10 @@ CLASS ltcl_corresponding DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHO
     METHODS error_unknown_component FOR TESTING RAISING cx_static_check.
     METHODS error_struct_and_table FOR TESTING RAISING cx_static_check.
     METHODS error_bad_level FOR TESTING RAISING cx_static_check.
+    METHODS except_sub_structure FOR TESTING RAISING cx_static_check.
+    METHODS except_source_only FOR TESTING RAISING cx_static_check.
+    METHODS error_except_unknown FOR TESTING RAISING cx_static_check.
+    METHODS error_except_no_srcname FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_corresponding IMPLEMENTATION.
@@ -318,6 +322,79 @@ CLASS ltcl_corresponding IMPLEMENTATION.
           destination = d2
           mapping     = VALUE #(
             ( level = 1 kind = cl_abap_corresponding=>mapping_component srcname = 'A' dstname = 'X' ) ) ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_corr_dyn_error.
+        RETURN.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD except_sub_structure.
+    DATA d1 TYPE ty_deep1.
+    DATA d2 TYPE ty_deep2.
+
+    d1 = VALUE #( id = 1 sub = VALUE #( a = 2 b = 3 ) ).
+    d2-sub2-b = 7.
+    cl_abap_corresponding=>create(
+      source      = d1
+      destination = d2
+      mapping     = VALUE #(
+        ( level = 0 kind = cl_abap_corresponding=>mapping_component srcname = 'SUB' dstname = 'SUB2' )
+        ( level = 1 kind = cl_abap_corresponding=>mapping_component srcname = 'A' dstname = 'X' )
+        ( level = 1 kind = cl_abap_corresponding=>mapping_except_component srcname = 'B' ) )
+      )->execute( EXPORTING source = d1 CHANGING destination = d2 ).
+
+    cl_abap_unit_assert=>assert_equals( act = d2-id
+                                        exp = 1 ).
+    cl_abap_unit_assert=>assert_equals( act = d2-sub2-x
+                                        exp = 2 ).
+    cl_abap_unit_assert=>assert_equals( act = d2-sub2-b
+                                        exp = 7 ).
+  ENDMETHOD.
+
+  METHOD except_source_only.
+* K only exists in the source, excluding it changes nothing
+    DATA s1 TYPE ty1.
+    DATA s2 TYPE ty2.
+
+    s1 = VALUE #( k = 3 v = `x` same = 9 ).
+    cl_abap_corresponding=>create(
+      source      = s1
+      destination = s2
+      mapping     = VALUE #(
+        ( level = 0 kind = cl_abap_corresponding=>mapping_except_component srcname = 'K' ) )
+      )->execute( EXPORTING source = s1 CHANGING destination = s2 ).
+
+    cl_abap_unit_assert=>assert_equals( act = s2
+                                        exp = VALUE ty2( key = 0 v = `x` same = 9 ) ).
+  ENDMETHOD.
+
+  METHOD error_except_unknown.
+* KEY only exists in the destination, the excluded component is a source component
+    DATA s1 TYPE ty1.
+    DATA s2 TYPE ty2.
+
+    TRY.
+        cl_abap_corresponding=>create(
+          source      = s1
+          destination = s2
+          mapping     = VALUE #(
+            ( level = 0 kind = cl_abap_corresponding=>mapping_except_component srcname = 'KEY' ) ) ).
+        cl_abap_unit_assert=>fail( ).
+      CATCH cx_corr_dyn_error.
+        RETURN.
+    ENDTRY.
+  ENDMETHOD.
+
+  METHOD error_except_no_srcname.
+    DATA s1 TYPE ty1.
+    DATA s2 TYPE ty2.
+
+    TRY.
+        cl_abap_corresponding=>create(
+          source      = s1
+          destination = s2
+          mapping     = VALUE #(
+            ( level = 0 kind = cl_abap_corresponding=>mapping_except_component dstname = 'SAME' ) ) ).
         cl_abap_unit_assert=>fail( ).
       CATCH cx_corr_dyn_error.
         RETURN.
