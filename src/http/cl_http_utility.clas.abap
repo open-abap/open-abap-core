@@ -63,6 +63,8 @@ CLASS cl_http_utility DEFINITION PUBLIC.
         incomplete_utf8     TYPE i VALUE 512,
       END OF c_error.
 
+    CLASS-DATA gv_last_error TYPE i.
+
     CLASS-METHODS do_escape_url
       IMPORTING
         unescaped      TYPE string
@@ -176,21 +178,45 @@ CLASS cl_http_utility IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_utility~get_last_error.
-    ASSERT 1 = 'todo'.
+    rc = gv_last_error.
   ENDMETHOD.
 
   METHOD if_http_utility~string_to_fields.
     DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
     DATA str LIKE LINE OF tab.
     DATA ls_field LIKE LINE OF fields.
+    DATA lv_name  TYPE string.
+    DATA lv_value TYPE string.
+    DATA lv_text  TYPE string.
+    DATA lv_rc    TYPE i.
 
     ASSERT ignore_parenthesis = 0.
 
+* processing stops at the first field that cannot be unescaped
     SPLIT string AT '&' INTO TABLE tab.
     LOOP AT tab INTO str.
-      SPLIT str AT '=' INTO ls_field-name ls_field-value.
-      ls_field-value = if_http_utility~unescape_url( ls_field-value ).
+      CLEAR ls_field.
+      SPLIT str AT '=' INTO lv_name lv_value.
+      do_unescape_url(
+        EXPORTING
+          escaped   = lv_name
+        IMPORTING
+          unescaped = lv_text
+          rc        = lv_rc ).
+      ls_field-name = lv_text.
+      IF lv_rc = c_error-ok.
+        do_unescape_url(
+          EXPORTING
+            escaped   = lv_value
+          IMPORTING
+            unescaped = lv_text
+            rc        = lv_rc ).
+        ls_field-value = lv_text.
+      ENDIF.
       APPEND ls_field TO fields.
+      IF lv_rc <> c_error-ok.
+        EXIT.
+      ENDIF.
     ENDLOOP.
   ENDMETHOD.
 
@@ -206,10 +232,13 @@ CLASS cl_http_utility IMPLEMENTATION.
     DATA tab TYPE STANDARD TABLE OF string WITH DEFAULT KEY.
     DATA str TYPE string.
     DATA ls_field LIKE LINE OF fields.
+    DATA lv_name  TYPE string.
+    DATA lv_value TYPE string.
 
     LOOP AT fields INTO ls_field.
-      ls_field-value = do_escape_url( ls_field-value ).
-      str = ls_field-name && '=' && ls_field-value.
+      lv_name = do_escape_url( ls_field-name ).
+      lv_value = do_escape_url( ls_field-value ).
+      str = lv_name && '=' && lv_value.
       APPEND str TO tab.
     ENDLOOP.
     string = concat_lines_of( table = tab
@@ -232,7 +261,8 @@ CLASS cl_http_utility IMPLEMENTATION.
       EXPORTING
         escaped   = escaped
       IMPORTING
-        unescaped = unescaped ).
+        unescaped = unescaped
+        rc        = gv_last_error ).
   ENDMETHOD.
 
   METHOD do_unescape_url.
@@ -433,22 +463,34 @@ CLASS cl_http_utility IMPLEMENTATION.
     DATA lv_index TYPE i.
     DATA lv_char  TYPE string.
     DATA lv_hex   TYPE string.
+    DATA lv_run   TYPE string.
 
-    DO strlen( unescaped ) TIMES.
+* characters to escape are collected and converted together, so both halves
+* of a surrogate pair reach the UTF-8 conversion as one character
+    DO strlen( unescaped ) + 1 TIMES.
       lv_index = sy-index - 1.
-      lv_char = unescaped+lv_index(1).
-      IF to_upper( lv_char ) CA sy-abcde OR lv_char CA '0123456789.-_()'.
-        escaped = escaped && lv_char.
+      IF lv_index < strlen( unescaped ).
+        lv_char = unescaped+lv_index(1).
+        IF NOT ( to_upper( lv_char ) CA sy-abcde OR lv_char CA '0123456789.-_()' ).
+          lv_run = lv_run && lv_char.
+          CONTINUE.
+        ENDIF.
       ELSE.
+        CLEAR lv_char.
+      ENDIF.
+
+      IF lv_run IS NOT INITIAL.
 * one escape per byte of the UTF-8 encoding
-        lv_hex = to_lower( cl_abap_codepage=>convert_to( lv_char ) ).
+        lv_hex = to_lower( cl_abap_codepage=>convert_to( lv_run ) ).
         WHILE lv_hex IS NOT INITIAL.
           escaped = escaped && '%' && substring( val = lv_hex
                                                  len = 2 ).
           lv_hex = substring( val = lv_hex
                               off = 2 ).
         ENDWHILE.
+        CLEAR lv_run.
       ENDIF.
+      escaped = escaped && lv_char.
     ENDDO.
   ENDMETHOD.
 
