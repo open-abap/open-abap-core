@@ -19,6 +19,8 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS get_ddic_field_datatype FOR TESTING RAISING cx_static_check.
     METHODS get_ddic_field_no_convexit FOR TESTING RAISING cx_static_check.
     METHODS get_ddic_field_text FOR TESTING RAISING cx_static_check.
+    METHODS get_ddic_field_leng_ddic FOR TESTING RAISING cx_static_check.
+    METHODS get_ddic_field_leng_builtin FOR TESTING RAISING cx_static_check.
     METHODS get_p_basic FOR TESTING RAISING cx_static_check.
 
 ENDCLASS.
@@ -247,6 +249,63 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = ls_dfies-fieldtext
       exp = 'Memory Size' ).
+  ENDMETHOD.
+
+  METHOD get_ddic_field_leng_ddic.
+* LENG is the dictionary length in characters or digits, not the internal length in bytes
+    DATA lo_element TYPE REF TO cl_abap_elemdescr.
+    DATA ls_dfies   TYPE dfies.
+
+    lo_element ?= cl_abap_elemdescr=>describe_by_name( 'ABAP_BOOLEAN' ).
+    ls_dfies = lo_element->get_ddic_field( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-leng
+      exp = 1 ).
+
+    lo_element ?= cl_abap_elemdescr=>describe_by_name( 'TIMESTAMPL' ).
+    ls_dfies = lo_element->get_ddic_field( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-datatype
+      exp = 'DEC' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-leng
+      exp = 21 ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-decimals
+      exp = 7 ).
+  ENDMETHOD.
+
+  METHOD get_ddic_field_leng_builtin.
+    DATA lo_element TYPE REF TO cl_abap_elemdescr.
+    DATA ls_dfies   TYPE dfies.
+    DATA lv_char    TYPE c LENGTH 40.
+    DATA lv_date    TYPE d.
+    DATA lv_int     TYPE i.
+    DATA lv_hex     TYPE x LENGTH 16.
+
+    lo_element ?= cl_abap_typedescr=>describe_by_data( lv_char ).
+    ls_dfies = lo_element->get_ddic_field( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-leng
+      exp = 40 ).
+
+    lo_element ?= cl_abap_typedescr=>describe_by_data( lv_date ).
+    ls_dfies = lo_element->get_ddic_field( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-leng
+      exp = 8 ).
+
+    lo_element ?= cl_abap_typedescr=>describe_by_data( lv_int ).
+    ls_dfies = lo_element->get_ddic_field( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-leng
+      exp = 10 ).
+
+    lo_element ?= cl_abap_typedescr=>describe_by_data( lv_hex ).
+    ls_dfies = lo_element->get_ddic_field( ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_dfies-leng
+      exp = 16 ).
   ENDMETHOD.
 
   METHOD get_ddic_field2.
