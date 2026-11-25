@@ -421,3 +421,131 @@ CLASS ltcl_escaping IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+* expected values verified on a real SAP system
+CLASS ltcl_sap_reference DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+
+  PRIVATE SECTION.
+    METHODS escape_url_non_bmp FOR TESTING RAISING cx_static_check.
+    METHODS unescape_url_non_bmp FOR TESTING RAISING cx_static_check.
+    METHODS get_last_error FOR TESTING RAISING cx_static_check.
+    METHODS string_to_fields_stops FOR TESTING RAISING cx_static_check.
+    METHODS string_to_fields_names FOR TESTING RAISING cx_static_check.
+    METHODS fields_to_string_names FOR TESTING RAISING cx_static_check.
+
+    METHODS emoji
+      RETURNING VALUE(rv) TYPE string.
+
+ENDCLASS.
+
+CLASS ltcl_sap_reference IMPLEMENTATION.
+
+  METHOD emoji.
+* U+1F600, a surrogate pair
+    DATA lv_utf8 TYPE xstring.
+    lv_utf8 = 'F09F9880'.
+    rv = cl_abap_codepage=>convert_from( lv_utf8 ).
+  ENDMETHOD.
+
+  METHOD escape_url_non_bmp.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>escape_url( emoji( ) )
+      exp = `%f0%9f%98%80` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>escape_url( |a{ emoji( ) }b| )
+      exp = `a%f0%9f%98%80b` ).
+  ENDMETHOD.
+
+  METHOD unescape_url_non_bmp.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>unescape_url( `%f0%9f%98%80` )
+      exp = emoji( ) ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>unescape_url( cl_http_utility=>escape_url( emoji( ) ) )
+      exp = emoji( ) ).
+  ENDMETHOD.
+
+  METHOD get_last_error.
+    DATA lv_result TYPE string.
+
+    lv_result = cl_http_utility=>unescape_url( `50%+off` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_result
+      exp = `` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>get_last_error( )
+      exp = 3 ).
+
+* a successful call resets the error
+    lv_result = cl_http_utility=>unescape_url( `abc` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>get_last_error( )
+      exp = 0 ).
+  ENDMETHOD.
+
+  METHOD string_to_fields_stops.
+* processing stops at the invalid escape, the following fields are dropped
+    DATA lt_fields TYPE tihttpnvp.
+    DATA ls_field  LIKE LINE OF lt_fields.
+
+    lt_fields = cl_http_utility=>string_to_fields( `discount=100%&a=b` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( lt_fields )
+      exp = 1 ).
+    READ TABLE lt_fields INDEX 1 INTO ls_field.
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_field-name
+      exp = `discount` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_field-value
+      exp = `` ).
+  ENDMETHOD.
+
+  METHOD string_to_fields_names.
+    DATA lt_fields TYPE tihttpnvp.
+    DATA ls_field  LIKE LINE OF lt_fields.
+
+    lt_fields = cl_http_utility=>string_to_fields( `first+name=a+b` ).
+    READ TABLE lt_fields INDEX 1 INTO ls_field.
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_field-name
+      exp = `first name` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_field-value
+      exp = `a b` ).
+
+    lt_fields = cl_http_utility=>string_to_fields( `a%5Bb%5D=1` ).
+    CLEAR ls_field.
+    READ TABLE lt_fields INDEX 1 INTO ls_field.
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_field-name
+      exp = `a[b]` ).
+
+    lt_fields = cl_http_utility=>string_to_fields( `x%20y=1&z+w=2` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( lt_fields )
+      exp = 2 ).
+    CLEAR ls_field.
+    READ TABLE lt_fields INDEX 2 INTO ls_field.
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_field-name
+      exp = `z w` ).
+  ENDMETHOD.
+
+  METHOD fields_to_string_names.
+    DATA lt_fields TYPE tihttpnvp.
+
+    lt_fields = VALUE #( ( name = `a b&c` value = `d e&f` ) ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>fields_to_string( lt_fields )
+      exp = `a%20b%26c=d%20e%26f` ).
+
+    lt_fields = VALUE #(
+      ( name = `a b` value = `1` )
+      ( name = `c&d` value = `2` ) ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>fields_to_string( lt_fields )
+      exp = `a%20b=1&c%26d=2` ).
+  ENDMETHOD.
+
+ENDCLASS.
