@@ -70,6 +70,10 @@ CLASS cl_abap_elemdescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
         typekind           TYPE abap_typekind
       RETURNING
         VALUE(rv_datatype) TYPE string.
+    "! open-abap: DDIC length derived from the internal type, when no dictionary length is known
+    METHODS ddic_length_from_typekind
+      RETURNING
+        VALUE(rv_length) TYPE i.
 ENDCLASS.
 
 CLASS cl_abap_elemdescr IMPLEMENTATION.
@@ -110,13 +114,14 @@ CLASS cl_abap_elemdescr IMPLEMENTATION.
 
   METHOD get_ddic_field.
     DATA lv_datatype TYPE string.
+    DATA lv_length   TYPE string.
+    DATA lv_decimals TYPE string.
 
     p_flddescr-tabname  = absolute_name.
     p_flddescr-rollname = relative_name.
     p_flddescr-inttype  = type_kind.
     p_flddescr-langu    = sy-langu.
     p_flddescr-position = 1.
-    p_flddescr-leng     = length.
     p_flddescr-decimals = decimals.
     p_flddescr-outputlen = output_length.
 
@@ -128,9 +133,49 @@ CLASS cl_abap_elemdescr IMPLEMENTATION.
     ENDIF.
     p_flddescr-datatype = lv_datatype.
 
+* LENG is the dictionary length in characters or digits, not the internal length in bytes
+    WRITE '@KERNEL lv_length.set(String(abap.DDIC[this.relative_name.get()]?.length ?? ""));'.
+    WRITE '@KERNEL lv_decimals.set(String(abap.DDIC[this.relative_name.get()]?.decimals ?? ""));'.
+    IF lv_length IS INITIAL.
+      p_flddescr-leng = ddic_length_from_typekind( ).
+    ELSE.
+      p_flddescr-leng = lv_length.
+    ENDIF.
+    IF lv_decimals IS NOT INITIAL.
+      p_flddescr-decimals = lv_decimals.
+    ENDIF.
+
     IF edit_mask CP '==*'.
       p_flddescr-convexit = edit_mask+2.
     ENDIF.
+  ENDMETHOD.
+
+  METHOD ddic_length_from_typekind.
+* packed: the number of digits is odd here, DEC 4 and DEC 5 have the same internal length
+    CASE type_kind.
+      WHEN cl_abap_typedescr=>typekind_char
+          OR cl_abap_typedescr=>typekind_num
+          OR cl_abap_typedescr=>typekind_date
+          OR cl_abap_typedescr=>typekind_time.
+        rv_length = output_length.
+      WHEN cl_abap_typedescr=>typekind_packed.
+        rv_length = length * 2 - 1.
+      WHEN cl_abap_typedescr=>typekind_int1.
+        rv_length = 3.
+      WHEN cl_abap_typedescr=>typekind_int2.
+        rv_length = 5.
+      WHEN cl_abap_typedescr=>typekind_int.
+        rv_length = 10.
+      WHEN cl_abap_typedescr=>typekind_int8.
+        rv_length = 19.
+      WHEN cl_abap_typedescr=>typekind_float.
+        rv_length = 16.
+      WHEN cl_abap_typedescr=>typekind_string
+          OR cl_abap_typedescr=>typekind_xstring.
+        rv_length = 0.
+      WHEN OTHERS.
+        rv_length = length.
+    ENDCASE.
   ENDMETHOD.
 
   METHOD ddic_datatype_from_typekind.
