@@ -803,9 +803,85 @@ CLASS ltcl_url_parsing DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT
   PRIVATE SECTION.
     METHODS parses_url_components FOR TESTING RAISING cx_static_check.
     METHODS authenticate_non_ascii FOR TESTING RAISING cx_static_check.
+    METHODS escape_url FOR TESTING RAISING cx_static_check.
+    METHODS create_abs_url FOR TESTING RAISING cx_static_check.
+    METHODS create_abs_url_request_uri FOR TESTING RAISING cx_static_check.
+    METHODS abs_url
+      IMPORTING
+        url        TYPE string
+        path       TYPE string OPTIONAL
+      RETURNING
+        VALUE(abs) TYPE string.
 ENDCLASS.
 
 CLASS ltcl_url_parsing IMPLEMENTATION.
+
+  METHOD abs_url.
+    DATA li_client TYPE REF TO if_http_client.
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = url
+      IMPORTING
+        client = li_client ).
+    abs = li_client->create_abs_url( path ).
+  ENDMETHOD.
+
+  METHOD escape_url.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_client=>if_http_client~escape_url( `a b/~(x)` )
+      exp = `a%20b%2f%7e(x)` ).
+  ENDMETHOD.
+
+  METHOD create_abs_url.
+* scheme in lower case, the port always given, no user information, no query
+    cl_abap_unit_assert=>assert_equals(
+      act = abs_url( `http://example.com:8080/sap/a?b=1` )
+      exp = `http://example.com:8080/sap/a` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = abs_url( `https://Example.com/x/y/` )
+      exp = `https://Example.com:443/x/y/` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = abs_url( `HTTP://example.com:80/z` )
+      exp = `http://example.com:80/z` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = abs_url( `http://user:pw@example.com/z` )
+      exp = `http://example.com:80/z` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = abs_url( `http://[::1]:8000/z` )
+      exp = `http://[::1]:8000/z` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = abs_url( `http://example.com/a%20b?c=d e` )
+      exp = `http://example.com:80/a%20b` ).
+
+* PATH replaces the path, as it is
+    cl_abap_unit_assert=>assert_equals(
+      act = abs_url( url  = `http://example.com:8080/sap/a?b=1`
+                     path = `/x/y?z=1` )
+      exp = `http://example.com:8080/x/y?z=1` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = abs_url( url  = `http://example.com:8080/sap/a`
+                     path = `rel` )
+      exp = `http://example.com:8080rel` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = abs_url( url  = `https://example.com`
+                     path = `/p q` )
+      exp = `https://example.com:443/p q` ).
+  ENDMETHOD.
+
+  METHOD create_abs_url_request_uri.
+    DATA li_client TYPE REF TO if_http_client.
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = `http://example.com:8080/sap/a?b=1`
+      IMPORTING
+        client = li_client ).
+    cl_http_utility=>set_request_uri(
+      request = li_client->request
+      uri     = `/other/p?x=y` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_client->create_abs_url( )
+      exp = `http://example.com:8080/other/p` ).
+  ENDMETHOD.
 
   METHOD authenticate_non_ascii.
 * characters outside ASCII become "#", also those of ISO-8859-1

@@ -114,7 +114,7 @@ CLASS cl_http_client IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_client~escape_url.
-    ASSERT 1 = 'todo'.
+    escaped = cl_http_utility=>escape_url( unescaped ).
   ENDMETHOD.
 
   METHOD create_by_url.
@@ -168,7 +168,50 @@ CLASS cl_http_client IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_client~create_abs_url.
-    ASSERT 1 = 'todo'.
+* scheme in lower case, the port always given, no user information; without
+* a PATH the path of the request URI, without its query. Nothing is escaped,
+* and a PATH that does not start with "/" is appended as it is
+    DATA lv_scheme    TYPE string.
+    DATA lv_authority TYPE string.
+    DATA lv_path      TYPE string.
+    DATA lv_query     TYPE string.
+    DATA lv_offset    TYPE i.
+    DATA lv_length    TYPE i.
+
+    FIND FIRST OCCURRENCE OF '://' IN mv_host MATCH OFFSET lv_offset.
+    IF sy-subrc = 0.
+      lv_scheme = to_lower( substring( val = mv_host
+                                       len = lv_offset ) ).
+      lv_authority = substring( val = mv_host
+                                off = lv_offset + 3 ).
+    ELSE.
+      lv_scheme = 'http'.
+      lv_authority = mv_host.
+    ENDIF.
+
+    FIND REGEX '^.*@' IN lv_authority MATCH LENGTH lv_length.
+    IF sy-subrc = 0.
+      lv_authority = substring( val = lv_authority
+                                off = lv_length ).
+    ENDIF.
+
+    FIND REGEX ':[0-9]*$' IN lv_authority.
+    IF sy-subrc <> 0.
+      IF lv_scheme = 'https'.
+        lv_authority = lv_authority && ':443'.
+      ELSE.
+        lv_authority = lv_authority && ':80'.
+      ENDIF.
+    ENDIF.
+
+    lv_path = path.
+    IF lv_path IS INITIAL.
+      lv_path = if_http_client~request->get_header_field( '~request_uri' ).
+      REPLACE FIRST OCCURRENCE OF mv_host IN lv_path WITH ''.
+      SPLIT lv_path AT '?' INTO lv_path lv_query.
+    ENDIF.
+
+    url = lv_scheme && '://' && lv_authority && lv_path.
   ENDMETHOD.
 
   METHOD if_http_client~send.

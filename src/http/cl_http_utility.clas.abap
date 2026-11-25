@@ -1,4 +1,4 @@
-CLASS cl_http_utility DEFINITION PUBLIC.
+CLASS cl_http_utility DEFINITION PUBLIC FRIENDS cl_http_server.
   PUBLIC SECTION.
     INTERFACES if_http_utility.
 
@@ -54,11 +54,13 @@ CLASS cl_http_utility DEFINITION PUBLIC.
         VALUE(escaped) TYPE string.
 
   PRIVATE SECTION.
-* the results of unescaping
+* the result of the last call, reported by GET_LAST_ERROR; the helpers of
+* CL_HTTP_SERVER use the same conversions but leave it as it is
     CONSTANTS:
       BEGIN OF c_error,
         ok                  TYPE i VALUE 0,
         null_character      TYPE i VALUE 3,
+        field_not_unescaped TYPE i VALUE 28,
         invalid_escape      TYPE i VALUE 29,
         incomplete_utf8     TYPE i VALUE 512,
       END OF c_error.
@@ -128,6 +130,7 @@ CLASS cl_http_utility IMPLEMENTATION.
 
   METHOD escape_html.
 * abap_undefined, the default, keeps no references either
+    gv_last_error = c_error-ok.
     escaped = do_escape_html(
       unescaped         = unescaped
       keep_num_char_ref = boolc( keep_num_char_ref = abap_true ) ).
@@ -170,11 +173,35 @@ CLASS cl_http_utility IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD escape_javascript.
-    ASSERT 1 = 'todo'.
+* the backslash goes first, the other replacements add backslashes of their own;
+* tabs and other control characters are kept as they are
+    gv_last_error = c_error-ok.
+    escaped = unescaped.
+    REPLACE ALL OCCURRENCES OF `\` IN escaped WITH `\\`.
+    REPLACE ALL OCCURRENCES OF `'` IN escaped WITH `\'`.
+    IF inside_html = abap_true.
+      REPLACE ALL OCCURRENCES OF `&` IN escaped WITH `&amp;`.
+      REPLACE ALL OCCURRENCES OF `"` IN escaped WITH `&quot;`.
+      REPLACE ALL OCCURRENCES OF `<` IN escaped WITH `&lt;`.
+      REPLACE ALL OCCURRENCES OF `>` IN escaped WITH `&gt;`.
+    ELSE.
+      REPLACE ALL OCCURRENCES OF `"` IN escaped WITH `\"`.
+      REPLACE ALL OCCURRENCES OF `<` IN escaped WITH `\x3c`.
+      REPLACE ALL OCCURRENCES OF `>` IN escaped WITH `\x3e`.
+    ENDIF.
+    REPLACE ALL OCCURRENCES OF cl_abap_char_utilities=>newline IN escaped WITH `\n`.
+    REPLACE ALL OCCURRENCES OF cl_abap_char_utilities=>cr_lf(1) IN escaped WITH `\r`.
+    REPLACE ALL OCCURRENCES OF cl_abap_conv_in_ce=>uccp( '2028' ) IN escaped WITH `\x2028`.
+    REPLACE ALL OCCURRENCES OF cl_abap_conv_in_ce=>uccp( '2029' ) IN escaped WITH `\x2029`.
   ENDMETHOD.
 
   METHOD escape_xml_attr_value.
-    ASSERT 1 = 'todo'.
+* ">" stays as it is, as does whitespace; the last error is not changed
+    escaped = unescaped.
+    REPLACE ALL OCCURRENCES OF `&` IN escaped WITH `&amp;`.
+    REPLACE ALL OCCURRENCES OF `<` IN escaped WITH `&lt;`.
+    REPLACE ALL OCCURRENCES OF `"` IN escaped WITH `&quot;`.
+    REPLACE ALL OCCURRENCES OF `'` IN escaped WITH `&apos;`.
   ENDMETHOD.
 
   METHOD if_http_utility~get_last_error.
@@ -191,6 +218,8 @@ CLASS cl_http_utility IMPLEMENTATION.
     DATA lv_rc    TYPE i.
 
     ASSERT ignore_parenthesis = 0.
+
+    gv_last_error = c_error-ok.
 
 * processing stops at the first field that cannot be unescaped
     SPLIT string AT '&' INTO TABLE tab.
@@ -215,6 +244,7 @@ CLASS cl_http_utility IMPLEMENTATION.
       ENDIF.
       APPEND ls_field TO fields.
       IF lv_rc <> c_error-ok.
+        gv_last_error = c_error-field_not_unescaped.
         EXIT.
       ENDIF.
     ENDLOOP.
@@ -225,7 +255,83 @@ CLASS cl_http_utility IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_utility~normalize_url.
-    ASSERT 1 = 'todo'.
+* removes "." and ".." path segments; everything after the authority counts
+* as path here, query and fragment included. A ".." also removes the empty
+* segments in front of the segment it removes, and never goes above the root
+    DATA lv_prefix   TYPE string.
+    DATA lv_rest     TYPE string.
+    DATA lv_length   TYPE i.
+    DATA lv_offset   TYPE i.
+    DATA lv_absolute TYPE abap_bool.
+    DATA lv_trailing TYPE abap_bool.
+    DATA lv_segment  TYPE string.
+    DATA lv_last     TYPE i.
+    DATA lt_segments TYPE string_table.
+    DATA lt_stack    TYPE string_table.
+
+    gv_last_error = c_error-ok.
+
+    FIND REGEX '^([^/?#]*:)?//[^/?#]*' IN unnormalized MATCH LENGTH lv_length.
+    IF sy-subrc = 0.
+      lv_prefix = substring( val = unnormalized
+                             len = lv_length ).
+      lv_rest = substring( val = unnormalized
+                           off = lv_length ).
+    ELSE.
+      lv_rest = unnormalized.
+    ENDIF.
+
+    IF strlen( lv_rest ) > 0 AND substring( val = lv_rest
+                                            len = 1 ) = `/`.
+      lv_absolute = abap_true.
+      lv_rest = substring( val = lv_rest
+                           off = 1 ).
+    ENDIF.
+
+* SPLIT would drop an empty last segment
+    DO.
+      FIND FIRST OCCURRENCE OF `/` IN lv_rest MATCH OFFSET lv_offset.
+      IF sy-subrc <> 0.
+        APPEND lv_rest TO lt_segments.
+        EXIT.
+      ENDIF.
+      APPEND substring( val = lv_rest
+                        len = lv_offset ) TO lt_segments.
+      lv_rest = substring( val = lv_rest
+                           off = lv_offset + 1 ).
+    ENDDO.
+
+    LOOP AT lt_segments INTO lv_segment.
+      lv_trailing = abap_false.
+      IF lv_segment = `.`.
+        lv_trailing = abap_true.
+      ELSEIF lv_segment = `..`.
+        lv_trailing = abap_true.
+        DO.
+          lv_last = lines( lt_stack ).
+          IF lv_last = 0.
+            EXIT.
+          ENDIF.
+          READ TABLE lt_stack INDEX lv_last INTO lv_segment.
+          DELETE lt_stack INDEX lv_last.
+          IF lv_segment IS NOT INITIAL.
+            EXIT.
+          ENDIF.
+        ENDDO.
+      ELSE.
+        APPEND lv_segment TO lt_stack.
+      ENDIF.
+    ENDLOOP.
+
+    normalized = concat_lines_of( table = lt_stack
+                                  sep   = `/` ).
+    IF lv_trailing = abap_true AND lines( lt_stack ) > 0.
+      normalized = normalized && `/`.
+    ENDIF.
+    IF lv_absolute = abap_true.
+      normalized = `/` && normalized.
+    ENDIF.
+    normalized = lv_prefix && normalized.
   ENDMETHOD.
 
   METHOD if_http_utility~fields_to_string.
@@ -243,14 +349,17 @@ CLASS cl_http_utility IMPLEMENTATION.
     ENDLOOP.
     string = concat_lines_of( table = tab
                               sep   = '&' ).
+    gv_last_error = c_error-ok.
   ENDMETHOD.
 
   METHOD encode_x_base64.
+    gv_last_error = c_error-ok.
     WRITE '@KERNEL let buffer = Buffer.from(unencoded.get(), "hex");'.
     WRITE '@KERNEL encoded.set(buffer.toString("base64"));'.
   ENDMETHOD.
 
   METHOD decode_x_base64.
+    gv_last_error = c_error-ok.
     WRITE '@KERNEL let buffer = Buffer.from(encoded.get(), "base64");'.
     WRITE '@KERNEL decoded.set(buffer.toString("hex").toUpperCase());'.
   ENDMETHOD.
@@ -456,6 +565,7 @@ CLASS cl_http_utility IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_utility~escape_url.
+    gv_last_error = c_error-ok.
     escaped = do_escape_url( unescaped ).
   ENDMETHOD.
 
@@ -495,6 +605,7 @@ CLASS cl_http_utility IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_utility~encode_base64.
+    gv_last_error = c_error-ok.
     encoded = do_encode_base64( unencoded ).
   ENDMETHOD.
 
@@ -527,6 +638,7 @@ CLASS cl_http_utility IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_utility~decode_base64.
+    gv_last_error = c_error-ok.
     decoded = do_decode_base64( encoded ).
   ENDMETHOD.
 
