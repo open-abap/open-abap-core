@@ -125,8 +125,29 @@ CLASS cl_http_client IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_http_client~authenticate.
+* the credentials are taken as ASCII, any other character becomes "#"
+    CONSTANTS lc_hash TYPE x LENGTH 1 VALUE '23'.
+
+    DATA lv_utf8   TYPE xstring.
+    DATA lv_ascii  TYPE xstring.
+    DATA lv_byte   TYPE x LENGTH 1.
+    DATA lv_value  TYPE i.
+    DATA lv_pos    TYPE i.
     DATA lv_base64 TYPE string.
-    lv_base64 = cl_http_utility=>encode_base64( |{ username }:{ password }| ).
+
+    lv_utf8 = cl_abap_codepage=>convert_to( |{ username }:{ password }| ).
+    WHILE lv_pos < xstrlen( lv_utf8 ).
+      lv_byte = lv_utf8+lv_pos(1).
+      lv_value = lv_byte.
+      IF lv_value >= 192.
+        CONCATENATE lv_ascii lc_hash INTO lv_ascii IN BYTE MODE.
+      ELSEIF lv_value < 128.
+        CONCATENATE lv_ascii lv_byte INTO lv_ascii IN BYTE MODE.
+      ENDIF.
+      lv_pos = lv_pos + 1.
+    ENDWHILE.
+
+    lv_base64 = cl_http_utility=>encode_x_base64( lv_ascii ).
     if_http_client~request->set_header_field(
       name  = 'authorization'
       value = |Basic { lv_base64 }| ).

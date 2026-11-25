@@ -802,9 +802,27 @@ CLASS cl_http_client DEFINITION LOCAL FRIENDS ltcl_url_parsing.
 CLASS ltcl_url_parsing DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
   PRIVATE SECTION.
     METHODS parses_url_components FOR TESTING RAISING cx_static_check.
+    METHODS authenticate_non_ascii FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_url_parsing IMPLEMENTATION.
+
+  METHOD authenticate_non_ascii.
+* characters outside ASCII become "#", also those of ISO-8859-1
+    DATA li_client TYPE REF TO if_http_client.
+    cl_http_client=>create_by_url(
+      EXPORTING
+        url    = `http://example.com/x`
+      IMPORTING
+        client = li_client ).
+    li_client->authenticate(
+      username = |u{ cl_abap_conv_in_ce=>uccp( '00E4' ) }|
+      password = |p{ cl_abap_conv_in_ce=>uccp( '20AC' ) }| ).
+    cl_abap_unit_assert=>assert_equals(
+      act = li_client->request->get_header_field( `authorization` )
+      exp = `Basic dSM6cCM=` ).
+  ENDMETHOD.
+
   METHOD parses_url_components.
 
     TYPES: BEGIN OF ty_url_case,
