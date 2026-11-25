@@ -262,3 +262,290 @@ CLASS ltcl_test IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+CLASS ltcl_escaping DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+
+  PRIVATE SECTION.
+    CONSTANTS c_ascii TYPE string
+      VALUE ` !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_``abcdefghijklmnopqrstuvwxyz{|}~`.
+
+    METHODS escape_url_ascii FOR TESTING RAISING cx_static_check.
+    METHODS escape_url_utf8 FOR TESTING RAISING cx_static_check.
+    METHODS unescape_url_plus FOR TESTING RAISING cx_static_check.
+    METHODS unescape_url_utf8 FOR TESTING RAISING cx_static_check.
+    METHODS unescape_url_invalid FOR TESTING RAISING cx_static_check.
+    METHODS escape_html_ascii FOR TESTING RAISING cx_static_check.
+    METHODS escape_html_keep_references FOR TESTING RAISING cx_static_check.
+    METHODS encode_base64_latin1 FOR TESTING RAISING cx_static_check.
+    METHODS decode_base64_latin1 FOR TESTING RAISING cx_static_check.
+
+ENDCLASS.
+
+CLASS ltcl_escaping IMPLEMENTATION.
+
+  METHOD escape_url_ascii.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>escape_url( c_ascii )
+      exp = `%20%21%22%23%24%25%26%27()%2a%2b%2c-.%2f0123456789%3a%3b%3c%3d%3e%3f%40ABCDEFGHIJKLMNOPQRSTUVWXYZ`
+         && `%5b%5c%5d%5e_%60abcdefghijklmnopqrstuvwxyz%7b%7c%7d%7e` ).
+  ENDMETHOD.
+
+  METHOD escape_url_utf8.
+    DATA lv_input TYPE string.
+    lv_input = |a{ cl_abap_char_utilities=>horizontal_tab }b{ cl_abap_char_utilities=>newline }|
+      && |{ cl_abap_conv_in_ce=>uccp( '00E4' ) }{ cl_abap_conv_in_ce=>uccp( '20AC' ) }|.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>escape_url( lv_input )
+      exp = `a%09b%0a%c3%a4%e2%82%ac` ).
+  ENDMETHOD.
+
+  METHOD unescape_url_plus.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>unescape_url( `%41+%42%20` )
+      exp = `A B ` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>unescape_url( `a+b%2Bc` )
+      exp = `a b+c` ).
+  ENDMETHOD.
+
+  METHOD unescape_url_utf8.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>unescape_url( `%c3%A4%E2%82%AC` )
+      exp = |{ cl_abap_conv_in_ce=>uccp( '00E4' ) }{ cl_abap_conv_in_ce=>uccp( '20AC' ) }| ).
+* characters outside ASCII are not expected in an escaped URL
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>unescape_url( |a{ cl_abap_conv_in_ce=>uccp( '00E9' ) }b| )
+      exp = `a#b` ).
+  ENDMETHOD.
+
+  METHOD unescape_url_invalid.
+    TYPES: BEGIN OF ty_case,
+             input TYPE string,
+             utf8  TYPE xstring,
+           END OF ty_case.
+    DATA lt_cases TYPE STANDARD TABLE OF ty_case WITH EMPTY KEY.
+    DATA ls_case LIKE LINE OF lt_cases.
+    DATA lv_result TYPE string.
+
+* an invalid escape or a UTF-8 sequence cut off by the end gives an empty result,
+* other invalid UTF-8 gives U+FFFD
+    lt_cases = VALUE #(
+      ( input = `ok`             utf8 = '6F6B' )
+      ( input = `%zz%` )
+      ( input = `%gg` )
+      ( input = `%00a` )
+      ( input = `a%2` )
+      ( input = `%` )
+      ( input = `%g1` )
+      ( input = `%1g` )
+      ( input = `%e4` )
+      ( input = `%E2%82` )
+      ( input = `%C3%A4%E4x` )
+      ( input = `%80`            utf8 = 'EFBFBD' )
+      ( input = `%FF`            utf8 = 'EFBFBD' )
+      ( input = `%E2%82x`        utf8 = 'EFBFBDEFBFBD78' )
+      ( input = `%C3%C3%A4`      utf8 = 'EFBFBDC3A4' )
+      ( input = `%C0%80`         utf8 = 'EFBFBD' )
+      ( input = `%E0%80%80`      utf8 = 'EFBFBD' )
+      ( input = `%F4%90%80%80`   utf8 = 'EFBFBD' )
+      ( input = `%F0%9F%98%80`   utf8 = 'F09F9880' ) ).
+
+    LOOP AT lt_cases INTO ls_case.
+      lv_result = cl_http_utility=>unescape_url( ls_case-input ).
+      cl_abap_unit_assert=>assert_equals(
+        act = cl_abap_codepage=>convert_to( lv_result )
+        exp = ls_case-utf8
+        msg = ls_case-input ).
+    ENDLOOP.
+  ENDMETHOD.
+
+  METHOD escape_html_ascii.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>escape_html( c_ascii )
+      exp = ` !&quot;#$%&amp;&#39;()*+,-./0123456789:;&lt;=&gt;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_``abcdefghijklmnopqrstuvwxyz{|}~` ).
+  ENDMETHOD.
+
+  METHOD escape_html_keep_references.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>escape_html( unescaped         = `a&#65;&#66;b&amp;`
+                                          keep_num_char_ref = abap_true )
+      exp = `a&#65;&#66;b&amp;amp;` ).
+* up to five decimal or four hex digits, x in either case, the semicolon required
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>escape_html( unescaped         = `&#00065;&#000065;&#99999;&#xFFFF;&#x10000;&#X41;&#x;&#65`
+                                          keep_num_char_ref = abap_true )
+      exp = `&#00065;&amp;#000065;&#99999;&#xFFFF;&amp;#x10000;&#X41;&amp;#x;&amp;#65` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>escape_html( unescaped         = `&&#65;;`
+                                          keep_num_char_ref = abap_true )
+      exp = `&amp;&#65;;` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>escape_html( `&#65;` )
+      exp = `&amp;#65;` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>escape_html( unescaped         = `&#65;`
+                                          keep_num_char_ref = abap_false )
+      exp = `&amp;#65;` ).
+  ENDMETHOD.
+
+
+  METHOD encode_base64_latin1.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>encode_base64( |{ cl_abap_conv_in_ce=>uccp( '00E4' ) }b| )
+      exp = `5GI=` ).
+* characters outside ISO-8859-1 become "#"
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>encode_base64( |{ cl_abap_conv_in_ce=>uccp( '20AC' ) }| )
+      exp = `Iw==` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>encode_base64( |{ cl_abap_conv_in_ce=>uccp( '0100' ) }a| )
+      exp = `I2E=` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>encode_base64( `` )
+      exp = `` ).
+  ENDMETHOD.
+
+  METHOD decode_base64_latin1.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_codepage=>convert_to( cl_http_utility=>decode_base64( `w6Ri` ) )
+      exp = 'C383C2A462' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_codepage=>convert_to( cl_http_utility=>decode_base64( `gA==` ) )
+      exp = 'C280' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_codepage=>convert_to( cl_http_utility=>decode_base64( `/w==` ) )
+      exp = 'C3BF' ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>decode_base64( `QQ` )
+      exp = `A` ).
+  ENDMETHOD.
+
+ENDCLASS.
+
+* expected values verified on a real SAP system
+CLASS ltcl_sap_reference DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+
+  PRIVATE SECTION.
+    METHODS escape_url_non_bmp FOR TESTING RAISING cx_static_check.
+    METHODS unescape_url_non_bmp FOR TESTING RAISING cx_static_check.
+    METHODS get_last_error FOR TESTING RAISING cx_static_check.
+    METHODS string_to_fields_stops FOR TESTING RAISING cx_static_check.
+    METHODS string_to_fields_names FOR TESTING RAISING cx_static_check.
+    METHODS fields_to_string_names FOR TESTING RAISING cx_static_check.
+
+    METHODS emoji
+      RETURNING VALUE(rv) TYPE string.
+
+ENDCLASS.
+
+CLASS ltcl_sap_reference IMPLEMENTATION.
+
+  METHOD emoji.
+* U+1F600, a surrogate pair
+    DATA lv_utf8 TYPE xstring.
+    lv_utf8 = 'F09F9880'.
+    rv = cl_abap_codepage=>convert_from( lv_utf8 ).
+  ENDMETHOD.
+
+  METHOD escape_url_non_bmp.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>escape_url( emoji( ) )
+      exp = `%f0%9f%98%80` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>escape_url( |a{ emoji( ) }b| )
+      exp = `a%f0%9f%98%80b` ).
+  ENDMETHOD.
+
+  METHOD unescape_url_non_bmp.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>unescape_url( `%f0%9f%98%80` )
+      exp = emoji( ) ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>unescape_url( cl_http_utility=>escape_url( emoji( ) ) )
+      exp = emoji( ) ).
+  ENDMETHOD.
+
+  METHOD get_last_error.
+    DATA lv_result TYPE string.
+
+    lv_result = cl_http_utility=>unescape_url( `50%+off` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lv_result
+      exp = `` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>get_last_error( )
+      exp = 3 ).
+
+* a successful call resets the error
+    lv_result = cl_http_utility=>unescape_url( `abc` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>get_last_error( )
+      exp = 0 ).
+  ENDMETHOD.
+
+  METHOD string_to_fields_stops.
+* processing stops at the invalid escape, the following fields are dropped
+    DATA lt_fields TYPE tihttpnvp.
+    DATA ls_field  LIKE LINE OF lt_fields.
+
+    lt_fields = cl_http_utility=>string_to_fields( `discount=100%&a=b` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( lt_fields )
+      exp = 1 ).
+    READ TABLE lt_fields INDEX 1 INTO ls_field.
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_field-name
+      exp = `discount` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_field-value
+      exp = `` ).
+  ENDMETHOD.
+
+  METHOD string_to_fields_names.
+    DATA lt_fields TYPE tihttpnvp.
+    DATA ls_field  LIKE LINE OF lt_fields.
+
+    lt_fields = cl_http_utility=>string_to_fields( `first+name=a+b` ).
+    READ TABLE lt_fields INDEX 1 INTO ls_field.
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_field-name
+      exp = `first name` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_field-value
+      exp = `a b` ).
+
+    lt_fields = cl_http_utility=>string_to_fields( `a%5Bb%5D=1` ).
+    CLEAR ls_field.
+    READ TABLE lt_fields INDEX 1 INTO ls_field.
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_field-name
+      exp = `a[b]` ).
+
+    lt_fields = cl_http_utility=>string_to_fields( `x%20y=1&z+w=2` ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( lt_fields )
+      exp = 2 ).
+    CLEAR ls_field.
+    READ TABLE lt_fields INDEX 2 INTO ls_field.
+    cl_abap_unit_assert=>assert_equals(
+      act = ls_field-name
+      exp = `z w` ).
+  ENDMETHOD.
+
+  METHOD fields_to_string_names.
+    DATA lt_fields TYPE tihttpnvp.
+
+    lt_fields = VALUE #( ( name = `a b&c` value = `d e&f` ) ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>fields_to_string( lt_fields )
+      exp = `a%20b%26c=d%20e%26f` ).
+
+    lt_fields = VALUE #(
+      ( name = `a b` value = `1` )
+      ( name = `c&d` value = `2` ) ).
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_http_utility=>fields_to_string( lt_fields )
+      exp = `a%20b=1&c%26d=2` ).
+  ENDMETHOD.
+
+ENDCLASS.
