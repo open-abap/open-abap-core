@@ -507,9 +507,11 @@ CLASS cl_abap_typedescr IMPLEMENTATION.
         type->kind = kind_elem.
       WHEN 'DataReference'.
         IF lv_generic = abap_true.
-          CREATE OBJECT lo_referenced TYPE cl_abap_datadescr.
+          " the generic type data is described as an elementary type
+          CREATE OBJECT lo_referenced TYPE cl_abap_elemdescr.
           lo_referenced->type_kind = typekind_data.
           lo_referenced->kind = kind_elem.
+          lo_referenced->absolute_name = '\TYPE=DATA'.
         ELSE.
           WRITE '@KERNEL lv_any = p_data.type;'.
           lo_referenced = describe_by_data( lv_any ).

@@ -3,7 +3,7 @@ CLASS cl_bcs_mail_message DEFINITION PUBLIC FINAL CREATE PRIVATE.
   PUBLIC SECTION.
     TYPES ty_address TYPE c LENGTH 512.
     TYPES ty_subject TYPE c LENGTH 1024.
-    TYPES ty_status TYPE c.
+    TYPES ty_status TYPE c LENGTH 1.
     TYPES ty_creation_time TYPE p LENGTH 11 DECIMALS 7.
     TYPES ty_mail_id TYPE x LENGTH 16.
 * the copy type, data element BCS_MSG_COPY on a system

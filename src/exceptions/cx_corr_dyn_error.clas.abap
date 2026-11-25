@@ -1,0 +1,7 @@
+CLASS cx_corr_dyn_error DEFINITION PUBLIC INHERITING FROM cx_dynamic_check.
+
+ENDCLASS.
+
+CLASS cx_corr_dyn_error IMPLEMENTATION.
+
+ENDCLASS.
