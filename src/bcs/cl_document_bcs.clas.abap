@@ -2,6 +2,8 @@ CLASS cl_document_bcs DEFINITION PUBLIC.
   PUBLIC SECTION.
     INTERFACES if_document_bcs.
 
+    TYPES ty_doctp TYPE c LENGTH 3.
+
     CLASS-METHODS create_document
       IMPORTING
         i_type        TYPE clike
@@ -25,14 +27,21 @@ CLASS cl_document_bcs DEFINITION PUBLIC.
 
     METHODS add_attachment
       IMPORTING
-        i_attachment_type    TYPE clike
-        i_attachment_subject TYPE clike
-        i_attachment_size    TYPE any OPTIONAL
-        i_att_content_text   TYPE any OPTIONAL
-        i_att_content_hex    TYPE any OPTIONAL
-        i_attachment_header  TYPE soli_tab OPTIONAL
+        i_attachment_type     TYPE clike
+        i_attachment_subject  TYPE clike
+        i_attachment_size     TYPE any OPTIONAL
+        i_att_content_text    TYPE any OPTIONAL
+        i_att_content_hex     TYPE any OPTIONAL
+        i_attachment_header   TYPE soli_tab OPTIONAL
+        i_attachment_language TYPE sy-langu DEFAULT space
       RAISING
         cx_bcs.
+
+    METHODS get_doctp
+      RETURNING
+        VALUE(result) TYPE ty_doctp
+      RAISING
+        cx_os_object_not_found.
 
     CLASS-METHODS xstring_to_solix
       IMPORTING
@@ -61,6 +70,18 @@ CLASS cl_document_bcs DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS cl_document_bcs IMPLEMENTATION.
+  METHOD get_doctp.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_document_bcs~get_body_part_attributes.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD if_document_bcs~get_body_part_content.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD add_document_as_attachment.
     ASSERT 1 = 'todo'.
   ENDMETHOD.

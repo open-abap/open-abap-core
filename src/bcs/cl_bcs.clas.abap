@@ -89,9 +89,27 @@ CLASS cl_bcs DEFINITION PUBLIC.
       RAISING
         cx_send_req_bcs.
 
+    METHODS create_link
+      IMPORTING
+        i_appl_object TYPE any
+      RAISING
+        cx_send_req_bcs.
+
+    METHODS oid
+      RETURNING
+        VALUE(result) TYPE os_guid.
+
 ENDCLASS.
 
 CLASS cl_bcs IMPLEMENTATION.
+  METHOD create_link.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD oid.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD create_link_to_app.
     RETURN. " todo, implement method
   ENDMETHOD.
