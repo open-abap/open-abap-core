@@ -34,6 +34,10 @@ CLASS cl_cam_address_bcs DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS cl_cam_address_bcs IMPLEMENTATION.
+  METHOD if_sender_bcs~address_string.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD create_fax_address.
     ASSERT 1 = 'todo'.
   ENDMETHOD.

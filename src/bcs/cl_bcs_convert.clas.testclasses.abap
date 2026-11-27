@@ -2,6 +2,10 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
   PRIVATE SECTION.
     METHODS empty FOR TESTING.
     METHODS boundaries FOR TESTING.
+    METHODS string_to_xstring FOR TESTING RAISING cx_bcs.
+    METHODS string_to_xstring_bom FOR TESTING RAISING cx_bcs.
+    METHODS xtab_to_xstring FOR TESTING.
+    METHODS xtab_to_xstring_size FOR TESTING.
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
@@ -51,5 +55,57 @@ CLASS ltcl_test IMPLEMENTATION.
       cl_abap_unit_assert=>assert_equals( act = lv_actual
                                           exp = lv_expected ).
     ENDLOOP.
+  ENDMETHOD.
+
+  METHOD string_to_xstring.
+    DATA lv_utf8 TYPE xstring.
+    DATA lv_string TYPE string.
+
+    lv_utf8 = '41C3A4'.
+    lv_string = cl_abap_conv_codepage=>create_in( )->convert( lv_utf8 ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_bcs_convert=>string_to_xstring( lv_string )
+      exp = lv_utf8 ).
+  ENDMETHOD.
+
+  METHOD string_to_xstring_bom.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_bcs_convert=>string_to_xstring( iv_string  = `A`
+                                               iv_add_bom = abap_true )
+      exp = 'EFBBBF41' ).
+  ENDMETHOD.
+
+  METHOD xtab_to_xstring.
+    DATA lt_solix TYPE solix_tab.
+    DATA ls_solix TYPE solix.
+    DATA ls_first TYPE solix.
+    DATA lv_expected TYPE xstring.
+
+    ls_first-line = 'AABB'.
+    APPEND ls_first TO lt_solix.
+    ls_solix-line = 'CCDD'.
+    APPEND ls_solix TO lt_solix.
+
+    CONCATENATE ls_first-line ls_solix-line INTO lv_expected IN BYTE MODE.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_bcs_convert=>xtab_to_xstring( lt_solix )
+      exp = lv_expected ).
+  ENDMETHOD.
+
+  METHOD xtab_to_xstring_size.
+    DATA lt_solix TYPE solix_tab.
+    DATA ls_solix TYPE solix.
+
+    ls_solix-line = 'AABB'.
+    APPEND ls_solix TO lt_solix.
+    ls_solix-line = 'CCDD'.
+    APPEND ls_solix TO lt_solix.
+
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_bcs_convert=>xtab_to_xstring( it_xtab = lt_solix
+                                             iv_size = 3 )
+      exp = 'AABB00' ).
   ENDMETHOD.
 ENDCLASS.

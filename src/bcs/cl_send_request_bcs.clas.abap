@@ -29,9 +29,51 @@ CLASS cl_send_request_bcs DEFINITION PUBLIC.
         i_object TYPE any
       RAISING
         cx_os_object_not_found.
+
+    CLASS-METHODS getu_ref_by_oid
+      IMPORTING
+        i_oid         TYPE os_guid
+      RETURNING
+        VALUE(result) TYPE REF TO cl_send_request_bcs
+      RAISING
+        cx_send_req_bcs.
+
+    METHODS get_document
+      RETURNING
+        VALUE(result) TYPE REF TO if_document_bcs
+      RAISING
+        cx_send_req_bcs.
+
+    METHODS get_sender
+      RETURNING
+        VALUE(result) TYPE REF TO if_sender_bcs
+      RAISING
+        cx_send_req_bcs.
+
+    METHODS getu_message_subject_long
+      RETURNING
+        VALUE(result) TYPE string
+      RAISING
+        cx_send_req_bcs.
 ENDCLASS.
 
 CLASS cl_send_request_bcs IMPLEMENTATION.
+  METHOD getu_ref_by_oid.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get_document.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD get_sender.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
+  METHOD getu_message_subject_long.
+    ASSERT 1 = 'todo'.
+  ENDMETHOD.
+
   METHOD set_disclosure.
     RETURN. " todo, implement method
   ENDMETHOD.
