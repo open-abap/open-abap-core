@@ -99,10 +99,10 @@ INTERFACE if_ixml_document PUBLIC.
         VALUE(val) TYPE REF TO if_ixml_element,
     get_elements_by_tag_name_ns
       IMPORTING
-        name               TYPE string
-        namespace          TYPE string OPTIONAL
-        uri                TYPE string OPTIONAL
-      RETURNING VALUE(val) TYPE REF TO if_ixml_node_collection,
+        name                TYPE string
+        namespace           TYPE string OPTIONAL
+        uri                 TYPE string OPTIONAL
+      RETURNING VALUE(rval) TYPE REF TO if_ixml_node_collection,
     get_elements_by_tag_name
       IMPORTING
         depth              TYPE i OPTIONAL
