@@ -21,7 +21,13 @@ CLASS cx_sy_create_object_error IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD if_message~get_text.
-    result = 'The object could not be created: The class ??? does not exist.'.
+    " the runtime hands the name over on CREATE OBJECT ... TYPE (name); a
+    " raise of its own that names none keeps the placeholder
+    IF classname IS INITIAL.
+      result = 'The object could not be created: The class ??? does not exist.'.
+    ELSE.
+      result = |The object could not be created: The class { classname } does not exist.|.
+    ENDIF.
   ENDMETHOD.
 
 ENDCLASS.
