@@ -66,7 +66,7 @@ INTERFACE if_ixml_element PUBLIC.
         VALUE(val) TYPE REF TO if_ixml_node_collection,
     get_elements_by_tag_name_ns
       IMPORTING
-        name       TYPE string
+        name        TYPE string
         uri        TYPE string OPTIONAL
       RETURNING
         VALUE(rval) TYPE REF TO if_ixml_node_collection,
