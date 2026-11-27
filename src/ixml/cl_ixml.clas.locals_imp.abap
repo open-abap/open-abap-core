@@ -1431,7 +1431,7 @@ CLASS lcl_document IMPLEMENTATION.
       lv_namespace = namespace.
     ENDIF.
 
-    val = mi_node->if_ixml_element~get_elements_by_tag_name_ns(
+    rval = mi_node->if_ixml_element~get_elements_by_tag_name_ns(
       name = name
       uri  = lv_namespace ).
   ENDMETHOD.
