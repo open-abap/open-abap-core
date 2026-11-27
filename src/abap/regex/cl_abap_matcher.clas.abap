@@ -11,6 +11,14 @@ CLASS cl_abap_matcher DEFINITION PUBLIC.
         text        TYPE clike
         regex       TYPE REF TO cl_abap_regex OPTIONAL.
 
+    CLASS-METHODS matches
+      IMPORTING
+        pattern        TYPE clike
+        text           TYPE clike
+        ignore_case    TYPE abap_bool DEFAULT abap_false
+      RETURNING
+        VALUE(success) TYPE abap_bool.
+
     METHODS find_all
       RETURNING
         VALUE(rt_matches) TYPE match_result_tab.
@@ -86,6 +94,17 @@ CLASS cl_abap_matcher DEFINITION PUBLIC.
 ENDCLASS.
 
 CLASS cl_abap_matcher IMPLEMENTATION.
+
+  METHOD matches.
+    DATA lo_matcher TYPE REF TO cl_abap_matcher.
+
+    CREATE OBJECT lo_matcher
+      EXPORTING
+        pattern     = pattern
+        ignore_case = ignore_case
+        text        = text.
+    success = lo_matcher->match( ).
+  ENDMETHOD.
 
   METHOD constructor.
     mv_pattern = pattern.

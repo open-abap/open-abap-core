@@ -412,3 +412,32 @@ CLASS ltcl_keys IMPLEMENTATION.
   ENDMETHOD.
 
 ENDCLASS.
+
+CLASS ltcl_get DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
+  PRIVATE SECTION.
+    METHODS get_and_create_data FOR TESTING RAISING cx_static_check.
+ENDCLASS.
+
+CLASS ltcl_get IMPLEMENTATION.
+  METHOD get_and_create_data.
+    DATA lo_descr TYPE REF TO cl_abap_tabledescr.
+    DATA lr_data  TYPE REF TO data.
+    FIELD-SYMBOLS <lt_any> TYPE STANDARD TABLE.
+
+    lo_descr = cl_abap_tabledescr=>get( p_line_type = cl_abap_elemdescr=>get_i( ) ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_descr->table_kind
+      exp = cl_abap_tabledescr=>tablekind_std ).
+    cl_abap_unit_assert=>assert_equals(
+      act = lo_descr->get_table_line_type( )->type_kind
+      exp = cl_abap_typedescr=>typekind_int ).
+
+    CREATE DATA lr_data TYPE HANDLE lo_descr.
+    ASSIGN lr_data->* TO <lt_any>.
+    APPEND 2 TO <lt_any>.
+    cl_abap_unit_assert=>assert_equals(
+      act = lines( <lt_any> )
+      exp = 1 ).
+  ENDMETHOD.
+ENDCLASS.
