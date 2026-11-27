@@ -813,7 +813,7 @@ CLASS lcl_node IMPLEMENTATION.
       iv_namespace = ''
       iv_uri       = uri
       io_list      = lo_list ).
-    val = lo_list.
+    rval = lo_list.
   ENDMETHOD.
 
   METHOD if_ixml_element~get_first_child.
