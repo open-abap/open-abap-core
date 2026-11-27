@@ -1,4 +1,4 @@
-CLASS cl_http_utility DEFINITION PUBLIC FRIENDS cl_http_server.
+CLASS cl_http_utility DEFINITION PUBLIC GLOBAL FRIENDS cl_http_server.
   PUBLIC SECTION.
     INTERFACES if_http_utility.
 
