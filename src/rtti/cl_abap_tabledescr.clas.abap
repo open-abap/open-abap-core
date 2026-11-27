@@ -28,8 +28,14 @@ CLASS cl_abap_tabledescr DEFINITION PUBLIC INHERITING FROM cl_abap_datadescr.
         VALUE(type) TYPE REF TO cl_abap_datadescr.
 
     CLASS-METHODS get
-      IMPORTING type       TYPE REF TO cl_abap_datadescr
-      RETURNING VALUE(val) TYPE REF TO cl_abap_tabledescr.
+      IMPORTING
+        p_line_type     TYPE REF TO cl_abap_datadescr
+        p_table_kind    TYPE abap_tablekind DEFAULT tablekind_std
+        p_unique        TYPE abap_bool DEFAULT abap_false
+        p_key           TYPE abap_keydescr_tab OPTIONAL
+        p_key_kind      TYPE abap_keydefkind DEFAULT keydefkind_default
+      RETURNING
+        VALUE(p_result) TYPE REF TO cl_abap_tabledescr.
 
     CLASS-METHODS get_with_keys
       IMPORTING
@@ -124,7 +130,12 @@ CLASS cl_abap_tabledescr IMPLEMENTATION.
   ENDMETHOD.
 
   METHOD get.
-    ASSERT 1 = 'todo'.
+    p_result = create(
+      p_line_type  = p_line_type
+      p_table_kind = p_table_kind
+      p_unique     = p_unique
+      p_key        = p_key
+      p_key_kind   = p_key_kind ).
   ENDMETHOD.
 
   METHOD construct_from_data.

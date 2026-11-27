@@ -9,4 +9,12 @@ INTERFACE if_os_ca_persistency PUBLIC.
       cx_os_object_not_found
       cx_os_class_not_found.
 
+  METHODS get_persistent_by_key_tab
+    IMPORTING
+      i_key_tab     TYPE INDEX TABLE
+    RETURNING
+      VALUE(result) TYPE osreftab
+    RAISING
+      cx_os_object_not_found.
+
 ENDINTERFACE.

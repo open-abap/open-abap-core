@@ -16,6 +16,9 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
     METHODS match_whole_text FOR TESTING RAISING cx_static_check.
     METHODS match_ignore_case FOR TESTING RAISING cx_static_check.
     METHODS match_line_only FOR TESTING RAISING cx_static_check.
+    METHODS static_matches FOR TESTING RAISING cx_static_check.
+    METHODS static_matches_not FOR TESTING RAISING cx_static_check.
+    METHODS static_matches_ignore_case FOR TESTING RAISING cx_static_check.
 ENDCLASS.
 
 CLASS ltcl_test IMPLEMENTATION.
@@ -189,6 +192,29 @@ CLASS ltcl_test IMPLEMENTATION.
     cl_abap_unit_assert=>assert_equals(
       act = cl_abap_regex=>create_pcre( 'a' )->create_matcher( text = lv_text )->match( )
       exp = abap_false ).
+  ENDMETHOD.
+
+  METHOD static_matches.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_matcher=>matches( pattern = 'SM(.*)'
+                                      text    = 'SMITH' )
+      exp = abap_true ).
+  ENDMETHOD.
+
+  METHOD static_matches_not.
+* the whole text must match
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_matcher=>matches( pattern = 'SM'
+                                      text    = 'SMITH' )
+      exp = abap_false ).
+  ENDMETHOD.
+
+  METHOD static_matches_ignore_case.
+    cl_abap_unit_assert=>assert_equals(
+      act = cl_abap_matcher=>matches( pattern     = 'sm.*'
+                                      text        = 'SMITH'
+                                      ignore_case = abap_true )
+      exp = abap_true ).
   ENDMETHOD.
 
 ENDCLASS.
