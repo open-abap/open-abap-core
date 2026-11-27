@@ -69,7 +69,7 @@ INTERFACE if_ixml_element PUBLIC.
         name       TYPE string
         uri        TYPE string OPTIONAL
       RETURNING
-        VALUE(val) TYPE REF TO if_ixml_node_collection,
+        VALUE(rval) TYPE REF TO if_ixml_node_collection,
     get_attribute_node_ns
         IMPORTING
         name       TYPE string
