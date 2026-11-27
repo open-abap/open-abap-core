@@ -150,7 +150,7 @@ CLASS lcl_heap IMPLEMENTATION.
     DATA lv_data         TYPE string.
     DATA lv_counter      LIKE mv_counter.
 
-    FIELD-SYMBOLS <any> TYPE REF TO any.
+    FIELD-SYMBOLS <any> TYPE any.
 
     mv_counter = mv_counter + 1.
     lv_counter = mv_counter.

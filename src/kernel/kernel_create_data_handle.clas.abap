@@ -5,28 +5,28 @@ CLASS kernel_create_data_handle DEFINITION PUBLIC.
         handle        TYPE REF TO cl_abap_datadescr
         allow_generic TYPE abap_bool OPTIONAL
       CHANGING
-        dref          TYPE REF TO any.
+        dref          TYPE REF TO data.
   PRIVATE SECTION.
     CLASS-METHODS elem
       IMPORTING
         handle TYPE REF TO cl_abap_datadescr
       CHANGING
-        dref   TYPE REF TO any.
+        dref   TYPE REF TO data.
     CLASS-METHODS struct
       IMPORTING
         handle TYPE REF TO cl_abap_datadescr
       CHANGING
-        dref   TYPE REF TO any.
+        dref   TYPE REF TO data.
     CLASS-METHODS table
       IMPORTING
         handle TYPE REF TO cl_abap_datadescr
       CHANGING
-        dref   TYPE REF TO any.
+        dref   TYPE REF TO data.
     CLASS-METHODS ref
       IMPORTING
         handle TYPE REF TO cl_abap_datadescr
       CHANGING
-        dref   TYPE REF TO any.
+        dref   TYPE REF TO data.
 ENDCLASS.
 
 CLASS kernel_create_data_handle IMPLEMENTATION.
