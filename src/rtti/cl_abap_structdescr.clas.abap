@@ -179,7 +179,7 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
       IF ls_component-type->kind = cl_abap_typedescr=>kind_elem.
         lo_elemdescr ?= ls_component-type.
         ls_field = lo_elemdescr->get_ddic_field( ).
-        ls_return-leng      = lo_elemdescr->output_length.
+        ls_return-leng      = ls_field-leng.
         ls_return-intlen    = lo_elemdescr->length.
         ls_return-outputlen = lo_elemdescr->output_length.
         ls_return-decimals  = lo_elemdescr->decimals.
@@ -188,6 +188,7 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
         ls_return-domname   = ls_field-domname.
         ls_return-rollname  = ls_field-rollname.
         ls_return-convexit  = ls_field-convexit.
+        ls_return-fieldtext = ls_field-fieldtext.
       ENDIF.
       APPEND ls_return TO rt_components.
     ENDLOOP.
