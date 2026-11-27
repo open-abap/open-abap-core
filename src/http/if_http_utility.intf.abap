@@ -42,6 +42,12 @@ INTERFACE if_http_utility PUBLIC.
     RETURNING
       VALUE(decoded) TYPE string.
 
+  CLASS-METHODS decode_x_base64
+    IMPORTING
+      encoded        TYPE string
+    RETURNING
+      VALUE(decoded) TYPE xstring.
+
   CLASS-METHODS normalize_url
     IMPORTING
       unnormalized      TYPE string

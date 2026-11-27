@@ -3,6 +3,7 @@ CLASS ltcl_test DEFINITION FOR TESTING RISK LEVEL HARMLESS DURATION SHORT FINAL.
   PRIVATE SECTION.
     METHODS decode_x_base64 FOR TESTING RAISING cx_static_check.
     METHODS decode_x_base64_2 FOR TESTING RAISING cx_static_check.
+    METHODS decode_x_base64_intf FOR TESTING RAISING cx_static_check.
     METHODS encode_x_base64 FOR TESTING RAISING cx_static_check.
     METHODS unescape_url FOR TESTING RAISING cx_static_check.
     METHODS unescape_url_eqs1 FOR TESTING RAISING cx_static_check.
@@ -72,6 +73,18 @@ CLASS ltcl_test IMPLEMENTATION.
     DATA decoded TYPE xstring.
 
     decoded = cl_http_utility=>decode_x_base64( 'qrvM' ).
+
+    cl_abap_unit_assert=>assert_equals(
+      act = decoded
+      exp = 'AABBCC' ).
+
+  ENDMETHOD.
+
+  METHOD decode_x_base64_intf.
+
+    DATA decoded TYPE xstring.
+
+    decoded = cl_http_utility=>if_http_utility~decode_x_base64( 'qrvM' ).
 
     cl_abap_unit_assert=>assert_equals(
       act = decoded
