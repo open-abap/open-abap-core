@@ -7,6 +7,8 @@ CONSTANTS icon_workflow_until TYPE c LENGTH 4 VALUE 'TODO'.
 CONSTANTS icon_workflow_condition TYPE c LENGTH 4 VALUE 'TODO'.
 CONSTANTS icon_adjust_configuration TYPE c LENGTH 4 VALUE 'TODO'.
 CONSTANTS icon_incoming_task TYPE c LENGTH 4 VALUE 'TODO'.
+CONSTANTS icon_manager TYPE c LENGTH 4 VALUE 'TODO'.
+CONSTANTS icon_rename TYPE c LENGTH 4 VALUE 'TODO'.
 
 CONSTANTS icon_active_inactive TYPE c LENGTH 4 VALUE 'TODO'.
 CONSTANTS icon_availability_check TYPE c LENGTH 4 VALUE 'TODO'.
