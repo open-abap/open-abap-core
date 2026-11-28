@@ -26,8 +26,8 @@ CLASS cl_numberrange_intervals DEFINITION PUBLIC.
         error_iv  TYPE nr_error_tab
         warning   TYPE abap_bool
       RAISING
-        cx_number_ranges
-        cx_nr_object_not_found.
+        cx_nr_object_not_found
+        cx_number_ranges.
 ENDCLASS.
 
 CLASS cl_numberrange_intervals IMPLEMENTATION.
