@@ -55,7 +55,7 @@ INTERFACE if_http_request PUBLIC.
 
   METHODS get_method
     RETURNING
-      VALUE(meth) TYPE string.
+      VALUE(method) TYPE string.
 
   METHODS set_version
     IMPORTING
