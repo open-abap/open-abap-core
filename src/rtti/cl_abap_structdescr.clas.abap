@@ -23,7 +23,7 @@ CLASS cl_abap_structdescr DEFINITION PUBLIC INHERITING FROM cl_abap_complexdescr
           p_langu                  TYPE syst-langu DEFAULT sy-langu
           p_including_substructres TYPE abap_bool DEFAULT abap_false
         RETURNING
-          VALUE(rt_components)     TYPE ddfields
+          VALUE(p_field_list)      TYPE ddfields
         EXCEPTIONS
           not_found
           no_ddic_type.
@@ -159,12 +159,12 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
 
     DATA lt_components TYPE component_table.
     DATA ls_component  LIKE LINE OF lt_components.
-    DATA ls_return     LIKE LINE OF rt_components.
+    DATA ls_return     LIKE LINE OF p_field_list.
     DATA lv_name       TYPE string.
     DATA lv_keyfield   TYPE string.
     DATA lo_elemdescr  TYPE REF TO cl_abap_elemdescr.
     DATA ls_field      TYPE dfies.
-    FIELD-SYMBOLS <component> LIKE LINE OF rt_components.
+    FIELD-SYMBOLS <component> LIKE LINE OF p_field_list.
 
     lt_components = get_components( ).
 
@@ -190,14 +190,14 @@ CLASS cl_abap_structdescr IMPLEMENTATION.
         ls_return-convexit  = ls_field-convexit.
         ls_return-fieldtext = ls_field-fieldtext.
       ENDIF.
-      APPEND ls_return TO rt_components.
+      APPEND ls_return TO p_field_list.
     ENDLOOP.
 
 *    WRITE '@KERNEL console.dir(abap.DDIC[lv_name.get()]?.keyFields);'.
     WRITE '@KERNEL for (const keyfield of abap.DDIC[lv_name.get()]?.keyFields || [] ) {'.
     WRITE '@KERNEL lv_keyfield.set(keyfield);'.
-*    WRITE '@KERNEL console.dir(rt_components.array()[0].get());'.
-    READ TABLE rt_components ASSIGNING <component> WITH KEY fieldname = lv_keyfield.
+*    WRITE '@KERNEL console.dir(p_field_list.array()[0].get());'.
+    READ TABLE p_field_list ASSIGNING <component> WITH KEY fieldname = lv_keyfield.
     ASSERT sy-subrc = 0.
     <component>-keyflag = abap_true.
     WRITE '@KERNEL }'.
