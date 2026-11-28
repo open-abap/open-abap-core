@@ -190,6 +190,8 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
     FIELD-SYMBOLS <row1> TYPE any.
     FIELD-SYMBOLS <tab2> TYPE ANY TABLE.
     FIELD-SYMBOLS <row2> TYPE any.
+    FIELD-SYMBOLS <itab1> TYPE INDEX TABLE.
+    FIELD-SYMBOLS <itab2> TYPE INDEX TABLE.
 
     IF lines( act ) <> lines( exp ).
       RAISE EXCEPTION TYPE kernel_cx_assert
@@ -224,11 +226,13 @@ CLASS cl_abap_unit_assert IMPLEMENTATION.
         ENDIF.
       ENDLOOP.
     ELSE.
+      ASSIGN act TO <itab1>.
+      ASSIGN exp TO <itab2>.
       DO lines( act ) TIMES.
         index = sy-index.
-        READ TABLE <tab1> INDEX index ASSIGNING <row1>.
+        READ TABLE <itab1> INDEX index ASSIGNING <row1>.
         assert_subrc( ).
-        READ TABLE <tab2> INDEX index ASSIGNING <row2>.
+        READ TABLE <itab2> INDEX index ASSIGNING <row2>.
         assert_subrc( ).
         assert_equals(
           act = <row1>
