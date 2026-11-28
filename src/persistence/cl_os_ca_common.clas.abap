@@ -189,6 +189,10 @@ CLASS cl_os_ca_common IMPLEMENTATION.
     RETURN.
   ENDMETHOD.
 
+  METHOD if_os_ca_persistency~get_persistent_by_query.
+    RETURN.
+  ENDMETHOD.
+
   METHOD if_os_ca_service~save.
     RETURN.
   ENDMETHOD.
